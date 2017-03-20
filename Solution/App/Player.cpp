@@ -4,7 +4,7 @@
 #include "Stage.h"
 
 const double GRAVITY = -0.1;
-static const Vector ROOMBA_SCALE( 1, 1, 1 ); 
+static const Vector ROOMBA_SCALE( 2, 2, 2 ); 
 
 Player::Player( ) :
 _range( 5 ),

@@ -31,7 +31,7 @@ private:
 private:
 	void loadMapCSV( );
 	void loadModelPos( );
-	bool isCollisionModel( ModelData model, Vector pos, Vector vec, Vector scale );
+	bool isCollisionModel( ModelData model, Vector check_pos );
 private:
 	std::vector< int > _map_data;
 	std::array< ModelData, MAX_MODEL_NUM > _model_data;

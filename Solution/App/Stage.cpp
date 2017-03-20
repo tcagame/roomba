@@ -130,7 +130,13 @@ bool Stage::isCollision( Vector pos, Vector vec, Vector scale ) {
 			continue;
 		}
 		//‚ ‚½‚Á‚Ä‚¢‚é‚©Šm‚©‚ß‚é
-		ret = isCollisionModel( _model_data[ i ], pos, vec, scale );
+		if ( vec.z > 0 ) {
+			check_pos.z += scale.z;
+		}
+		if ( vec.z < 0 ) {
+			check_pos.z -= scale.z;
+		}
+		ret = isCollisionModel( _model_data[ i ], check_pos );
 		if ( ret ) {
 			return true;
 		}
@@ -138,32 +144,29 @@ bool Stage::isCollision( Vector pos, Vector vec, Vector scale ) {
 	return false;
 }
 
-bool Stage::isCollisionModel( ModelData model, Vector pos, Vector vec, Vector scale ) {
-	Vector check_pos = pos + vec;
+bool Stage::isCollisionModel( ModelData model, Vector check_pos ) {
+	Vector pos_p = check_pos;
 	int polygon_idx = 0;
 	for ( int i = 0; i < model.polygon_num; i++ ) {
 		polygon_idx = i * 3;
-		Vector polygon_point_a = model.pos[ polygon_idx ];
-		Vector polygon_point_b = model.pos[ polygon_idx + 1 ];
-		Vector polygon_point_c = model.pos[ polygon_idx + 2 ];
+		Vector pos_a = model.pos[ polygon_idx ];
+		Vector pos_b = model.pos[ polygon_idx + 1 ];
+		Vector pos_c = model.pos[ polygon_idx + 2 ];
 
-		Vector normal_polygon = ( polygon_point_b - polygon_point_a ).cross( polygon_point_c - polygon_point_b );
-		normal_polygon = normal_polygon.normalize( );
-
-//		Vector polygon_to_pos = polygon_point_a - check_pos;
-//		double dot = normal_polygon.dot( polygon_to_pos );
-
-
-		Vector ab_cross_bcroos_pos = ( polygon_point_b - polygon_point_a ).cross( check_pos - polygon_point_b );
-		Vector ca_cross_acroos_pos = ( polygon_point_a - polygon_point_c ).cross( check_pos - polygon_point_a );
-		Vector bc_cross_ccroos_pos = ( polygon_point_c - polygon_point_b ).cross( check_pos - polygon_point_c );
-	
-		if ( ab_cross_bcroos_pos != normal_polygon ||
-			 ca_cross_acroos_pos != normal_polygon || 
-			 bc_cross_ccroos_pos != normal_polygon ) {
-			continue;
+		Vector ab = pos_a.sub( pos_b );
+		Vector bp = pos_b.sub( pos_p );
+		Vector bc = pos_b.sub( pos_c );
+		Vector cp = pos_c.sub( pos_p );
+		Vector ca = pos_c.sub( pos_a );
+		Vector ap = pos_a.sub( pos_p );
+		Vector c1 = ab.cross( bp );
+		Vector c2 = bc.cross( cp );
+		Vector c3 = ca.cross( ap );
+		double dot1 = c1.dot( c2 );
+		double dot2 = c1.dot( c3 );
+		if ( dot1 > 0 && dot2 > 0 ) {
+			return true;
 		}
-		return true;
 	}
 	return false;
 }
