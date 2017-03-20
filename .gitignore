@@ -1,0 +1,6 @@
+Solution/App/Debug/
+Solution/Common/Debug/
+Solution/Common/x64/
+Solution/App/x64/
+*.opendb
+*.db
