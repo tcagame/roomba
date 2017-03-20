@@ -22,6 +22,7 @@ private:
 private:
 	void updateRoomba( );
 	void fall( );
+	bool isCollision( StagePtr stage );
 private:
 	std::array< RoombaPtr, MAX_ROOMBA > _roombas;
 	Vector _pos;

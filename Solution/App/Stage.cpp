@@ -3,14 +3,15 @@
 #include "define.h"
 
 static const Vector MODEL_SIZE( 10, 8 );
-static const std::string STAGE_FILE_NAME = "Model/Stage/floor01.mdl";
+static const std::string STAGE_FILE_NAME = "../Resource/Model/Stage/floor01.mdl";
 
 Stage::Stage( ) :
 _width( 0 ),
 _height( 0 ) {
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->loadMDLModel( MDL::MDL_STAGE, STAGE_FILE_NAME.c_str( ), "Model/Stage/floor01_DM.jpg" );
+	drawer->loadMDLModel( MDL::MDL_STAGE, "Model/Stage/floor01.mdl", "Model/Stage/floor01_DM.jpg" );
 	loadMapCSV( );
+	loadModelPos( );
 }
 
 Stage::~Stage( ) {
@@ -19,7 +20,10 @@ Stage::~Stage( ) {
 void Stage::draw( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	for ( int i = 0; i < _width * _height; i++ ) {
-		int type = _map_data[ i ];
+		MDL type = (MDL)_map_data[ i ];
+		if ( type == MDL::MDL_NONE ) {
+			continue;
+		}
 		Vector pos( i % _width * MODEL_SIZE.x, i / _height * MODEL_SIZE.y );
 		Drawer::ModelMDL model = Drawer::ModelMDL( pos, MDL::MDL_STAGE );
 		drawer->setModelMDL( model );
@@ -82,7 +86,7 @@ void Stage::loadModelPos( ) {
 		double min_x = 10000;
 		double min_y = 10000;
 		for ( int j = 0; j < polygon_num * 3; j++ ) {
-			Vector pos = model->getPoint( i );
+			Vector pos = model->getPoint( j );
 			_model_data[ i ].pos[ j ] = pos;
 			if ( pos.x > max_x ) {
 				max_x = pos.x;
@@ -104,7 +108,7 @@ void Stage::loadModelPos( ) {
 	}
 }
 
-bool Stage::isCollision( Vector pos, Vector vec ) {
+bool Stage::isCollision( Vector pos, Vector vec, Vector scale ) {
 	bool ret = false;
 	Vector check_pos = pos + vec;
 
@@ -113,20 +117,20 @@ bool Stage::isCollision( Vector pos, Vector vec ) {
 			continue;
 		}
 		//ÉÇÉfÉãÇ™Ç†ÇÈîÕàÕÇ…posÇ™ç›ÇÈÇ©ämÇ©ÇﬂÇÈ
-		if ( _model_data[ i ].max_x < check_pos.x ) {
+		if ( _model_data[ i ].max_x < check_pos.x - scale.x ) {
 			continue;
 		}  
-		if ( _model_data[ i ].max_y < check_pos.y ) {
+		if ( _model_data[ i ].max_y < check_pos.y - scale.y ) {
 			continue;
 		}  
-		if ( _model_data[ i ].min_x > check_pos.x ) {
+		if ( _model_data[ i ].min_x > check_pos.x + scale.x ) {
 			continue;
 		}  
-		if ( _model_data[ i ].min_y > check_pos.y ) {
+		if ( _model_data[ i ].min_y > check_pos.y + scale.y ) {
 			continue;
-		}  
+		}
 		//Ç†ÇΩÇ¡ÇƒÇ¢ÇÈÇ©ämÇ©ÇﬂÇÈ
-		ret = isCollisionModel( _model_data[ i ], pos, vec );
+		ret = isCollisionModel( _model_data[ i ], pos, vec, scale );
 		if ( ret ) {
 			return true;
 		}
@@ -134,7 +138,7 @@ bool Stage::isCollision( Vector pos, Vector vec ) {
 	return false;
 }
 
-bool Stage::isCollisionModel( ModelData model, Vector pos, Vector vec ) {
+bool Stage::isCollisionModel( ModelData model, Vector pos, Vector vec, Vector scale ) {
 	Vector check_pos = pos + vec;
 	int polygon_idx = 0;
 	for ( int i = 0; i < model.polygon_num; i++ ) {

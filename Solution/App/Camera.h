@@ -12,7 +12,9 @@ public:
 	virtual ~Camera( );
 public:
 	void update( );
+	void move( );
 protected:
 	Vector _pos;
 	Vector _target;
+	Vector _before_mouse_pos;
 };

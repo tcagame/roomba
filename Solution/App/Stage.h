@@ -8,7 +8,7 @@ public:
 	virtual ~Stage( );
 public:
 	void draw( );
-	bool isCollision( Vector pos, Vector vec );
+	bool isCollision( Vector pos, Vector vec, Vector scale );
 private:
 	static const int MAX_POLYGON_NUM = 4096;
 	static const int MAX_MODEL_NUM = 1024;
@@ -31,7 +31,7 @@ private:
 private:
 	void loadMapCSV( );
 	void loadModelPos( );
-	bool isCollisionModel( ModelData model, Vector pos, Vector vec );
+	bool isCollisionModel( ModelData model, Vector pos, Vector vec, Vector scale );
 private:
 	std::vector< int > _map_data;
 	std::array< ModelData, MAX_MODEL_NUM > _model_data;

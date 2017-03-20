@@ -4,6 +4,7 @@
 #include "Stage.h"
 
 const double GRAVITY = -0.1;
+static const Vector ROOMBA_SCALE( 1, 1, 1 ); 
 
 Player::Player( ) :
 _range( 5 ),
@@ -21,7 +22,7 @@ Player::~Player( ) {
 
 void Player::update( StagePtr stage ) {
 	fall( );
-	if ( stage->isCollision( _pos, _vec ) ) {
+	if ( isCollision( stage ) ) {
 		_vec = Vector( );
 	}
 	_pos += _vec;
@@ -59,4 +60,15 @@ void Player::draw( ) const {
 	Vector pos0 = _roombas[ ROOMBA::ROOMBA_LEFT  ]->getPos( );
 	Vector pos1 = _roombas[ ROOMBA::ROOMBA_RIGHT ]->getPos( );
 	drawer->drawLine( pos0, pos1 );
+}
+
+bool Player::isCollision( StagePtr stage ) {
+	bool result = false;
+	for ( int i = 0; i < MAX_ROOMBA; i++ ) {
+		Vector pos = _roombas[ i ]->getPos( );
+		if ( stage->isCollision( _pos, _vec, ROOMBA_SCALE ) ) {
+			result = true;
+		}
+	}
+	return result;
 }
