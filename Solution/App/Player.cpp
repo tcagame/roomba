@@ -2,6 +2,7 @@
 #include "Roomba.h"
 #include "define.h"
 #include "Stage.h"
+#include "Keyboard.h"
 
 const double GRAVITY = -0.1;
 static const Vector ROOMBA_SCALE( 2, 2, 2 ); 
@@ -25,6 +26,7 @@ void Player::update( StagePtr stage ) {
 	if ( isCollision( stage ) ) {
 		_vec = Vector( );
 	}
+	Translation( );
 	_pos += _vec;
 	updateRoomba( );
 }
@@ -46,6 +48,7 @@ void Player::updateRoomba( ) {
 		pos = _pos + _dir.normalize( ) * range;
 		_roombas[ i ]->update( pos, _dir );
 	}
+
 }
 
 void Player::draw( ) const {
@@ -60,6 +63,16 @@ void Player::draw( ) const {
 	Vector pos0 = _roombas[ ROOMBA::ROOMBA_LEFT  ]->getPos( );
 	Vector pos1 = _roombas[ ROOMBA::ROOMBA_RIGHT ]->getPos( );
 	drawer->drawLine( pos0, pos1 );
+}
+
+void Player::Translation( ) {
+	KeyboardPtr Keyboard = Keyboard::getTask( );
+	if ( Keyboard->isHoldKey( "ARROW_UP" ) && Keyboard->isHoldKey( "W" ) ) {
+		_vec.y += 0.5;
+	}
+	if ( Keyboard->isHoldKey( "ARROW_DOWN" ) && Keyboard->isHoldKey( "S" )) {
+		_vec.y -= 0.5;
+	}
 }
 
 bool Player::isCollision( StagePtr stage ) {
