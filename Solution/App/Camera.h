@@ -5,13 +5,14 @@
 #include <string>
 
 PTR( Camera );
+PTR( Player );
 
 class Camera  {
 public:
 	Camera( );
 	virtual ~Camera( );
 public:
-	void update( );
+	void update( PlayerPtr player );
 	void move( );
 protected:
 	Vector _pos;

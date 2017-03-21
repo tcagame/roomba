@@ -2,10 +2,11 @@
 #include "Application.h"
 #include "Drawer.h"
 #include "Mouse.h"
+#include "Player.h"
 
 const Vector START_CAMERA_POS = Vector( 0, -100, 50 );
 const Vector START_TARGET_POS = Vector( 0, 0, 0 );
-const int ROTE_SPEED = 2;
+const int ROTE_SPEED = 10;
 const int MAX_LENGTH = 200;
 
 Camera::Camera( ) :
@@ -20,7 +21,8 @@ _target( START_TARGET_POS ) {
 Camera::~Camera( ) {
 }
 
-void Camera::update( ) {
+void Camera::update( PlayerPtr target ) {
+	_target = target->getPos( );
 	move( );
 	Vector vec = _pos - _target;
 

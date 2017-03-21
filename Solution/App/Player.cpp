@@ -8,6 +8,8 @@ const double GRAVITY = -0.1;
 const double SCALING_SPEED = 0.1;
 static const Vector ROOMBA_SCALE( 2, 2, 2 );
 static const double ACCEL = 0.1;
+static const double ROTE_ACCEL = PI / 360;
+static const double MAX_ROTE_SPEED = PI / 15;
 static const double MAX_SPEED = 0.6;
 static const double ROTE_SPEED = 0.1;
 
@@ -15,11 +17,13 @@ Player::Player( ) :
 _range( 5 ),
 _pos( 4, 0, 10 ),
 _dir( 1, 0, 0 ),
+_rote_speed( 0 ),
 _state( STATE::STATE_NEUTRAL ) {
 	_roombas[ ROOMBA::ROOMBA_LEFT  ] = RoombaPtr( new Roomba( true  ) );
 	_roombas[ ROOMBA::ROOMBA_RIGHT ] = RoombaPtr( new Roomba( false ) );
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadMV1Model( MV1::MV1_ROOMBA, "Model/Roomba/source/sphere.mv1" );
+	drawer->loadMV1Model( MV1::MV1_PLASMA, "Model/Plasma/source/plasma.mv1" );
 }
 
 
@@ -27,6 +31,7 @@ Player::~Player( ) {
 }
 
 void Player::update( StagePtr stage ) {
+	_attack = false;
 	fall( );
 	move( );
 	if ( isCollision( stage ) ) {
@@ -34,6 +39,7 @@ void Player::update( StagePtr stage ) {
 	}
 	if ( _vec.getLength( ) > MAX_SPEED ) {
 		_vec = _vec.normalize( ) * MAX_SPEED;
+		_attack = true;
 	}
 	_pos += _vec;
 	updateRoomba( );
@@ -77,6 +83,12 @@ void Player::neutral( ) {
 	if ( _range < ROOMBA_SCALE.x ) {
 		_range = ROOMBA_SCALE.x;
 	}
+	{//‰ñ“]
+		Matrix mat = Matrix( );
+		Vector axis = Vector( 0, 0, 1 );
+		mat = mat.makeTransformRotation( axis, _rote_speed );
+		_dir = mat.multiply( _dir );
+	}
 }
 
 void Player::translation( ) {
@@ -105,35 +117,40 @@ void Player::rotetion( ) {
 	bool hold = false;
 	
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	Vector axis = Vector( 0, 0, 1 );
 	//‰Eƒ‹ƒ“ƒo
-	Matrix mat = Matrix( );
 	if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
 		hold = true;
-		mat = mat.makeTransformRotation( axis, -ROTE_SPEED );
-		_dir = mat.multiply( _dir );
+		_rote_speed -= ROTE_ACCEL;
 	}
 	if ( keyboard->isHoldKey( "ARROW_DOWN" ) ) {
+		_rote_speed += ROTE_ACCEL;
 		hold = true;
-		mat = mat.makeTransformRotation( axis, ROTE_SPEED );
-		_dir = mat.multiply( _dir );
 	}
-	mat = Matrix( );
 	//¶ƒ‹ƒ“ƒo
 	if ( keyboard->isHoldKey( "S" ) ) {
 		hold = true;
-		mat = mat.makeTransformRotation( axis, -ROTE_SPEED );
-		_dir = mat.multiply( _dir );
+		_rote_speed -= ROTE_ACCEL;
 	}
 	if ( keyboard->isHoldKey( "W" ) ) {
+		_rote_speed += ROTE_ACCEL;
 		hold = true;
-		mat = mat.makeTransformRotation( axis, ROTE_SPEED );
-		_dir = mat.multiply( _dir );
+	}
+	if ( _rote_speed > MAX_ROTE_SPEED ) {
+		_rote_speed = MAX_ROTE_SPEED;
+		_attack = true;
+	}
+	if ( _rote_speed < -MAX_ROTE_SPEED ) {
+		_rote_speed = -MAX_ROTE_SPEED;
+		_attack = true;
 	}
 	_range += SCALING_SPEED;
 	if ( !hold ) {
 		_state = STATE_NEUTRAL;
 	}
+	Matrix mat = Matrix( );
+	Vector axis = Vector( 0, 0, 1 );
+	mat = mat.makeTransformRotation( axis, _rote_speed );
+	_dir = mat.multiply( _dir );
 }
 
 void Player::updateRoomba( ) {
@@ -171,6 +188,18 @@ void Player::deceleration( ) {
 		}
 		_vec.y -= ACCEL;
 	}
+	if ( _rote_speed > 0 ) {
+		_rote_speed -= ROTE_ACCEL / 6;
+		if ( _rote_speed < 0 ) {
+			_rote_speed = 0;
+		}
+	}
+	if ( _rote_speed< 0 ) {
+		_rote_speed += ROTE_ACCEL / 6;
+		if ( _rote_speed > 0 ) {
+			_rote_speed = 0;
+		}
+	}
 }
 
 void Player::draw( ) const {
@@ -181,12 +210,17 @@ void Player::draw( ) const {
 		_roombas[ i ]->draw( );
 	}
 	//drawLine
-	DrawerPtr drawer = Drawer::getTask( );
-	Vector pos0 = _roombas[ ROOMBA::ROOMBA_LEFT  ]->getPos( );
-	Vector pos1 = _roombas[ ROOMBA::ROOMBA_RIGHT ]->getPos( );
-	drawer->drawLine( pos0, pos1 );
+	if ( _attack ) {
+		DrawerPtr drawer = Drawer::getTask( );
+		Vector pos0 = _roombas[ ROOMBA::ROOMBA_LEFT  ]->getPos( );
+		Vector pos1 = _roombas[ ROOMBA::ROOMBA_RIGHT ]->getPos( );
+		drawer->drawLine( pos0, pos1 );
+	}
 }
 
+Vector Player::getPos( ) const {
+	return _pos;
+}
 
 bool Player::isCollision( StagePtr stage ) {
 	bool result = false;

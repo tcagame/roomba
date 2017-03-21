@@ -13,6 +13,7 @@ public:
 public:
 	void update( StagePtr stage );
 	void draw( ) const;
+	Vector getPos( ) const;
 private:
 	enum ROOMBA {
 		ROOMBA_LEFT,
@@ -41,5 +42,7 @@ private:
 	Vector _vec;
 	Vector _dir;
 	double _range;
+	bool _attack;
+	double _rote_speed;
 };
 
