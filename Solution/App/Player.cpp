@@ -23,7 +23,6 @@ _state( STATE::STATE_NEUTRAL ) {
 	_roombas[ ROOMBA::ROOMBA_RIGHT ] = RoombaPtr( new Roomba( false ) );
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadMV1Model( MV1::MV1_ROOMBA, "Model/Roomba/source/sphere.mv1" );
-	drawer->loadMV1Model( MV1::MV1_PLASMA, "Model/Plasma/source/plasma.mv1" );
 }
 
 
