@@ -162,7 +162,6 @@
     <ClCompile Include="Crystal.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Roomba.cpp" />
     <ClCompile Include="Stage.cpp" />
   </ItemGroup>
@@ -177,7 +176,6 @@
     <ClInclude Include="Crystal.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="Roomba.h" />
     <ClInclude Include="Stage.h" />
   </ItemGroup>

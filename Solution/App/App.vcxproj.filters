@@ -4,18 +4,16 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Roomba.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="Crystal.cpp" />
+    <ClCompile Include="Roomba.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="Roomba.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="Crystal.h" />
+    <ClInclude Include="Roomba.h" />
   </ItemGroup>
 </Project>

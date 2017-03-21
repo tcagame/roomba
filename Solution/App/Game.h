@@ -4,7 +4,7 @@
 
 PTR( Game );
 PTR( Camera );
-PTR( Player );
+PTR( Roomba );
 PTR( Stage );
 
 class Game : public Task {
@@ -19,6 +19,6 @@ public:
 	void initialize( );
 private:
 	CameraPtr _camera;
-	PlayerPtr _player;
+	RoombaPtr _Roomba;
 	StagePtr _stage;
 };

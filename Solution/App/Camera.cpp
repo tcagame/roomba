@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "Drawer.h"
 #include "Mouse.h"
-#include "Player.h"
+#include "Roomba.h"
 
 const Vector START_CAMERA_POS = Vector( 0, -100, 50 );
 const Vector START_TARGET_POS = Vector( 0, 0, 0 );
@@ -21,7 +21,7 @@ _target( START_TARGET_POS ) {
 Camera::~Camera( ) {
 }
 
-void Camera::update( PlayerPtr target ) {
+void Camera::update( RoombaPtr target ) {
 	_target = target->getPos( );
 	move( );
 	Vector vec = _pos - _target;

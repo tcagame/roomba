@@ -2,7 +2,7 @@
 
 enum MV1 {
 	MV1_NONE,
-	MV1_ROOMBA,
+	MV1_BALL,
 	MAX_MV1,
 };
 

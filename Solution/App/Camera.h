@@ -5,14 +5,14 @@
 #include <string>
 
 PTR( Camera );
-PTR( Player );
+PTR( Roomba );
 
 class Camera  {
 public:
 	Camera( );
 	virtual ~Camera( );
 public:
-	void update( PlayerPtr player );
+	void update( RoombaPtr Roomba );
 	void move( );
 protected:
 	Vector _pos;
