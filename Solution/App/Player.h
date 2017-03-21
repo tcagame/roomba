@@ -27,6 +27,7 @@ private:
 	};
 private:
 	void updateRoomba( );
+	void deceleration( );
 	void fall( );
 	void move( );
 	void neutral( );

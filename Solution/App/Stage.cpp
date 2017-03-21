@@ -2,7 +2,7 @@
 #include "Model.h"
 #include "define.h"
 
-static const Vector MODEL_SIZE( 10, 8 );
+static const Vector MODEL_SIZE( 6, 6 );
 static const std::string STAGE_FILE_NAME = "../Resource/Model/Stage/floor01.mdl";
 
 Stage::Stage( ) :
