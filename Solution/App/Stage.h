@@ -1,6 +1,9 @@
 #pragma once
 #include <vector>
+#include <list>
 #include "Drawer.h"
+
+PTR( Crystal );
 
 class Stage {
 public:
@@ -32,9 +35,11 @@ private:
 	void loadMapCSV( );
 	void loadModelPos( );
 	bool isCollisionModel( ModelData model, Vector check_pos );
+	void drawCrystal( ) const;
 private:
 	std::vector< int > _map_data;
 	std::array< ModelData, MAX_MODEL_NUM > _model_data;
+	std::list< CrystalPtr > _crystals;
 	int _width;
 	int _height;
 };

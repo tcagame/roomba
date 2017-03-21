@@ -7,6 +7,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Roomba.cpp" />
     <ClCompile Include="Stage.cpp" />
+    <ClCompile Include="Crystal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -15,5 +16,6 @@
     <ClInclude Include="Roomba.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="Stage.h" />
+    <ClInclude Include="Crystal.h" />
   </ItemGroup>
 </Project>

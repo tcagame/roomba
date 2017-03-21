@@ -5,7 +5,7 @@
 #include "Keyboard.h"
 
 const double GRAVITY = -0.1;
-const double SHRINK_SPEED = 0.4;
+const double SCALING_SPEED = 0.1;
 static const Vector ROOMBA_SCALE( 2, 2, 2 );
 static const double ACCEL = 0.1;
 static const double MAX_SPEED = 0.6;
@@ -73,6 +73,10 @@ void Player::neutral( ) {
 	if ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) {
 		_state = STATE_ROTETION;
 	}
+	_range -= SCALING_SPEED;
+	if ( _range < ROOMBA_SCALE.x ) {
+		_range = ROOMBA_SCALE.x;
+	}
 }
 
 void Player::translation( ) {
@@ -87,7 +91,7 @@ void Player::translation( ) {
 		_vec.y -= ACCEL;
 	}
 
-	_range -= ROOMBA_SCALE.x;
+	_range -= SCALING_SPEED;
 	if ( _range < ROOMBA_SCALE.x ) {
 		_range = ROOMBA_SCALE.x;
 	}
@@ -126,7 +130,7 @@ void Player::rotetion( ) {
 		mat = mat.makeTransformRotation( axis, ROTE_SPEED );
 		_dir = mat.multiply( _dir );
 	}
-
+	_range += SCALING_SPEED;
 	if ( !hold ) {
 		_state = STATE_NEUTRAL;
 	}

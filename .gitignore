@@ -4,3 +4,4 @@ Solution/Common/x64/
 Solution/App/x64/
 *.opendb
 *.db
+Solution/App/Log.txt

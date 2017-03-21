@@ -1,15 +1,21 @@
 #include "Stage.h"
 #include "Model.h"
 #include "define.h"
+#include "Crystal.h"
 
 static const Vector MODEL_SIZE( 6, 6 );
 static const std::string STAGE_FILE_NAME = "../Resource/Model/Stage/floor01.mdl";
+static const Vector CRYSTAL_SCALE( 2, 2, 2 );
 
 Stage::Stage( ) :
 _width( 0 ),
 _height( 0 ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadMDLModel( MDL::MDL_STAGE, "Model/Stage/floor01.mdl", "Model/Stage/floor01_DM.jpg" );
+	Matrix mat = Matrix( );
+	mat = mat.makeTransformScaling( CRYSTAL_SCALE );
+	drawer->loadMDLModel( MDL::MDL_CRYSTAL, "Model/Crystal/crystal.mdl","Model/Crystal/crystal.jpg", mat );
+	_crystals.push_back( CrystalPtr( new Crystal( Vector( 5, 5, 1 ) ) ) );
 	loadMapCSV( );
 	loadModelPos( );
 }
@@ -27,6 +33,19 @@ void Stage::draw( ) {
 		Vector pos( i % _width * MODEL_SIZE.x, i / _height * MODEL_SIZE.y );
 		Drawer::ModelMDL model = Drawer::ModelMDL( pos, MDL::MDL_STAGE );
 		drawer->setModelMDL( model );
+	}
+	drawCrystal( );
+}
+
+void Stage::drawCrystal( ) const {
+	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
+	while ( ite != _crystals.end( ) ) {
+		if ( !(*ite) ) {
+			ite++;
+			continue;
+		}
+		(*ite)->draw( );
+		ite++;
 	}
 }
 
