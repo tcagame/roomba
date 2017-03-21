@@ -12,11 +12,13 @@ _width( 0 ),
 _height( 0 ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadMDLModel( MDL::MDL_STAGE, "Model/Stage/floor01.mdl", "Model/Stage/floor01_DM.jpg" );
+	drawer->loadMDLModel( MDL::MDL_OBJ, "Model/Stage/path01.mdl", "Model/Stage/path.jpg");
 	Matrix mat = Matrix( );
 	mat = mat.makeTransformScaling( CRYSTAL_SCALE );
 	drawer->loadMDLModel( MDL::MDL_CRYSTAL, "Model/Crystal/crystal.mdl","Model/Crystal/crystal.jpg", mat );
 	_crystals.push_back( CrystalPtr( new Crystal( Vector( 5, 5, 1 ) ) ) );
 	loadMapCSV( );
+	loadObjCSV( );
 	loadModelPos( );
 }
 
@@ -30,12 +32,21 @@ void Stage::draw( ) {
 		if ( type == MDL::MDL_NONE ) {
 			continue;
 		}
-		Vector pos( i % _width * MODEL_SIZE.x, i / _height * MODEL_SIZE.y );
-		Drawer::ModelMDL model = Drawer::ModelMDL( pos, MDL::MDL_STAGE );
-		drawer->setModelMDL( model );
+		if ( type == MDL::MDL_STAGE) {
+			Vector pos( i % _width * MODEL_SIZE.x, i / _height * MODEL_SIZE.y );
+			Drawer::ModelMDL model = Drawer::ModelMDL( pos, MDL::MDL_STAGE );
+			drawer->setModelMDL(model);
+		}
+		if ( type == MDL::MDL_OBJ ) {
+			Vector pos( i % _width * MODEL_SIZE.x, i / _height * MODEL_SIZE.y, i  );
+			Drawer::ModelMDL model = Drawer::ModelMDL(pos, MDL::MDL_OBJ);
+			drawer->setModelMDL( model );
+		}	
 	}
 	drawCrystal( );
 }
+
+
 
 void Stage::drawCrystal( ) const {
 	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
@@ -79,6 +90,43 @@ void Stage::loadMapCSV( ) {
 		}
 
 		if ( _height == 0 ) {
+			_width = width;
+		}
+		_height++;
+	}
+	return;
+}
+
+void Stage::loadObjCSV( ) {
+	//ファイルの読み込み
+	const char* file_name = "../Resource/CSV/obj.csv";
+	FILE* fp;
+	errno_t err = fopen_s( &fp, file_name, "r" );
+	if ( err != 0 ) {
+		return;
+	}
+
+	char buf[2048];
+
+	//　カウントする
+	while ( fgets( buf, 2048, fp ) != NULL ) {
+		int width = 0;
+		std::string str = buf;
+		while ( true ) {
+			width++;
+			std::string::size_type index = str.find( "," );
+
+			if ( index == std::string::npos ) {
+				//","が見つからない場合
+				_map_data.push_back(atoi(str.c_str()));
+				break;
+			}
+			std::string substr = str.substr(0, index);
+			_map_data.push_back(atoi(substr.c_str()));
+			str = str.substr(index + 1);
+		}
+
+		if (_height == 0) {
 			_width = width;
 		}
 		_height++;
@@ -154,6 +202,18 @@ bool Stage::isCollision( Vector pos, Vector vec, Vector scale ) {
 		}
 		if ( vec.z < 0 ) {
 			check_pos.z -= scale.z;
+		}
+		if ( vec.x > 0 ) {
+			check_pos.x += scale.x;
+		}
+		if ( vec.x < 0 ) {
+			check_pos.x -= scale.x;
+		}
+		if ( vec.y > 0 ) {
+			check_pos.y += scale.y;
+		}
+		if ( vec.y < 0 ) {
+			check_pos.y -= scale.y;
 		}
 		ret = isCollisionModel( _model_data[ i ], check_pos );
 		if ( ret ) {

@@ -9,6 +9,7 @@ enum MV1 {
 enum MDL {
 	MDL_NONE,
 	MDL_STAGE,
+	MDL_OBJ,
 	MDL_CRYSTAL,
 	MAX_MDL
 };
