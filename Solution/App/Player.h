@@ -29,6 +29,6 @@ private:
 	Vector _pos;
 	Vector _vec;
 	Vector _dir;
-	int _range;
+	double _range;
 };
 
