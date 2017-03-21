@@ -3,6 +3,7 @@
 enum MV1 {
 	MV1_NONE,
 	MV1_ROOMBA,
+	MV1_PLASMA,
 	MAX_MV1,
 };
 

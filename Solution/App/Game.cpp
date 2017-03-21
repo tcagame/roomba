@@ -25,8 +25,8 @@ void Game::initialize( ) {
 }
 
 void Game::update( ) {
-	_camera->update( );
 	_player->update( _stage );
+	_camera->update( _player );
 	_stage->draw( );
 	_player->draw( );
 }
