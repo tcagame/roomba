@@ -34,6 +34,7 @@ private:
 private:
 	void loadMapCSV( );
 	void loadModelPos( );
+	void loadObjCSV( );
 	bool isCollisionModel( ModelData model, Vector check_pos );
 	void drawCrystal( ) const;
 private:
