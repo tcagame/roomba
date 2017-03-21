@@ -12,7 +12,7 @@ _width( 0 ),
 _height( 0 ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadMDLModel( MDL::MDL_STAGE, "Model/Stage/floor01.mdl", "Model/Stage/floor01_DM.jpg" );
-	drawer->loadMDLModel( MDL::MDL_OBJ, "Model/Stage/path01.mdl", "Model/Stage/path.jpg");
+	drawer->loadMDLModel( MDL::MDL_OBJ, "Model/Stage/floor01.mdl", "Model/Stage/floor01_DM.jpg");
 	Matrix mat = Matrix( );
 	mat = mat.makeTransformScaling( CRYSTAL_SCALE );
 	drawer->loadMDLModel( MDL::MDL_CRYSTAL, "Model/Crystal/crystal.mdl","Model/Crystal/crystal.jpg", mat );
@@ -38,7 +38,7 @@ void Stage::draw( ) {
 			drawer->setModelMDL(model);
 		}
 		if ( type == MDL::MDL_OBJ ) {
-			Vector pos( i % _width * MODEL_SIZE.x, i / _height * MODEL_SIZE.y, i  );
+			Vector pos( i % _width * MODEL_SIZE.x, i / _height * MODEL_SIZE.y, 3 );
 			Drawer::ModelMDL model = Drawer::ModelMDL(pos, MDL::MDL_OBJ);
 			drawer->setModelMDL( model );
 		}	
