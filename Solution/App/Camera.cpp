@@ -3,7 +3,7 @@
 #include "Drawer.h"
 #include "Mouse.h"
 
-const Vector START_CAMERA_POS = Vector( 0, 100, 50 );
+const Vector START_CAMERA_POS = Vector( 0, -100, 50 );
 const Vector START_TARGET_POS = Vector( 0, 0, 0 );
 const int ROTE_SPEED = 2;
 const int MAX_LENGTH = 200;
