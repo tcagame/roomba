@@ -18,3 +18,7 @@ void Crystal::draw( ) {
 	Drawer::ModelMDL model( _pos, MDL::MDL_CRYSTAL );
 	drawer->setModelMDL( model );
 }
+
+bool Crystal::isHitting( Vector pos0, Vector pos1 ) {
+	return true;
+}

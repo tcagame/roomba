@@ -78,3 +78,21 @@ void Stage::drawCrystal( ) const {
 		ite++;
 	}
 }
+
+CrystalPtr Stage::getHittingCrystal( Vector pos0, Vector pos1 ) {
+	CrystalPtr hitting = CrystalPtr( );
+	//‚ ‚½‚Á‚Ä‚¢‚éƒNƒŠƒXƒ^ƒ‹‚ðhitting‚É‘ã“ü‚·‚é
+	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
+	while ( ite != _crystals.end( ) ) {
+		CrystalPtr crystal = (*ite);
+		if ( !crystal ) {
+			ite++;
+			continue;
+		}
+		if ( crystal->isHitting( pos0, pos1 ) ) {
+			hitting = crystal;
+		}
+		ite++;
+	}
+	return hitting;
+}

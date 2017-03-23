@@ -35,6 +35,7 @@ private:
 	void translation( );
 	void rotetionSide( );
 	void rotetionBoth( );
+	void attack( StagePtr stage );
 	Vector convertToBallPos( BALL type ) const;
 private:
 	STATE _state;
@@ -42,7 +43,7 @@ private:
 	Vector _vec;
 	Vector _dir;
 	double _range;
-	bool _attack;
+	bool _attacking;
 	double _rote_speed;
 };
 
