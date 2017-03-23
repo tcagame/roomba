@@ -6,6 +6,7 @@
 static const Vector MODEL_SIZE( 6, 6 );
 static const std::string STAGE_FILE_NAME = "../Resource/Model/Stage/floor01.mdl";
 static const Vector CRYSTAL_SCALE( 2, 2, 2 );
+static const int PITCH = 10;
 
 Stage::Stage( ) {
 	Matrix mat = Matrix( );
@@ -16,7 +17,7 @@ Stage::Stage( ) {
 	_stage_data = { 
 		0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -36,7 +37,6 @@ void Stage::draw( ) {
 }
 
 void Stage::drawWireFrame( ) {
-	const int pitch = 10;
 	DrawerPtr drawer = Drawer::getTask( );
 
 	//@°‚Ì•`‰æ
@@ -44,8 +44,8 @@ void Stage::drawWireFrame( ) {
 		Vector vec1 = Vector( 0, 0, 0 );
 		Vector vec2 = Vector( 0, 100, 0 );
 		Vector vec3 = Vector( 100, 0, 0 );
-		Vector pitchX = Vector( ( i * pitch ), 0, 0 );
-		Vector pitchY = Vector( 0, ( i * pitch ), 0 );
+		Vector pitchX = Vector( ( i * PITCH ), 0, 0 );
+		Vector pitchY = Vector( 0, ( i * PITCH ), 0 );
 		drawer->drawLine( vec1 + pitchX, vec2 + pitchX );
 		drawer->drawLine( vec1 + pitchY, vec3 + pitchY );
 	}
@@ -53,21 +53,21 @@ void Stage::drawWireFrame( ) {
 	// —§‘Ì‚Ì•`‰æ
 	for ( int i = 0; i < STAGE_SIZE; i++ ) {
 		if ( _stage_data[ i ] == 1 ) {
-			Vector vec1 = Vector( ( i % 10 ) * pitch, ( i / 10 ) * pitch, 0 );
-			Vector vec2 = vec1 + Vector( pitch, 0, 0 );
-			Vector vec3 = vec1 + Vector( 0, pitch, 0 );
-			Vector vec4 = vec1 + Vector( pitch, pitch, 0 );
+			Vector vec1 = Vector( ( i % 10 ) * PITCH, ( i / 10 ) * PITCH, 0 );
+			Vector vec2 = vec1 + Vector( PITCH, 0, 0 );
+			Vector vec3 = vec1 + Vector( 0, PITCH, 0 );
+			Vector vec4 = vec1 + Vector( PITCH, PITCH, 0 );
 
 			//c‚Ì•Ó
-			drawer->drawLine( vec1, vec1 + Vector( 0, 0, pitch ) );
-			drawer->drawLine( vec2, vec2 + Vector( 0, 0, pitch ) );
-			drawer->drawLine( vec3, vec3 + Vector( 0, 0, pitch ) );
-			drawer->drawLine( vec4, vec4 + Vector( 0, 0, pitch ) );
+			drawer->drawLine( vec1, vec1 + Vector( 0, 0, PITCH ) );
+			drawer->drawLine( vec2, vec2 + Vector( 0, 0, PITCH ) );
+			drawer->drawLine( vec3, vec3 + Vector( 0, 0, PITCH ) );
+			drawer->drawLine( vec4, vec4 + Vector( 0, 0, PITCH ) );
 			//ã–Ê
-			drawer->drawLine( vec1 + Vector( 0, 0, pitch ), vec2 + Vector( 0, 0, pitch ) );
-			drawer->drawLine( vec2 + Vector( 0, 0, pitch ), vec4 + Vector( 0, 0, pitch ) );
-			drawer->drawLine( vec3 + Vector( 0, 0, pitch ), vec4 + Vector( 0, 0, pitch ) );
-			drawer->drawLine( vec3 + Vector( 0, 0, pitch ), vec1 + Vector( 0, 0, pitch ) );
+			drawer->drawLine( vec1 + Vector( 0, 0, PITCH ), vec2 + Vector( 0, 0, PITCH ) );
+			drawer->drawLine( vec2 + Vector( 0, 0, PITCH ), vec4 + Vector( 0, 0, PITCH ) );
+			drawer->drawLine( vec3 + Vector( 0, 0, PITCH ), vec4 + Vector( 0, 0, PITCH ) );
+			drawer->drawLine( vec3 + Vector( 0, 0, PITCH ), vec1 + Vector( 0, 0, PITCH ) );
 		}
 	}
 }
@@ -82,6 +82,24 @@ void Stage::drawCrystal( ) const {
 		(*ite)->draw( );
 		ite++;
 	}
+}
+
+bool Stage::isCollisionWall( Vector pos ) {
+	// ƒ{[ƒ‹‚Æ•Ç‚Ì“–‚½‚è”»’è
+	for ( int i = 0; i < STAGE_SIZE; i++ ) {
+		if ( _stage_data[ i ] == 1 ) {
+			Vector vec1 = Vector( ( i % 10 ) * PITCH, ( i / 10 ) * PITCH, 0 );
+			Vector vec2 = vec1 + Vector( PITCH, 0, 0 );
+			Vector vec3 = vec1 + Vector( 0, PITCH, 0 );
+
+			if ( vec1.x < pos.x && pos.x < vec2.x &&
+				 vec1.y < pos.y && pos.y < vec3.y ) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 CrystalPtr Stage::getHittingCrystal( Vector pos0, Vector pos1 ) {

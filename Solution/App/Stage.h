@@ -11,6 +11,7 @@ public:
 	virtual ~Stage( );
 public:
 	void draw( );
+	bool isCollisionWall( Vector pos );
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 );
 private:
 	static const int STAGE_SIZE = 110;

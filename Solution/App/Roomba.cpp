@@ -30,11 +30,12 @@ void Roomba::update( StagePtr stage ) {
 	_attacking = false;
 	move( );
 	if ( _vec.getLength( ) > MAX_SPEED ) {
-	//	_vec = _vec.normalize( ) * MAX_SPEED;
+		_vec = _vec.normalize( ) * MAX_SPEED;
 		_attacking = true;
 	}
-	_pos += _vec;
-
+	if ( isCollision( stage ) ) {
+		_pos += _vec;
+	}
 	//UŒ‚
 	attack( stage );
 }
@@ -293,4 +294,12 @@ void Roomba::draw( ) const {
 
 Vector Roomba::getPos( ) const {
 	return _pos;
+}
+
+bool Roomba::isCollision( StagePtr stage ) {
+	if ( stage->isCollisionWall( convertToBallPos( BALL_LEFT ) ) ||
+		 stage->isCollisionWall( convertToBallPos( BALL_RIGHT ) ) ) {
+		return false;
+	}
+	return true;
 }
