@@ -27,15 +27,17 @@ Roomba::~Roomba( ) {
 }
 
 void Roomba::update( StagePtr stage ) {
-	_attack = false;
+	_attacking = false;
 	move( );
 	if ( _vec.getLength( ) > MAX_SPEED ) {
 	//	_vec = _vec.normalize( ) * MAX_SPEED;
-		_attack = true;
+		_attacking = true;
 	}
 	if ( isCollision( stage ) ) {
 		_pos += _vec;
 	}
+	//UŒ‚
+	attack( stage );
 }
 
 void Roomba::move( ) {
@@ -151,11 +153,11 @@ void Roomba::rotetionSide( ) {
 	//‰ñ“]‘¬“xmax
 	if ( _rote_speed > MAX_ROTE_SPEED ) {
 		_rote_speed = MAX_ROTE_SPEED;
-		_attack = true;
+		_attacking = true;
 	}
 	if ( _rote_speed < -MAX_ROTE_SPEED ) {
 		_rote_speed = -MAX_ROTE_SPEED;
-		_attack = true;
+		_attacking = true;
 	}
 	//‰ñ“]
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), _rote_speed );
@@ -196,11 +198,11 @@ void Roomba::rotetionBoth( ) {
 	//‰ñ“]‘¬“xmax
 	if ( _rote_speed > MAX_ROTE_SPEED ) {
 		_rote_speed = MAX_ROTE_SPEED;
-		_attack = true;
+		_attacking = true;
 	}
 	if ( _rote_speed < -MAX_ROTE_SPEED ) {
 		_rote_speed = -MAX_ROTE_SPEED;
-		_attack = true;
+		_attacking = true;
 	}
 	_range += SCALING_SPEED;
 	//‰ñ“]
@@ -251,6 +253,18 @@ void Roomba::decelerationRotetion( ) {
 	}
 }
 
+void Roomba::attack( StagePtr stage ) {
+	if ( !_attacking ) {
+		return;
+	}
+	Vector pos0 = convertToBallPos( BALL_LEFT );
+	Vector pos1 = convertToBallPos( BALL_RIGHT );
+	CrystalPtr crystal =  stage->getHittingCrystal( pos0, pos1 );
+	if ( crystal ) {
+		DrawerPtr drawer = Drawer::getTask( );
+		drawer->drawString( 0, 0, "‚ ‚½‚Á‚Ä‚é‚æ[" );
+	}
+}
 
 Vector Roomba::convertToBallPos( BALL type ) const {
 	Matrix mat_ball = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
@@ -273,7 +287,7 @@ void Roomba::draw( ) const {
 		Drawer::ModelMV1 model = Drawer::ModelMV1( mat, MV1::MV1_BALL, 0, 0 );
 		drawer->setModelMV1( model );
 	}
-	if ( _attack ) {
+	if ( _attacking ) {
 		drawer->drawLine( pos[ 0 ], pos[ 1 ] );
 	}
 }
