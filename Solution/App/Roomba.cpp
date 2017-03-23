@@ -9,13 +9,13 @@ static const Vector ROOMBA_SCALE( 2, 2, 2 );
 static const double ACCEL = 0.1;
 static const double ROTE_ACCEL = PI / 360;
 static const double MAX_ROTE_SPEED = PI / 30;
-static const double MAX_SPEED = 0.6;
+static const double MAX_SPEED = 1.5;
 static const double ROTE_SPEED = 0.1;
 
 Roomba::Roomba( ) :
 _range( 5 ),
 _pos( 4, 0, 10 ),
-_dir( 1, 0, 0 ),
+_dir( 0, 1, 0 ),
 _rote_speed( 0 ),
 _state( STATE::STATE_NEUTRAL ) {
 	DrawerPtr drawer = Drawer::getTask( );
@@ -30,7 +30,7 @@ void Roomba::update( StagePtr stage ) {
 	_attack = false;
 	move( );
 	if ( _vec.getLength( ) > MAX_SPEED ) {
-		_vec = _vec.normalize( ) * MAX_SPEED;
+	//	_vec = _vec.normalize( ) * MAX_SPEED;
 		_attack = true;
 	}
 	_pos += _vec;
@@ -79,12 +79,9 @@ void Roomba::neutral( ) {
 	if ( _range < ROOMBA_SCALE.x ) {
 		_range = ROOMBA_SCALE.x;
 	}
-	{//‰ñ“]
-		Matrix mat = Matrix( );
-		Vector axis = Vector( 0, 0, 1 );
-		mat = mat.makeTransformRotation( axis, _rote_speed );
-		_dir = mat.multiply( _dir );
-	}
+	//‰ñ“]
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), _rote_speed );
+	_dir = mat.multiply( _dir );
 }
 
 void Roomba::translation( ) {
