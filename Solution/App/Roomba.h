@@ -28,7 +28,8 @@ private:
 		MAX_STATE,
 	};
 private:
-	void deceleration( );
+	void decelerationTranslation( );
+	void decelerationRotetion( );
 	void move( );
 	void neutral( );
 	void translation( );

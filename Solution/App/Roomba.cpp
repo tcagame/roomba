@@ -55,14 +55,9 @@ void Roomba::move( ) {
 }
 
 void Roomba::neutral( ) {
-	deceleration( );
+	decelerationTranslation( );
+	decelerationRotetion( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	if ( keyboard->isHoldKey( "W" ) && keyboard->isHoldKey( "ARROW_UP" ) ) {
-		_state = STATE_TRANSLATION;
-	}
-	if ( keyboard->isHoldKey( "S" ) && keyboard->isHoldKey( "ARROW_DOWN" ) ) {
-		_state = STATE_TRANSLATION;
-	}
 	if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
 		_state = STATE_ROTETION_SIDE;
 	}
@@ -85,6 +80,7 @@ void Roomba::neutral( ) {
 }
 
 void Roomba::translation( ) {
+	decelerationRotetion( );
 	bool hold = false;
 	KeyboardPtr keyboard = Keyboard::getTask( );
 	if ( keyboard->isHoldKey( "ARROW_UP" ) && keyboard->isHoldKey( "W" ) ) {
@@ -113,6 +109,13 @@ void Roomba::rotetionSide( ) {
 	if ( ( keyboard->isHoldKey( "ARROW_UP" ) &&  keyboard->isHoldKey( "S" ) ) ||
 		 ( keyboard->isHoldKey( "ARROW_DOWN" ) &&  keyboard->isHoldKey( "W" ) ) ) {
 		_state = STATE_ROTETION_BOTH;
+	}
+	if ( ( keyboard->isHoldKey( "W" ) && keyboard->isHoldKey( "ARROW_UP" ) ) ||
+		 ( keyboard->isHoldKey( "S" ) && keyboard->isHoldKey( "ARROW_DOWN" ) ) ) {
+		_state = STATE_TRANSLATION;
+	}
+	if ( keyboard->isHoldKey( "S" ) && keyboard->isHoldKey( "ARROW_DOWN" ) ) {
+		_state = STATE_TRANSLATION;
 	}
 	//‰Ÿ‚µ‚Ä‚¢‚é‚©Šm‚©‚ß‚é
 	if ( keyboard->isHoldKey( "ARROW_UP" ) ||
@@ -163,6 +166,7 @@ void Roomba::rotetionSide( ) {
 
 void Roomba::rotetionBoth( ) {
 	bool hold = false;
+	decelerationTranslation( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
 	//‰Ÿ‚µ‚Ä‚¢‚é‚©Šm‚©‚ß‚é
 	if ( ( keyboard->isHoldKey( "ARROW_UP" ) &&  keyboard->isHoldKey( "S" ) ) ||
@@ -203,7 +207,7 @@ void Roomba::rotetionBoth( ) {
 
 }
 
-void Roomba::deceleration( ) {
+void Roomba::decelerationTranslation( ) {
 	//Œ¸‘¬
 	if ( _vec.x > 0 ) {
 		_vec.x -= ACCEL;
@@ -229,9 +233,11 @@ void Roomba::deceleration( ) {
 			_vec.y = 0;
 		}
 	}
+}
+void Roomba::decelerationRotetion( ) {
 	if ( _rote_speed > 0 ) {
 		_rote_speed -= ROTE_ACCEL / 6;
-		if ( _rote_speed < 0 ) {
+	if ( _rote_speed < 0 ) {
 			_rote_speed = 0;
 		}
 	}
@@ -242,6 +248,7 @@ void Roomba::deceleration( ) {
 		}
 	}
 }
+
 
 Vector Roomba::convertToBallPos( BALL type ) const {
 	Matrix mat_ball = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
