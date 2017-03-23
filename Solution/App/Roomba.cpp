@@ -14,7 +14,7 @@ static const double ROTE_SPEED = 0.1;
 
 Roomba::Roomba( ) :
 _range( 5 ),
-_pos( 4, 0, 10 ),
+_pos( 4, 0, 1 ),
 _dir( 0, 1, 0 ),
 _rote_speed( 0 ),
 _state( STATE::STATE_NEUTRAL ) {
