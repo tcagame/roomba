@@ -8,7 +8,7 @@ const double SCALING_SPEED = 0.1;
 static const Vector ROOMBA_SCALE( 2, 2, 2 );
 static const double ACCEL = 0.1;
 static const double ROTE_ACCEL = PI / 360;
-static const double MAX_ROTE_SPEED = PI / 15;
+static const double MAX_ROTE_SPEED = PI / 30;
 static const double MAX_SPEED = 0.6;
 static const double ROTE_SPEED = 0.1;
 
@@ -45,8 +45,11 @@ void Roomba::move( ) {
 	case STATE::STATE_TRANSLATION:
 		translation( );
 		break;
-	case STATE::STATE_ROTETION:
-		rotetion( );
+	case STATE::STATE_ROTETION_SIDE:
+		rotetionSide( );
+		break;
+	case STATE::STATE_ROTETION_BOTH:
+		rotetionBoth( );
 		break;
 	}
 }
@@ -54,17 +57,23 @@ void Roomba::move( ) {
 void Roomba::neutral( ) {
 	deceleration( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	if ( keyboard->isHoldKey( "ARROW_UP" ) && keyboard->isHoldKey( "W" ) ) {
+	if ( keyboard->isHoldKey( "W" ) && keyboard->isHoldKey( "ARROW_UP" ) ) {
 		_state = STATE_TRANSLATION;
 	}
-	if ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "S" ) ) {
+	if ( keyboard->isHoldKey( "S" ) && keyboard->isHoldKey( "ARROW_DOWN" ) ) {
 		_state = STATE_TRANSLATION;
 	}
-	if ( keyboard->isHoldKey( "ARROW_UP" ) && keyboard->isHoldKey( "S" ) ) {
-		_state = STATE_ROTETION;
+	if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
+		_state = STATE_ROTETION_SIDE;
 	}
-	if ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) {
-		_state = STATE_ROTETION;
+	if ( keyboard->isHoldKey( "ARROW_DOWN" ) ) {
+		_state = STATE_ROTETION_SIDE;
+	}
+	if ( keyboard->isHoldKey( "W" ) ) {
+		_state = STATE_ROTETION_SIDE;
+	}
+	if ( keyboard->isHoldKey( "S" ) ) {
+		_state = STATE_ROTETION_SIDE;
 	}
 	_range -= SCALING_SPEED;
 	if ( _range < ROOMBA_SCALE.x ) {
@@ -100,34 +109,88 @@ void Roomba::translation( ) {
 
 }
 
-void Roomba::rotetion( ) {
+void Roomba::rotetionSide( ) {
 	bool hold = false;
-	bool synchro = false;
+	BALL move_type = BALL::BALL_LEFT;
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	//右ルンバ
-	if ( keyboard->isHoldKey( "ARROW_UP" ) &&  keyboard->isHoldKey( "S" ) ) {
-		synchro = true;
+	if ( ( keyboard->isHoldKey( "ARROW_UP" ) &&  keyboard->isHoldKey( "S" ) ) ||
+		 ( keyboard->isHoldKey( "ARROW_DOWN" ) &&  keyboard->isHoldKey( "W" ) ) ) {
+		_state = STATE_ROTETION_BOTH;
 	}
-	if ( keyboard->isHoldKey( "ARROW_DOWN" ) &&  keyboard->isHoldKey( "W" ) ) {
-		synchro = true;
-	}
-	if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
+	//押しているか確かめる
+	if ( keyboard->isHoldKey( "ARROW_UP" ) ||
+		 keyboard->isHoldKey( "ARROW_DOWN" ) ||
+		 keyboard->isHoldKey( "S" ) ||
+		 keyboard->isHoldKey( "W" ) ) {
 		hold = true;
+	}
+	//押してなかったらニュートラル
+	if ( !hold ) {
+		_state = STATE_NEUTRAL;
+		return;
+	}
+	//回転速度変化
+	if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
+		move_type = BALL::BALL_RIGHT;
 		_rote_speed -= ROTE_ACCEL;
 	}
 	if ( keyboard->isHoldKey( "ARROW_DOWN" ) ) {
+		move_type = BALL::BALL_RIGHT;
 		_rote_speed += ROTE_ACCEL;
-		hold = true;
 	}
-	//左ルンバ
 	if ( keyboard->isHoldKey( "S" ) ) {
-		hold = true;
 		_rote_speed -= ROTE_ACCEL;
 	}
 	if ( keyboard->isHoldKey( "W" ) ) {
 		_rote_speed += ROTE_ACCEL;
+	}
+
+	_range += SCALING_SPEED;
+	//回転速度max
+	if ( _rote_speed > MAX_ROTE_SPEED ) {
+		_rote_speed = MAX_ROTE_SPEED;
+		_attack = true;
+	}
+	if ( _rote_speed < -MAX_ROTE_SPEED ) {
+		_rote_speed = -MAX_ROTE_SPEED;
+		_attack = true;
+	}
+	//回転
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), _rote_speed );
+	Vector pos_before = convertToBallPos( move_type );
+	_dir = mat.multiply( _dir );
+	Vector pos_after = convertToBallPos( move_type );
+	Vector vec = pos_after - pos_before;
+	_vec = vec;
+}
+
+void Roomba::rotetionBoth( ) {
+	bool hold = false;
+	KeyboardPtr keyboard = Keyboard::getTask( );
+	//押しているか確かめる
+	if ( ( keyboard->isHoldKey( "ARROW_UP" ) &&  keyboard->isHoldKey( "S" ) ) ||
+		 ( keyboard->isHoldKey( "ARROW_DOWN" ) &&  keyboard->isHoldKey( "W" ) ) ) {
 		hold = true;
 	}
+	//押してなかったらニュートラル
+	if ( !hold ) {
+		_state = STATE_NEUTRAL;
+		return;
+	}
+	//回転速度変化
+	if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
+		_rote_speed -= ROTE_ACCEL;
+	}
+	if ( keyboard->isHoldKey( "ARROW_DOWN" ) ) {
+		_rote_speed += ROTE_ACCEL;
+	}
+	if ( keyboard->isHoldKey( "S" ) ) {
+		_rote_speed -= ROTE_ACCEL;
+	}
+	if ( keyboard->isHoldKey( "W" ) ) {
+		_rote_speed += ROTE_ACCEL;
+	}
+	//回転速度max
 	if ( _rote_speed > MAX_ROTE_SPEED ) {
 		_rote_speed = MAX_ROTE_SPEED;
 		_attack = true;
@@ -137,40 +200,37 @@ void Roomba::rotetion( ) {
 		_attack = true;
 	}
 	_range += SCALING_SPEED;
-	if ( !hold ) {
-		_state = STATE_NEUTRAL;
-	}
-	Matrix mat = Matrix( );
-	Vector axis = Vector( 0, 0, 1 );
-	mat = mat.makeTransformRotation( axis, _rote_speed );
+	//回転
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), _rote_speed );
 	_dir = mat.multiply( _dir );
-	if ( !synchro ) {
-		////速度ベクトル？
-		//_
-		//Vector vec;// = pos1 - pos0;
-		////行列回転
-		//vec = mat.multiply( vec );
-		////左ルンバ+vec.nom * range
-		//Vector pos = pos0 + vec.normalize( ) * _range;
-		////未来-現在
-		//_vec.x = pos.x - _pos.x;
-		//_vec.y = pos.y - _pos.y;
-	}
+
 }
 
 void Roomba::deceleration( ) {
 	//減速
 	if ( _vec.x > 0 ) {
-		if ( _vec.x < ACCEL ) {
+		_vec.x -= ACCEL;
+		if ( _vec.x < 0 ) {
 			_vec.x = 0;
 		}
-		_vec.x -= ACCEL;
 	}
 	if ( _vec.y > 0 ) {
-		if ( _vec.y < ACCEL ) {
+		_vec.y -= ACCEL;
+		if ( _vec.y < 0 ) {
 			_vec.y = 0;
 		}
-		_vec.y -= ACCEL;
+	}
+	if ( _vec.x < 0 ) {
+		_vec.x += ACCEL;
+		if ( _vec.x > 0 ) {
+			_vec.x = 0;
+		}
+	}
+	if ( _vec.y < 0 ) {
+		_vec.y += ACCEL;
+		if ( _vec.y > 0 ) {
+			_vec.y = 0;
+		}
 	}
 	if ( _rote_speed > 0 ) {
 		_rote_speed -= ROTE_ACCEL / 6;
@@ -178,7 +238,7 @@ void Roomba::deceleration( ) {
 			_rote_speed = 0;
 		}
 	}
-	if ( _rote_speed< 0 ) {
+	if ( _rote_speed < 0 ) {
 		_rote_speed += ROTE_ACCEL / 6;
 		if ( _rote_speed > 0 ) {
 			_rote_speed = 0;
@@ -186,13 +246,19 @@ void Roomba::deceleration( ) {
 	}
 }
 
-void Roomba::draw( ) const {
+Vector Roomba::convertToBallPos( BALL type ) const {
 	Matrix mat_ball = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
 	Vector dir_ball = mat_ball.multiply( _dir );
+	double v = 1 - 2 * ( type == BALL_LEFT );
+	Vector pos = _pos + dir_ball.normalize( ) * _range * v;
+	return pos;
+}
+
+
+void Roomba::draw( ) const {
 	Vector pos[ 2 ];
 	for ( int i = 0; i < MAX_BALL; i++ ) {
-		double v = 1 - 2 * ( (BALL)i == BALL_LEFT );
-		pos[ i ] = _pos + dir_ball.normalize( ) * _range * v;
+		pos[ i ] = convertToBallPos( (BALL)i );
 	}
 
 	DrawerPtr drawer = Drawer::getTask( );

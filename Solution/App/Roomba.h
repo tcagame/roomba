@@ -23,7 +23,8 @@ private:
 	enum STATE {
 		STATE_NEUTRAL,
 		STATE_TRANSLATION,
-		STATE_ROTETION,
+		STATE_ROTETION_SIDE,
+		STATE_ROTETION_BOTH,
 		MAX_STATE,
 	};
 private:
@@ -31,7 +32,9 @@ private:
 	void move( );
 	void neutral( );
 	void translation( );
-	void rotetion( );
+	void rotetionSide( );
+	void rotetionBoth( );
+	Vector convertToBallPos( BALL type ) const;
 private:
 	STATE _state;
 	Vector _pos;
