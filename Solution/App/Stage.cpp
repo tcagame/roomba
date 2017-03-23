@@ -8,6 +8,11 @@ static const std::string STAGE_FILE_NAME = "../Resource/Model/Stage/floor01.mdl"
 static const Vector CRYSTAL_SCALE( 2, 2, 2 );
 
 Stage::Stage( ) {
+	Matrix mat = Matrix( );
+	mat = mat.makeTransformScaling( CRYSTAL_SCALE );
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->loadMDLModel( MDL::MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/crystal.jpg", mat );
+	_crystals.push_back( CrystalPtr( new Crystal( Vector( 5, 5, 1 ) ) ) );
 	_stage_data = { 
 		0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
