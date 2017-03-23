@@ -14,7 +14,7 @@ static const double ROTE_SPEED = 0.1;
 
 Roomba::Roomba( ) :
 _range( 5 ),
-_pos( 4, 0, 10 ),
+_pos( 4, 0, 2 ),
 _dir( 0, 1, 0 ),
 _rote_speed( 0 ),
 _state( STATE::STATE_NEUTRAL ) {
@@ -33,7 +33,9 @@ void Roomba::update( StagePtr stage ) {
 	//	_vec = _vec.normalize( ) * MAX_SPEED;
 		_attack = true;
 	}
-	_pos += _vec;
+	if ( isCollision( stage ) ) {
+		_pos += _vec;
+	}
 }
 
 void Roomba::move( ) {
@@ -278,4 +280,12 @@ void Roomba::draw( ) const {
 
 Vector Roomba::getPos( ) const {
 	return _pos;
+}
+
+bool Roomba::isCollision( StagePtr stage ) {
+	if ( stage->isCollisionWall( convertToBallPos( BALL_LEFT ) ) ||
+		 stage->isCollisionWall( convertToBallPos( BALL_RIGHT ) ) ) {
+		return false;
+	}
+	return true;
 }

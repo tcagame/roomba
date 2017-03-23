@@ -11,6 +11,7 @@ public:
 	virtual ~Stage( );
 public:
 	void draw( );
+	bool isCollisionWall( Vector pos );
 private:
 	static const int STAGE_SIZE = 110;
 private:

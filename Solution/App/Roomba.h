@@ -36,6 +36,7 @@ private:
 	void rotetionSide( );
 	void rotetionBoth( );
 	Vector convertToBallPos( BALL type ) const;
+	bool isCollision( StagePtr stage );
 private:
 	STATE _state;
 	Vector _pos;
