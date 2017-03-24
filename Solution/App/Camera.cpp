@@ -49,3 +49,9 @@ void Camera::move( ) {
 	}
 	_before_mouse_pos = mouse->getPos( );
 }
+
+Vector Camera::getDir( ) const {
+	Vector dir = ( _target - _pos ).normalize( );
+	dir.z = 0;
+	return dir;
+}
