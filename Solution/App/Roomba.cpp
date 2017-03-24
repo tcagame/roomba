@@ -38,9 +38,8 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 void Roomba::move( CameraPtr camera ) {
 	Vector vec[ MAX_BALL ];
 	Vector dir = camera->getDir( );
-	for ( int i = 0; i < MAX_BALL; i++ ) {
-		_balls[ i ]->move( dir, getCentralPos( ), _state );
-	}
+	_balls[ BALL_LEFT ]->move( dir, _state, _balls[ BALL_RIGHT ] );
+	_balls[ BALL_RIGHT ]->move( dir, _state, _balls[ BALL_LEFT ] );
 	centripetal( );
 }
 

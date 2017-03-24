@@ -13,8 +13,8 @@ public:
 	void draw( ) const;
 	Vector getPos( ) const;
 	void addAccel( Vector vec );
-	void move( Vector dir, Vector central_pos, Roomba::MOVE_STATE state );
 	bool isAttacking( ) const;
+	void move( Vector dir, Roomba::MOVE_STATE state, BallPtr target );
 private:
 	enum KEY {
 		KEY_UP,
@@ -25,9 +25,10 @@ private:
 	};
 private:
 	void moveTranslation( Vector dir, bool hold_key[ ] );
-	void moveRotetionBoth( Vector dir, bool hold_key[ ] );
-	void moveRotetionSide( Vector central_pos, bool hold_key[ ] );
+	void moveRotetionBoth( Vector other_pos, bool hold_key[ ] );
+	void moveRotetionSide( Vector dir, bool hold_key[ ], BallPtr target );
 	void deceleration( );
+	void setAccel( Vector vec );
 	void neutral( );
 private:
 	Roomba::BALL _type;
