@@ -116,8 +116,18 @@ void Roomba::updateState( ) {
 		}
 		break;
 	case MOVE_STATE_ROTETION_SIDE:
+		if ( !keyboard->isHoldKey( "ARROW_UP" ) &&
+			 !keyboard->isHoldKey( "ARROW_DOWN" ) &&
+			 !keyboard->isHoldKey( "W" ) &&
+			 !keyboard->isHoldKey( "S" ) ) {
+			_state = MOVE_STATE_NEUTRAL;
+		}
 		break;
 	case MOVE_STATE_ROTETION_BOTH:
+		if ( !( keyboard->isHoldKey( "ARROW_UP"   ) && keyboard->isHoldKey( "S" ) ) &&
+			 !( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) ) {
+			_state = MOVE_STATE_NEUTRAL;
+		}
 		break;
 	}
 }

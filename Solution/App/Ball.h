@@ -13,6 +13,8 @@ public:
 	void addAccel( Vector vec );
 	void move( Vector dir, Roomba::MOVE_STATE state );
 	void moveTranslation( Vector dir, bool hold_key[ ] );
+	void moveRotetionBoth( Vector dir, bool hold_key[ ] );
+	void moveRotetionSide( Vector dir, bool hold_key[ ] );
 private:
 	enum KEY {
 		KEY_UP,

@@ -93,6 +93,14 @@ void Ball::moveTranslation( Vector dir, bool hold_key[ ] ) {
 	}
 }
 
+void Ball::moveRotetionBoth( Vector dir, bool hold_key[ ] ) {
+
+}
+
+void Ball::moveRotetionSide( Vector dir, bool hold_key[ ] ) {
+
+}
+
 void Ball::deceleration( ) {
 	//Œ¸‘¬
 	if ( _vec.x > 0 ) {
