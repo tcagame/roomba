@@ -6,7 +6,8 @@
 static const double CRYSTAL_RADIUS = 2.0;
 
 Crystal::Crystal( Vector pos ) :
-_pos( pos ) {
+_pos( pos ),
+_finished( false ) {
 
 }
 
@@ -38,4 +39,12 @@ bool Crystal::isHitting( Vector pos0, Vector pos1 ) {
 		hitting = true;
 	}
 	return hitting;
+}
+
+void Crystal::damage( ) {
+	_finished = true;
+}
+
+bool Crystal::isFinished( ) const {
+	return _finished;
 }

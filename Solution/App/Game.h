@@ -19,6 +19,6 @@ public:
 	void initialize( );
 private:
 	CameraPtr _camera;
-	RoombaPtr _Roomba;
+	RoombaPtr _roomba;
 	StagePtr _stage;
 };

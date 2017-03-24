@@ -31,6 +31,26 @@ Stage::Stage( ) {
 Stage::~Stage( ) {
 }
 
+void Stage::update( ) {
+	updateCrystal( );
+}
+
+void Stage::updateCrystal( ) {
+	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
+	while ( ite != _crystals.end( ) ) {
+		CrystalPtr crystal = (*ite);
+		if ( !crystal ) {
+			ite++;
+			continue;
+		}
+		if ( crystal->isFinished( ) ) {
+			ite = _crystals.erase( ite );
+			continue;
+		}
+		ite++;
+	}
+}
+
 void Stage::draw( ) {
 	drawWireFrame( );
 	drawCrystal( );

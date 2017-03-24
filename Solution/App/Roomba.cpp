@@ -4,6 +4,7 @@
 #include "Keyboard.h"
 #include "Ball.h"
 #include "Camera.h"
+#include "Crystal.h"
 
 static const Vector ROOMBA_SCALE( 2, 2, 2 );
 static const Vector START_POS( 4, 0, 1 );
@@ -136,6 +137,7 @@ void Roomba::attack( StagePtr stage ) {
 	if ( crystal ) {
 		DrawerPtr drawer = Drawer::getTask( );
 		drawer->drawString( 0, 0, "‚ ‚½‚Á‚Ä‚é‚æ[" );
+		crystal->damage( );
 	}
 }
 

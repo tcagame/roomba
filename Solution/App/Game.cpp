@@ -21,12 +21,13 @@ void Game::initialize( ) {
 	//drawer‰Šú‰»Œã
 	_camera = CameraPtr( new Camera );
 	_stage = StagePtr( new Stage );
-	_Roomba = RoombaPtr( new Roomba );
+	_roomba = RoombaPtr( new Roomba );
 }
 
 void Game::update( ) {
-	_Roomba->update( _stage, _camera );
-	_camera->update( _Roomba );
+	_roomba->update( _stage, _camera );
+	_stage->update( );
+	_camera->update( _roomba );
 	_stage->draw( );
-	_Roomba->draw( );
+	_roomba->draw( );
 }
