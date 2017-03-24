@@ -8,12 +8,13 @@ static const std::string STAGE_FILE_NAME = "../Resource/Model/Stage/floor01.mdl"
 static const Vector CRYSTAL_SCALE( 2, 2, 2 );
 static const int PITCH = 10;
 
-Stage::Stage( ) {
+Stage::Stage( ) :
+_wave( 0 ),
+_finished( 0 ) {
 	Matrix mat = Matrix( );
 	mat = mat.makeTransformScaling( CRYSTAL_SCALE );
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadMDLModel( MDL::MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/crystal.jpg", mat );
-	_crystals.push_back( CrystalPtr( new Crystal( Vector( 5, 5, 1 ) ) ) );
 	_stage_data = { 
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -26,6 +27,43 @@ Stage::Stage( ) {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 1, 0, 0, 0, 0
 	};
+	_waves[ 0 ] = {
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 1, 0, 1, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	};
+	_waves[ 1 ] = {
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 1, 0, 1, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	};
+	_waves[ 2 ] = {
+		0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 1, 0, 1, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	};
+	loadCrystalData( );
 }
 
 Stage::~Stage( ) {
@@ -36,6 +74,9 @@ void Stage::update( ) {
 }
 
 void Stage::updateCrystal( ) {
+	if ( _crystals.size( ) == 0 ) {
+		loadCrystalData( );
+	}
 	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
 	while ( ite != _crystals.end( ) ) {
 		CrystalPtr crystal = (*ite);
@@ -102,6 +143,20 @@ void Stage::drawCrystal( ) const {
 		(*ite)->draw( );
 		ite++;
 	}
+}
+
+void Stage::loadCrystalData( ) {
+	if ( _wave >= MAX_WAVE ) {
+		_finished = true;
+		return;
+	}
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		if ( _waves[ _wave ][ i ] == 1 ) {
+			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * PITCH + PITCH / 2, ( i / STAGE_WIDTH_NUM ) * PITCH + PITCH / 2, 1 );
+			_crystals.push_back( CrystalPtr( new Crystal( pos ) ) );
+		}
+	}
+	_wave++;
 }
 
 bool Stage::isCollisionWall( Vector pos ) {
