@@ -71,9 +71,9 @@ void Stage::drawWireFrame( ) {
 	}
 
 	// —§‘Ì‚Ì•`‰æ
-	for ( int i = 0; i < STAGE_SIZE; i++ ) {
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( _stage_data[ i ] == 1 ) {
-			Vector vec1 = Vector( ( i % 10 ) * PITCH, ( i / 10 ) * PITCH, 0 );
+			Vector vec1 = Vector( ( i % STAGE_WIDTH_NUM ) * PITCH, ( i / STAGE_WIDTH_NUM ) * PITCH, 0 );
 			Vector vec2 = vec1 + Vector( PITCH, 0, 0 );
 			Vector vec3 = vec1 + Vector( 0, PITCH, 0 );
 			Vector vec4 = vec1 + Vector( PITCH, PITCH, 0 );
@@ -106,9 +106,9 @@ void Stage::drawCrystal( ) const {
 
 bool Stage::isCollisionWall( Vector pos ) {
 	// ƒ{[ƒ‹‚Æ•Ç‚Ì“–‚½‚è”»’è
-	for ( int i = 0; i < STAGE_SIZE; i++ ) {
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( _stage_data[ i ] == 1 ) {
-			Vector vec1 = Vector( ( i % 10 ) * PITCH, ( i / 10 ) * PITCH, 0 );
+			Vector vec1 = Vector( ( i % STAGE_WIDTH_NUM ) * PITCH, ( i / STAGE_WIDTH_NUM ) * PITCH, 0 );
 			Vector vec2 = vec1 + Vector( PITCH, 0, 0 );
 			Vector vec3 = vec1 + Vector( 0, PITCH, 0 );
 

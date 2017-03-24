@@ -15,15 +15,14 @@ public:
 	bool isCollisionWall( Vector pos );
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 );
 private:
-	static const int STAGE_SIZE = 110;
+	static const int STAGE_WIDTH_NUM = 10;
+	static const int STAGE_HEIGHT_NUM = 10;
 private:
 	void updateCrystal( );
 	void drawCrystal( ) const;
 	void drawWireFrame( );
 private:
-	std::vector< int > _map_data;
 	std::list< CrystalPtr > _crystals;
-	std::array< int, STAGE_SIZE > _stage_data;
-
+	std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _stage_data;
 };
 
