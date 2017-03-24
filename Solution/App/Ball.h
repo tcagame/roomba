@@ -1,13 +1,15 @@
 #pragma once
 #include "Drawer.h"
+#include "smart_ptr.h"
 #include "Roomba.h"
+PTR( Stage );
 
 class Ball {
 public:
 	Ball( Vector pos, Roomba::BALL type );
 	virtual ~Ball( );
 public:
-	void update( );
+	void update( StagePtr stage );
 	void draw( ) const;
 	Vector getPos( ) const;
 	void addAccel( Vector vec );
@@ -24,6 +26,7 @@ private:
 		MAX_KEY
 	};
 private:
+	void move( StagePtr stage );
 	void deceleration( );
 private:
 	Roomba::BALL _type;

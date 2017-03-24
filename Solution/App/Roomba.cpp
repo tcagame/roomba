@@ -37,7 +37,7 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	updateState( );
 	move( camera );
 	for ( int i = 0; i < MAX_BALL; i++ ) {
-		_balls[ i ]->update( );
+		_balls[ i ]->update( stage );
 	}
 
 	//UŒ‚

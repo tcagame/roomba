@@ -15,7 +15,7 @@ Stage::Stage( ) {
 	drawer->loadMDLModel( MDL::MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/crystal.jpg", mat );
 	_crystals.push_back( CrystalPtr( new Crystal( Vector( 5, 5, 1 ) ) ) );
 	_stage_data = { 
-		0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 1, 1, 0, 0, 0, 0,

@@ -1,7 +1,7 @@
 #include "Ball.h"
 #include "define.h"
 #include "Keyboard.h"
-
+#include "Stage.h"
 
 static const double ACCEL = 0.1;
 
@@ -14,8 +14,10 @@ _type( type ) {
 Ball::~Ball( ) {
 }
 
-void Ball::update( ) {
-	_pos += _vec;
+void Ball::update( StagePtr stage ) {
+	if ( !stage->isCollisionWall( _pos + _vec + Vector( 1, 1, 0 ) ) ) {
+		_pos += _vec;
+	}
 }
 
 void Ball::draw( ) const {
