@@ -34,7 +34,7 @@ void Roomba::update( StagePtr stage ) {
 	//‰ñ“]‘¬“x‚Ü‚½‚ÍAˆÚ“®‘¬“x‚ªMAX‚Ì‚Æ‚«‚Étrue‚É‚·‚é
 	move( );
 	for ( int i = 0; i < MAX_BALL; i++ ) {
-		_balls[ i ]->update( );
+		_balls[ i ]->update( stage );
 	}
 
 	//UŒ‚
