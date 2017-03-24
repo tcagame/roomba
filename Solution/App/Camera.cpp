@@ -22,7 +22,7 @@ Camera::~Camera( ) {
 }
 
 void Camera::update( RoombaPtr target ) {
-	_target = target->getPos( );
+	_target = target->getCentralPos( );
 	move( );
 	Vector vec = _pos - _target;
 

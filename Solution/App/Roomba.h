@@ -7,19 +7,15 @@ PTR( Ball );
 PTR( Stage );
 
 class Roomba {
+
 public:
 	Roomba( );
 	virtual ~Roomba( );
 public:
 	void update( StagePtr stage );
 	void draw( ) const;
-	Vector getPos( ) const;
+	Vector getCentralPos( ) const;
 private:
-	enum BALL {
-		BALL_LEFT,
-		BALL_RIGHT,
-		MAX_BALL
-	};
 	enum STATE {
 		STATE_NEUTRAL,
 		STATE_TRANSLATION,
@@ -27,23 +23,22 @@ private:
 		STATE_ROTETION_BOTH,
 		MAX_STATE,
 	};
+	enum BALL {
+		BALL_LEFT,
+		BALL_RIGHT,
+		MAX_BALL
+	};
 private:
-	void decelerationTranslation( );
-	void decelerationRotetion( );
 	void move( );
+	void centripetal( );
+	void decelerationRotetion( );
 	void neutral( );
 	void translation( );
-	void rotetionSide( );
-	void rotetionBoth( );
 	void attack( StagePtr stage );
-	Vector convertToBallPos( BALL type ) const;
 	bool isCollision( StagePtr stage );
 private:
 	STATE _state;
-	Vector _pos;
-	Vector _vec;
 	Vector _dir;
-	double _range;
 	bool _attacking;
 	double _rote_speed;
 	std::array< BallPtr, MAX_BALL > _balls;

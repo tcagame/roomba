@@ -6,10 +6,15 @@ public:
 	Ball( Vector pos );
 	virtual ~Ball( );
 public:
-	void update( Vector pos );
+	void update( );
 	void draw( ) const;
 	Vector getPos( ) const;
+	void addAccel( Vector vec );
+private:
+	void move( );
+	void deceleration( );
 private:
 	Vector _pos;
+	Vector _vec;
 };
 
