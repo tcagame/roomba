@@ -5,6 +5,7 @@
 
 static const double ACCEL = 0.1;
 static const double MAX_SPEED = 3.0;
+static const double ATTACK_START_SPEED = 1.0;
 static const double DECELERATION_SPEED = 0.2;
 
 Ball::Ball( Vector pos, Roomba::BALL type ) :
@@ -40,7 +41,7 @@ void Ball::addAccel( Vector vec ) {
 	_vec += vec;
 }
 
-void Ball::move( Vector dir, Vector central_pos, Roomba::MOVE_STATE state, BallPtr target ) {
+void Ball::move( Vector dir, Roomba::MOVE_STATE state, BallPtr target ) {
 	KeyboardPtr keyboard = Keyboard::getTask( );
 
 	bool hold_key[ MAX_KEY ] = { false };
@@ -80,8 +81,9 @@ void Ball::move( Vector dir, Vector central_pos, Roomba::MOVE_STATE state, BallP
 		break;
 	case Roomba::MOVE_STATE_TRANSLATION:
 		moveTranslation( dir, hold_key );
+		break;
 	case Roomba::MOVE_STATE_ROTETION_BOTH:
-		moveRotetionBoth( central_pos, hold_key );
+		moveRotetionBoth( target->getPos( ), hold_key );
 		break;
 	case Roomba::MOVE_STATE_ROTETION_SIDE:
 		moveRotetionSide( hold_key, target );
@@ -107,9 +109,9 @@ void Ball::moveTranslation( Vector dir, bool hold_key[ ] ) {
 	}
 }
 
-void Ball::moveRotetionBoth( Vector central_pos, bool hold_key[ ] ) {
+void Ball::moveRotetionBoth( Vector other_pos, bool hold_key[ ] ) {
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
-	Vector dir = mat.multiply( central_pos - _pos );
+	Vector dir = mat.multiply( other_pos - _pos );
 	if ( _type == Roomba::BALL_LEFT ) {
 		dir *= -1;
 	}
@@ -170,3 +172,6 @@ void Ball::neutral( ) {
 	_vec -= _vec * DECELERATION_SPEED;
 }
 
+bool Ball::isAttacking( ) const {
+	return _vec.getLength( ) > ATTACK_START_SPEED;
+}

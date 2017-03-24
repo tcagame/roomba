@@ -6,7 +6,8 @@
 static const double CRYSTAL_RADIUS = 2.0;
 
 Crystal::Crystal( Vector pos ) :
-_pos( pos ) {
+_pos( pos ),
+_finished( false ) {
 
 }
 
@@ -30,9 +31,20 @@ bool Crystal::isHitting( Vector pos0, Vector pos1 ) {
 	if ( fabs( angle ) > PI / 2 ) {
 		return false;
 	}
+	if ( vec0.getLength( ) > vec1.getLength( ) ) {
+		return false;
+	}
 	double distance = vec0.getLength( ) * fabs( sin( angle ) );
 	if ( fabs( distance ) < CRYSTAL_RADIUS ) {
 		hitting = true;
 	}
 	return hitting;
+}
+
+void Crystal::damage( ) {
+	_finished = true;
+}
+
+bool Crystal::isFinished( ) const {
+	return _finished;
 }

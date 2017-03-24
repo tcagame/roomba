@@ -35,8 +35,6 @@ private:
 	void attack( StagePtr stage );
 private:
 	MOVE_STATE _state;
-	bool _attacking;
-	double _rote_speed;
 	int _neutral_count;
 	std::array< BallPtr, MAX_BALL > _balls;
 };
