@@ -13,3 +13,8 @@ enum MDL {
 	MDL_CRYSTAL,
 	MAX_MDL
 };
+
+enum GRAPH {
+	GRAPH_TIMER_NUM,
+	MAX_GRAPH
+};

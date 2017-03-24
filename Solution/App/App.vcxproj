@@ -165,6 +165,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Roomba.cpp" />
     <ClCompile Include="Stage.cpp" />
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Framework2017\Framework2017.vcxproj">
@@ -180,6 +181,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Roomba.h" />
     <ClInclude Include="Stage.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
