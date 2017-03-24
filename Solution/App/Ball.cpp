@@ -25,6 +25,10 @@ void Ball::draw( ) const {
 	Matrix mat = Matrix::makeTransformTranslation( _pos );
 	Drawer::ModelMV1 model = Drawer::ModelMV1( mat, MV1::MV1_BALL, 0, 0 );
 	drawer->setModelMV1( model );
+
+	if ( _type == Roomba::BALL_LEFT ) {
+		drawer->drawLine( _pos + Vector( -1, 0, 5 ), _pos + Vector( 1, 0, 5 ) );
+	}
 }
 
 Vector Ball::getPos( ) const {
@@ -35,7 +39,7 @@ void Ball::addAccel( Vector vec ) {
 	_vec += vec;
 }
 
-void Ball::move( Vector dir, Roomba::MOVE_STATE state ) {
+void Ball::move( Vector dir, Roomba::MOVE_STATE state, BallPtr target ) {
 	deceleration( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
 
@@ -74,6 +78,10 @@ void Ball::move( Vector dir, Roomba::MOVE_STATE state ) {
 	case Roomba::MOVE_STATE_TRANSLATION:
 		moveTranslation( dir, hold_key );
 		break;
+	case Roomba::MOVE_STATE_ROTETION_SIDE:
+		moveRotetionSide( dir, hold_key, target );
+		break;
+
 	}
 }
 
@@ -99,8 +107,15 @@ void Ball::moveRotetionBoth( Vector dir, bool hold_key[ ] ) {
 
 }
 
-void Ball::moveRotetionSide( Vector dir, bool hold_key[ ] ) {
+void Ball::moveRotetionSide( Vector dir, bool hold_key[ ], BallPtr target ) {
+	if ( hold_key[ KEY_UP ] ) {
+		_vec.y += ACCEL * 2;
+	}
+	if ( hold_key[ KEY_DOWN ] ) {
+		_vec.y -= ACCEL * 2;
+	}
 
+	target->setAccel( Vector( ) );
 }
 
 void Ball::deceleration( ) {
@@ -129,4 +144,8 @@ void Ball::deceleration( ) {
 			_vec.y = 0;
 		}
 	}
+}
+
+void Ball::setAccel( Vector vec ) {
+	_vec = vec;
 }

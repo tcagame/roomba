@@ -33,7 +33,6 @@ private:
 	void centripetal( );
 	void updateState( );
 	void attack( StagePtr stage );
-	bool isCollision( StagePtr stage );
 private:
 	MOVE_STATE _state;
 	bool _attacking;
