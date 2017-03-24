@@ -30,10 +30,6 @@ void Ball::draw( ) const {
 	Matrix mat = Matrix::makeTransformTranslation( _pos );
 	Drawer::ModelMV1 model = Drawer::ModelMV1( mat, MV1::MV1_BALL, 0, 0 );
 	drawer->setModelMV1( model );
-
-	if ( _type == Roomba::BALL_LEFT ) {
-		drawer->drawLine( _pos + Vector( -1, 0, 5 ), _pos + Vector( 1, 0, 5 ) );
-	}
 }
 
 Vector Ball::getPos( ) const {
@@ -82,6 +78,8 @@ void Ball::move( Vector dir, Vector central_pos, Roomba::MOVE_STATE state, BallP
 	case Roomba::MOVE_STATE_NEUTRAL:
 		neutral( );
 		break;
+	case Roomba::MOVE_STATE_TRANSLATION:
+		moveTranslation( dir, hold_key );
 	case Roomba::MOVE_STATE_ROTETION_BOTH:
 		moveRotetionBoth( central_pos, hold_key );
 		break;
@@ -124,14 +122,16 @@ void Ball::moveRotetionBoth( Vector central_pos, bool hold_key[ ] ) {
 }
 
 void Ball::moveRotetionSide( Vector dir, bool hold_key[ ], BallPtr target ) {
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
+	Vector dir2 = mat.multiply( target->getPos( ) - _pos );
 	if ( hold_key[ KEY_UP ] ) {
-		_vec.y += ACCEL * 2;
+		_vec += dir2.normalize( ) * ACCEL;
+		target->setAccel( Vector( ) );
 	}
 	if ( hold_key[ KEY_DOWN ] ) {
-		_vec.y -= ACCEL * 2;
+		_vec -= dir2.normalize( ) * ACCEL;
+		target->setAccel( Vector( ) );
 	}
-
-	target->setAccel( Vector( ) );
 }
 
 void Ball::deceleration( ) {
