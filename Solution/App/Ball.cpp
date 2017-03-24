@@ -4,6 +4,8 @@
 #include "Stage.h"
 
 static const double ACCEL = 0.1;
+static const double MAX_SPEED = 3.0;
+static const double DECELERATION_SPEED = 0.2;
 
 Ball::Ball( Vector pos, Roomba::BALL type ) :
 _pos( pos ),
@@ -15,6 +17,9 @@ Ball::~Ball( ) {
 }
 
 void Ball::update( StagePtr stage ) {
+	if ( _vec.getLength( ) > MAX_SPEED ) {
+		_vec = _vec.normalize( ) * MAX_SPEED;
+	}
 	if ( !stage->isCollisionWall( _pos + _vec + Vector( 1, 1, 0 ) ) ) {
 		_pos += _vec;
 	}
@@ -35,8 +40,8 @@ void Ball::addAccel( Vector vec ) {
 	_vec += vec;
 }
 
-void Ball::move( Vector dir, Roomba::MOVE_STATE state ) {
-	deceleration( );
+void Ball::move( Vector dir, Vector central_pos, Roomba::MOVE_STATE state ) {
+	//deceleration( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
 
 	bool hold_key[ MAX_KEY ] = { false };
@@ -71,8 +76,17 @@ void Ball::move( Vector dir, Roomba::MOVE_STATE state ) {
 		break;
 	}
 	switch ( state ) {
+	case Roomba::MOVE_STATE_NEUTRAL:
+		neutral( );
+		break;
 	case Roomba::MOVE_STATE_TRANSLATION:
 		moveTranslation( dir, hold_key );
+		break;
+	case Roomba::MOVE_STATE_ROTETION_BOTH:
+		moveRotetionBoth( central_pos, hold_key );
+		break;
+	case Roomba::MOVE_STATE_ROTETION_SIDE:
+		moveRotetionSide( dir, hold_key );
 		break;
 	}
 }
@@ -95,8 +109,18 @@ void Ball::moveTranslation( Vector dir, bool hold_key[ ] ) {
 	}
 }
 
-void Ball::moveRotetionBoth( Vector dir, bool hold_key[ ] ) {
-
+void Ball::moveRotetionBoth( Vector central_pos, bool hold_key[ ] ) {
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
+	Vector dir = mat.multiply( central_pos - _pos );
+	if ( _type == Roomba::BALL_LEFT ) {
+		dir *= -1;
+	}
+	if ( hold_key[ KEY_UP ] ) {
+		_vec += dir.normalize( ) * ACCEL;
+	}
+	if ( hold_key[ KEY_DOWN ] ) {
+		_vec -= dir.normalize( ) * ACCEL;
+	}
 }
 
 void Ball::moveRotetionSide( Vector dir, bool hold_key[ ] ) {
@@ -129,4 +153,8 @@ void Ball::deceleration( ) {
 			_vec.y = 0;
 		}
 	}
+}
+
+void Ball::neutral( ) {
+	_vec -= _vec * DECELERATION_SPEED;
 }

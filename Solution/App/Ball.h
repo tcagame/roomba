@@ -13,10 +13,7 @@ public:
 	void draw( ) const;
 	Vector getPos( ) const;
 	void addAccel( Vector vec );
-	void move( Vector dir, Roomba::MOVE_STATE state );
-	void moveTranslation( Vector dir, bool hold_key[ ] );
-	void moveRotetionBoth( Vector dir, bool hold_key[ ] );
-	void moveRotetionSide( Vector dir, bool hold_key[ ] );
+	void move( Vector dir, Vector central_pos, Roomba::MOVE_STATE state );
 private:
 	enum KEY {
 		KEY_UP,
@@ -26,8 +23,11 @@ private:
 		MAX_KEY
 	};
 private:
-	void move( StagePtr stage );
+	void moveTranslation( Vector dir, bool hold_key[ ] );
+	void moveRotetionBoth( Vector dir, bool hold_key[ ] );
+	void moveRotetionSide( Vector central_pos, bool hold_key[ ] );
 	void deceleration( );
+	void neutral( );
 private:
 	Roomba::BALL _type;
 	Vector _pos;
