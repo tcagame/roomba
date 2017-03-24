@@ -23,6 +23,7 @@ private:
 	void drawCrystal( ) const;
 	void drawWireFrame( );
 	void loadCrystalData( );
+	void drawResult( );
 private:
 	std::list< CrystalPtr > _crystals;
 	std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _stage_data;

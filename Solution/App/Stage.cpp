@@ -95,6 +95,7 @@ void Stage::updateCrystal( ) {
 void Stage::draw( ) {
 	drawWireFrame( );
 	drawCrystal( );
+	drawResult( );
 }
 
 void Stage::drawWireFrame( ) {
@@ -193,4 +194,11 @@ CrystalPtr Stage::getHittingCrystal( Vector pos0, Vector pos1 ) {
 		ite++;
 	}
 	return hitting;
+}
+
+void Stage::drawResult( ) {
+	if ( _finished ) {
+		DrawerPtr drawer = Drawer::getTask( );
+		drawer->drawString( 700, 400, "Ç∞Å[ÇﬁÇ≠ÇËÇ†" );
+	}
 }
