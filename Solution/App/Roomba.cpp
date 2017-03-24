@@ -5,17 +5,11 @@
 #include "Ball.h"
 #include "Camera.h"
 
-static const double ACCEL = 0.1;
-const double SCALING_SPEED = 0.1;
 static const Vector ROOMBA_SCALE( 2, 2, 2 );
-static const double ROTE_ACCEL = PI / 360;
-static const double MAX_ROTE_SPEED = PI / 180;
-static const double MAX_SPEED = 0.5;
-static const double ROTE_SPEED = 0.1;
 static const Vector START_POS( 4, 0, 1 );
-static const double CENTRIPETAL_RATIO = 0.3;
+static const double CENTRIPETAL_RATIO = 0.1;
 static const double CENTRIPETAL_MIN = 3.5;
-static const int KEY_WAIT_TIME = 6;
+static const int KEY_WAIT_TIME = 4;
 
 Roomba::Roomba( ) :
 _rote_speed( 0 ),
@@ -47,10 +41,8 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 void Roomba::move( CameraPtr camera ) {
 	Vector vec[ MAX_BALL ];
 	Vector dir = camera->getDir( );
-	_balls[ BALL_LEFT ]->move( dir, _state, _balls[ BALL_RIGHT ] );
-	_balls[ BALL_RIGHT ]->move( dir, _state, _balls[ BALL_LEFT ] );
-	for ( int i = 0; i < MAX_BALL; i++ ) {
-	}
+	_balls[ BALL_LEFT ]->move( dir, getCentralPos( ),_state, _balls[ BALL_RIGHT ] );
+	_balls[ BALL_RIGHT ]->move( dir, getCentralPos( ),_state, _balls[ BALL_LEFT ] );
 	centripetal( );
 }
 
