@@ -46,5 +46,6 @@ private:
 	double _range;
 	bool _attacking;
 	double _rote_speed;
+	std::array< BallPtr, MAX_BALL > _balls;
 };
 

@@ -2,8 +2,8 @@
 #include "define.h"
 #include "Stage.h"
 #include "Keyboard.h"
+#include "Ball.h"
 
-const double GRAVITY = -0.1;
 const double SCALING_SPEED = 0.1;
 static const Vector ROOMBA_SCALE( 2, 2, 2 );
 static const double ACCEL = 0.1;
@@ -20,6 +20,8 @@ _rote_speed( 0 ),
 _state( STATE::STATE_NEUTRAL ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadMV1Model( MV1::MV1_BALL, "Model/Roomba/source/sphere.mv1" );
+	_balls[ BALL_LEFT ] = BallPtr( new Ball( convertToBallPos( BALL_LEFT ) ) );
+	_balls[ BALL_RIGHT ] = BallPtr( new Ball( convertToBallPos( BALL_RIGHT ) ) );
 }
 
 
@@ -36,6 +38,10 @@ void Roomba::update( StagePtr stage ) {
 	if ( isCollision( stage ) ) {
 		_pos += _vec;
 	}
+	for ( int i = 0; i < MAX_BALL; i++ ) {
+		_balls[ i ]->update( convertToBallPos( (BALL)i ) );
+	}
+
 	//çUåÇ
 	attack( stage );
 }
@@ -276,19 +282,13 @@ Vector Roomba::convertToBallPos( BALL type ) const {
 
 
 void Roomba::draw( ) const {
-	Vector pos[ 2 ];
-	for ( int i = 0; i < MAX_BALL; i++ ) {
-		pos[ i ] = convertToBallPos( (BALL)i );
-	}
-
 	DrawerPtr drawer = Drawer::getTask( );
 	for ( int i = 0; i < MAX_BALL; i++ ) {
-		Matrix mat = Matrix::makeTransformTranslation( pos[ i ] );
-		Drawer::ModelMV1 model = Drawer::ModelMV1( mat, MV1::MV1_BALL, 0, 0 );
-		drawer->setModelMV1( model );
+		_balls[ i ]->draw( );
 	}
+
 	if ( _attacking ) {
-		drawer->drawLine( pos[ 0 ], pos[ 1 ] );
+		drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
 	}
 }
 
