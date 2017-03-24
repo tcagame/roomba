@@ -24,8 +24,8 @@ private:
 	};
 private:
 	void moveTranslation( Vector dir, bool hold_key[ ] );
-	void moveRotetionBoth( Vector dir, bool hold_key[ ] );
-	void moveRotetionSide( Vector central_pos, bool hold_key[ ], BallPtr target );
+	void moveRotetionBoth( Vector central_pos, bool hold_key[ ] );
+	void moveRotetionSide( bool hold_key[ ], BallPtr target );
 	void deceleration( );
 	void setAccel( Vector vec );
 	void neutral( );

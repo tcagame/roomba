@@ -29,8 +29,8 @@ public:
 	void draw( ) const;
 	Vector getCentralPos( ) const;
 private:
-	void move( CameraPtr camera );
-	void centripetal( );
+	void move( StagePtr stage, CameraPtr camera );
+	void centripetal( StagePtr stage );
 	void updateState( );
 	void attack( StagePtr stage );
 private:

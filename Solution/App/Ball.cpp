@@ -84,7 +84,7 @@ void Ball::move( Vector dir, Vector central_pos, Roomba::MOVE_STATE state, BallP
 		moveRotetionBoth( central_pos, hold_key );
 		break;
 	case Roomba::MOVE_STATE_ROTETION_SIDE:
-		moveRotetionSide( dir, hold_key, target );
+		moveRotetionSide( hold_key, target );
 		break;
 	}
 }
@@ -121,15 +121,15 @@ void Ball::moveRotetionBoth( Vector central_pos, bool hold_key[ ] ) {
 	}
 }
 
-void Ball::moveRotetionSide( Vector dir, bool hold_key[ ], BallPtr target ) {
+void Ball::moveRotetionSide( bool hold_key[ ], BallPtr target ) {
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
-	Vector dir2 = mat.multiply( target->getPos( ) - _pos );
+	Vector dir = mat.multiply( target->getPos( ) - _pos );
 	if ( hold_key[ KEY_UP ] ) {
-		_vec += dir2.normalize( ) * ACCEL;
+		_vec += dir.normalize( ) * ACCEL;
 		target->setAccel( Vector( ) );
 	}
 	if ( hold_key[ KEY_DOWN ] ) {
-		_vec -= dir2.normalize( ) * ACCEL;
+		_vec -= dir.normalize( ) * ACCEL;
 		target->setAccel( Vector( ) );
 	}
 }

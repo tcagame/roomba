@@ -29,7 +29,7 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	//_attacking = false;
 	//‰ñ“]‘¬“x‚Ü‚½‚ÍAˆÚ“®‘¬“x‚ªMAX‚Ì‚Æ‚«‚Étrue‚É‚·‚é
 	updateState( );
-	move( camera );
+	move( stage, camera );
 	for ( int i = 0; i < MAX_BALL; i++ ) {
 		_balls[ i ]->update( stage );
 	}
@@ -38,19 +38,21 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	attack( stage );
 }
 
-void Roomba::move( CameraPtr camera ) {
+void Roomba::move( StagePtr stage, CameraPtr camera ) {
 	Vector vec[ MAX_BALL ];
 	Vector dir = camera->getDir( );
 	_balls[ BALL_LEFT ]->move( dir, getCentralPos( ),_state, _balls[ BALL_RIGHT ] );
 	_balls[ BALL_RIGHT ]->move( dir, getCentralPos( ),_state, _balls[ BALL_LEFT ] );
-	centripetal( );
+	centripetal( stage );
 }
 
-void Roomba::centripetal( ) {
+void Roomba::centripetal( StagePtr stage ) {
 	Vector vec[ MAX_BALL ];
 	for ( int i = 0; i < MAX_BALL; i++ ) {
 		vec[ i ] = getCentralPos( ) - _balls[ i ]->getPos( );
-		if ( vec[ i ].getLength( ) < CENTRIPETAL_MIN ) {
+		if ( vec[ i ].getLength( ) < CENTRIPETAL_MIN ||
+			 stage->isCollisionWall( _balls[ BALL_LEFT ]->getPos( ) + Vector( 1, 1, 0 ) ) ||
+			 stage->isCollisionWall( _balls[ BALL_LEFT ]->getPos( ) + Vector( 1, 1, 0 ) ) ) {
 			vec[ i ] = Vector( );
 			continue;
 		}
