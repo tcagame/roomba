@@ -14,6 +14,7 @@ public:
 	Vector getPos( ) const;
 	void addAccel( Vector vec );
 	void move( Vector dir, Vector central_pos, Roomba::MOVE_STATE state );
+	bool isAttacking( ) const;
 private:
 	enum KEY {
 		KEY_UP,

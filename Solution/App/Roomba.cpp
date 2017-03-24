@@ -7,12 +7,11 @@
 
 static const Vector ROOMBA_SCALE( 2, 2, 2 );
 static const Vector START_POS( 4, 0, 1 );
-static const double CENTRIPETAL_RATIO = 0.1;
+static const double CENTRIPETAL_RATIO = 0.05;
 static const double CENTRIPETAL_MIN = 3.5;
 static const int KEY_WAIT_TIME = 4;
 
 Roomba::Roomba( ) :
-_rote_speed( 0 ),
 _neutral_count( 0 ),
 _state( MOVE_STATE::MOVE_STATE_NEUTRAL ) {
 	DrawerPtr drawer = Drawer::getTask( );
@@ -26,8 +25,6 @@ Roomba::~Roomba( ) {
 }
 
 void Roomba::update( StagePtr stage, CameraPtr camera ) {
-	//_attacking = false;
-	//‰ñ“]‘¬“x‚Ü‚½‚ÍAˆÚ“®‘¬“x‚ªMAX‚Ì‚Æ‚«‚Étrue‚É‚·‚é
 	updateState( );
 	move( camera );
 	for ( int i = 0; i < MAX_BALL; i++ ) {
@@ -116,6 +113,10 @@ void Roomba::updateState( ) {
 			 !keyboard->isHoldKey( "S" ) ) {
 			_state = MOVE_STATE_NEUTRAL;
 		}
+		if ( ( keyboard->isHoldKey( "ARROW_UP"   ) && keyboard->isHoldKey( "S" ) ) ||
+				 ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) ) {
+				_state = MOVE_STATE_ROTETION_BOTH;
+		}
 		break;
 	case MOVE_STATE_ROTETION_BOTH:
 		if ( !( keyboard->isHoldKey( "ARROW_UP"   ) && keyboard->isHoldKey( "S" ) ) &&
@@ -127,7 +128,9 @@ void Roomba::updateState( ) {
 }
 
 void Roomba::attack( StagePtr stage ) {
-	if ( !_attacking ) {
+	bool attacking = ( _balls[ BALL_LEFT ]->isAttacking( ) || _balls[ BALL_RIGHT ]->isAttacking( ) );
+
+	if ( !attacking ) {
 		return;
 	}
 	CrystalPtr crystal =  stage->getHittingCrystal( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
@@ -138,12 +141,14 @@ void Roomba::attack( StagePtr stage ) {
 }
 
 void Roomba::draw( ) const {
+	bool attacking = ( _balls[ BALL_LEFT ]->isAttacking( ) || _balls[ BALL_RIGHT ]->isAttacking( ) );
+
 	DrawerPtr drawer = Drawer::getTask( );
 	for ( int i = 0; i < MAX_BALL; i++ ) {
 		_balls[ i ]->draw( );
 	}
 
-	if ( _attacking ) {
+	if ( attacking ) {
 		drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
 	}
 }

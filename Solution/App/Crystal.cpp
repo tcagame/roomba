@@ -30,6 +30,9 @@ bool Crystal::isHitting( Vector pos0, Vector pos1 ) {
 	if ( fabs( angle ) > PI / 2 ) {
 		return false;
 	}
+	if ( vec0.getLength( ) > vec1.getLength( ) ) {
+		return false;
+	}
 	double distance = vec0.getLength( ) * fabs( sin( angle ) );
 	if ( fabs( distance ) < CRYSTAL_RADIUS ) {
 		hitting = true;
