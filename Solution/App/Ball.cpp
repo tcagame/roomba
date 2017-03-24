@@ -21,9 +21,10 @@ void Ball::update( StagePtr stage ) {
 	if ( _vec.getLength( ) > MAX_SPEED ) {
 		_vec = _vec.normalize( ) * MAX_SPEED;
 	}
-	if ( !stage->isCollisionWall( _pos + _vec + Vector( 1, 1, 0 ) ) ) {
-		_pos += _vec;
+	if ( stage->isCollisionWall( _pos + _vec + Vector( 1, 1, 0 ) ) ) {
+		_vec = Vector( );
 	}
+	_pos += _vec;
 }
 
 void Ball::draw( ) const {
