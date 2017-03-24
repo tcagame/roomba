@@ -25,7 +25,7 @@ void Game::initialize( ) {
 }
 
 void Game::update( ) {
-	_Roomba->update( _stage );
+	_Roomba->update( _stage, _camera );
 	_camera->update( _Roomba );
 	_stage->draw( );
 	_Roomba->draw( );

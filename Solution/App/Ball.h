@@ -1,19 +1,30 @@
 #pragma once
 #include "Drawer.h"
+#include "Roomba.h"
 
 class Ball {
 public:
-	Ball( Vector pos );
+	Ball( Vector pos, Roomba::BALL type );
 	virtual ~Ball( );
 public:
 	void update( );
 	void draw( ) const;
 	Vector getPos( ) const;
 	void addAccel( Vector vec );
+	void move( Vector dir, Roomba::MOVE_STATE state );
+	void moveTranslation( Vector dir, bool hold_key[ ] );
 private:
-	void move( );
+	enum KEY {
+		KEY_UP,
+		KEY_DOWN,
+		KEY_LEFT,
+		KEY_RIGHT,
+		MAX_KEY
+	};
+private:
 	void deceleration( );
 private:
+	Roomba::BALL _type;
 	Vector _pos;
 	Vector _vec;
 };

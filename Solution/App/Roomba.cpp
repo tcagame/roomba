@@ -3,6 +3,7 @@
 #include "Stage.h"
 #include "Keyboard.h"
 #include "Ball.h"
+#include "Camera.h"
 
 static const double ACCEL = 0.1;
 const double SCALING_SPEED = 0.1;
@@ -14,25 +15,27 @@ static const double ROTE_SPEED = 0.1;
 static const Vector START_POS( 4, 0, 1 );
 static const double CENTRIPETAL_RATIO = 0.3;
 static const double CENTRIPETAL_MIN = 3.5;
+static const int KEY_WAIT_TIME = 6;
 
 Roomba::Roomba( ) :
-_dir( 0, 1, 0 ),
 _rote_speed( 0 ),
-_state( STATE::STATE_NEUTRAL ) {
+_neutral_count( 0 ),
+_state( MOVE_STATE::MOVE_STATE_NEUTRAL ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadMV1Model( MV1::MV1_BALL, "Model/Roomba/source/sphere.mv1" );
-	_balls[ BALL_LEFT ] = BallPtr( new Ball( START_POS ) );
-	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS + Vector( 10, 0, 0 ) ) );
+	_balls[ BALL_LEFT ] = BallPtr( new Ball( START_POS, BALL::BALL_LEFT ) );
+	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS + Vector( 10, 0, 0 ), BALL::BALL_RIGHT ) );
 }
 
 
 Roomba::~Roomba( ) {
 }
 
-void Roomba::update( StagePtr stage ) {
+void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	//_attacking = false;
 	//âÒì]ë¨ìxÇ‹ÇΩÇÕÅAà⁄ìÆë¨ìxÇ™MAXÇÃÇ∆Ç´Ç…trueÇ…Ç∑ÇÈ
-	move( );
+	updateState( );
+	move( camera );
 	for ( int i = 0; i < MAX_BALL; i++ ) {
 		_balls[ i ]->update( );
 	}
@@ -41,27 +44,13 @@ void Roomba::update( StagePtr stage ) {
 	attack( stage );
 }
 
-void Roomba::move( ) {
+void Roomba::move( CameraPtr camera ) {
 	Vector vec[ MAX_BALL ];
-	KeyboardPtr keyboard = Keyboard::getTask( );
-	if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
-		vec[ BALL_RIGHT ] += _dir.normalize( ) * ACCEL;
-	}
-	if ( keyboard->isHoldKey( "ARROW_DOWN" ) ) {
-		vec[ BALL_RIGHT ] -= _dir.normalize( ) * ACCEL;
-	}
-	if ( keyboard->isHoldKey( "W" ) ) {
-		vec[ BALL_LEFT ] += _dir.normalize( ) * ACCEL;
-	}
-	if (  keyboard->isHoldKey( "S" ) ) {
-		vec[ BALL_LEFT ] -= _dir.normalize( ) * ACCEL;
-	}
+	Vector dir = camera->getDir( );
 	for ( int i = 0; i < MAX_BALL; i++ ) {
-		_balls[ i ]->addAccel( vec[ i ] );
+		_balls[ i ]->move( dir, _state );
 	}
 	centripetal( );
-	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
-	_dir = mat.multiply( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) );
 }
 
 void Roomba::centripetal( ) {
@@ -80,59 +69,56 @@ void Roomba::centripetal( ) {
 	}
 }
 
-void Roomba::neutral( ) {
-	decelerationRotetion( );
+void Roomba::updateState( ) {
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
-		_state = STATE_ROTETION_SIDE;
-	}
-	if ( keyboard->isHoldKey( "ARROW_DOWN" ) ) {
-		_state = STATE_ROTETION_SIDE;
-	}
-	if ( keyboard->isHoldKey( "W" ) ) {
-		_state = STATE_ROTETION_SIDE;
-	}
-	if ( keyboard->isHoldKey( "S" ) ) {
-		_state = STATE_ROTETION_SIDE;
-	}
-}
-
-void Roomba::translation( ) {
-	decelerationRotetion( );
-	bool hold = false;
-	KeyboardPtr keyboard = Keyboard::getTask( );
-	Vector vec[ MAX_BALL ];
-	if ( keyboard->isHoldKey( "ARROW_UP" ) && keyboard->isHoldKey( "W" ) ) {
-		hold = true;
-		for ( int i = 0; i < MAX_BALL; i++ ) {
-			vec[ i ].y += ACCEL;
+	switch ( _state ) {
+	case MOVE_STATE_NEUTRAL:
+		if ( _neutral_count < KEY_WAIT_TIME ) {
+			if ( keyboard->isHoldKey( "ARROW_UP"    ) ||
+				 keyboard->isHoldKey( "ARROW_DOWN"  ) ||
+				 keyboard->isHoldKey( "ARROW_LEFT"  ) ||
+				 keyboard->isHoldKey( "ARROW_RIGHT" ) ||
+				 keyboard->isHoldKey( "W" ) ||
+				 keyboard->isHoldKey( "S" ) ||
+				 keyboard->isHoldKey( "A" ) ||
+				 keyboard->isHoldKey( "D" ) ) {
+				_neutral_count++;
+			}
+			break;
 		}
-	}
-	if ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "S" ) ) {
-		hold = true;
-		for ( int i = 0; i < MAX_BALL; i++ ) {
-			vec[ i ].y -= ACCEL;
+		if ( _neutral_count >= KEY_WAIT_TIME ) {
+			if ( keyboard->isHoldKey( "ARROW_UP"   ) ||
+				 keyboard->isHoldKey( "ARROW_DOWN" ) ||
+				 keyboard->isHoldKey( "W" ) ||
+				 keyboard->isHoldKey( "S" ) ) {
+				_state = MOVE_STATE_ROTETION_SIDE;
+			}
+			if ( keyboard->isHoldKey( "ARROW_LEFT"  ) && keyboard->isHoldKey( "A" ) ||
+				 keyboard->isHoldKey( "ARROW_RIGHT" ) && keyboard->isHoldKey( "D" ) ||
+				 keyboard->isHoldKey( "ARROW_UP"    ) && keyboard->isHoldKey( "W" ) ||
+				 keyboard->isHoldKey( "ARROW_DOWN"  ) && keyboard->isHoldKey( "S" ) ) {
+				_state = MOVE_STATE_TRANSLATION;
+			}
+			if ( ( keyboard->isHoldKey( "ARROW_UP"   ) && keyboard->isHoldKey( "S" ) ) ||
+				 ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) ) {
+				_state = MOVE_STATE_ROTETION_BOTH;
+			}
+			_neutral_count++;
 		}
-	}
-
-	for ( int i = 0; i < MAX_BALL; i++ ) {
-		_balls[ i ]->addAccel( vec[ i ] );
-	}
-}
-
-
-void Roomba::decelerationRotetion( ) {
-	if ( _rote_speed > 0 ) {
-		_rote_speed -= ROTE_ACCEL / 6;
-	if ( _rote_speed < 0 ) {
-			_rote_speed = 0;
+		break;
+	case MOVE_STATE_TRANSLATION:
+		if ( !( keyboard->isHoldKey( "ARROW_LEFT"  ) && keyboard->isHoldKey( "A" ) ) &&
+			 !( keyboard->isHoldKey( "ARROW_RIGHT" ) && keyboard->isHoldKey( "D" ) ) &&
+			 !( keyboard->isHoldKey( "ARROW_UP"    ) && keyboard->isHoldKey( "W" ) ) &&
+			 !( keyboard->isHoldKey( "ARROW_DOWN"  ) && keyboard->isHoldKey( "S" ) ) ) {
+			_state = MOVE_STATE_NEUTRAL;
+			_neutral_count = 0;
 		}
-	}
-	if ( _rote_speed < 0 ) {
-		_rote_speed += ROTE_ACCEL / 6;
-		if ( _rote_speed > 0 ) {
-			_rote_speed = 0;
-		}
+		break;
+	case MOVE_STATE_ROTETION_SIDE:
+		break;
+	case MOVE_STATE_ROTETION_BOTH:
+		break;
 	}
 }
 
