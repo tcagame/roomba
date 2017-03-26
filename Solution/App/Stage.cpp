@@ -2,6 +2,7 @@
 #include "Model.h"
 #include "define.h"
 #include "Crystal.h"
+#include "Timer.h"
 
 static const Vector MODEL_SIZE( 6, 6 );
 static const std::string STAGE_FILE_NAME = "../Resource/Model/Stage/floor01.mdl";
@@ -10,7 +11,8 @@ static const int PITCH = 10;
 
 Stage::Stage( ) :
 _wave( 0 ),
-_finished( 0 ) {
+_state( STATE_NORMAL ) {
+	_timer = TimerPtr( new Timer );
 	Matrix mat = Matrix( );
 	mat = mat.makeTransformScaling( CRYSTAL_SCALE );
 	DrawerPtr drawer = Drawer::getTask( );
@@ -71,6 +73,7 @@ Stage::~Stage( ) {
 
 void Stage::update( ) {
 	updateCrystal( );
+	_timer->update( );
 }
 
 void Stage::updateCrystal( ) {
@@ -96,6 +99,7 @@ void Stage::draw( ) {
 	drawWireFrame( );
 	drawCrystal( );
 	drawResult( );
+	_timer->draw( );
 }
 
 void Stage::drawWireFrame( ) {
@@ -148,7 +152,7 @@ void Stage::drawCrystal( ) const {
 
 void Stage::loadCrystalData( ) {
 	if ( _wave >= MAX_WAVE ) {
-		_finished = true;
+		_state = STATE_GAME_CLEAR;
 		return;
 	}
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
@@ -197,8 +201,12 @@ CrystalPtr Stage::getHittingCrystal( Vector pos0, Vector pos1 ) {
 }
 
 void Stage::drawResult( ) {
-	if ( _finished ) {
+	if ( _state == STATE_GAME_CLEAR ) {
 		DrawerPtr drawer = Drawer::getTask( );
 		drawer->drawString( 700, 400, "げーむくりあ" );
+	}
+	if ( _state == STATE_GAME_OVER ) {
+		DrawerPtr drawer = Drawer::getTask( );
+		drawer->drawString( 700, 400, "げーむおーばー" );
 	}
 }

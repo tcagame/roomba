@@ -19,6 +19,13 @@ private:
 	static const int STAGE_HEIGHT_NUM = 10;
 	static const int MAX_WAVE = 3;
 private:
+	enum STATE {
+		STATE_NORMAL,
+		STATE_GAME_CLEAR,
+		STATE_GAME_OVER,
+		MAX_STATE,
+	};
+private:
 	void updateCrystal( );
 	void drawCrystal( ) const;
 	void drawWireFrame( );
@@ -29,6 +36,5 @@ private:
 	std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _stage_data;
 	std::array< std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_WAVE > _waves;
 	int _wave;
-	bool _finished;
 };
 
