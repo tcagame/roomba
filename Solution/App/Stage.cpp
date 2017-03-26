@@ -210,3 +210,7 @@ void Stage::drawResult( ) {
 		drawer->drawString( 700, 400, "‚°[‚Þ‚¨[‚Î[" );
 	}
 }
+
+void Stage::addTime( ) {
+	_timer->addTime( );
+}

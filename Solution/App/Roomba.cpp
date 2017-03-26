@@ -140,6 +140,7 @@ void Roomba::attack( StagePtr stage ) {
 		DrawerPtr drawer = Drawer::getTask( );
 		drawer->drawString( 0, 0, "‚ ‚½‚Á‚Ä‚é‚æ[" );
 		crystal->damage( );
+		stage->addTime( );
 	}
 }
 

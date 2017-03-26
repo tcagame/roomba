@@ -14,6 +14,7 @@ public:
 public:
 	void update( );
 	void draw( );
+	void addTime( );
 	bool isCollisionWall( Vector pos );
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 );
 private:
