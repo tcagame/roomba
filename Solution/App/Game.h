@@ -6,6 +6,7 @@ PTR( Game );
 PTR( Camera );
 PTR( Roomba );
 PTR( Stage );
+PTR( Timer );
 
 class Game : public Task {
 public:
@@ -18,7 +19,18 @@ public:
 	void update( );
 	void initialize( );
 private:
+	enum STATE {
+		STATE_NORMAL,
+		STATE_GAME_CLEAR,
+		STATE_GAME_OVER,
+		MAX_STATE,
+	};
+private:
+	void drawResult( );
+private:
 	CameraPtr _camera;
 	RoombaPtr _roomba;
 	StagePtr _stage;
+	TimerPtr _timer;
+	STATE _state;
 };
