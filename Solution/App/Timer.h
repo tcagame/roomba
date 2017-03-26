@@ -7,6 +7,7 @@ public:
 public:
 	void update( );
 	void draw( ) const;
+	bool isTimeOver( ) const;
 private:
 	int _timer;
 };

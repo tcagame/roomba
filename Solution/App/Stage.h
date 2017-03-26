@@ -29,6 +29,7 @@ private:
 	};
 private:
 	void updateCrystal( );
+	void updateTimer( );
 	void drawCrystal( ) const;
 	void drawWireFrame( );
 	void loadCrystalData( );

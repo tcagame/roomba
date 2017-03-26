@@ -2,7 +2,7 @@
 #include "Drawer.h"
 #include "define.h"
 
-static const int MAX_TIME = 60 * 60;
+static const int MAX_TIME = 10 * 60;
 
 Timer::Timer( ) :
 _timer( MAX_TIME ) {
@@ -36,4 +36,12 @@ void Timer::draw( ) const {
 		picth += 50;
 	}
 
+}
+
+bool Timer::isTimeOver( ) const {
+	bool result = false;
+	if ( _timer == 0 ) {
+		result = true;
+	}
+	return result;
 }

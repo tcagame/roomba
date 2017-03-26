@@ -72,8 +72,11 @@ Stage::~Stage( ) {
 }
 
 void Stage::update( ) {
+	if ( _state != STATE_NORMAL ) {
+		return;
+	}
 	updateCrystal( );
-	_timer->update( );
+	updateTimer( );
 }
 
 void Stage::updateCrystal( ) {
@@ -93,6 +96,14 @@ void Stage::updateCrystal( ) {
 		}
 		ite++;
 	}
+}
+
+void Stage::updateTimer( ) {
+	_timer->update( );
+	if ( _timer->isTimeOver( ) ) {
+		_state = STATE_GAME_OVER;
+	}
+	
 }
 
 void Stage::draw( ) {
