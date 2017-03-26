@@ -15,15 +15,6 @@ _timer( START_TIME ) {
 Timer::~Timer( ) {
 }
 
-void Timer::update( ) {
-//	time_t now_time;
-//	time( &now_time );
-//	int elapsed_time = difftime( _watch, now_time );
-//	if ( _timer - elapsed_time < 0 ) {
-//		// ゲームオーバー
-//	}
-}
-
 void Timer::draw( ) const {
 	time_t now_time;
 	time( &now_time );
@@ -47,4 +38,14 @@ void Timer::draw( ) const {
 
 void Timer::addTime( ) {
 	_timer += 5;
+}
+
+bool Timer::isTimeOver( ) const {
+	time_t now_time;
+	time( &now_time );
+	int elapsed_time = difftime( now_time, _watch );
+	if ( _timer - elapsed_time < 0 ) {
+		return true;
+	}
+	return false;
 }

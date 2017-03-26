@@ -6,6 +6,7 @@
 PTR( Ball );
 PTR( Stage );
 PTR( Camera );
+PTR( Timer );
 
 class Roomba {
 public:
@@ -25,14 +26,14 @@ public:
 	Roomba( );
 	virtual ~Roomba( );
 public:
-	void update( StagePtr stage, CameraPtr camera );
+	void update( StagePtr stage, CameraPtr camera, TimerPtr timer );
 	void draw( ) const;
 	Vector getCentralPos( ) const;
 private:
 	void move( StagePtr stage, CameraPtr camera );
 	void centripetal( StagePtr stage );
 	void updateState( );
-	void attack( StagePtr stage );
+	void attack( StagePtr stage, TimerPtr timer );
 private:
 	MOVE_STATE _state;
 	int _neutral_count;

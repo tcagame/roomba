@@ -5,6 +5,7 @@
 #include "Ball.h"
 #include "Camera.h"
 #include "Crystal.h"
+#include "Timer.h"
 
 static const Vector ROOMBA_SCALE( 2, 2, 2 );
 static const Vector START_POS( 4, 0, 1 );
@@ -25,7 +26,7 @@ _state( MOVE_STATE::MOVE_STATE_NEUTRAL ) {
 Roomba::~Roomba( ) {
 }
 
-void Roomba::update( StagePtr stage, CameraPtr camera ) {
+void Roomba::update( StagePtr stage, CameraPtr camera, TimerPtr timer ) {
 	updateState( );
 	move( stage, camera );
 	for ( int i = 0; i < MAX_BALL; i++ ) {
@@ -33,7 +34,7 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	}
 
 	//UŒ‚
-	attack( stage );
+	attack( stage, timer );
 }
 
 void Roomba::move( StagePtr stage, CameraPtr camera ) {
@@ -129,7 +130,7 @@ void Roomba::updateState( ) {
 	}
 }
 
-void Roomba::attack( StagePtr stage ) {
+void Roomba::attack( StagePtr stage, TimerPtr timer ) {
 	bool attacking = ( _balls[ BALL_LEFT ]->isAttacking( ) || _balls[ BALL_RIGHT ]->isAttacking( ) );
 
 	if ( !attacking ) {
@@ -140,7 +141,7 @@ void Roomba::attack( StagePtr stage ) {
 		DrawerPtr drawer = Drawer::getTask( );
 		drawer->drawString( 0, 0, "‚ ‚½‚Á‚Ä‚é‚æ[" );
 		crystal->damage( );
-		stage->addTime( );
+		timer->addTime( );
 	}
 }
 
