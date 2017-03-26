@@ -50,8 +50,8 @@ void Roomba::centripetal( StagePtr stage ) {
 	for ( int i = 0; i < MAX_BALL; i++ ) {
 		vec[ i ] = getCentralPos( ) - _balls[ i ]->getPos( );
 		if ( vec[ i ].getLength( ) < CENTRIPETAL_MIN ||
-			 stage->isCollisionWall( _balls[ BALL_LEFT ]->getPos( ) + Vector( 1, 1, 0 ) ) ||
-			 stage->isCollisionWall( _balls[ BALL_LEFT ]->getPos( ) + Vector( 1, 1, 0 ) ) ) {
+			 stage->isCollisionWall( _balls[ BALL_LEFT ]->getPos( ) + _balls[ BALL_LEFT ]->getVec( ) + ROOMBA_SCALE * 0.5 ) ||
+			 stage->isCollisionWall( _balls[ BALL_RIGHT ]->getPos( ) + _balls[ BALL_RIGHT ]->getVec( ) + ROOMBA_SCALE * 0.5 ) ) {
 			vec[ i ] = Vector( );
 			continue;
 		}

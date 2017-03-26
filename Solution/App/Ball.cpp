@@ -38,6 +38,10 @@ Vector Ball::getPos( ) const {
 	return _pos;
 }
 
+Vector Ball::getVec( ) const {
+	return _vec;
+}
+
 void Ball::addAccel( Vector vec ) {
 	_vec += vec;
 }

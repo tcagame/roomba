@@ -16,7 +16,7 @@ Timer::~Timer( ) {
 }
 
 void Timer::update( ) {
-	_timer--;
+	//_timer--;
 }
 
 void Timer::draw( ) const {

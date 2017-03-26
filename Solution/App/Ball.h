@@ -12,6 +12,7 @@ public:
 	void update( StagePtr stage );
 	void draw( ) const;
 	Vector getPos( ) const;
+	Vector getVec( ) const;
 	void addAccel( Vector vec );
 	bool isAttacking( ) const;
 	void move( Vector dir, Roomba::MOVE_STATE state, BallPtr target );
