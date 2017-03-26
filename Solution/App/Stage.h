@@ -4,6 +4,8 @@
 #include "Drawer.h"
 
 PTR( Crystal );
+PTR( Timer );
+
 
 class Stage {
 public:
@@ -36,5 +38,7 @@ private:
 	std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _stage_data;
 	std::array< std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_WAVE > _waves;
 	int _wave;
+	STATE _state;
+	TimerPtr _timer;
 };
 
