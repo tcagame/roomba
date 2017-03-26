@@ -34,6 +34,8 @@ void Game::update( ) {
 		_roomba->update( _stage, _camera, _timer );
 		_stage->update( );
 		_camera->update( _roomba );
+		_timer->update( );
+
 		if ( _timer->isTimeOver( ) ) {
 			_state = STATE_GAME_OVER;
 		}
@@ -54,6 +56,6 @@ void Game::drawResult( ) {
 	}
 	if ( _state == STATE_GAME_OVER ) {
 		DrawerPtr drawer = Drawer::getTask( );
-		drawer->drawString( 700, 400, "Ç∞Å[ÇﬁÇ®Å[ÇŒÅ[" );
+		drawer->drawString( 700, 400, "Ç∞Å`ÇﬁÇ®Å`ÇŒÅ`" );
 	}
 }
