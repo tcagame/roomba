@@ -1,12 +1,12 @@
 #pragma once
 #include "Drawer.h"
-#include "smart_ptr.h"
 #include "Roomba.h"
+
 PTR( Stage );
 
 class Ball {
 public:
-	Ball( Vector pos, Roomba::BALL type );
+	Ball( Vector pos );
 	virtual ~Ball( );
 public:
 	void update( StagePtr stage );
@@ -26,14 +26,14 @@ private:
 	};
 private:
 	void moveTranslation( Vector dir, bool hold_key[ ] );
-	void moveRotetionBoth( Vector other_pos, bool hold_key[ ] );
+	void moveRotetionBoth( Vector other_pos, bool hold_key[ ], bool left );
 	void moveRotetionSide( bool hold_key[ ], BallPtr target );
 	void deceleration( );
 	void setAccel( Vector vec );
-	void neutral( );
+	void neutral( Vector dir, Vector other_pos );
 private:
-	Roomba::BALL _type;
 	Vector _pos;
 	Vector _vec;
+	bool _left;
 };
 
