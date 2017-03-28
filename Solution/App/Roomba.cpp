@@ -17,7 +17,7 @@ Roomba::Roomba( ) :
 _neutral_count( 0 ),
 _state( MOVE_STATE::MOVE_STATE_NEUTRAL ) {
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->loadMV1Model( MV1::MV1_BALL, "Model/Roomba/source/sphere.mv1" );
+	drawer->loadMV1Model( MV1::MV1_BALL, "Model/Roomba/roomba.mv1" );
 	_balls[ BALL_LEFT ] = BallPtr( new Ball( START_POS ) );
 	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS + Vector( 10, 0, 0 ) ) );
 }
