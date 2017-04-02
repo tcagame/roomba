@@ -9,7 +9,7 @@
 
 static const Vector ROOMBA_SCALE( 2, 2, 2 );
 static const Vector START_POS( 4, 0, 1 );
-static const double CENTRIPETAL_RATIO = 0.05;
+static const double CENTRIPETAL_RATIO = 0.005;
 static const double CENTRIPETAL_MIN = 3.5;
 static const int KEY_WAIT_TIME = 4;
 

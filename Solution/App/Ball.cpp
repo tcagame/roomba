@@ -129,12 +129,16 @@ void Ball::moveRotetionBoth( Vector other_pos, bool hold_key[ ], bool left ) {
 void Ball::moveRotetionSide( bool hold_key[ ], BallPtr target ) {
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
 	Vector dir = mat.multiply( target->getPos( ) - _pos );
+	double accel = ACCEL;
+	if ( !_left ) {
+		accel *= -1;
+	}
 	if ( hold_key[ KEY_UP ] ) {
-		_vec += dir.normalize( ) * ACCEL;
+		_vec -= dir.normalize( ) * accel;
 		target->setAccel( Vector( ) );
 	}
 	if ( hold_key[ KEY_DOWN ] ) {
-		_vec -= dir.normalize( ) * ACCEL;
+		_vec += dir.normalize( ) * accel;
 		target->setAccel( Vector( ) );
 	}
 }
@@ -173,12 +177,13 @@ void Ball::setAccel( Vector vec ) {
 
 void Ball::neutral( Vector dir, Vector other_pos ) {
 	_vec -= _vec * DECELERATION_SPEED;
-
-	double angle = dir.angle( _pos - other_pos );
-	if ( angle > PI / 2 ) {
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
+	Vector vec = mat.multiply( other_pos - _pos );
+	double dot = dir.dot( vec );
+	if ( dot < 0 ) {
 		_left = true;
 	}
-	if ( angle < PI / 2 ) {
+	if ( dot > 0 ) {
 		_left = false;
 	}
 }
