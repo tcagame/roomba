@@ -46,20 +46,17 @@ void Roomba::move( StagePtr stage, CameraPtr camera ) {
 }
 
 void Roomba::centripetal( StagePtr stage ) {
-	Vector vec[ MAX_BALL ];
 	for ( int i = 0; i < MAX_BALL; i++ ) {
-		vec[ i ] = getCentralPos( ) - _balls[ i ]->getPos( );
-		if ( vec[ i ].getLength( ) < CENTRIPETAL_MIN ||
+		Vector vec = getCentralPos( ) - _balls[ i ]->getPos( );
+		if ( vec.getLength( ) < CENTRIPETAL_MIN ||
 			 stage->isCollisionWall( _balls[ BALL_LEFT ]->getPos( ) + _balls[ BALL_LEFT ]->getVec( ) + ROOMBA_SCALE * 0.5 ) ||
 			 stage->isCollisionWall( _balls[ BALL_RIGHT ]->getPos( ) + _balls[ BALL_RIGHT ]->getVec( ) + ROOMBA_SCALE * 0.5 ) ) {
-			vec[ i ] = Vector( );
+			_balls[ i ]->addAccel( Vector( ) );
 			continue;
 		}
-		vec[ i ] -= vec[ i ].normalize( ) * CENTRIPETAL_MIN;
-		vec[ i ] *= CENTRIPETAL_RATIO;
-	}
-	for ( int i = 0; i < MAX_BALL; i++ ) {
-		_balls[ i ]->addAccel( vec[ i ] );
+		vec -= vec.normalize( ) * CENTRIPETAL_MIN;
+		vec *= CENTRIPETAL_RATIO;
+		_balls[ i ]->addAccel( vec );
 	}
 }
 
