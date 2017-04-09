@@ -41,10 +41,6 @@ Vector Ball::getVec( ) const {
 	return _vec;
 }
 
-void Ball::addAccel( Vector vec ) {
-	_vec += vec;
-}
-
 void Ball::move( Vector dir, Roomba::MOVE_STATE state, BallPtr target ) {
 
 	bool hold_key[ MAX_KEY ] = { false };

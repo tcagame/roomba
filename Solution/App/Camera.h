@@ -17,6 +17,7 @@ public:
 	Vector getDir( ) const;
 protected:
 	Vector _pos;
+	Vector _dir;
 	Vector _target;
-	Vector _before_mouse_pos;
+	int _mouse_x;
 };

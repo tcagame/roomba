@@ -13,7 +13,7 @@ public:
 	void draw( ) const;
 	Vector getPos( ) const;
 	Vector getVec( ) const;
-	void addAccel( Vector vec );
+	void setAccel( Vector vec );
 	bool isAttacking( ) const;
 	void move( Vector dir, Roomba::MOVE_STATE state, BallPtr target );
 private:
@@ -29,7 +29,6 @@ private:
 	void moveRotetionBoth( Vector other_pos, bool hold_key[ ], bool left );
 	void moveRotetionSide( bool hold_key[ ], BallPtr target );
 	void deceleration( );
-	void setAccel( Vector vec );
 	void neutral( Vector dir, Vector other_pos );
 private:
 	Vector _pos;

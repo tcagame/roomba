@@ -9,7 +9,7 @@
 
 static const Vector ROOMBA_SCALE( 2, 2, 2 );
 static const Vector START_POS( 25, 25, 1 );
-static const double CENTRIPETAL_RATIO = 0.005;
+static const double CENTRIPETAL_POWER = 0.020;
 static const double CENTRIPETAL_MIN = 3.5;
 static const int KEY_WAIT_TIME = 4;
 
@@ -38,25 +38,22 @@ void Roomba::update( StagePtr stage, CameraPtr camera, TimerPtr timer ) {
 }
 
 void Roomba::move( StagePtr stage, CameraPtr camera ) {
-	Vector vec[ MAX_BALL ];
 	Vector dir = camera->getDir( );
-	_balls[ BALL_LEFT ]->move( dir, _state, _balls[ BALL_RIGHT ] );
-	_balls[ BALL_RIGHT ]->move( dir, _state, _balls[ BALL_LEFT ] );
-	centripetal( stage );
-}
+	dir.z = 0;
 
-void Roomba::centripetal( StagePtr stage ) {
 	for ( int i = 0; i < MAX_BALL; i++ ) {
+		_balls[ i ]->move( dir, _state, _balls[ i % 2 == 0 ] );
+		if ( stage->isCollisionWall( _balls[ i ]->getPos( ) + _balls[ i ]->getVec( ) + ROOMBA_SCALE * 0.5 ) ) {
+			_balls[ i ]->setAccel( Vector( ) );
+			continue;
+		}
 		Vector vec = getCentralPos( ) - _balls[ i ]->getPos( );
-		if ( vec.getLength( ) < CENTRIPETAL_MIN ||
-			 stage->isCollisionWall( _balls[ BALL_LEFT ]->getPos( ) + _balls[ BALL_LEFT ]->getVec( ) + ROOMBA_SCALE * 0.5 ) ||
-			 stage->isCollisionWall( _balls[ BALL_RIGHT ]->getPos( ) + _balls[ BALL_RIGHT ]->getVec( ) + ROOMBA_SCALE * 0.5 ) ) {
-			_balls[ i ]->addAccel( Vector( ) );
+		if ( vec.getLength( ) < CENTRIPETAL_MIN ) {
 			continue;
 		}
 		vec -= vec.normalize( ) * CENTRIPETAL_MIN;
-		vec *= CENTRIPETAL_RATIO;
-		_balls[ i ]->addAccel( vec );
+		vec *= CENTRIPETAL_POWER;
+		_balls[ i ]->setAccel( _balls[ i ]->getVec( ) + vec );
 	}
 }
 

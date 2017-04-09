@@ -31,7 +31,6 @@ public:
 	Vector getCentralPos( ) const;
 private:
 	void move( StagePtr stage, CameraPtr camera );
-	void centripetal( StagePtr stage );
 	void updateState( );
 	void attack( StagePtr stage, TimerPtr timer );
 private:
