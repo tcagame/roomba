@@ -4,7 +4,7 @@
 #include "Mouse.h"
 #include "Roomba.h"
 
-const Vector START_CAMERA_POS = Vector( 0, -100, 50 );
+const Vector START_CAMERA_POS = Vector( 0, -100, 75 );
 const Vector START_TARGET_POS = Vector( 0, 0, 0 );
 const int ROTE_SPEED = 10;
 const int MAX_LENGTH = 200;

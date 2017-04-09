@@ -18,8 +18,8 @@ public:
 	bool isFinished( ) const;
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 );
 private:
-	static const int STAGE_WIDTH_NUM = 10;
-	static const int STAGE_HEIGHT_NUM = 10;
+	static const int STAGE_WIDTH_NUM = 14;
+	static const int STAGE_HEIGHT_NUM = 14;
 	static const int MAX_WAVE = 3;
 private:
 	void updateCrystal( );
