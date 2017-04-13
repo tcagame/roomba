@@ -6,6 +6,7 @@
 #include "Stage.h"
 #include "Timer.h"
 #include "define.h"
+#include "Device.h"
 
 GamePtr Game::getTask( ) {
 	ApplicationPtr app = Application::getInstance( );
@@ -13,7 +14,8 @@ GamePtr Game::getTask( ) {
 }
 
 Game::Game( ) :
-	_state( STATE_NORMAL ) {
+	_state( STATE_NORMAL ),
+	_select( 0 ) {
 	
 }
 
@@ -25,8 +27,7 @@ void Game::initialize( ) {
 	//drawer‰Šú‰»Œã
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
-	drawer->loadGraph( GRAPH_SELECT_COUSER, "UI/timenumber.png" );
-	drawer->loadGraph( GRAPH_SELECT_MENU, "UI/timenumber.png" );
+	drawer->loadGraph( GRAPH_SELECT_MENU, "UI/UI_retry_select.png" );
 
 	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/crystal.jpg", Matrix::makeTransformScaling( CRYSTAL_SCALE ) );
 	drawer->loadMDLModel( MDL_BG, "Model/Stage/bg.mdl", "Model/Stage/bg01_DM.jpg" );
@@ -64,6 +65,20 @@ void Game::update( ) {
 		_camera->reset( );
 		//_timer->reset( );
 		_state = STATE_NORMAL;
+		DevicePtr device = Device::getTask( );
+		if ( device->getDirY( ) > 0 ) {
+			_select = 1;
+		}
+		if ( device->getDirY( ) < 0 ) {
+			_select = 0;
+		}
+		if ( device->getButton( ) & BUTTON_A ) {
+			_roomba->reset( );
+			_stage->reset( );
+			_camera->reset( );
+			_timer->reset( );
+			_state = STATE_NORMAL;
+		}
 	}
 	_stage->draw( );
 	_roomba->draw( );
@@ -77,8 +92,15 @@ void Game::drawResult( ) {
 		drawer->drawString( 700, 400, "‚°[‚Þ‚­‚è‚ " );
 	}
 	if ( _state == STATE_SELECT_RETRY ) {
-		DrawerPtr drawer = Drawer::getTask( );
-		//drawer->drawString( 700, 400, "‚°`‚Þ‚¨`‚Î`" );
 		//‘I‘ð‰æ–Ê
+		DrawerPtr drawer = Drawer::getTask( );
+		ApplicationPtr app = Application::getInstance( );
+		int width = app->getWindowWidth( );
+		int height = app->getWindowHeight( );
+		int select_y = height / 2 + 32 + _select * 64;
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( width / 2 - 128, height / 2 - 128, 0, 0, 256, 256 ), GRAPH_SELECT_MENU ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( width / 2 - 64, height / 2, 256, 0, 128, 128 ), GRAPH_SELECT_MENU ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( width / 2 - 64, height / 2 + 64, 256, 0, 128, 128 ), GRAPH_SELECT_MENU ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( width / 2 - 128, select_y, 384, 0, 64, 64 ), GRAPH_SELECT_MENU ) );
 	}
 }

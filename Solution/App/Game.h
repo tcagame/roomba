@@ -33,4 +33,5 @@ private:
 	StagePtr _stage;
 	TimerPtr _timer;
 	STATE _state;
+	char _select;
 };
