@@ -48,7 +48,7 @@ void Game::update( ) {
 		_roomba->update( _stage, _camera, _timer );
 		_stage->update( );
 		_camera->update( _roomba );
-		_timer->update( );
+		//_timer->update( );
 
 		if ( _timer->isTimeOver( ) ) {
 			_state = STATE_SELECT_RETRY;
@@ -62,7 +62,7 @@ void Game::update( ) {
 		_roomba->reset( );
 		_stage->reset( );
 		_camera->reset( );
-		_timer->reset( );
+		//_timer->reset( );
 		_state = STATE_NORMAL;
 	}
 	_stage->draw( );
