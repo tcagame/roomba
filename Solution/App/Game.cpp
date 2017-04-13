@@ -50,7 +50,7 @@ void Game::update( ) {
 		_roomba->update( _stage, _camera, _timer );
 		_stage->update( );
 		_camera->update( _roomba );
-		_timer->update( );
+		//_timer->update( );
 
 		if ( _timer->isTimeOver( ) ) {
 			_state = STATE_SELECT_RETRY;
@@ -61,6 +61,11 @@ void Game::update( ) {
 	}
 	if ( _state == STATE_SELECT_RETRY ) {
 		//選択したらリセット
+		_roomba->reset( );
+		_stage->reset( );
+		_camera->reset( );
+		//_timer->reset( );
+		_state = STATE_NORMAL;
 		DevicePtr device = Device::getTask( );
 		if ( device->getDirY( ) > 0 ) {
 			_select = 1;
