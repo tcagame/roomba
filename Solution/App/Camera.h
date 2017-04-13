@@ -14,6 +14,7 @@ public:
 public:
 	void update( RoombaPtr Roomba );
 	void move( );
+	void reset( );
 	Vector getDir( ) const;
 protected:
 	Vector _pos;

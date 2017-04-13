@@ -15,9 +15,7 @@ static const int KEY_WAIT_TIME = 4;
 
 Roomba::Roomba( ) :
 _neutral_count( 0 ),
-_state( MOVE_STATE::MOVE_STATE_NEUTRAL ) {
-	DrawerPtr drawer = Drawer::getTask( );
-	drawer->loadMV1Model( MV1::MV1_BALL, "Model/Roomba/roomba.mv1" );
+_state( MOVE_STATE_NEUTRAL ) {
 	_balls[ BALL_LEFT ] = BallPtr( new Ball( START_POS ) );
 	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS + Vector( 10, 0, 0 ) ) );
 }
@@ -160,4 +158,11 @@ Vector Roomba::getCentralPos( ) const {
 	Vector central_pos = ( pos[ BALL_LEFT ] + pos[ BALL_RIGHT ] ) * 0.5;
 
 	return central_pos;
+}
+
+void Roomba::reset( ) {	
+	_neutral_count = 0;
+	_state = MOVE_STATE::MOVE_STATE_NEUTRAL;
+	_balls[ BALL_LEFT ] = BallPtr( new Ball( START_POS ) );
+	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS + Vector( 10, 0, 0 ) ) );
 }

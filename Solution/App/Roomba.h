@@ -28,6 +28,7 @@ public:
 public:
 	void update( StagePtr stage, CameraPtr camera, TimerPtr timer );
 	void draw( ) const;
+	void reset( );
 	Vector getCentralPos( ) const;
 private:
 	void move( StagePtr stage, CameraPtr camera );

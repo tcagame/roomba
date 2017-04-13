@@ -5,3 +5,5 @@ Solution/App/x64/
 *.opendb
 *.db
 Solution/App/Log.txt
+Solution/Debug/
+Solution/.vs/Solution/v14/.suo

@@ -4,20 +4,11 @@
 #include "Crystal.h"
 
 static const Vector MODEL_SIZE( 6, 6 );
-static const Vector CRYSTAL_SCALE( 2, 2, 2 );
 static const int PITCH = 10;
 
 Stage::Stage( ) :
 _wave( 0 ),
 _finished( false ) {
-	Matrix mat = Matrix::makeTransformScaling( CRYSTAL_SCALE );
-	DrawerPtr drawer = Drawer::getTask( );
-	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/crystal.jpg", mat );
-	drawer->loadMDLModel( MDL_BG, "Model/Stage/bg.mdl", "Model/Stage/bg01_DM.jpg" );
-	drawer->loadMV1Model( MV1_WALL_1, "Model/Stage/wall_1.mv1" );
-	drawer->loadMV1Model( MV1_WALL_2, "Model/Stage/wall_2.mv1" );
-	drawer->loadMV1Model( MV1_BLOCK_1, "Model/Stage/block_1.mv1" );
-	drawer->loadMV1Model( MV1_BLOCK_2, "Model/Stage/block_2.mv1" );
 	_stage_data = { 
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -163,6 +154,7 @@ void Stage::drawCrystal( ) const {
 }
 
 void Stage::loadCrystalData( ) {
+	_crystals.clear( );
 	if ( _wave >= MAX_WAVE ) {
 		_finished = true;
 		return;
@@ -214,5 +206,11 @@ CrystalPtr Stage::getHittingCrystal( Vector pos0, Vector pos1 ) {
 		ite++;
 	}
 	return hitting;
+}
+
+void Stage::reset( ) {
+	_wave = 0;
+	_finished = false;
+	loadCrystalData( );
 }
 

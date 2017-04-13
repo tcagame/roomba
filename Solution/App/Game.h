@@ -22,7 +22,7 @@ private:
 	enum STATE {
 		STATE_NORMAL,
 		STATE_GAME_CLEAR,
-		STATE_GAME_OVER,
+		STATE_SELECT_RETRY,
 		MAX_STATE,
 	};
 private:

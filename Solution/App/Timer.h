@@ -8,6 +8,7 @@ public:
 	void update( );
 	void draw( ) const;
 	void addTime( );
+	void reset( );
 	bool isTimeOver( ) const;
 private:
 	int _timer;

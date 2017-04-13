@@ -45,8 +45,6 @@ void Camera::move( ) {
 	}
 	_mouse_x = mouse_x;
 
-
-
 	if ( axis != 0 ) {
 		Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, axis ), ROTE_SPEED );
 		_dir = mat.multiply( _dir );
@@ -56,4 +54,10 @@ void Camera::move( ) {
 
 Vector Camera::getDir( ) const {
 	return _dir;
+}
+
+void Camera::reset( ) {
+	_pos = START_CAMERA_POS;
+	_target = START_TARGET_POS;
+	_dir = _target - _pos;
 }

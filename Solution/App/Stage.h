@@ -6,6 +6,7 @@
 PTR( Crystal );
 PTR( Timer );
 
+static const Vector CRYSTAL_SCALE( 2, 2, 2 );
 
 class Stage {
 public:
@@ -17,6 +18,7 @@ public:
 	bool isCollisionWall( Vector pos );
 	bool isFinished( ) const;
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 );
+	void reset( );
 private:
 	static const int STAGE_WIDTH_NUM = 14;
 	static const int STAGE_HEIGHT_NUM = 14;
