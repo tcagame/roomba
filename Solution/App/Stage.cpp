@@ -109,13 +109,19 @@ void Stage::updateTimer( ) {
 }
 
 void Stage::draw( ) {
-	drawWireFrame( );
+	drawBackground( );
+	drawEarth( );
+	drawWall( );
 	drawCrystal( );
 }
 
-void Stage::drawWireFrame( ) {
+void Stage::drawBackground( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->setModelMDL( Drawer::ModelMDL( Vector( ), MDL_BG ) );
+}
+
+void Stage::drawEarth( ) const {
+	DrawerPtr drawer = Drawer::getTask( );
 
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		MV1 mv1 = MV1_BLOCK_1;
@@ -125,18 +131,84 @@ void Stage::drawWireFrame( ) {
 		if ( ( x + y ) % 2 == 0 ) {
 			mv1 = MV1_BLOCK_2;
 		}
-		Matrix mat = Matrix::makeTransformTranslation( pos );
-		Drawer::ModelMV1 model( mat, mv1, 0, 0 );
+		Drawer::ModelMV1 model( Matrix::makeTransformTranslation( pos ), mv1, 0, 0 );
 		drawer->setModelMV1( model );
+	}
+}
+
+void Stage::drawWall( ) const {
+	DrawerPtr drawer = Drawer::getTask( );
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		int x = i % STAGE_WIDTH_NUM;
+		int y = i / STAGE_WIDTH_NUM;
+		Vector pos( x * PITCH + PITCH / 2, y * PITCH + PITCH / 2, -PITCH / 2 );
 		if ( _stage_data[ i ] == 1 ) {
-			mv1 = MV1_WALL_1;
-			if ( ( x + y ) % 2 == 0 ) {
-				mv1 = MV1_WALL_2;
+			MDL mdl = MDL_WALL_1;
+			const int OFFSET_X[ 4 ] = { 0, 0, -1, 1 };
+			const int OFFSET_Y[ 4 ] = { -1, 1, 0, 0 };
+			unsigned char flag = 0;
+			for ( int j = 0; j < 4; j++ ) {
+				int idx = i + OFFSET_X[ i ] + OFFSET_Y[ i ] * STAGE_WIDTH_NUM;
+				if ( idx < 0 || idx >= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
+					continue;
+				}
+				flag |= ( _stage_data[ idx ] == 1 ) << j;
 			}
-			pos.z += PITCH;
-			mat = Matrix::makeTransformTranslation( pos );
-			model = Drawer::ModelMV1( mat, mv1, 0, 0 );
-			drawer->setModelMV1( model );
+			//¶ã
+			Vector position = pos;
+			position.x -= PITCH / 4;
+			position.y -= PITCH / 4;
+			position.z += PITCH;
+			mdl = MDL_WALL_2;
+			if ( flag & 1 ||
+				 flag & 4 ) {
+				//ŽlŠp
+				mdl = MDL_WALL_2;
+			}
+			Drawer::ModelMDL model = Drawer::ModelMDL( position, mdl );
+			drawer->setModelMDL( model );
+
+			//‰Eã
+			position = pos;
+			position.x += PITCH / 4;
+			position.y -= PITCH / 4;
+			position.z += PITCH;
+		//	mdl = MDL_WALL_0;
+			if ( flag & 1 ||
+				 flag & 8 ) {
+				//ŽlŠp
+				mdl = MDL_WALL_2;
+			}
+			model = Drawer::ModelMDL( position, mdl );
+			drawer->setModelMDL( model );
+
+			//¶‰º
+			position = pos;
+			position.x -= PITCH / 4;
+			position.y += PITCH / 4;
+			position.z += PITCH;
+		//	mdl = MDL_WALL_0;
+			if ( flag & 2 ||
+				 flag & 4 ) {
+				//ŽlŠp
+				mdl = MDL_WALL_2;
+			}
+			model = Drawer::ModelMDL( position, mdl );
+			drawer->setModelMDL( model );
+
+			//‰E‰º
+			position = pos;
+			position.x += PITCH / 4;
+			position.y += PITCH / 4;
+			position.z += PITCH;
+		//	mdl = MDL_WALL_0;
+			if ( flag & 2 ||
+				 flag & 8 ) {
+				//ŽlŠp
+				mdl = MDL_WALL_2;
+			}
+			model = Drawer::ModelMDL( position, mdl );
+			drawer->setModelMDL( model );
 		}
 	}
 }

@@ -7,6 +7,7 @@ PTR( Crystal );
 PTR( Timer );
 
 static const Vector CRYSTAL_SCALE( 2, 2, 2 );
+static const Vector WALL_SCALE( 1, 1, 1 );
 
 class Stage {
 public:
@@ -27,7 +28,9 @@ private:
 	void updateCrystal( );
 	void updateTimer( );
 	void drawCrystal( ) const;
-	void drawWireFrame( );
+	void drawEarth( ) const;
+	void drawWall( ) const;
+	void drawBackground( ) const;
 	void loadCrystalData( );
 private:
 	std::list< CrystalPtr > _crystals;
