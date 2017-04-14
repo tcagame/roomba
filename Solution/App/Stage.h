@@ -32,11 +32,13 @@ private:
 	void drawWall( ) const;
 	void drawBackground( ) const;
 	void loadCrystalData( );
+	void loadWallModel( );
 private:
 	std::list< CrystalPtr > _crystals;
 	std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _stage_data;
 	std::array< std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_WAVE > _waves;
 	int _wave;
 	bool _finished;
+	ModelPtr _model[ STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ];
 };
 

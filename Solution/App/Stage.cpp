@@ -1,7 +1,7 @@
 #include "Stage.h"
 #include "Model.h"
-#include "define.h"
 #include "Crystal.h"
+#include "define.h"
 
 static const Vector MODEL_SIZE( 6, 6 );
 static const int PITCH = 10;
@@ -102,6 +102,7 @@ _finished( false ) {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	};
 	loadCrystalData( );
+	loadWallModel( );
 }
 
 Stage::~Stage( ) {
@@ -109,7 +110,6 @@ Stage::~Stage( ) {
 
 void Stage::update( ) {
 	updateCrystal( );
-	updateTimer( );
 }
 
 void Stage::updateCrystal( ) {
@@ -129,10 +129,6 @@ void Stage::updateCrystal( ) {
 		}
 		ite++;
 	}
-}
-
-void Stage::updateTimer( ) {
-
 }
 
 void Stage::draw( ) {
@@ -165,78 +161,9 @@ void Stage::drawEarth( ) const {
 
 void Stage::drawWall( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
+	ModelPtr model_ptr[ STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ];
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		int x = i % STAGE_WIDTH_NUM;
-		int y = i / STAGE_WIDTH_NUM;
-		Vector pos( x * PITCH + PITCH / 2, y * PITCH + PITCH / 2, -PITCH / 2 );
-		if ( _stage_data[ i ] == 1 ) {
-			MDL mdl = MDL_WALL_1;
-			const int OFFSET_X[ 4 ] = { 0, 0, -1, 1 };
-			const int OFFSET_Y[ 4 ] = { -1, 1, 0, 0 };
-			unsigned char flag = 0;
-			for ( int j = 0; j < 4; j++ ) {
-				int idx = i + OFFSET_X[ i ] + OFFSET_Y[ i ] * STAGE_WIDTH_NUM;
-				if ( idx < 0 || idx >= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
-					continue;
-				}
-				flag |= ( _stage_data[ idx ] == 1 ) << j;
-			}
-			//左上
-			Vector position = pos;
-			position.x -= PITCH / 4;
-			position.y -= PITCH / 4;
-			position.z += PITCH;
-			mdl = MDL_WALL_2;
-			if ( flag & 1 ||
-				 flag & 4 ) {
-				//四角
-				mdl = MDL_WALL_2;
-			}
-			Drawer::ModelMDL model = Drawer::ModelMDL( position, mdl );
-			drawer->setModelMDL( model );
-
-			//右上
-			position = pos;
-			position.x += PITCH / 4;
-			position.y -= PITCH / 4;
-			position.z += PITCH;
-		//	mdl = MDL_WALL_0;
-			if ( flag & 1 ||
-				 flag & 8 ) {
-				//四角
-				mdl = MDL_WALL_2;
-			}
-			model = Drawer::ModelMDL( position, mdl );
-			drawer->setModelMDL( model );
-
-			//左下
-			position = pos;
-			position.x -= PITCH / 4;
-			position.y += PITCH / 4;
-			position.z += PITCH;
-		//	mdl = MDL_WALL_0;
-			if ( flag & 2 ||
-				 flag & 4 ) {
-				//四角
-				mdl = MDL_WALL_2;
-			}
-			model = Drawer::ModelMDL( position, mdl );
-			drawer->setModelMDL( model );
-
-			//右下
-			position = pos;
-			position.x += PITCH / 4;
-			position.y += PITCH / 4;
-			position.z += PITCH;
-		//	mdl = MDL_WALL_0;
-			if ( flag & 2 ||
-				 flag & 8 ) {
-				//四角
-				mdl = MDL_WALL_2;
-			}
-			model = Drawer::ModelMDL( position, mdl );
-			drawer->setModelMDL( model );
-		}
+		_model[ i ]->draw( );
 	}
 }
 
@@ -266,6 +193,56 @@ void Stage::loadCrystalData( ) {
 	}
 	_wave++;
 }
+
+void Stage::loadWallModel( ) {
+	ModelPtr model_ptr[ MAX_MODEL ];
+	for ( int i = 0; i < MAX_MODEL; i++ ) {
+		model_ptr[ i ] = ModelPtr( new Model );
+	}
+	model_ptr[ MODEL_WALL_0 ]->load( "../Resource/Model/Stage/wall_0.mdl" );
+	model_ptr[ MODEL_WALL_1 ]->load( "../Resource/Model/Stage/wall_1.mdl" );
+	model_ptr[ MODEL_WALL_2 ]->load( "../Resource/Model/Stage/wall_2.mdl" );
+
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		_model[ i ] = ModelPtr( new Model );
+		int x = i % STAGE_WIDTH_NUM;
+		int y = i / STAGE_WIDTH_NUM;
+		Vector pos( x * PITCH + PITCH / 2, y * PITCH + PITCH / 2, PITCH / 2 );
+		if ( _stage_data[ i ] == 1 ) {
+			const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
+			const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
+			unsigned char flag = 0;
+			for ( int j = 0; j < 4; j++ ) {
+				int idx = i + OFFSET_X[ 4 + i ] + OFFSET_Y[ 4 + i ] * STAGE_WIDTH_NUM;
+				if ( idx < 0 || idx >= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
+					continue;
+				}
+				flag |= ( _stage_data[ idx ] == 1 ) << j;
+			}
+
+			const int FLAG[ 4 ][ 2 ] = {
+				{ 1, 3 },
+				{ 1, 4 },
+				{ 2, 3 },
+				{ 2, 4 }
+			};
+			for ( int j = 0; j < 4; j++ ) {
+				Vector position = pos;
+				position.x += OFFSET_X[ j ] * PITCH / 3;
+				position.y += OFFSET_Y[ j ] * PITCH / 3;
+				MODEL model = MODEL_WALL_0;
+				if ( flag & FLAG[ j ][ 0 ] ||
+					 flag & FLAG[ j ][ 1 ] ) {
+					model = MODEL_WALL_2;
+				}
+				model_ptr[ model ]->setPos( position );
+				_model[ i ]->mergeModel( model_ptr[ model ] );
+			}
+		}
+		_model[ i ]->setTexture( "../Resource/Model/Stage/texture.jpg" );
+	}
+}
+
 
 bool Stage::isCollisionWall( Vector pos ) {
 	// ボールと壁の当たり判定
