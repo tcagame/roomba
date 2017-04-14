@@ -6,9 +6,6 @@
 PTR( Crystal );
 PTR( Timer );
 
-static const Vector CRYSTAL_SCALE( 2, 2, 2 );
-static const Vector WALL_SCALE( 1, 1, 1 );
-
 class Stage {
 public:
 	Stage( );
@@ -45,7 +42,7 @@ private:
 	std::array< std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_WAVE > _waves;
 	int _wave;
 	bool _finished;
-	ModelPtr _wall[ STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ];
+	ModelPtr _wall;
 	ModelPtr _earth;
 };
 
