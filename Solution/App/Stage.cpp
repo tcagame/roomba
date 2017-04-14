@@ -4,7 +4,7 @@
 #include "Crystal.h"
 
 static const Vector MODEL_SIZE( 6, 6 );
-static const int PITCH = 5;
+static const double PITCH = 2.5;
 
 Stage::Stage( ) :
 _wave( 0 ),
