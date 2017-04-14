@@ -42,7 +42,7 @@ private:
 	std::array< std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_WAVE > _waves;
 	int _wave;
 	bool _finished;
-	ModelPtr _wall;
-	ModelPtr _earth;
+	std::array< ModelPtr, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _earth;
+	std::vector< ModelPtr > _wall;
 };
 
