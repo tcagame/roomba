@@ -3,7 +3,7 @@
 #include "Keyboard.h"
 #include "Stage.h"
 
-static const double ACCEL = 0.1;
+static const double ACCEL = 0.01;
 static const double MAX_SPEED = 3.0;
 static const double ATTACK_START_SPEED = 1.0;
 static const double DECELERATION_SPEED = 0.2;

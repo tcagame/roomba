@@ -8,7 +8,7 @@
 #include "Timer.h"
 
 static const Vector ROOMBA_SCALE( 2, 2, 2 );
-static const Vector START_POS( 9, 25, 1 );
+static const Vector START_POS( 2, 25, 1 );
 static const double CENTRIPETAL_POWER = 0.020;
 static const double CENTRIPETAL_MIN = 3.5;
 static const int KEY_WAIT_TIME = 4;
