@@ -17,7 +17,7 @@ Roomba::Roomba( ) :
 _neutral_count( 0 ),
 _state( MOVE_STATE_NEUTRAL ) {
 	_balls[ BALL_LEFT ] = BallPtr( new Ball( START_POS + Vector( 0, 0, 1 ) ) );
-	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS + Vector( 10, 0, 1 ) ) );
+	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS + Vector( 5, 0, 1 ) ) );
 }
 
 
