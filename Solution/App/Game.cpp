@@ -33,11 +33,6 @@ void Game::initialize( ) {
 	drawer->loadMDLModel( MDL_BG, "Model/Stage/bg.mdl", "Model/Stage/bg01_DM.jpg" );
 
 	drawer->loadMV1Model( MV1_BALL, "Model/Roomba/roomba.mv1" );
-	drawer->loadMV1Model( MV1_BLOCK_1, "Model/Stage/block_1.mv1" );
-	drawer->loadMV1Model( MV1_BLOCK_2, "Model/Stage/block_2.mv1" );
-	drawer->loadMDLModel( MDL_WALL_0, "Model/Stage/wall_0.mdl", "Model/Stage/texture.jpg", Matrix::makeTransformScaling( WALL_SCALE ) );
-	drawer->loadMDLModel( MDL_WALL_1, "Model/Stage/wall_1.mdl", "Model/Stage/texture.jpg", Matrix::makeTransformScaling( WALL_SCALE ) );
-	drawer->loadMDLModel( MDL_WALL_2, "Model/Stage/wall_2.mdl", "Model/Stage/texture.jpg", Matrix::makeTransformScaling( WALL_SCALE ) );
 
 	_camera = CameraPtr( new Camera );
 	_stage = StagePtr( new Stage );

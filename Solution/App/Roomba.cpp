@@ -16,8 +16,8 @@ static const int KEY_WAIT_TIME = 4;
 Roomba::Roomba( ) :
 _neutral_count( 0 ),
 _state( MOVE_STATE_NEUTRAL ) {
-	_balls[ BALL_LEFT ] = BallPtr( new Ball( START_POS + Vector( 0, 0, 4 ) ) );
-	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS + Vector( 10, 0, 4 ) ) );
+	_balls[ BALL_LEFT ] = BallPtr( new Ball( START_POS + Vector( 0, 0, 1 ) ) );
+	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS + Vector( 10, 0, 1 ) ) );
 }
 
 

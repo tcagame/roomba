@@ -4,7 +4,7 @@
 #include "define.h"
 
 static const Vector MODEL_SIZE( 6, 6 );
-static const int PITCH = 5;
+static const double PITCH = 2;
 
 Stage::Stage( ) :
 _wave( 0 ),
@@ -103,7 +103,7 @@ _finished( false ) {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	};
 	loadCrystalData( );
-	loadWallModel( );
+	loadModel( );
 }
 
 Stage::~Stage( ) {
@@ -145,24 +145,12 @@ void Stage::drawBackground( ) const {
 }
 
 void Stage::drawEarth( ) const {
-	DrawerPtr drawer = Drawer::getTask( );
-
-	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		MV1 mv1 = MV1_BLOCK_1;
-		int x = i % STAGE_WIDTH_NUM;
-		int y = i / STAGE_WIDTH_NUM;
-		Vector pos( x * PITCH + PITCH / 2, y * PITCH + PITCH / 2, -PITCH / 2 );
-		if ( ( x + y ) % 2 == 0 ) {
-			mv1 = MV1_BLOCK_2;
-		}
-		Drawer::ModelMV1 model( Matrix::makeTransformTranslation( pos ), mv1, 0, 0 );
-		drawer->setModelMV1( model );
-	}
+	_earth->draw( );
 }
 
 void Stage::drawWall( ) const {
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		_model[ i ]->draw( );
+		_wall[ i ]->draw( );
 	}
 }
 
@@ -186,27 +174,33 @@ void Stage::loadCrystalData( ) {
 	}
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( _waves[ _wave ][ i ] == 1 ) {
-			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * PITCH + PITCH / 2, ( i / STAGE_WIDTH_NUM ) * PITCH + PITCH / 2, 4 );
+			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * PITCH + PITCH / 2, ( i / STAGE_WIDTH_NUM ) * PITCH + PITCH / 2, 1 );
 			_crystals.push_back( CrystalPtr( new Crystal( pos ) ) );
 		}
 	}
 	_wave++;
 }
 
-void Stage::loadWallModel( ) {
-	ModelPtr model_ptr[ MAX_MODEL ];
-	for ( int i = 0; i < MAX_MODEL; i++ ) {
-		model_ptr[ i ] = ModelPtr( new Model );
+void Stage::loadModel( ) {
+	_earth = ModelPtr( new Model );
+	ModelPtr model[ MAX_WALL ];
+	for ( int i = 0; i < MAX_WALL; i++ ) {
+		model[ i ] = ModelPtr( new Model );
 	}
-	model_ptr[ MODEL_WALL_0 ]->load( "../Resource/Model/Stage/wall_0.mdl" );
-	model_ptr[ MODEL_WALL_1 ]->load( "../Resource/Model/Stage/wall_1.mdl" );
-	model_ptr[ MODEL_WALL_2 ]->load( "../Resource/Model/Stage/wall_2.mdl" );
-
+	model[ WALL_0 ]->load( "../Resource/Model/Stage/wall_0.mdl" );
+	model[ WALL_1 ]->load( "../Resource/Model/Stage/wall_1.mdl" );
+	model[ WALL_2 ]->load( "../Resource/Model/Stage/wall_2.mdl" );
+	ModelPtr earth( new Model );
+	earth->load( "../Resource/Model/Stage/earth.mdl" );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		_model[ i ] = ModelPtr( new Model );
 		int x = i % STAGE_WIDTH_NUM;
 		int y = i / STAGE_WIDTH_NUM;
-		Vector pos( x * PITCH + PITCH / 2, y * PITCH + PITCH / 2, PITCH / 2 );
+		Vector pos( x * PITCH + PITCH / 2, y * PITCH + PITCH / 2, -PITCH / 2 );
+		earth->setPos( pos );
+		_earth->mergeModel( earth );
+
+		pos.z += PITCH;
+		_wall[ i ] = ModelPtr( new Model );
 		if ( _stage_data[ i ] == 1 ) {
 			const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
 			const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
@@ -229,17 +223,20 @@ void Stage::loadWallModel( ) {
 				Vector position = pos;
 				position.x += OFFSET_X[ j ] * PITCH / 3;
 				position.y += OFFSET_Y[ j ] * PITCH / 3;
-				MODEL model = MODEL_WALL_0;
+				WALL wall = WALL_0;
 				if ( flag & FLAG[ j ][ 0 ] ||
 					 flag & FLAG[ j ][ 1 ] ) {
-					model = MODEL_WALL_2;
+					wall = WALL_2;
 				}
-				model_ptr[ model ]->setPos( position );
-				_model[ i ]->mergeModel( model_ptr[ model ] );
+				model[ wall ]->setPos( Vector( ) );
+				model[ wall ]->multiply( Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 ) );
+				model[ wall ]->setPos( position );
+				_wall[ i ]->mergeModel( model[ wall ] );
 			}
 		}
-		_model[ i ]->setTexture( "../Resource/Model/Stage/texture.jpg" );
+		_wall[ i ]->setTexture( "../Resource/Model/Stage/wall.jpg" );
 	}
+	_earth->setTexture( "../Resource/Model/Stage/earth.jpg" );
 }
 
 

@@ -25,20 +25,27 @@ private:
 	static const int STAGE_HEIGHT_NUM = 20;
 	static const int MAX_WAVE = 3;
 private:
+	enum WALL {
+		WALL_0,
+		WALL_1,
+		WALL_2,
+		MAX_WALL
+	};
+private:
 	void updateCrystal( );
-	void updateTimer( );
 	void drawCrystal( ) const;
 	void drawEarth( ) const;
 	void drawWall( ) const;
 	void drawBackground( ) const;
 	void loadCrystalData( );
-	void loadWallModel( );
+	void loadModel( );
 private:
 	std::list< CrystalPtr > _crystals;
 	std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _stage_data;
 	std::array< std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_WAVE > _waves;
 	int _wave;
 	bool _finished;
-	ModelPtr _model[ STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ];
+	ModelPtr _wall[ STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ];
+	ModelPtr _earth;
 };
 
