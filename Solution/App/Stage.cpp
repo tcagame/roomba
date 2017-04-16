@@ -4,7 +4,7 @@
 #include "define.h"
 
 static const Vector MODEL_SIZE( 6, 6 );
-static const double PITCH = 2;
+static const double PITCH = 4;
 
 Stage::Stage( ) :
 _wave( 0 ),
@@ -18,8 +18,8 @@ _finished( false ) {
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -219,41 +219,35 @@ void Stage::loadCrystalData( ) {
 void Stage::loadModel( ) {
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
 	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
+	const double ROTE[ 4 ] = { PI / 2 * 2, PI / 2 * 3, PI / 2 * 1, PI / 2 * 0 };
 
-
-	ModelPtr wall_mdl[ MAX_WALL ];
-	for ( int i = 0; i < MAX_WALL; i++ ) {
+	ModelPtr wall_mdl[ 16 ];
+	for ( int i = 0; i < 16; i++ ) {
 		wall_mdl[ i ] = ModelPtr( new Model );
 	}
-	wall_mdl[ WALL_0 ]->load( "../Resource/Model/Stage/wall_0.mdl" );
-	wall_mdl[ WALL_1 ]->load( "../Resource/Model/Stage/wall_1.mdl" );
-	wall_mdl[ WALL_2 ]->load( "../Resource/Model/Stage/wall_2.mdl" );
+	wall_mdl[ 0  ]->load( "../Resource/Model/Stage/0.mdl" );
+	wall_mdl[ 1  ]->load( "../Resource/Model/Stage/1.mdl" );
+	wall_mdl[ 2  ]->load( "../Resource/Model/Stage/2.mdl" );
+	wall_mdl[ 3  ]->load( "../Resource/Model/Stage/3.mdl" );
+	wall_mdl[ 4  ]->load( "../Resource/Model/Stage/4.mdl" );
+	wall_mdl[ 5  ]->load( "../Resource/Model/Stage/5.mdl" );
+	wall_mdl[ 6  ]->load( "../Resource/Model/Stage/6.mdl" );
+	wall_mdl[ 7  ]->load( "../Resource/Model/Stage/7.mdl" );
+	wall_mdl[ 8  ]->load( "../Resource/Model/Stage/8.mdl" );
+	wall_mdl[ 9  ]->load( "../Resource/Model/Stage/9.mdl" );
+	wall_mdl[ 10 ]->load( "../Resource/Model/Stage/10.mdl" );
+	wall_mdl[ 11 ]->load( "../Resource/Model/Stage/11.mdl" );
+	wall_mdl[ 12 ]->load( "../Resource/Model/Stage/12.mdl" );
+	wall_mdl[ 13 ]->load( "../Resource/Model/Stage/13.mdl" );
+	wall_mdl[ 14 ]->load( "../Resource/Model/Stage/14.mdl" );
+	wall_mdl[ 15 ]->load( "../Resource/Model/Stage/15.mdl" );
+	
 	ModelPtr earth( new Model );
 	earth->load( "../Resource/Model/Stage/earth.mdl" );
-
-	//壁パターン生成
-	ModelPtr wall_model[ 16 ];
-	for ( int i = 0; i < 16; i++ ) {
-		wall_model[ i ] = ModelPtr( new Model );
-		int tmp = 1;
-		for ( int j = 0; j < 4; j++ ) {
-			tmp *= 2;
-			WALL wall = WALL_2;
-			if ( i % tmp >= tmp / 2 ) {
-				wall = WALL_1;
-			}
-			Vector pos = Vector( );
-			pos.x = OFFSET_X[ j ] * PITCH / 2 - PITCH;
-			pos.y = OFFSET_Y[ j ] * PITCH / 2 - PITCH;
-			wall_mdl[ wall ]->setPos( pos );
-			wall_model[ i ]->mergeModel( wall_mdl[ wall ] );
-		}
-	}
-
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		int x = i % STAGE_WIDTH_NUM;
 		int y = i / STAGE_WIDTH_NUM;
-		Vector pos( x * PITCH + PITCH / 2, y * PITCH + PITCH / 2, -PITCH / 2 );
+		Vector pos( x * PITCH, y * PITCH, -PITCH / 2 );
 		// 地面生成
 		_earth[ i ] = ModelPtr( new Model );
 		_earth[ i ]->mergeModel( earth );
@@ -261,12 +255,12 @@ void Stage::loadModel( ) {
 
 		//壁生成
 		ModelPtr wall_ptr( new Model );
-		pos.z += PITCH * 2;
+		pos += Vector( PITCH / 2, PITCH / 2, PITCH * 2 ); 
 		if ( _stage_data[ i ] == 1 ) {
 			unsigned char flag = 0;
 			for ( int j = 0; j < 4; j++ ) {
 				if ( i % STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM < OFFSET_X[ j ] ||
-					i % STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM  + OFFSET_X[ j ] > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
+					 i % STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM  + OFFSET_X[ j ] > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 					continue;
 				}
 				int idx0 = i + OFFSET_X[ j ];
@@ -281,7 +275,7 @@ void Stage::loadModel( ) {
 
 				flag |= ( _stage_data[ idx0 ] == 0 && _stage_data[ idx1 ] == 0 ) << j;
 			}
-			wall_ptr->mergeModel( wall_model[ flag ] );
+			wall_ptr->mergeModel( wall_mdl[ flag ] );
 			wall_ptr->setPos( pos );
 			
 		}
@@ -299,7 +293,6 @@ bool Stage::isCollisionWall( Vector pos ) {
 			Vector vec1 = Vector( ( i % STAGE_WIDTH_NUM ) * PITCH, ( i / STAGE_WIDTH_NUM ) * PITCH, 0 );
 			Vector vec2 = vec1 + Vector( PITCH, 0, 0 );
 			Vector vec3 = vec1 + Vector( 0, PITCH, 0 );
-
 			if ( vec1.x < pos.x && pos.x < vec2.x &&
 				 vec1.y < pos.y && pos.y < vec3.y ) {
 				return true;

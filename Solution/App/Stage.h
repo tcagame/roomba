@@ -22,13 +22,6 @@ private:
 	static const int STAGE_HEIGHT_NUM = 50;
 	static const int MAX_WAVE = 3;
 private:
-	enum WALL {
-		WALL_0,
-		WALL_1,
-		WALL_2,
-		MAX_WALL
-	};
-private:
 	void updateCrystal( );
 	void drawCrystal( ) const;
 	void drawEarth( ) const;
