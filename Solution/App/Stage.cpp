@@ -209,7 +209,7 @@ void Stage::loadCrystalData( ) {
 	}
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( _waves[ _wave ][ i ] == 1 ) {
-			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * PITCH + PITCH / 2, ( i / STAGE_WIDTH_NUM ) * PITCH + PITCH / 2, 1 );
+			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * PITCH + PITCH / 2, ( i / STAGE_WIDTH_NUM ) * PITCH + PITCH / 2, 2 );
 			_crystals.push_back( CrystalPtr( new Crystal( pos ) ) );
 		}
 	}
