@@ -12,35 +12,35 @@ _finished( false ) {
 	_stage_data = { 
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -219,29 +219,81 @@ void Stage::loadCrystalData( ) {
 void Stage::loadModel( ) {
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
 	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
-	const double ROTE[ 4 ] = { PI / 2 * 2, PI / 2 * 3, PI / 2 * 1, PI / 2 * 0 };
+	const double ROTE[ 4 ] = { PI / 2 * 0, PI / 2 * 1, PI / 2 * 3, PI / 2 * 2 };
 
-	ModelPtr wall_mdl[ 16 ];
-	for ( int i = 0; i < 16; i++ ) {
-		wall_mdl[ i ] = ModelPtr( new Model );
+	ModelPtr wall_mdl[ 2 ][ 16 ];
+	for ( int i = 0; i < 2; i++ ) {
+		for ( int j = 0; j < 16; j++ ) {
+			wall_mdl[ i ][ j ] = ModelPtr( new Model );
+		}
 	}
-	wall_mdl[ 0  ]->load( "../Resource/Model/Stage/0.mdl" );
-	wall_mdl[ 1  ]->load( "../Resource/Model/Stage/1.mdl" );
-	wall_mdl[ 2  ]->load( "../Resource/Model/Stage/2.mdl" );
-	wall_mdl[ 3  ]->load( "../Resource/Model/Stage/3.mdl" );
-	wall_mdl[ 4  ]->load( "../Resource/Model/Stage/4.mdl" );
-	wall_mdl[ 5  ]->load( "../Resource/Model/Stage/5.mdl" );
-	wall_mdl[ 6  ]->load( "../Resource/Model/Stage/6.mdl" );
-	wall_mdl[ 7  ]->load( "../Resource/Model/Stage/7.mdl" );
-	wall_mdl[ 8  ]->load( "../Resource/Model/Stage/8.mdl" );
-	wall_mdl[ 9  ]->load( "../Resource/Model/Stage/9.mdl" );
-	wall_mdl[ 10 ]->load( "../Resource/Model/Stage/10.mdl" );
-	wall_mdl[ 11 ]->load( "../Resource/Model/Stage/11.mdl" );
-	wall_mdl[ 12 ]->load( "../Resource/Model/Stage/12.mdl" );
-	wall_mdl[ 13 ]->load( "../Resource/Model/Stage/13.mdl" );
-	wall_mdl[ 14 ]->load( "../Resource/Model/Stage/14.mdl" );
-	wall_mdl[ 15 ]->load( "../Resource/Model/Stage/15.mdl" );
-	
+	wall_mdl[ 0 ][ 0  ]->load( "../Resource/Model/Stage/0_0.mdl" );
+	wall_mdl[ 0 ][ 1  ]->load( "../Resource/Model/Stage/0_1.mdl" );
+	wall_mdl[ 0 ][ 2  ]->load( "../Resource/Model/Stage/0_2.mdl" );
+	wall_mdl[ 0 ][ 3  ]->load( "../Resource/Model/Stage/0_3.mdl" );
+	wall_mdl[ 0 ][ 4  ]->load( "../Resource/Model/Stage/0_4.mdl" );
+	wall_mdl[ 0 ][ 5  ]->load( "../Resource/Model/Stage/0_5.mdl" );
+	wall_mdl[ 0 ][ 6  ]->load( "../Resource/Model/Stage/0_6.mdl" );
+	wall_mdl[ 0 ][ 7  ]->load( "../Resource/Model/Stage/0_7.mdl" );
+	wall_mdl[ 0 ][ 8  ]->load( "../Resource/Model/Stage/0_8.mdl" );
+	wall_mdl[ 0 ][ 9  ]->load( "../Resource/Model/Stage/0_9.mdl" );
+	wall_mdl[ 0 ][ 10 ]->load( "../Resource/Model/Stage/0_10.mdl" );
+	wall_mdl[ 0 ][ 11 ]->load( "../Resource/Model/Stage/0_11.mdl" );
+	wall_mdl[ 0 ][ 12 ]->load( "../Resource/Model/Stage/0_12.mdl" );
+	wall_mdl[ 0 ][ 13 ]->load( "../Resource/Model/Stage/0_13.mdl" );
+	wall_mdl[ 0 ][ 14 ]->load( "../Resource/Model/Stage/0_14.mdl" );
+	wall_mdl[ 0 ][ 15 ]->load( "../Resource/Model/Stage/0_15.mdl" );
+
+	wall_mdl[ 1 ][ 0  ]->load( "../Resource/Model/Stage/1_0.mdl" );
+	wall_mdl[ 1 ][ 1  ]->load( "../Resource/Model/Stage/1_1.mdl" );
+	wall_mdl[ 1 ][ 2  ]->load( "../Resource/Model/Stage/1_2.mdl" );
+	wall_mdl[ 1 ][ 3  ]->load( "../Resource/Model/Stage/1_3.mdl" );
+	wall_mdl[ 1 ][ 4  ]->load( "../Resource/Model/Stage/1_4.mdl" );
+	wall_mdl[ 1 ][ 5  ]->load( "../Resource/Model/Stage/1_5.mdl" );
+	wall_mdl[ 1 ][ 6  ]->load( "../Resource/Model/Stage/1_6.mdl" );
+	wall_mdl[ 1 ][ 7  ]->load( "../Resource/Model/Stage/1_7.mdl" );
+	wall_mdl[ 1 ][ 8  ]->load( "../Resource/Model/Stage/1_8.mdl" );
+	wall_mdl[ 1 ][ 9  ]->load( "../Resource/Model/Stage/1_9.mdl" );
+	wall_mdl[ 1 ][ 10 ]->load( "../Resource/Model/Stage/1_10.mdl" );
+	wall_mdl[ 1 ][ 11 ]->load( "../Resource/Model/Stage/1_11.mdl" );
+	wall_mdl[ 1 ][ 12 ]->load( "../Resource/Model/Stage/1_12.mdl" );
+	wall_mdl[ 1 ][ 13 ]->load( "../Resource/Model/Stage/1_13.mdl" );
+	wall_mdl[ 1 ][ 14 ]->load( "../Resource/Model/Stage/1_14.mdl" );
+	wall_mdl[ 1 ][ 15 ]->load( "../Resource/Model/Stage/1_15.mdl" );
+/*	
+	ModelPtr model = ModelPtr( new Model );
+	model->load( "../Resource/Model/Stage/wall_2.mdl" );
+	ModelPtr aaa[ 16 ];
+	for ( int i = 0; i < 16; i++ ) {
+		aaa[ i ] = ModelPtr( new Model );
+		int tmp = 1;
+		for ( int j = 0; j < 4; j++ ) {
+			tmp *= 2;
+			if ( i % tmp >= tmp / 2 ) {
+				ModelPtr tmp_model( new Model );
+				tmp_model->mergeModel( model );
+				tmp_model->multiply( Matrix::makeTransformRotation( Vector( 0, 0, -1 ), ROTE[ j ] ) );
+				aaa[ i ]->mergeModel( tmp_model );
+			}
+		}
+	}
+	aaa[ 0  ]->save( "../Resource/Model/Stage/0_0.mdl" );
+	aaa[ 1  ]->save( "../Resource/Model/Stage/0_1.mdl" );
+	aaa[ 2  ]->save( "../Resource/Model/Stage/0_2.mdl" );
+	aaa[ 3  ]->save( "../Resource/Model/Stage/0_3.mdl" );
+	aaa[ 4  ]->save( "../Resource/Model/Stage/0_4.mdl" );
+	aaa[ 5  ]->save( "../Resource/Model/Stage/0_5.mdl" );
+	aaa[ 6  ]->save( "../Resource/Model/Stage/0_6.mdl" );
+	aaa[ 7  ]->save( "../Resource/Model/Stage/0_7.mdl" );
+	aaa[ 8  ]->save( "../Resource/Model/Stage/0_8.mdl" );
+	aaa[ 9  ]->save( "../Resource/Model/Stage/0_9.mdl" );
+	aaa[ 10 ]->save( "../Resource/Model/Stage/0_10.mdl" );
+	aaa[ 11 ]->save( "../Resource/Model/Stage/0_11.mdl" );
+	aaa[ 12 ]->save( "../Resource/Model/Stage/0_12.mdl" );
+	aaa[ 13 ]->save( "../Resource/Model/Stage/0_13.mdl" );
+	aaa[ 14 ]->save( "../Resource/Model/Stage/0_14.mdl" );
+	aaa[ 15 ]->save( "../Resource/Model/Stage/0_15.mdl" );
+*/
 	ModelPtr earth( new Model );
 	earth->load( "../Resource/Model/Stage/earth.mdl" );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
@@ -252,34 +304,74 @@ void Stage::loadModel( ) {
 		_earth[ i ] = ModelPtr( new Model );
 		_earth[ i ]->mergeModel( earth );
 		_earth[ i ]->setPos( pos );
+		_earth[ i ]->setTexture( "../Resource/Model/Stage/earth.jpg" );
 
 		//ï«ê∂ê¨
-		ModelPtr wall_ptr( new Model );
-		pos += Vector( PITCH / 2, PITCH / 2, PITCH * 2 ); 
-		if ( _stage_data[ i ] == 1 ) {
-			unsigned char flag = 0;
-			for ( int j = 0; j < 4; j++ ) {
-				if ( i % STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM < OFFSET_X[ j ] ||
-					 i % STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM  + OFFSET_X[ j ] > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
-					continue;
-				}
-				int idx0 = i + OFFSET_X[ j ];
-				if ( idx0 < 0 || idx0 >= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
-					continue;
-				}
-
-				int idx1 = i + OFFSET_Y[ j ] * STAGE_WIDTH_NUM;
-				if ( idx1 < 0 || idx1 >= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
-					continue;
-				}
-
+		int type = _stage_data[ i ];
+		if ( type != 0 && type != 1 ) {
+			continue;
+		}
+		pos += Vector( PITCH / 2, PITCH / 2, PITCH * 2 );
+		unsigned char flag = 0;
+		Vector adjust_pos = Vector( );
+		for ( int j = 0; j < 4; j++ ) {
+			if ( i % STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM < OFFSET_X[ j ] ||
+				 i % STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM  + OFFSET_X[ j ] > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
+				continue;
+			}
+			int idx0 = i + OFFSET_X[ j ];
+			if ( idx0 < 0 || idx0 >= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
+				continue;
+			}
+	
+			int idx1 = i + OFFSET_Y[ j ] * STAGE_WIDTH_NUM;
+			if ( idx1 < 0 || idx1 >= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
+				continue;
+			}
+			if ( type == 1 ) {
 				flag |= ( _stage_data[ idx0 ] == 0 && _stage_data[ idx1 ] == 0 ) << j;
 			}
-			wall_ptr->mergeModel( wall_mdl[ flag ] );
-			wall_ptr->setPos( pos );
-			
+			if ( type == 0 ) {
+				flag |= ( _stage_data[ idx0 ] == 1 && _stage_data[ idx1 ] == 1 ) << j;
+			}
 		}
-		_earth[ i ]->setTexture( "../Resource/Model/Stage/earth.jpg" );
+		if ( type == 1 ) {
+			if ( flag == 1 ||
+				 flag == 3 ||
+				 flag == 5 ||
+				 flag == 15 ) {
+				adjust_pos = Vector( -PITCH / 2, 0, 0 );
+			}
+		}
+		if ( type == 0 ) {
+			const Vector ADJUST[ 16 ] {
+				Vector( 0, 0 ),
+				Vector( -PITCH / 8, -PITCH / 2 ),
+				Vector( PITCH / 2, -PITCH / 8 ),
+				Vector( -PITCH / 8, -PITCH / 2 ),
+				Vector( -PITCH / 2, PITCH / 8 ),
+				Vector( -PITCH / 8, -PITCH / 2 ),
+				Vector( 0, 0 ),
+				Vector( 0, 0 ),
+				Vector( PITCH / 8, PITCH / 2 ),
+				Vector( 0, 0 ),
+				Vector( PITCH / 2, -PITCH / 8 ),
+				Vector( 0, 0 ),
+				Vector( -PITCH / 2, PITCH / 8 ),
+				Vector( 0, 0 ),
+				Vector( 0, 0 ),
+				Vector( -PITCH / 8, -PITCH / 2 )
+			};
+
+			adjust_pos += ADJUST[ flag ];
+		}
+		
+		if ( type == 0 && flag == 0 ) {
+				continue;
+		}
+		ModelPtr wall_ptr( new Model );
+		wall_ptr->mergeModel( wall_mdl[ type ][ flag ] );
+		wall_ptr->setPos( pos + adjust_pos );
 		wall_ptr->setTexture( "../Resource/Model/Stage/wall.jpg" );
 		_wall.push_back( wall_ptr );
 	}
