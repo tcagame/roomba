@@ -3,11 +3,12 @@
 #include "Drawer.h"
 #include "Mouse.h"
 #include "Roomba.h"
+#include "define.h"
 
 const Vector START_CAMERA_POS = Vector( 0, -100, 75 );
 const Vector START_TARGET_POS = Vector( 0, 0, 0 );
 const double ROTE_SPEED = PI / 90;
-const int CAMERA_LENGTH = 200;
+const int CAMERA_LENGTH = (int)( 100 * WORLD_SCALE );
 
 Camera::Camera( ) :
 _pos( START_CAMERA_POS ),

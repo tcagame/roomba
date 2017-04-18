@@ -3,9 +3,9 @@
 #include "Keyboard.h"
 #include "Stage.h"
 
-static const double ACCEL = 0.09;
-static const double MAX_SPEED = 0.9;
-static const double ATTACK_START_SPEED = 0.09;
+static const double ACCEL = 0.05;
+static const double MAX_SPEED = 0.5;
+static const double ATTACK_START_SPEED = 0.2;
 static const double DECELERATION_SPEED = 0.4;
 
 Ball::Ball( Vector pos ) :
@@ -28,9 +28,8 @@ void Ball::update( StagePtr stage ) {
 
 void Ball::draw( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	Matrix mat = Matrix::makeTransformTranslation( _pos );
-	Drawer::ModelMV1 model = Drawer::ModelMV1( mat, MV1::MV1_BALL, 0, 0 );
-	drawer->setModelMV1( model );
+	Drawer::ModelMDL model( _pos, MDL_BALL );
+	drawer->setModelMDL( model );
 }
 
 Vector Ball::getPos( ) const {

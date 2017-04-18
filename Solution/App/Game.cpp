@@ -26,14 +26,13 @@ Game::~Game( ) {
 void Game::initialize( ) {
 	//drawer‰Šú‰»Œã
 	DrawerPtr drawer = Drawer::getTask( );
-
-	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/crystal.jpg", Matrix::makeTransformScaling( Vector( 1.5, 1.5, 1.5 ) ) );
-	drawer->loadMDLModel( MDL_BG, "Model/Stage/bg.mdl", "Model/Stage/bg01_DM.jpg" );
-
-	drawer->loadMV1Model( MV1_BALL, "Model/Roomba/roomba.mv1" );
-
 	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
 	drawer->loadGraph( GRAPH_SELECT_MENU, "UI/UI_retry_select.png" );
+	
+	Matrix size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / 2, WORLD_SCALE / 2, WORLD_SCALE / 2 ) ); 
+	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/crystal.jpg", size );
+	drawer->loadMDLModel( MDL_BG, "Model/Stage/bg.mdl", "Model/Stage/bg01_DM.jpg" );
+	drawer->loadMDLModel( MDL_BALL, "Model/Roomba/roomba.mdl", "Model/Roomba/texture.jpg", size );
 
 	_camera = CameraPtr( new Camera );
 	_stage = StagePtr( new Stage );
@@ -46,7 +45,7 @@ void Game::update( ) {
 		_roomba->update( _stage, _camera, _timer );
 		_stage->update( );
 		_camera->update( _roomba );
-		//_timer->update( );
+		_timer->update( );
 
 		if ( _timer->isTimeOver( ) ) {
 			_state = STATE_SELECT_RETRY;
