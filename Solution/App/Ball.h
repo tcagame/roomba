@@ -18,6 +18,7 @@ public:
 	void setAccel( Vector vec );
 	bool isAttacking( ) const;
 	void move( Vector dir, Roomba::MOVE_STATE state, BallPtr target );
+	void reset( Vector pos );
 private:
 	enum KEY {
 		KEY_UP,

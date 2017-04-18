@@ -186,3 +186,8 @@ void Ball::neutral( Vector dir, Vector other_pos ) {
 bool Ball::isAttacking( ) const {
 	return _vec.getLength( ) > ATTACK_START_SPEED;
 }
+
+void Ball::reset( Vector pos ) {
+	_vec = Vector( );
+	_pos = pos;
+}

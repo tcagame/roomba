@@ -7,7 +7,10 @@
 #include "Crystal.h"
 #include "Timer.h"
 
-static const Vector START_POS = Vector( 1, 6 ) * WORLD_SCALE + Vector( 0, 0, BALL_RADIUS );
+static const Vector START_POS[ 2 ] {
+	Vector( 2, 6 ) * WORLD_SCALE + Vector( 0, 0, BALL_RADIUS * 2 ),
+	Vector( 2, 6 ) * WORLD_SCALE + Vector( WORLD_SCALE * 2, 0, BALL_RADIUS * 2 ),
+};
 static const double CENTRIPETAL_POWER = 0.020;
 static const double CENTRIPETAL_MIN = 3.5;
 static const int KEY_WAIT_TIME = 4;
@@ -15,8 +18,8 @@ static const int KEY_WAIT_TIME = 4;
 Roomba::Roomba( ) :
 _neutral_count( 0 ),
 _state( MOVE_STATE_NEUTRAL ) {
-	_balls[ BALL_LEFT ] = BallPtr( new Ball( START_POS + Vector( 0, 0, 1 ) ) );
-	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS + Vector( 5, 0, 1 ) ) );
+	_balls[ BALL_LEFT  ] = BallPtr( new Ball( START_POS[ 0 ] ) );
+	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS[ 1 ] ) );
 }
 
 
@@ -168,6 +171,6 @@ Vector Roomba::getCentralPos( ) const {
 void Roomba::reset( ) {	
 	_neutral_count = 0;
 	_state = MOVE_STATE::MOVE_STATE_NEUTRAL;
-	_balls[ BALL_LEFT ] = BallPtr( new Ball( START_POS ) );
-	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS + Vector( 10, 0, 0 ) ) );
+	_balls[ BALL_LEFT ]->reset( START_POS[ 0 ] );
+	_balls[ BALL_RIGHT ]->reset( START_POS[ 1 ]  );
 }
