@@ -98,8 +98,8 @@ void Ball::move( Vector camera_dir, Roomba::MOVE_STATE state, BallPtr target ) {
 }
 
 void Ball::moveTranslation( Vector camera_dir, int dir_x, int dir_y ) {
-	Vector vec( -dir_x, -dir_y );
-	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), camera_dir.angle( Vector( 0, 1 ) ) );
+	Vector vec( dir_x, dir_y );
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), Vector( 0, -1 ).angle( camera_dir ) );
 	vec = mat.multiply( vec );
 	_vec += vec.normalize( ) * ACCEL;
 }
@@ -167,11 +167,10 @@ void Ball::setAccel( Vector vec ) {
 	_vec = vec;
 }
 
-void Ball::neutral( Vector dir, Vector other_pos ) {
-	_vec -= _vec * DECELERATION_SPEED;
+void Ball::checkLeft( Vector camera_dir, Vector other_pos ) {
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
 	Vector vec = mat.multiply( other_pos - _pos );
-	double dot = dir.dot( vec );
+	double dot = camera_dir.dot( vec );
 	if ( dot < 0 ) {
 		_left = false;
 	}

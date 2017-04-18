@@ -19,6 +19,7 @@ public:
 	bool isAttacking( ) const;
 	void move( Vector camera_dir, Roomba::MOVE_STATE state, BallPtr target );
 	void reset( Vector pos );
+	void checkLeft( Vector camera_dir, Vector other_pos );
 private:
 	enum KEY {
 		KEY_UP,
@@ -32,7 +33,6 @@ private:
 	void moveRotetionBoth( Vector other_pos, bool hold_key[ ], bool left );
 	void moveRotetionSide( bool hold_key[ ], BallPtr target );
 	void deceleration( );
-	void neutral( Vector dir, Vector other_pos );
 private:
 	Vector _pos;
 	Vector _vec;
