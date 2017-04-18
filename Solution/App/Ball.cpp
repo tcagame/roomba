@@ -73,6 +73,7 @@ void Ball::move( Vector dir, Roomba::MOVE_STATE state, BallPtr target ) {
 			hold_key[ KEY_RIGHT ] = true;
 		}
 	}
+	deceleration( );
 	switch ( state ) {
 	case Roomba::MOVE_STATE_TRANSLATION:
 		moveTranslation( dir, hold_key );
@@ -138,25 +139,25 @@ void Ball::moveRotetionSide( bool hold_key[ ], BallPtr target ) {
 void Ball::deceleration( ) {
 	//Œ¸‘¬
 	if ( _vec.x > 0 ) {
-		_vec.x -= ACCEL / 4;
+		_vec.x -= ACCEL / 2;
 		if ( _vec.x < 0 ) {
 			_vec.x = 0;
 		}
 	}
 	if ( _vec.y > 0 ) {
-		_vec.y -= ACCEL / 4;
+		_vec.y -= ACCEL / 2;
 		if ( _vec.y < 0 ) {
 			_vec.y = 0;
 		}
 	}
 	if ( _vec.x < 0 ) {
-		_vec.x += ACCEL / 4;
+		_vec.x += ACCEL / 2;
 		if ( _vec.x > 0 ) {
 			_vec.x = 0;
 		}
 	}
 	if ( _vec.y < 0 ) {
-		_vec.y += ACCEL / 4;
+		_vec.y += ACCEL / 2;
 		if ( _vec.y > 0 ) {
 			_vec.y = 0;
 		}

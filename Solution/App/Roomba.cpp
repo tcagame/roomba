@@ -59,74 +59,22 @@ void Roomba::move( StagePtr stage, CameraPtr camera ) {
 
 void Roomba::updateState( ) {
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	switch ( _state ) {
-	case MOVE_STATE_NEUTRAL:
-		if ( _neutral_count < KEY_WAIT_TIME ) {
-			if ( keyboard->isHoldKey( "ARROW_UP"    ) ||
-				 keyboard->isHoldKey( "ARROW_DOWN"  ) ||
-				 keyboard->isHoldKey( "ARROW_LEFT"  ) ||
-				 keyboard->isHoldKey( "ARROW_RIGHT" ) ||
-				 keyboard->isHoldKey( "W" ) ||
-				 keyboard->isHoldKey( "S" ) ||
-				 keyboard->isHoldKey( "A" ) ||
-				 keyboard->isHoldKey( "D" ) ) {
-				_neutral_count++;
-			}
-			break;
-		}
-		if ( _neutral_count >= KEY_WAIT_TIME ) {
-			if ( keyboard->isHoldKey( "ARROW_UP"   ) ||
-				 keyboard->isHoldKey( "ARROW_DOWN" ) ||
-				 keyboard->isHoldKey( "W" ) ||
-				 keyboard->isHoldKey( "S" ) ) {
-				_state = MOVE_STATE_ROTETION_SIDE;
-			}
-			if ( keyboard->isHoldKey( "ARROW_LEFT"  ) && keyboard->isHoldKey( "A" ) ||
-				 keyboard->isHoldKey( "ARROW_RIGHT" ) && keyboard->isHoldKey( "D" ) ||
-				 keyboard->isHoldKey( "ARROW_UP"    ) && keyboard->isHoldKey( "W" ) ||
-				 keyboard->isHoldKey( "ARROW_DOWN"  ) && keyboard->isHoldKey( "S" ) ) {
-				_state = MOVE_STATE_TRANSLATION;
-			}
-			if ( ( keyboard->isHoldKey( "ARROW_UP"   ) && keyboard->isHoldKey( "S" ) ) ||
-				 ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) ) {
-				_state = MOVE_STATE_ROTETION_BOTH;
-			}
-			_neutral_count++;
-		}
-		break;
-	case MOVE_STATE_TRANSLATION:
-		if ( !( keyboard->isHoldKey( "ARROW_LEFT"  ) && keyboard->isHoldKey( "A" ) ) &&
-			 !( keyboard->isHoldKey( "ARROW_RIGHT" ) && keyboard->isHoldKey( "D" ) ) &&
-			 !( keyboard->isHoldKey( "ARROW_UP"    ) && keyboard->isHoldKey( "W" ) ) &&
-			 !( keyboard->isHoldKey( "ARROW_DOWN"  ) && keyboard->isHoldKey( "S" ) ) ) {
-			_state = MOVE_STATE_NEUTRAL;
-			_neutral_count = 0;
-		}
-		break;
-	case MOVE_STATE_ROTETION_SIDE:
-		if ( !keyboard->isHoldKey( "ARROW_UP" ) &&
-			 !keyboard->isHoldKey( "ARROW_DOWN" ) &&
-			 !keyboard->isHoldKey( "W" ) &&
-			 !keyboard->isHoldKey( "S" ) ) {
-			_state = MOVE_STATE_NEUTRAL;
-		}
-		if ( keyboard->isHoldKey( "ARROW_LEFT"  ) && keyboard->isHoldKey( "A" ) ||
-             keyboard->isHoldKey( "ARROW_RIGHT" ) && keyboard->isHoldKey( "D" ) ||
-             keyboard->isHoldKey( "ARROW_UP"    ) && keyboard->isHoldKey( "W" ) ||
-             keyboard->isHoldKey( "ARROW_DOWN"  ) && keyboard->isHoldKey( "S" ) ) {
-            _state = MOVE_STATE_TRANSLATION;
-        }
-		if ( ( keyboard->isHoldKey( "ARROW_UP"   ) && keyboard->isHoldKey( "S" ) ) ||
-			 ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) ) {
-				_state = MOVE_STATE_ROTETION_BOTH;
-		}
-		break;
-	case MOVE_STATE_ROTETION_BOTH:
-		if ( !( keyboard->isHoldKey( "ARROW_UP"   ) && keyboard->isHoldKey( "S" ) ) &&
-			 !( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) ) {
-			_state = MOVE_STATE_NEUTRAL;
-		}
-		break;
+
+	if ( keyboard->isHoldKey( "ARROW_UP"   ) ||
+		 keyboard->isHoldKey( "ARROW_DOWN" ) ||
+		 keyboard->isHoldKey( "W" ) ||
+		 keyboard->isHoldKey( "S" ) ) {
+		_state = MOVE_STATE_ROTETION_SIDE;
+	}
+	if ( ( keyboard->isHoldKey( "ARROW_UP"   ) && keyboard->isHoldKey( "S" ) ) ||
+		 ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) ) {
+		_state = MOVE_STATE_ROTETION_BOTH;
+	}
+	if ( keyboard->isHoldKey( "ARROW_LEFT"  ) && keyboard->isHoldKey( "A" ) ||
+		 keyboard->isHoldKey( "ARROW_RIGHT" ) && keyboard->isHoldKey( "D" ) ||
+		 keyboard->isHoldKey( "ARROW_UP"    ) && keyboard->isHoldKey( "W" ) ||
+		 keyboard->isHoldKey( "ARROW_DOWN"  ) && keyboard->isHoldKey( "S" ) ) {
+		_state = MOVE_STATE_TRANSLATION;
 	}
 }
 
