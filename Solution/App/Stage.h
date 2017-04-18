@@ -37,5 +37,6 @@ private:
 	bool _finished;
 	std::array< ModelPtr, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _earth;
 	std::vector< ModelPtr > _wall;
+	std::array< char, STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 > _map_data;
 };
 

@@ -175,7 +175,25 @@ void Stage::loadModel( ) {
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
 	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
 	const double ROTE[ 4 ] = { PI / 2 * 0, PI / 2 * 1, PI / 2 * 3, PI / 2 * 2 };
-
+	// あたり判定用データ生成　stage_data拡張
+	const int PATTERN[ 16 ][ 4 ] = {
+		{ 0, 0, 0, 0 }, // type == 0 の時0、type == 1の時9
+		{ 4, 0, 0, 0 },
+		{ 0, 3, 0, 0 },
+		{ 4, 3, 0, 0 },
+		{ 0, 0, 2, 0 },
+		{ 4, 0, 2, 0 },
+		{ 0, 3, 2, 0 },
+		{ 4, 3, 2, 0 },
+		{ 0, 0, 0, 1 },
+		{ 4, 0, 0, 1 },
+		{ 0, 3, 0, 1 },
+		{ 4, 3, 0, 1 },
+		{ 0, 0, 2, 1 },
+		{ 4, 0, 2, 1 },
+		{ 0, 3, 2, 1 },
+		{ 4, 3, 2, 1 },
+	};
 	ModelPtr wall_mdl[ 2 ][ 16 ];
 	for ( int i = 0; i < 2; i++ ) {
 		for ( int j = 0; j < 16; j++ ) {
@@ -292,6 +310,15 @@ void Stage::loadModel( ) {
 				flag |= ( _stage_data[ idx0 ] == 1 && _stage_data[ idx1 ] == 1 ) << j;
 			}
 		}
+		// あたり判定用データ生成　stage_data拡張
+#if 0
+		for ( int j = 0; j < 4; j++ ) {
+			if ( flag == 0 && type == 1 ) {
+				//_map_data[ ( i + j % STAGE_WIDTH_NUM ) + ( i + j / STAGE_WIDTH_NUM * 2 ) ] = 9;
+			}
+			_map_data[ ( i % STAGE_WIDTH_NUM + ( ( i / STAGE_WIDTH_NUM ) * 2 ) * STAGE_WIDTH_NUM ) + ( j % 2 + j / 2 ) ] = PATTERN[ flag ][ j ] + type ? 4 : 0;
+		}
+#endif
 		if ( type == 1 ) {
 			if ( flag == 1 ||
 				 flag == 3 ||
@@ -335,9 +362,40 @@ void Stage::loadModel( ) {
 	}
 }
 
-
 bool Stage::isCollisionWall( Vector pos ) {
 	// ボールと壁の当たり判定
+	bool result = false;
+#if 0
+	// ボールがどのチップにいるか posをidxに変換
+	int x = (int)pos.x;
+	int y = (int)pos.y;
+	int idx = x % ( STAGE_WIDTH_NUM * 2 ) + y / ( STAGE_HEIGHT_NUM * 2 );
+	// 壁パターンを判断
+	switch ( _map_data[ idx ] ) {
+	case 0:
+		result = false;
+		break;
+	case 1:
+		break;
+	case 2:
+		break;
+	case 3:
+		break;
+	case 4:
+		break;
+	case 5:
+		break;
+	case 6:
+		break;
+	case 7:
+		break;
+	case 8:
+		break;
+	case 9:
+		result = true;
+		break;
+	}
+#endif
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( _stage_data[ i ] == 1 ) {
 			Vector vec1 = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE, 0 );
@@ -345,12 +403,12 @@ bool Stage::isCollisionWall( Vector pos ) {
 			Vector vec3 = vec1 + Vector( 0, WORLD_SCALE, 0 );
 			if ( vec1.x < pos.x && pos.x < vec2.x &&
 				 vec1.y < pos.y && pos.y < vec3.y ) {
-				return true;
+				result = true;
 			}
 		}
 	}
 
-	return false;
+	return result;
 }
 
 bool Stage::isFinished( ) const {
