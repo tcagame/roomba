@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Crystal.h"
 #include "Timer.h"
+#include "Device.h"
 
 static const Vector START_POS[ 2 ] {
 	Vector( 2, 6 ) * WORLD_SCALE + Vector( 0, 0, BALL_RADIUS * 2 ),
@@ -16,8 +17,7 @@ static const double CENTRIPETAL_MIN = 3.5;
 static const int KEY_WAIT_TIME = 4;
 
 Roomba::Roomba( ) :
-_neutral_count( 0 ),
-_state( MOVE_STATE_NEUTRAL ) {
+_state( MOVE_STATE_TRANSLATION ) {
 	_balls[ BALL_LEFT  ] = BallPtr( new Ball( START_POS[ 0 ] ) );
 	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS[ 1 ] ) );
 }
@@ -27,7 +27,7 @@ Roomba::~Roomba( ) {
 }
 
 void Roomba::update( StagePtr stage, CameraPtr camera, TimerPtr timer ) {
-	updateState( );
+	updateState( camera );
 	move( stage, camera );
 	for ( int i = 0; i < MAX_BALL; i++ ) {
 		_balls[ i ]->update( stage );
@@ -38,11 +38,11 @@ void Roomba::update( StagePtr stage, CameraPtr camera, TimerPtr timer ) {
 }
 
 void Roomba::move( StagePtr stage, CameraPtr camera ) {
-	Vector dir = camera->getDir( );
-	dir.z = 0;
+	Vector camera_dir = camera->getDir( );
+	camera_dir.z = 0;
 
 	for ( int i = 0; i < MAX_BALL; i++ ) {
-		_balls[ i ]->move( dir, _state, _balls[ i % 2 == 0 ] );
+		_balls[ i ]->move( camera_dir, _state, _balls[ i % 2 == 0 ] );
 		if ( stage->isCollisionWall( _balls[ i ]->getPos( ) + _balls[ i ]->getVec( ) + _balls[ i ]->getVec( ).normalize( ) * BALL_RADIUS ) ) {
 			_balls[ i ]->setAccel( Vector( ) );
 			continue;
@@ -57,76 +57,35 @@ void Roomba::move( StagePtr stage, CameraPtr camera ) {
 	}
 }
 
-void Roomba::updateState( ) {
+void Roomba::updateState( CameraPtr camera ) {
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	switch ( _state ) {
-	case MOVE_STATE_NEUTRAL:
-		if ( _neutral_count < KEY_WAIT_TIME ) {
-			if ( keyboard->isHoldKey( "ARROW_UP"    ) ||
-				 keyboard->isHoldKey( "ARROW_DOWN"  ) ||
-				 keyboard->isHoldKey( "ARROW_LEFT"  ) ||
-				 keyboard->isHoldKey( "ARROW_RIGHT" ) ||
-				 keyboard->isHoldKey( "W" ) ||
-				 keyboard->isHoldKey( "S" ) ||
-				 keyboard->isHoldKey( "A" ) ||
-				 keyboard->isHoldKey( "D" ) ) {
-				_neutral_count++;
-			}
-			break;
-		}
-		if ( _neutral_count >= KEY_WAIT_TIME ) {
-			if ( keyboard->isHoldKey( "ARROW_UP"   ) ||
-				 keyboard->isHoldKey( "ARROW_DOWN" ) ||
-				 keyboard->isHoldKey( "W" ) ||
-				 keyboard->isHoldKey( "S" ) ) {
-				_state = MOVE_STATE_ROTETION_SIDE;
-			}
-			if ( keyboard->isHoldKey( "ARROW_LEFT"  ) && keyboard->isHoldKey( "A" ) ||
-				 keyboard->isHoldKey( "ARROW_RIGHT" ) && keyboard->isHoldKey( "D" ) ||
-				 keyboard->isHoldKey( "ARROW_UP"    ) && keyboard->isHoldKey( "W" ) ||
-				 keyboard->isHoldKey( "ARROW_DOWN"  ) && keyboard->isHoldKey( "S" ) ) {
-				_state = MOVE_STATE_TRANSLATION;
-			}
-			if ( ( keyboard->isHoldKey( "ARROW_UP"   ) && keyboard->isHoldKey( "S" ) ) ||
-				 ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) ) {
-				_state = MOVE_STATE_ROTETION_BOTH;
-			}
-			_neutral_count++;
-		}
-		break;
-	case MOVE_STATE_TRANSLATION:
-		if ( !( keyboard->isHoldKey( "ARROW_LEFT"  ) && keyboard->isHoldKey( "A" ) ) &&
-			 !( keyboard->isHoldKey( "ARROW_RIGHT" ) && keyboard->isHoldKey( "D" ) ) &&
-			 !( keyboard->isHoldKey( "ARROW_UP"    ) && keyboard->isHoldKey( "W" ) ) &&
-			 !( keyboard->isHoldKey( "ARROW_DOWN"  ) && keyboard->isHoldKey( "S" ) ) ) {
-			_state = MOVE_STATE_NEUTRAL;
-			_neutral_count = 0;
-		}
-		break;
-	case MOVE_STATE_ROTETION_SIDE:
-		if ( !keyboard->isHoldKey( "ARROW_UP" ) &&
-			 !keyboard->isHoldKey( "ARROW_DOWN" ) &&
-			 !keyboard->isHoldKey( "W" ) &&
-			 !keyboard->isHoldKey( "S" ) ) {
-			_state = MOVE_STATE_NEUTRAL;
-		}
-		if ( keyboard->isHoldKey( "ARROW_LEFT"  ) && keyboard->isHoldKey( "A" ) ||
-             keyboard->isHoldKey( "ARROW_RIGHT" ) && keyboard->isHoldKey( "D" ) ||
-             keyboard->isHoldKey( "ARROW_UP"    ) && keyboard->isHoldKey( "W" ) ||
-             keyboard->isHoldKey( "ARROW_DOWN"  ) && keyboard->isHoldKey( "S" ) ) {
-            _state = MOVE_STATE_TRANSLATION;
-        }
-		if ( ( keyboard->isHoldKey( "ARROW_UP"   ) && keyboard->isHoldKey( "S" ) ) ||
-			 ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) ) {
-				_state = MOVE_STATE_ROTETION_BOTH;
-		}
-		break;
-	case MOVE_STATE_ROTETION_BOTH:
-		if ( !( keyboard->isHoldKey( "ARROW_UP"   ) && keyboard->isHoldKey( "S" ) ) &&
-			 !( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) ) {
-			_state = MOVE_STATE_NEUTRAL;
-		}
-		break;
+	DevicePtr device = Device::getTask( );
+	int dir_lx = device->getDirX( );
+	int dir_ly = device->getDirY( );
+	int dir_rx = device->getRightDirX( );
+	int dir_ry = device->getRightDirY( );
+
+	MOVE_STATE state = MOVE_STATE_TRANSLATION;
+	if ( keyboard->isHoldKey( "ARROW_UP"   ) ||
+		 keyboard->isHoldKey( "ARROW_DOWN" ) ||
+		 keyboard->isHoldKey( "W" ) ||
+		 keyboard->isHoldKey( "S" ) ) {
+		state = MOVE_STATE_ROTETION_SIDE;
+	}
+	if ( ( keyboard->isHoldKey( "ARROW_UP"   ) && keyboard->isHoldKey( "S" ) ) ||
+		 ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) ) {
+		state = MOVE_STATE_ROTETION_BOTH;
+	}
+	if ( ( dir_rx < 0 && dir_lx < 0 ) ||
+		 ( dir_rx > 0 && dir_lx > 0 ) ||
+		 ( dir_ry < 0 && dir_ly < 0 ) ||
+		 ( dir_ry > 0 && dir_ly > 0 ) ) {
+		state = MOVE_STATE_TRANSLATION;
+	}
+	if ( state != _state ) {
+		_state = state;
+		_balls[ 0 ]->checkLeft( camera->getDir( ), _balls[ 1 ]->getPos( ) );
+		_balls[ 1 ]->checkLeft( camera->getDir( ), _balls[ 0 ]->getPos( ) );
 	}
 }
 
@@ -168,9 +127,7 @@ Vector Roomba::getCentralPos( ) const {
 	return central_pos;
 }
 
-void Roomba::reset( ) {	
-	_neutral_count = 0;
-	_state = MOVE_STATE::MOVE_STATE_NEUTRAL;
+void Roomba::reset( ) {
 	_balls[ BALL_LEFT ]->reset( START_POS[ 0 ] );
 	_balls[ BALL_RIGHT ]->reset( START_POS[ 1 ]  );
 }

@@ -2,6 +2,7 @@
 #include "define.h"
 #include "Keyboard.h"
 #include "Stage.h"
+#include "Device.h"
 
 static const double ACCEL = 0.09;
 static const double MAX_SPEED = 0.9;
@@ -40,12 +41,16 @@ Vector Ball::getVec( ) const {
 	return _vec;
 }
 
-void Ball::move( Vector dir, Roomba::MOVE_STATE state, BallPtr target ) {
+void Ball::move( Vector camera_dir, Roomba::MOVE_STATE state, BallPtr target ) {
 
 	bool hold_key[ MAX_KEY ] = { false };
 
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	if ( _left ) {
+	DevicePtr device = Device::getTask( );
+	int dir_x = 0;
+	int dir_y = 0;
+
+	if ( !_left ) {
 		if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
 			hold_key[ KEY_UP ] = true;
 		}
@@ -58,8 +63,10 @@ void Ball::move( Vector dir, Roomba::MOVE_STATE state, BallPtr target ) {
 		if ( keyboard->isHoldKey( "ARROW_RIGHT" ) ) {
 			hold_key[ KEY_RIGHT ] = true;
 		}
+		dir_x = device->getRightDirX( );
+		dir_y = device->getRightDirY( );
 	}
-	if ( !_left ) {
+	if ( _left ) {
 		if ( keyboard->isHoldKey( "W" ) ) {
 			hold_key[ KEY_UP ] = true;
 		}
@@ -72,13 +79,14 @@ void Ball::move( Vector dir, Roomba::MOVE_STATE state, BallPtr target ) {
 		if ( keyboard->isHoldKey( "D" ) ) {
 			hold_key[ KEY_RIGHT ] = true;
 		}
+		dir_x = device->getDirX( );
+		dir_y = device->getDirY( );
+
 	}
+	deceleration( );
 	switch ( state ) {
-	case Roomba::MOVE_STATE_NEUTRAL:
-		neutral( dir,target->getPos( ) );
-		break;
 	case Roomba::MOVE_STATE_TRANSLATION:
-		moveTranslation( dir, hold_key );
+		moveTranslation( camera_dir, dir_x, dir_y );
 		break;
 	case Roomba::MOVE_STATE_ROTETION_BOTH:
 		moveRotetionBoth( target->getPos( ), hold_key, _left );
@@ -89,26 +97,15 @@ void Ball::move( Vector dir, Roomba::MOVE_STATE state, BallPtr target ) {
 	}
 }
 
-void Ball::moveTranslation( Vector dir, bool hold_key[ ] ) {
-	if ( hold_key[ KEY_UP ] ) {
-		_vec += dir.normalize( ) * ACCEL;
-	}
-	if ( hold_key[ KEY_DOWN ] ) {
-		_vec -= dir.normalize( ) * ACCEL;
-	}
-
-	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
-	dir = mat.multiply( dir );
-	if ( hold_key[ KEY_LEFT ] ) {
-		_vec += dir.normalize( ) * ACCEL;
-	}
-	if ( hold_key[ KEY_RIGHT ] ) {
-		_vec -= dir.normalize( ) * ACCEL;
-	}
+void Ball::moveTranslation( Vector camera_dir, int dir_x, int dir_y ) {
+	Vector vec( dir_x, dir_y );
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), Vector( 0, -1 ).angle( camera_dir ) );
+	vec = mat.multiply( vec );
+	_vec += vec.normalize( ) * ACCEL;
 }
 
 void Ball::moveRotetionBoth( Vector other_pos, bool hold_key[ ], bool left ) {
-	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0,1 ), PI / 2 );
 	Vector dir = mat.multiply( other_pos - _pos );
 	if ( left ) {
 		dir *= -1;
@@ -125,7 +122,7 @@ void Ball::moveRotetionSide( bool hold_key[ ], BallPtr target ) {
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
 	Vector dir = mat.multiply( target->getPos( ) - _pos );
 	double accel = ACCEL;
-	if ( !_left ) {
+	if ( _left ) {
 		accel *= -1;
 	}
 	if ( hold_key[ KEY_UP ] ) {
@@ -141,25 +138,25 @@ void Ball::moveRotetionSide( bool hold_key[ ], BallPtr target ) {
 void Ball::deceleration( ) {
 	//Œ¸‘¬
 	if ( _vec.x > 0 ) {
-		_vec.x -= ACCEL / 4;
+		_vec.x -= ACCEL / 2;
 		if ( _vec.x < 0 ) {
 			_vec.x = 0;
 		}
 	}
 	if ( _vec.y > 0 ) {
-		_vec.y -= ACCEL / 4;
+		_vec.y -= ACCEL / 2;
 		if ( _vec.y < 0 ) {
 			_vec.y = 0;
 		}
 	}
 	if ( _vec.x < 0 ) {
-		_vec.x += ACCEL / 4;
+		_vec.x += ACCEL / 2;
 		if ( _vec.x > 0 ) {
 			_vec.x = 0;
 		}
 	}
 	if ( _vec.y < 0 ) {
-		_vec.y += ACCEL / 4;
+		_vec.y += ACCEL / 2;
 		if ( _vec.y > 0 ) {
 			_vec.y = 0;
 		}
@@ -170,16 +167,15 @@ void Ball::setAccel( Vector vec ) {
 	_vec = vec;
 }
 
-void Ball::neutral( Vector dir, Vector other_pos ) {
-	_vec -= _vec * DECELERATION_SPEED;
+void Ball::checkLeft( Vector camera_dir, Vector other_pos ) {
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
 	Vector vec = mat.multiply( other_pos - _pos );
-	double dot = dir.dot( vec );
+	double dot = camera_dir.dot( vec );
 	if ( dot < 0 ) {
-		_left = true;
+		_left = false;
 	}
 	if ( dot > 0 ) {
-		_left = false;
+		_left = true;
 	}
 }
 

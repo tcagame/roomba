@@ -4,6 +4,7 @@
 #include "Mouse.h"
 #include "Roomba.h"
 #include "define.h"
+#include "Device.h"
 
 const Vector START_CAMERA_POS = Vector( 0, -100, 75 );
 const Vector START_TARGET_POS = Vector( 0, 0, 0 );
@@ -45,6 +46,14 @@ void Camera::move( ) {
 		}
 	}
 	_mouse_x = mouse_x;
+
+	DevicePtr device = Device::getTask( );
+	if ( device->getButton( ) & BUTTON_F ) {
+		axis = -1;
+	}
+	if ( device->getButton( ) & BUTTON_E ) {
+		axis = 1;
+	}
 
 	if ( axis != 0 ) {
 		Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, axis ), ROTE_SPEED );
