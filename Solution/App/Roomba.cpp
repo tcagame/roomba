@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Crystal.h"
 #include "Timer.h"
+#include "Device.h"
 
 static const Vector START_POS[ 2 ] {
 	Vector( 2, 6 ) * WORLD_SCALE + Vector( 0, 0, BALL_RADIUS * 2 ),
@@ -38,11 +39,11 @@ void Roomba::update( StagePtr stage, CameraPtr camera, TimerPtr timer ) {
 }
 
 void Roomba::move( StagePtr stage, CameraPtr camera ) {
-	Vector dir = camera->getDir( );
-	dir.z = 0;
+	Vector camera_dir = camera->getDir( );
+	camera_dir.z = 0;
 
 	for ( int i = 0; i < MAX_BALL; i++ ) {
-		_balls[ i ]->move( dir, _state, _balls[ i % 2 == 0 ] );
+		_balls[ i ]->move( camera_dir, _state, _balls[ i % 2 == 0 ] );
 		if ( stage->isCollisionWall( _balls[ i ]->getPos( ) + _balls[ i ]->getVec( ) + _balls[ i ]->getVec( ).normalize( ) * BALL_RADIUS ) ) {
 			_balls[ i ]->setAccel( Vector( ) );
 			continue;
@@ -59,7 +60,11 @@ void Roomba::move( StagePtr stage, CameraPtr camera ) {
 
 void Roomba::updateState( ) {
 	KeyboardPtr keyboard = Keyboard::getTask( );
-
+	DevicePtr device = Device::getTask( );
+	int dir_lx = device->getDirX( );
+	int dir_ly = device->getDirY( );
+	int dir_rx = device->getRightDirX( );
+	int dir_ry = device->getRightDirY( );
 	if ( keyboard->isHoldKey( "ARROW_UP"   ) ||
 		 keyboard->isHoldKey( "ARROW_DOWN" ) ||
 		 keyboard->isHoldKey( "W" ) ||
@@ -70,10 +75,10 @@ void Roomba::updateState( ) {
 		 ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) ) {
 		_state = MOVE_STATE_ROTETION_BOTH;
 	}
-	if ( keyboard->isHoldKey( "ARROW_LEFT"  ) && keyboard->isHoldKey( "A" ) ||
-		 keyboard->isHoldKey( "ARROW_RIGHT" ) && keyboard->isHoldKey( "D" ) ||
-		 keyboard->isHoldKey( "ARROW_UP"    ) && keyboard->isHoldKey( "W" ) ||
-		 keyboard->isHoldKey( "ARROW_DOWN"  ) && keyboard->isHoldKey( "S" ) ) {
+	if ( ( dir_rx < 0 && dir_lx < 0 ) ||
+		 ( dir_rx > 0 && dir_lx > 0 ) ||
+		 ( dir_ry < 0 && dir_ly < 0 ) ||
+		 ( dir_ry > 0 && dir_ly > 0 ) ) {
 		_state = MOVE_STATE_TRANSLATION;
 	}
 }
