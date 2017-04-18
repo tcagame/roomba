@@ -3,7 +3,8 @@
 #include "define.h"
 
 static const int FPS = 60;
-static const int START_TIME = 3 * FPS;
+static const int START_TIME = 10 * FPS;
+static const int ADD_TIME = 5;
 
 Timer::Timer( ) :
 _timer( START_TIME ) {
@@ -45,7 +46,7 @@ void Timer::draw( ) const {
 }
 
 void Timer::addTime( ) {
-	_timer += 5 * FPS;
+	_timer += ADD_TIME * FPS;
 }
 
 void Timer::reset( ) {

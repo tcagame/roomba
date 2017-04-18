@@ -26,13 +26,14 @@ Game::~Game( ) {
 void Game::initialize( ) {
 	//drawer‰Šú‰»Œã
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
-	drawer->loadGraph( GRAPH_SELECT_MENU, "UI/UI_retry_select.png" );
 
 	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/crystal.jpg", Matrix::makeTransformScaling( Vector( 1.5, 1.5, 1.5 ) ) );
 	drawer->loadMDLModel( MDL_BG, "Model/Stage/bg.mdl", "Model/Stage/bg01_DM.jpg" );
 
 	drawer->loadMV1Model( MV1_BALL, "Model/Roomba/roomba.mv1" );
+
+	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
+	drawer->loadGraph( GRAPH_SELECT_MENU, "UI/UI_retry_select.png" );
 
 	_camera = CameraPtr( new Camera );
 	_stage = StagePtr( new Stage );
@@ -45,7 +46,7 @@ void Game::update( ) {
 		_roomba->update( _stage, _camera, _timer );
 		_stage->update( );
 		_camera->update( _roomba );
-		//_timer->update( );
+		_timer->update( );
 
 		if ( _timer->isTimeOver( ) ) {
 			_state = STATE_SELECT_RETRY;
@@ -59,7 +60,7 @@ void Game::update( ) {
 		_roomba->reset( );
 		_stage->reset( );
 		_camera->reset( );
-		//_timer->reset( );
+		_timer->reset( );
 		_state = STATE_NORMAL;
 		DevicePtr device = Device::getTask( );
 		if ( device->getDirY( ) > 0 ) {

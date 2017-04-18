@@ -3,10 +3,10 @@
 #include "Keyboard.h"
 #include "Stage.h"
 
-static const double ACCEL = 0.01;
-static const double MAX_SPEED = 3.0;
-static const double ATTACK_START_SPEED = 1.0;
-static const double DECELERATION_SPEED = 0.2;
+static const double ACCEL = 0.05;
+static const double MAX_SPEED = 0.5;
+static const double ATTACK_START_SPEED = 0.2;
+static const double DECELERATION_SPEED = 0.4;
 
 Ball::Ball( Vector pos ) :
 _pos( pos ) {
