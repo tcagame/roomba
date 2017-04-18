@@ -75,9 +75,6 @@ void Ball::move( Vector dir, Roomba::MOVE_STATE state, BallPtr target ) {
 		}
 	}
 	switch ( state ) {
-	case Roomba::MOVE_STATE_NEUTRAL:
-		neutral( dir,target->getPos( ) );
-		break;
 	case Roomba::MOVE_STATE_TRANSLATION:
 		moveTranslation( dir, hold_key );
 		break;
