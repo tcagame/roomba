@@ -1,15 +1,12 @@
 #pragma once
 
-enum MV1 {
-	MV1_NONE,
-	MV1_BALL,
-	MAX_MV1,
-};
+static const double WORLD_SCALE = 2;
 
 enum MDL {
 	MDL_NONE,
 	MDL_BG,
 	MDL_CRYSTAL,
+	MDL_BALL,
 	MAX_MDL
 };
 

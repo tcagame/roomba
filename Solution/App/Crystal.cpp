@@ -25,7 +25,9 @@ void Crystal::draw( ) {
 bool Crystal::isHitting( Vector pos0, Vector pos1 ) {
 	//pos0‚Æpos1‚ÌŠÔ‚ÉƒNƒŠƒXƒ^ƒ‹‚ª‚ ‚é‚©‚Ç‚¤‚©
 	bool hitting = false;
-	Vector vec0 = _pos - pos0;
+	Vector pos = _pos;
+	pos.z = pos0.z;
+	Vector vec0 = pos - pos0;
 	Vector vec1 = pos1 - pos0;
 	double angle = vec0.angle( vec1 );
 	if ( fabs( angle ) > PI / 2 ) {

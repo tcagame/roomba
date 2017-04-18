@@ -7,8 +7,10 @@
 #include "Crystal.h"
 #include "Timer.h"
 
-static const Vector ROOMBA_SCALE( 2, 2, 2 );
-static const Vector START_POS( 4, 25, 2 );
+static const Vector START_POS[ 2 ] {
+	Vector( 2, 6 ) * WORLD_SCALE + Vector( 0, 0, BALL_RADIUS * 2 ),
+	Vector( 2, 6 ) * WORLD_SCALE + Vector( WORLD_SCALE * 2, 0, BALL_RADIUS * 2 ),
+};
 static const double CENTRIPETAL_POWER = 0.020;
 static const double CENTRIPETAL_MIN = 3.5;
 static const int KEY_WAIT_TIME = 4;
@@ -16,8 +18,8 @@ static const int KEY_WAIT_TIME = 4;
 Roomba::Roomba( ) :
 _neutral_count( 0 ),
 _state( MOVE_STATE_NEUTRAL ) {
-	_balls[ BALL_LEFT ] = BallPtr( new Ball( START_POS + Vector( 0, 0, 1 ) ) );
-	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS + Vector( 5, 0, 1 ) ) );
+	_balls[ BALL_LEFT  ] = BallPtr( new Ball( START_POS[ 0 ] ) );
+	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS[ 1 ] ) );
 }
 
 
@@ -41,7 +43,7 @@ void Roomba::move( StagePtr stage, CameraPtr camera ) {
 
 	for ( int i = 0; i < MAX_BALL; i++ ) {
 		_balls[ i ]->move( dir, _state, _balls[ i % 2 == 0 ] );
-		if ( stage->isCollisionWall( _balls[ i ]->getPos( ) + _balls[ i ]->getVec( ) + ROOMBA_SCALE * 0.5 ) ) {
+		if ( stage->isCollisionWall( _balls[ i ]->getPos( ) + _balls[ i ]->getVec( ) + _balls[ i ]->getVec( ).normalize( ) * BALL_RADIUS ) ) {
 			_balls[ i ]->setAccel( Vector( ) );
 			continue;
 		}
@@ -108,8 +110,14 @@ void Roomba::updateState( ) {
 			 !keyboard->isHoldKey( "S" ) ) {
 			_state = MOVE_STATE_NEUTRAL;
 		}
+		if ( keyboard->isHoldKey( "ARROW_LEFT"  ) && keyboard->isHoldKey( "A" ) ||
+             keyboard->isHoldKey( "ARROW_RIGHT" ) && keyboard->isHoldKey( "D" ) ||
+             keyboard->isHoldKey( "ARROW_UP"    ) && keyboard->isHoldKey( "W" ) ||
+             keyboard->isHoldKey( "ARROW_DOWN"  ) && keyboard->isHoldKey( "S" ) ) {
+            _state = MOVE_STATE_TRANSLATION;
+        }
 		if ( ( keyboard->isHoldKey( "ARROW_UP"   ) && keyboard->isHoldKey( "S" ) ) ||
-				 ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) ) {
+			 ( keyboard->isHoldKey( "ARROW_DOWN" ) && keyboard->isHoldKey( "W" ) ) ) {
 				_state = MOVE_STATE_ROTETION_BOTH;
 		}
 		break;
@@ -163,6 +171,6 @@ Vector Roomba::getCentralPos( ) const {
 void Roomba::reset( ) {	
 	_neutral_count = 0;
 	_state = MOVE_STATE::MOVE_STATE_NEUTRAL;
-	_balls[ BALL_LEFT ] = BallPtr( new Ball( START_POS ) );
-	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS + Vector( 10, 0, 0 ) ) );
+	_balls[ BALL_LEFT ]->reset( START_POS[ 0 ] );
+	_balls[ BALL_RIGHT ]->reset( START_POS[ 1 ]  );
 }

@@ -3,8 +3,7 @@
 #include "Crystal.h"
 #include "define.h"
 
-static const Vector MODEL_SIZE( 6, 6 );
-static const double PITCH = 4;
+static const double MODEL_SIZE = 4;
 
 Stage::Stage( ) :
 _wave( 0 ),
@@ -165,7 +164,7 @@ void Stage::loadCrystalData( ) {
 	}
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( _waves[ _wave ][ i ] == 1 ) {
-			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * PITCH + PITCH / 2, ( i / STAGE_WIDTH_NUM ) * PITCH + PITCH / 2, 2 );
+			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, WORLD_SCALE );
 			_crystals.push_back( CrystalPtr( new Crystal( pos ) ) );
 		}
 	}
@@ -252,13 +251,15 @@ void Stage::loadModel( ) {
 */
 	ModelPtr earth( new Model );
 	earth->load( "../Resource/Model/Stage/earth.mdl" );
+	Matrix size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / MODEL_SIZE, WORLD_SCALE / MODEL_SIZE, WORLD_SCALE / MODEL_SIZE ) );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		int x = i % STAGE_WIDTH_NUM;
 		int y = i / STAGE_WIDTH_NUM;
-		Vector pos( x * PITCH, y * PITCH, -PITCH / 2 );
+		Vector pos( x * WORLD_SCALE, y * WORLD_SCALE, 0 );
 		// ínñ ê∂ê¨
 		_earth[ i ] = ModelPtr( new Model );
 		_earth[ i ]->mergeModel( earth );
+		_earth[ i ]->multiply( size );
 		_earth[ i ]->setPos( pos );
 		_earth[ i ]->setTexture( "../Resource/Model/Stage/earth.jpg" );
 
@@ -267,7 +268,7 @@ void Stage::loadModel( ) {
 		if ( type != 0 && type != 1 ) {
 			continue;
 		}
-		pos += Vector( PITCH / 2, PITCH / 2, PITCH * 2 );
+		pos += Vector( WORLD_SCALE / 2, WORLD_SCALE / 2, WORLD_SCALE * 2 );
 		unsigned char flag = 0;
 		Vector adjust_pos = Vector( );
 		for ( int j = 0; j < 4; j++ ) {
@@ -296,27 +297,27 @@ void Stage::loadModel( ) {
 				 flag == 3 ||
 				 flag == 5 ||
 				 flag == 15 ) {
-				adjust_pos = Vector( -PITCH / 2, 0, 0 );
+				adjust_pos = Vector( -WORLD_SCALE / 2, 0, 0 );
 			}
 		}
 		if ( type == 0 ) {
 			const Vector ADJUST[ 16 ] {
 				Vector( 0, 0 ),
-				Vector( -PITCH / 8, -PITCH / 2 ),
-				Vector( PITCH / 2, -PITCH / 8 ),
-				Vector( -PITCH / 8, -PITCH / 2 ),
-				Vector( -PITCH / 2, PITCH / 8 ),
-				Vector( -PITCH / 8, -PITCH / 2 ),
+				Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
+				Vector( WORLD_SCALE / 2, -WORLD_SCALE / 8 ),
+				Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
+				Vector( -WORLD_SCALE / 2, WORLD_SCALE / 8 ),
+				Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
 				Vector( 0, 0 ),
 				Vector( 0, 0 ),
-				Vector( PITCH / 8, PITCH / 2 ),
+				Vector( WORLD_SCALE / 8, WORLD_SCALE / 2 ),
 				Vector( 0, 0 ),
-				Vector( PITCH / 2, -PITCH / 8 ),
+				Vector( WORLD_SCALE / 2, -WORLD_SCALE / 8 ),
 				Vector( 0, 0 ),
-				Vector( -PITCH / 2, PITCH / 8 ),
+				Vector( -WORLD_SCALE / 2, WORLD_SCALE / 8 ),
 				Vector( 0, 0 ),
 				Vector( 0, 0 ),
-				Vector( -PITCH / 8, -PITCH / 2 )
+				Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 )
 			};
 
 			adjust_pos += ADJUST[ flag ];
@@ -327,6 +328,7 @@ void Stage::loadModel( ) {
 		}
 		ModelPtr wall_ptr( new Model );
 		wall_ptr->mergeModel( wall_mdl[ type ][ flag ] );
+		wall_ptr->multiply( size );
 		wall_ptr->setPos( pos + adjust_pos );
 		wall_ptr->setTexture( "../Resource/Model/Stage/wall.jpg" );
 		_wall.push_back( wall_ptr );
@@ -338,9 +340,9 @@ bool Stage::isCollisionWall( Vector pos ) {
 	// É{Å[ÉãÇ∆ï«ÇÃìñÇΩÇËîªíË
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( _stage_data[ i ] == 1 ) {
-			Vector vec1 = Vector( ( i % STAGE_WIDTH_NUM ) * PITCH, ( i / STAGE_WIDTH_NUM ) * PITCH, 0 );
-			Vector vec2 = vec1 + Vector( PITCH, 0, 0 );
-			Vector vec3 = vec1 + Vector( 0, PITCH, 0 );
+			Vector vec1 = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE, 0 );
+			Vector vec2 = vec1 + Vector( WORLD_SCALE, 0, 0 );
+			Vector vec3 = vec1 + Vector( 0, WORLD_SCALE, 0 );
 			if ( vec1.x < pos.x && pos.x < vec2.x &&
 				 vec1.y < pos.y && pos.y < vec3.y ) {
 				return true;
