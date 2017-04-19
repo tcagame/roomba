@@ -99,7 +99,7 @@ void Ball::move( Vector camera_dir, Roomba::MOVE_STATE state, BallPtr target ) {
 
 void Ball::moveTranslation( Vector camera_dir, int dir_x, int dir_y ) {
 	Vector vec( dir_x, dir_y );
-	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), Vector( 0, -1 ).angle( camera_dir ) );
+	Matrix mat = Matrix::makeTransformRotation( camera_dir.cross( Vector( 0, -1 ) ), camera_dir.angle( Vector( 0, -1 ) ) );
 	vec = mat.multiply( vec );
 	_vec += vec.normalize( ) * ACCEL;
 }
