@@ -128,18 +128,17 @@ void Stage::drawBackground( ) const {
 }
 
 void Stage::drawEarth( ) const {
+	DrawerPtr drawer = Drawer::getTask( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		_earth[ i ]->draw( );
+		drawer->setModelMDL( _earth[ i ] );
 	}
 }
 
 void Stage::drawWall( ) const {
-	std::vector< ModelPtr >::const_iterator ite = _wall.begin( );
-	while ( ite != _wall.end( ) ) {
-		if ( !(*ite) ) {
-			continue;
-		}
-		(*ite)->draw( );
+	DrawerPtr drawer = Drawer::getTask( );
+	std::vector< Drawer::ModelMDL >::const_iterator ite = _walls.begin( );
+	while ( ite != _walls.end( ) ) {
+		drawer->setModelMDL( (*ite) );
 		ite++;
 	}
 }
@@ -164,7 +163,7 @@ void Stage::loadCrystalData( ) {
 	}
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( _waves[ _wave ][ i ] == 1 ) {
-			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, WORLD_SCALE );
+			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, 0 );
 			_crystals.push_back( CrystalPtr( new Crystal( pos ) ) );
 		}
 	}
@@ -194,45 +193,6 @@ void Stage::loadModel( ) {
 		{ 0, 3, 2, 1 },
 		{ 4, 3, 2, 1 },
 	};
-	ModelPtr wall_mdl[ 2 ][ 16 ];
-	for ( int i = 0; i < 2; i++ ) {
-		for ( int j = 0; j < 16; j++ ) {
-			wall_mdl[ i ][ j ] = ModelPtr( new Model );
-		}
-	}
-	wall_mdl[ 0 ][ 0  ]->load( "../Resource/Model/Stage/0_0.mdl" );
-	wall_mdl[ 0 ][ 1  ]->load( "../Resource/Model/Stage/0_1.mdl" );
-	wall_mdl[ 0 ][ 2  ]->load( "../Resource/Model/Stage/0_2.mdl" );
-	wall_mdl[ 0 ][ 3  ]->load( "../Resource/Model/Stage/0_3.mdl" );
-	wall_mdl[ 0 ][ 4  ]->load( "../Resource/Model/Stage/0_4.mdl" );
-	wall_mdl[ 0 ][ 5  ]->load( "../Resource/Model/Stage/0_5.mdl" );
-	wall_mdl[ 0 ][ 6  ]->load( "../Resource/Model/Stage/0_6.mdl" );
-	wall_mdl[ 0 ][ 7  ]->load( "../Resource/Model/Stage/0_7.mdl" );
-	wall_mdl[ 0 ][ 8  ]->load( "../Resource/Model/Stage/0_8.mdl" );
-	wall_mdl[ 0 ][ 9  ]->load( "../Resource/Model/Stage/0_9.mdl" );
-	wall_mdl[ 0 ][ 10 ]->load( "../Resource/Model/Stage/0_10.mdl" );
-	wall_mdl[ 0 ][ 11 ]->load( "../Resource/Model/Stage/0_11.mdl" );
-	wall_mdl[ 0 ][ 12 ]->load( "../Resource/Model/Stage/0_12.mdl" );
-	wall_mdl[ 0 ][ 13 ]->load( "../Resource/Model/Stage/0_13.mdl" );
-	wall_mdl[ 0 ][ 14 ]->load( "../Resource/Model/Stage/0_14.mdl" );
-	wall_mdl[ 0 ][ 15 ]->load( "../Resource/Model/Stage/0_15.mdl" );
-
-	wall_mdl[ 1 ][ 0  ]->load( "../Resource/Model/Stage/1_0.mdl" );
-	wall_mdl[ 1 ][ 1  ]->load( "../Resource/Model/Stage/1_1.mdl" );
-	wall_mdl[ 1 ][ 2  ]->load( "../Resource/Model/Stage/1_2.mdl" );
-	wall_mdl[ 1 ][ 3  ]->load( "../Resource/Model/Stage/1_3.mdl" );
-	wall_mdl[ 1 ][ 4  ]->load( "../Resource/Model/Stage/1_4.mdl" );
-	wall_mdl[ 1 ][ 5  ]->load( "../Resource/Model/Stage/1_5.mdl" );
-	wall_mdl[ 1 ][ 6  ]->load( "../Resource/Model/Stage/1_6.mdl" );
-	wall_mdl[ 1 ][ 7  ]->load( "../Resource/Model/Stage/1_7.mdl" );
-	wall_mdl[ 1 ][ 8  ]->load( "../Resource/Model/Stage/1_8.mdl" );
-	wall_mdl[ 1 ][ 9  ]->load( "../Resource/Model/Stage/1_9.mdl" );
-	wall_mdl[ 1 ][ 10 ]->load( "../Resource/Model/Stage/1_10.mdl" );
-	wall_mdl[ 1 ][ 11 ]->load( "../Resource/Model/Stage/1_11.mdl" );
-	wall_mdl[ 1 ][ 12 ]->load( "../Resource/Model/Stage/1_12.mdl" );
-	wall_mdl[ 1 ][ 13 ]->load( "../Resource/Model/Stage/1_13.mdl" );
-	wall_mdl[ 1 ][ 14 ]->load( "../Resource/Model/Stage/1_14.mdl" );
-	wall_mdl[ 1 ][ 15 ]->load( "../Resource/Model/Stage/1_15.mdl" );
 /*	
 	ModelPtr model = ModelPtr( new Model );
 	model->load( "../Resource/Model/Stage/wall_2.mdl" );
@@ -267,28 +227,20 @@ void Stage::loadModel( ) {
 	aaa[ 14 ]->save( "../Resource/Model/Stage/0_14.mdl" );
 	aaa[ 15 ]->save( "../Resource/Model/Stage/0_15.mdl" );
 */
-	ModelPtr earth( new Model );
-	earth->load( "../Resource/Model/Stage/earth.mdl" );
-	Matrix size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / MODEL_SIZE, WORLD_SCALE / MODEL_SIZE, WORLD_SCALE / MODEL_SIZE ) );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		int x = i % STAGE_WIDTH_NUM;
 		int y = i / STAGE_WIDTH_NUM;
 		Vector pos( x * WORLD_SCALE, y * WORLD_SCALE, 0 );
 		// ínñ ê∂ê¨
-		_earth[ i ] = ModelPtr( new Model );
-		_earth[ i ]->mergeModel( earth );
-		_earth[ i ]->multiply( size );
-		_earth[ i ]->setPos( pos );
-		_earth[ i ]->setTexture( "../Resource/Model/Stage/earth.jpg" );
-
+		Vector adjust_pos = Vector( WORLD_SCALE + WORLD_SCALE / 2, WORLD_SCALE + WORLD_SCALE / 3 );
+		_earth[ i ] = Drawer::ModelMDL( pos + adjust_pos, MDL_EARTH );
+		adjust_pos = Vector( );
 		//ï«ê∂ê¨
 		int type = _stage_data[ i ];
 		if ( type != 0 && type != 1 ) {
 			continue;
 		}
-		pos += Vector( WORLD_SCALE / 2, WORLD_SCALE / 2, WORLD_SCALE * 2 );
 		unsigned char flag = 0;
-		Vector adjust_pos = Vector( );
 		for ( int j = 0; j < 4; j++ ) {
 			if ( i % STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM < OFFSET_X[ j ] ||
 				 i % STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM  + OFFSET_X[ j ] > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
@@ -349,16 +301,12 @@ void Stage::loadModel( ) {
 
 			adjust_pos += ADJUST[ flag ];
 		}
-		
+		//adjust_pos -= Vector( WORLD_SCALE, WORLD_SCALE );
 		if ( type == 0 && flag == 0 ) {
 				continue;
 		}
-		ModelPtr wall_ptr( new Model );
-		wall_ptr->mergeModel( wall_mdl[ type ][ flag ] );
-		wall_ptr->multiply( size );
-		wall_ptr->setPos( pos + adjust_pos );
-		wall_ptr->setTexture( "../Resource/Model/Stage/wall.jpg" );
-		_wall.push_back( wall_ptr );
+		MDL wall_type = (MDL)( MDL_WALL_0_0 + type * 16 + flag );
+		_walls.push_back( Drawer::ModelMDL( pos - adjust_pos, wall_type ) );
 	}
 }
 

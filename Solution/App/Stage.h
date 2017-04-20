@@ -35,8 +35,8 @@ private:
 	std::array< std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_WAVE > _waves;
 	int _wave;
 	bool _finished;
-	std::array< ModelPtr, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _earth;
-	std::vector< ModelPtr > _wall;
+	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _earth;
+	std::vector< Drawer::ModelMDL > _walls;
 	std::array< char, STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 > _map_data;
 };
 
