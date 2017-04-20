@@ -1,6 +1,5 @@
 #include "Ball.h"
 #include "define.h"
-#include "Keyboard.h"
 #include "Stage.h"
 #include "Device.h"
 
@@ -54,32 +53,36 @@ void Ball::move( Vector camera_dir, Roomba::MOVE_STATE state, BallPtr target ) {
 	if ( _left ) {
 		device_dir.x = device->getDirX( );
 		device_dir.y = device->getDirY( );
-
 	}
+
 	deceleration( );
 	switch ( state ) {
 	case Roomba::MOVE_STATE_TRANSLATION:
-		moveTranslation( camera_dir, device_dir, target );
+		moveTranslation( target, device_dir, camera_dir );
 		break;
 	case Roomba::MOVE_STATE_ROTETION_BOTH:
-		moveRotetionBoth( other_pos, device_dir, _left );
+		moveRotetionBoth( target, device_dir );
 		break;
 	case Roomba::MOVE_STATE_ROTETION_SIDE:
-		moveRotetionSide( other_pos, device_dir, target );
+		moveRotetionSide( target, device_dir );
 		break;
 	}
 }
 
-void Ball::moveTranslation( Vector camera_dir, Vector device_dir, BallPtr target ) {
+void Ball::moveTranslation( BallPtr target, Vector device_dir, Vector camera_dir ) {
 	Matrix mat = Matrix::makeTransformRotation( camera_dir.cross( Vector( 0, -1 ) ), camera_dir.angle( Vector( 0, -1 ) ) );
 	device_dir = mat.multiply( device_dir );
 	_vec += device_dir.normalize( ) * ACCEL;
-	target->setAccel( _vec );
+	target->setAccel( target->getVec( ) + ( _vec - target->getVec( ) ) * 0.3 );
 }
 
-void Ball::moveRotetionBoth( Vector other_pos, Vector device_dir, bool left ) {
+void Ball::moveRotetionBoth( BallPtr target, Vector device_dir ) {
+	if ( fabs( device_dir.x ) > 70 ) {
+		device_dir.y = device_dir.x;
+	}
+	device_dir.x = 0;
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
-	Vector roomba_dir = mat.multiply( other_pos - _pos );
+	Vector roomba_dir = mat.multiply( target->getPos( ) - _pos );
 	mat = Matrix::makeTransformRotation( roomba_dir.cross( Vector( 0, -1 ) ), roomba_dir.angle( Vector( 0, -1 ) ) );
 	device_dir = mat.multiply( device_dir );
 	if ( !_left ) {
@@ -88,9 +91,13 @@ void Ball::moveRotetionBoth( Vector other_pos, Vector device_dir, bool left ) {
 	_vec += device_dir.normalize( ) * ACCEL;
 }
 
-void Ball::moveRotetionSide( Vector other_pos, Vector device_dir, BallPtr target ) {
+void Ball::moveRotetionSide( BallPtr target, Vector device_dir ) {
+	if ( fabs( device_dir.x ) > 70 ) {
+		device_dir.y = device_dir.x;
+	}
+	device_dir.x = 0;
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
-	Vector roomba_dir = mat.multiply( other_pos - _pos );
+	Vector roomba_dir = mat.multiply( target->getPos( ) - _pos );
 	mat = Matrix::makeTransformRotation( roomba_dir.cross( Vector( 0, -1 ) ), roomba_dir.angle( Vector( 0, -1 ) ) );
 	device_dir = mat.multiply( device_dir );
 	if ( !_left ) {

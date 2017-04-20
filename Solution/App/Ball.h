@@ -29,9 +29,9 @@ private:
 		MAX_KEY
 	};
 private:
-	void moveTranslation( Vector camera_dir, Vector device_dir, BallPtr target );
-	void moveRotetionBoth( Vector other_pos, Vector device_dir, bool left );
-	void moveRotetionSide( Vector other_pos, Vector device_dir, BallPtr target );
+	void moveTranslation(  BallPtr target, Vector device_dir, Vector camera_dir );
+	void moveRotetionBoth( BallPtr target, Vector device_dir );
+	void moveRotetionSide( BallPtr target, Vector device_dir );
 	void deceleration( );
 private:
 	Vector _pos;

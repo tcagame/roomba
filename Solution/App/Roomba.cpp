@@ -1,7 +1,6 @@
 #include "Roomba.h"
 #include "define.h"
 #include "Stage.h"
-#include "Keyboard.h"
 #include "Ball.h"
 #include "Camera.h"
 #include "Crystal.h"
@@ -12,14 +11,13 @@ static const Vector START_POS[ 2 ] {
 	Vector( 2, 6 ) * WORLD_SCALE + Vector( 0, 0, BALL_RADIUS * 2 ),
 	Vector( 2, 6 ) * WORLD_SCALE + Vector( WORLD_SCALE * 2, 0, BALL_RADIUS * 2 ),
 };
-static const double CENTRIPETAL_POWER = 0.020;
+static const double CENTRIPETAL_POWER = 0.02;
 static const double CENTRIPETAL_MIN = 3.5;
-static const int KEY_WAIT_TIME = 4;
 
 Roomba::Roomba( ) :
 _state( MOVE_STATE_TRANSLATION ) {
-	_balls[ BALL_LEFT  ] = BallPtr( new Ball( START_POS[ 0 ] ) );
-	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS[ 1 ] ) );
+	_balls[ 0 ] = BallPtr( new Ball( START_POS[ 0 ] ) );
+	_balls[ 1 ] = BallPtr( new Ball( START_POS[ 1 ] ) );
 }
 
 
@@ -29,7 +27,7 @@ Roomba::~Roomba( ) {
 void Roomba::update( StagePtr stage, CameraPtr camera, TimerPtr timer ) {
 	updateState( camera );
 	move( stage, camera );
-	for ( int i = 0; i < MAX_BALL; i++ ) {
+	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ]->update( stage );
 	}
 
@@ -41,7 +39,7 @@ void Roomba::move( StagePtr stage, CameraPtr camera ) {
 	Vector camera_dir = camera->getDir( );
 	camera_dir.z = 0;
 
-	for ( int i = 0; i < MAX_BALL; i++ ) {
+	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ]->move( camera_dir, _state, _balls[ i % 2 == 0 ] );
 		if ( stage->isCollisionWall( _balls[ i ]->getPos( ) + _balls[ i ]->getVec( ) + _balls[ i ]->getVec( ).normalize( ) * BALL_RADIUS ) ) {
 			_balls[ i ]->setAccel( Vector( ) );
@@ -58,7 +56,6 @@ void Roomba::move( StagePtr stage, CameraPtr camera ) {
 }
 
 void Roomba::updateState( CameraPtr camera ) {
-	KeyboardPtr keyboard = Keyboard::getTask( );
 	DevicePtr device = Device::getTask( );
 	int dir_lx = device->getDirX( );
 	int dir_ly = device->getDirY( );
@@ -69,11 +66,17 @@ void Roomba::updateState( CameraPtr camera ) {
 	if ( dir_ry > 0 ||
 		 dir_ry < 0 ||
 		 dir_ly > 0 ||
-		 dir_ly < 0 ) {
+		 dir_ly < 0 || 
+		 dir_rx > 0 ||
+		 dir_rx < 0 ||
+		 dir_lx > 0 ||
+		 dir_lx < 0 ) {
 		state = MOVE_STATE_ROTETION_SIDE;
 	}
 	if ( ( dir_ry > 0  && dir_ly < 0 ) ||
-		 ( dir_ry < 0  && dir_ly > 0 ) ) {
+		 ( dir_ry < 0  && dir_ly > 0 ) ||
+		 ( dir_rx > 0  && dir_lx < 0 ) ||
+		 ( dir_rx < 0  && dir_lx > 0 ) ) {
 		state = MOVE_STATE_ROTETION_BOTH;
 	}
 	if ( ( dir_rx < 0 && dir_lx < 0 ) ||
@@ -90,12 +93,12 @@ void Roomba::updateState( CameraPtr camera ) {
 }
 
 void Roomba::attack( StagePtr stage, TimerPtr timer ) {
-	bool attacking = ( _balls[ BALL_LEFT ]->isAttacking( ) || _balls[ BALL_RIGHT ]->isAttacking( ) );
+	bool attacking = ( _balls[ 0 ]->isAttacking( ) || _balls[ 1 ]->isAttacking( ) );
 
 	if ( !attacking ) {
 		return;
 	}
-	CrystalPtr crystal =  stage->getHittingCrystal( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
+	CrystalPtr crystal =  stage->getHittingCrystal( _balls[ 0 ]->getPos( ), _balls[ 1 ]->getPos( ) );
 	if ( crystal ) {
 		DrawerPtr drawer = Drawer::getTask( );
 		drawer->drawString( 0, 0, "‚ ‚½‚Á‚Ä‚é‚æ[" );
@@ -105,29 +108,29 @@ void Roomba::attack( StagePtr stage, TimerPtr timer ) {
 }
 
 void Roomba::draw( ) const {
-	bool attacking = ( _balls[ BALL_LEFT ]->isAttacking( ) || _balls[ BALL_RIGHT ]->isAttacking( ) );
+	bool attacking = ( _balls[ 0 ]->isAttacking( ) || _balls[ 1 ]->isAttacking( ) );
 
 	DrawerPtr drawer = Drawer::getTask( );
-	for ( int i = 0; i < MAX_BALL; i++ ) {
+	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ]->draw( );
 	}
 
 	if ( attacking ) {
-		drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
+		drawer->drawLine( _balls[ 0 ]->getPos( ), _balls[ 1 ]->getPos( ) );
 	}
 }
 
 Vector Roomba::getCentralPos( ) const {
-	Vector pos[ MAX_BALL ];
-	for ( int i = 0; i < MAX_BALL; i++ ) {
+	Vector pos[ 2 ];
+	for ( int i = 0; i < 2; i++ ) {
 		pos[ i ] = _balls[ i ]->getPos( );
 	}
-	Vector central_pos = ( pos[ BALL_LEFT ] + pos[ BALL_RIGHT ] ) * 0.5;
+	Vector central_pos = ( pos[ 0 ] + pos[ 1 ] ) * 0.5;
 
 	return central_pos;
 }
 
 void Roomba::reset( ) {
-	_balls[ BALL_LEFT ]->reset( START_POS[ 0 ] );
-	_balls[ BALL_RIGHT ]->reset( START_POS[ 1 ]  );
+	_balls[ 0 ]->reset( START_POS[ 0 ] );
+	_balls[ 1 ]->reset( START_POS[ 1 ]  );
 }
