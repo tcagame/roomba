@@ -43,95 +43,62 @@ Vector Ball::getVec( ) const {
 
 void Ball::move( Vector camera_dir, Roomba::MOVE_STATE state, BallPtr target ) {
 
-	bool hold_key[ MAX_KEY ] = { false };
-
-	KeyboardPtr keyboard = Keyboard::getTask( );
 	DevicePtr device = Device::getTask( );
-	int dir_x = 0;
-	int dir_y = 0;
+	Vector device_dir;
+	Vector other_pos = target->getPos( );
 
 	if ( !_left ) {
-		if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
-			hold_key[ KEY_UP ] = true;
-		}
-		if ( keyboard->isHoldKey( "ARROW_DOWN" ) ) {
-			hold_key[ KEY_DOWN ] = true;
-		}
-		if ( keyboard->isHoldKey( "ARROW_LEFT" ) ) {
-			hold_key[ KEY_LEFT ] = true;
-		}
-		if ( keyboard->isHoldKey( "ARROW_RIGHT" ) ) {
-			hold_key[ KEY_RIGHT ] = true;
-		}
-		dir_x = device->getRightDirX( );
-		dir_y = device->getRightDirY( );
+		device_dir.x = device->getRightDirX( );
+		device_dir.y = device->getRightDirY( );
 	}
 	if ( _left ) {
-		if ( keyboard->isHoldKey( "W" ) ) {
-			hold_key[ KEY_UP ] = true;
-		}
-		if ( keyboard->isHoldKey( "S" ) ) {
-			hold_key[ KEY_DOWN ] = true;
-		}
-		if ( keyboard->isHoldKey( "A" ) ) {
-			hold_key[ KEY_LEFT ] = true;
-		}
-		if ( keyboard->isHoldKey( "D" ) ) {
-			hold_key[ KEY_RIGHT ] = true;
-		}
-		dir_x = device->getDirX( );
-		dir_y = device->getDirY( );
+		device_dir.x = device->getDirX( );
+		device_dir.y = device->getDirY( );
 
 	}
 	deceleration( );
 	switch ( state ) {
 	case Roomba::MOVE_STATE_TRANSLATION:
-		moveTranslation( camera_dir, dir_x, dir_y );
+		moveTranslation( camera_dir, device_dir, target );
 		break;
 	case Roomba::MOVE_STATE_ROTETION_BOTH:
-		moveRotetionBoth( target->getPos( ), hold_key, _left );
+		moveRotetionBoth( other_pos, device_dir, _left );
 		break;
 	case Roomba::MOVE_STATE_ROTETION_SIDE:
-		moveRotetionSide( hold_key, target );
+		moveRotetionSide( other_pos, device_dir, target );
 		break;
 	}
 }
 
-void Ball::moveTranslation( Vector camera_dir, int dir_x, int dir_y ) {
-	Vector vec( dir_x, dir_y );
+void Ball::moveTranslation( Vector camera_dir, Vector device_dir, BallPtr target ) {
 	Matrix mat = Matrix::makeTransformRotation( camera_dir.cross( Vector( 0, -1 ) ), camera_dir.angle( Vector( 0, -1 ) ) );
-	vec = mat.multiply( vec );
-	_vec += vec.normalize( ) * ACCEL;
+	device_dir = mat.multiply( device_dir );
+	_vec += device_dir.normalize( ) * ACCEL;
+	target->setAccel( _vec );
 }
 
-void Ball::moveRotetionBoth( Vector other_pos, bool hold_key[ ], bool left ) {
-	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0,1 ), PI / 2 );
-	Vector dir = mat.multiply( other_pos - _pos );
-	if ( left ) {
-		dir *= -1;
-	}
-	if ( hold_key[ KEY_UP ] ) {
-		_vec += dir.normalize( ) * ACCEL;
-	}
-	if ( hold_key[ KEY_DOWN ] ) {
-		_vec -= dir.normalize( ) * ACCEL;
-	}
-}
-
-void Ball::moveRotetionSide( bool hold_key[ ], BallPtr target ) {
+void Ball::moveRotetionBoth( Vector other_pos, Vector device_dir, bool left ) {
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
-	Vector dir = mat.multiply( target->getPos( ) - _pos );
-	double accel = ACCEL;
-	if ( _left ) {
-		accel *= -1;
+	Vector roomba_dir = mat.multiply( other_pos - _pos );
+	mat = Matrix::makeTransformRotation( roomba_dir.cross( Vector( 0, -1 ) ), roomba_dir.angle( Vector( 0, -1 ) ) );
+	device_dir = mat.multiply( device_dir );
+	if ( !_left ) {
+		device_dir *= -1;
 	}
-	if ( hold_key[ KEY_UP ] ) {
-		_vec -= dir.normalize( ) * accel;
-		target->setAccel( Vector( ) );
+	_vec += device_dir.normalize( ) * ACCEL;
+}
+
+void Ball::moveRotetionSide( Vector other_pos, Vector device_dir, BallPtr target ) {
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
+	Vector roomba_dir = mat.multiply( other_pos - _pos );
+	mat = Matrix::makeTransformRotation( roomba_dir.cross( Vector( 0, -1 ) ), roomba_dir.angle( Vector( 0, -1 ) ) );
+	device_dir = mat.multiply( device_dir );
+	if ( !_left ) {
+		device_dir *= -1;
 	}
-	if ( hold_key[ KEY_DOWN ] ) {
-		_vec += dir.normalize( ) * accel;
-		target->setAccel( Vector( ) );
+	_vec += device_dir.normalize( ) * ACCEL;
+	if ( device_dir.getLength( ) < 10 ) {
+		_vec -= _vec.normalize( ) * ACCEL;
 	}
 }
 
