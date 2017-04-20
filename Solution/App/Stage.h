@@ -11,9 +11,16 @@ public:
 	Stage( );
 	virtual ~Stage( );
 public:
+	struct Collision{
+		bool isOverlapped_x;
+		bool isOverlapped_y;
+		Vector adjust;
+		Collision( Vector vec );
+	};
+public:
 	void update( );
 	void draw( );
-	Vector getCollisionWall( Vector pos, Vector vec, const double radius );
+	Collision getCollisionWall( Vector pos, Vector vec, const double radius );
 	bool isFinished( ) const;
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 );
 	void reset( );

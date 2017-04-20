@@ -8,8 +8,8 @@
 #include "Device.h"
 
 static const Vector START_POS[ 2 ] {
-	Vector( 2, 6 ) * WORLD_SCALE + Vector( 0, 0, 0 ),
-	Vector( 2, 6 ) * WORLD_SCALE + Vector( WORLD_SCALE * 2, 0, 0 )
+	Vector( 10, 6 ) * WORLD_SCALE + Vector( 0, 0, 0 ),
+	Vector( 10, 6 ) * WORLD_SCALE + Vector( WORLD_SCALE * 2, 0, 0 )
 };
 static const double CENTRIPETAL_POWER = 0.02;
 static const double CENTRIPETAL_MIN = 3.5;
