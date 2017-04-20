@@ -9,7 +9,7 @@
 
 static const Vector START_POS[ 2 ] {
 	Vector( 2, 6 ) * WORLD_SCALE + Vector( 0, 0, 0 ),
-	Vector( 2, 6 ) * WORLD_SCALE + Vector( WORLD_SCALE * 2, 0, 0 ),
+	Vector( 2, 6 ) * WORLD_SCALE + Vector( WORLD_SCALE * 2, 0, 0 )
 };
 static const double CENTRIPETAL_POWER = 0.02;
 static const double CENTRIPETAL_MIN = 3.5;
@@ -39,12 +39,14 @@ void Roomba::move( StagePtr stage, CameraPtr camera ) {
 	Vector camera_dir = camera->getDir( );
 	camera_dir.z = 0;
 
+
+
+		// ボールの加速度を計算
+
 	for ( int i = 0; i < 2; i++ ) {
+
 		_balls[ i ]->move( camera_dir, _state, _balls[ i % 2 == 0 ] );
-		if ( stage->isCollisionWall( _balls[ i ]->getPos( ) + _balls[ i ]->getVec( ) + _balls[ i ]->getVec( ).normalize( ) * BALL_RADIUS ) ) {
-			_balls[ i ]->setAccel( Vector( ) );
-			continue;
-		}
+		// ボールの加速度に求心力を加算
 		Vector vec = getCentralPos( ) - _balls[ i ]->getPos( );
 		if ( vec.getLength( ) < CENTRIPETAL_MIN ) {
 			continue;

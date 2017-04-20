@@ -13,7 +13,7 @@ public:
 public:
 	void update( );
 	void draw( );
-	bool isCollisionWall( Vector pos );
+	Vector getCollisionWall( Vector pos, Vector vec, const double radius );
 	bool isFinished( ) const;
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 );
 	void reset( );
@@ -29,6 +29,7 @@ private:
 	void drawBackground( ) const;
 	void loadCrystalData( );
 	void loadModel( );
+	void drawCollisionLine( ) const;
 private:
 	std::list< CrystalPtr > _crystals;
 	std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _stage_data;
