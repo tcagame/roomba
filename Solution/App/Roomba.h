@@ -10,11 +10,6 @@ PTR( Timer );
 
 class Roomba {
 public:
-	enum BALL {
-		BALL_LEFT,
-		BALL_RIGHT,
-		MAX_BALL
-	};
 	enum MOVE_STATE {
 		MOVE_STATE_TRANSLATION,
 		MOVE_STATE_ROTETION_SIDE,
@@ -35,6 +30,6 @@ private:
 	void attack( StagePtr stage, TimerPtr timer );
 private:
 	MOVE_STATE _state;
-	std::array< BallPtr, MAX_BALL > _balls;
+	std::array< BallPtr, 2 > _balls;
 };
 
