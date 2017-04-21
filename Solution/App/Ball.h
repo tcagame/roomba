@@ -37,5 +37,6 @@ private:
 	Vector _pos;
 	Vector _vec;
 	bool _left;
+	bool _axis;
 };
 
