@@ -435,37 +435,37 @@ void Stage::loadModel( ) {
 		}
 		unsigned char flag = 0;
 		for ( int j = 0; j < 4; j++ ) {
-			if ( i % STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM < OFFSET_X[ j ] ||
-				 i % STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM  + OFFSET_X[ j ] > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
+			int tmp_x = x * 2 + j % 2;
+			int tmp_y = y * 2 + j / 2;
+			int map_idx = tmp_x % ( STAGE_WIDTH_NUM * 2 ) + tmp_y * STAGE_WIDTH_NUM * 2;
+			if ( x + OFFSET_X[ j ] < 0 ||
+				 x + OFFSET_X[ j ] >= STAGE_WIDTH_NUM ) {
+				_map_data[ map_idx ] = 1;
 				continue;
 			}
+			if ( y + OFFSET_Y[ j ] < 0 ||
+				 y + OFFSET_Y[ j ] >= STAGE_HEIGHT_NUM ) {
+				_map_data[ map_idx ] = 1;
+				continue;
+			}
+
 			int idx0 = i + OFFSET_X[ j ];
-			if ( idx0 < 0 || idx0 >= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
-				continue;
-			}
-	
 			int idx1 = i + OFFSET_Y[ j ] * STAGE_WIDTH_NUM;
-			if ( idx1 < 0 || idx1 >= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
-				continue;
-			}
+
 			if ( type == 1 ) {
-				flag |= ( _stage_data[ _wave ][ idx0 ] == 0 && _stage_data[ _wave ][ idx1 ] == 0 ) << j;
+				_map_data[ map_idx ] = 1;
+				if ( _stage_data[ _wave ][ idx0 ] == 0 && _stage_data[ _wave ][ idx1 ] == 0 ) {
+					_map_data[ map_idx ] = 2;
+					flag |= 1 << j;
+				}
 			}
 			if ( type == 0 ) {
-				flag |= ( _stage_data[ _wave ][ idx0 ] == 1 && _stage_data[ _wave ][ idx1 ] == 1 ) << j;
+				if ( _stage_data[ _wave ][ idx0 ] == 1 && _stage_data[ _wave ][ idx1 ] == 1 ) {
+					flag |= 1 << j;
+					_map_data[ map_idx ] = 3;
+				}
 			}
 		}
-		// あたり判定用データ生成　stage_data拡張
-#if 1
-		for ( int j = 0; j < 4; j++ ) {
-			int idx = ( x * 2 + j % 2 ) + ( y * 2 * STAGE_WIDTH_NUM * 2 + j / 2 * STAGE_WIDTH_NUM * 2 );
-			if ( _stage_data[ _wave ][ i ] ) {
-				_map_data[ idx ] = 1;
-			} else {
-				_map_data[ idx ] = 0;
-			}
-		}
-#endif
 		if ( type == 1 ) {
 			if ( flag == 1 ||
 				 flag == 3 ||
@@ -564,25 +564,6 @@ void Stage::loadWall( ) {
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
 	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
 	const double ROTE[ 4 ] = { PI / 2 * 0, PI / 2 * 1, PI / 2 * 3, PI / 2 * 2 };
-	// あたり判定用データ生成　stage_data拡張
-	const int PATTERN[ 16 ][ 4 ] = {
-		{ 0, 0, 0, 0 }, // type == 0 の時0、type == 1の時9
-		{ 4, 0, 0, 0 },
-		{ 0, 3, 0, 0 },
-		{ 4, 3, 0, 0 },
-		{ 0, 0, 2, 0 },
-		{ 4, 0, 2, 0 },
-		{ 0, 3, 2, 0 },
-		{ 4, 3, 2, 0 },
-		{ 0, 0, 0, 1 },
-		{ 4, 0, 0, 1 },
-		{ 0, 3, 0, 1 },
-		{ 4, 3, 0, 1 },
-		{ 0, 0, 2, 1 },
-		{ 4, 0, 2, 1 },
-		{ 0, 3, 2, 1 },
-		{ 4, 3, 2, 1 },
-	};
 	_walls.clear( );
 
 	for ( int i = 0; i < 16; i++ ) {
@@ -607,37 +588,37 @@ void Stage::loadWall( ) {
 		}
 		unsigned char flag = 0;
 		for ( int j = 0; j < 4; j++ ) {
-			if ( i % STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM < OFFSET_X[ j ] ||
-				 i % STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM  + OFFSET_X[ j ] > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
+			int tmp_x = x * 2 + j % 2;
+			int tmp_y = y * 2 + j / 2;
+			int map_idx = tmp_x % ( STAGE_WIDTH_NUM * 2 ) + tmp_y * STAGE_WIDTH_NUM * 2;
+			if ( x + OFFSET_X[ j ] < 0 ||
+				 x + OFFSET_X[ j ] >= STAGE_WIDTH_NUM ) {
+				_map_data[ map_idx ] = 1;
 				continue;
 			}
+			if ( y + OFFSET_Y[ j ] < 0 ||
+				 y + OFFSET_Y[ j ] >= STAGE_HEIGHT_NUM ) {
+				_map_data[ map_idx ] = 1;
+				continue;
+			}
+
 			int idx0 = i + OFFSET_X[ j ];
-			if ( idx0 < 0 || idx0 >= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
-				continue;
-			}
-	
 			int idx1 = i + OFFSET_Y[ j ] * STAGE_WIDTH_NUM;
-			if ( idx1 < 0 || idx1 >= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
-				continue;
-			}
+
 			if ( type == 1 ) {
-				flag |= ( _stage_data[ _wave ][ idx0 ] == 0 && _stage_data[ _wave ][ idx1 ] == 0 ) << j;
+				_map_data[ map_idx ] = 1;
+				if ( _stage_data[ _wave ][ idx0 ] == 0 && _stage_data[ _wave ][ idx1 ] == 0 ) {
+					_map_data[ map_idx ] = 2;
+					flag |= 1 << j;
+				}
 			}
 			if ( type == 0 ) {
-				flag |= ( _stage_data[ _wave ][ idx0 ] == 1 && _stage_data[ _wave ][ idx1 ] == 1 ) << j;
+				if ( _stage_data[ _wave ][ idx0 ] == 1 && _stage_data[ _wave ][ idx1 ] == 1 ) {
+					flag |= 1 << j;
+					_map_data[ map_idx ] = 3;
+				}
 			}
 		}
-		// あたり判定用データ生成　stage_data拡張
-#if 1
-		for ( int j = 0; j < 4; j++ ) {
-			int idx = ( x * 2 + j % 2 ) + ( y * 2 * STAGE_WIDTH_NUM * 2 + j / 2 * STAGE_WIDTH_NUM * 2 );
-			if ( _stage_data[ _wave ][ i ] ) {
-				_map_data[ idx ] = 1;
-			} else {
-				_map_data[ idx ] = 0;
-			}
-		}
-#endif
 		if ( type == 1 ) {
 			if ( flag == 1 ||
 				 flag == 3 ||
@@ -690,29 +671,41 @@ void Stage::loadWave( ) {
 Stage::Collision Stage::getCollisionWall( Vector pos, Vector vec, const double radius ) {
 	// ボールと壁の当たり判定
 	Collision result = Collision( vec );
-	double f_pos_x = ( pos.x + vec.x + ( Vector( vec.x, 0, 0 ).normalize( ) * radius ).x );
-	double f_pos_y = ( pos.y + vec.y + ( Vector( 0, vec.y, 0 ).normalize( ) * radius ).y );
+	const int OFFSET_X[ 9 ] = { -1, 1, -1, 1, 0, 0, -1, 1, 0 };
+	const int OFFSET_Y[ 9 ] = { -1, -1, 1, 1, -1, 1, 0, 0, 0 };
+	Vector f_pos = Vector(pos + vec + vec.normalize() * radius) * (1.0 / WORLD_SCALE);
+	int x = (int)((pos.x + vec.x) + 0.5);
+	int y = (int)((pos.y + vec.y) + 0.5);
 
-	int idx = (int)( f_pos_x ) + (int)( f_pos_y ) * STAGE_WIDTH_NUM * 2;
-
-	if ( _map_data[ idx ] == 1 ) {
-		Vector vec1 = Vector( idx % ( STAGE_WIDTH_NUM * 2 ), idx / ( STAGE_WIDTH_NUM * 2 ), 0 );
-		Vector vec2 = vec1 + Vector( WORLD_SCALE / 2, 0, 0 );
-		Vector vec3 = vec1 + Vector( 0, WORLD_SCALE / 2, 0 );
-
-		if ( vec1.x < f_pos_x && f_pos_x < vec2.x ) {
-			result.isOverlapped_x = true;
-			result.adjust.x = 0;
+	for ( int i = 0; i < 9; i++ ) {
+		int tmp_x = x + OFFSET_X[i];
+		int tmp_y = y + OFFSET_Y[i];
+		int idx = tmp_x + tmp_y * STAGE_WIDTH_NUM * 2;
+		if ( idx < 0 || idx >= STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 ) {
+			continue;
 		}
-		
-		if ( vec1.y < f_pos_y && f_pos_y < vec3.y ) {
+		switch ( _map_data[ idx ] ) {
+		case 0: break;
+		case 1://四角
+			result.isOverlapped_x = true;
 			result.isOverlapped_y = true;
-			result.adjust.y = 0;
+			//result.adjust = ( vec.normalize( ) * WORLD_SCALE * 0.25 ) * -1;
+			result.adjust = Vector( );
+			break;
+		case 2://半々円柱
+			if ( Vector( tmp_x - f_pos.x, tmp_y - f_pos.y ).getLength( ) < WORLD_SCALE / 2 ) {
+				result.adjust = Vector( tmp_x, tmp_y ) - pos - vec.normalize( ) * WORLD_SCALE * 0.5;
+				result.isOverlapped_y = true;
+				//result.adjust = Vector( );
+			}
+			break;
+		case 3://L字
+			if ( Vector( ( tmp_x + OFFSET_X[ i ] ) - f_pos.x, ( tmp_y + OFFSET_Y[ i ] ) - f_pos.y ).getLength( ) > WORLD_SCALE / 2 + WORLD_SCALE ) {
+				result.adjust = Vector( );
+			}
+			break;
 		}
 	}
-
-	DrawerPtr drawer = Drawer::getTask( );
-	drawer->drawString( 10, 10, "x:%lf  y:%lf  idx:%d", f_pos_x, f_pos_y, idx );
 
 	return result;
 }
