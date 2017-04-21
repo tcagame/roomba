@@ -12,9 +12,8 @@ public:
 	virtual ~Stage( );
 public:
 	struct Collision{
-		bool isOverlapped_x;
-		bool isOverlapped_y;
-		Vector adjust;
+		bool isOverlapped;
+		Vector adjust_pos;
 		Collision( Vector vec );
 	};
 public:
