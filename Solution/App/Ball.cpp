@@ -3,13 +3,13 @@
 #include "Stage.h"
 #include "Device.h"
 
-static const double ACCEL = 0.09;
+static const double ACCEL = 0.18;
 static const double MAX_SPEED = 0.9;
 static const double ATTACK_START_SPEED = 0.09;
-static const double DECELERATION_SPEED = 0.4;
 
 Ball::Ball( Vector pos ) :
-_pos( pos ) {
+_pos( pos ),
+_axis( false ) {
 }
 
 
@@ -20,9 +20,6 @@ void Ball::update( StagePtr stage ) {
 	if ( _vec.getLength( ) > MAX_SPEED ) {
 		_vec = _vec.normalize( ) * MAX_SPEED;
 	}
-	//if ( stage->isCollisionWall( _pos + _vec + Vector( 1, 1, 0 ) ) ) {
-	//	_vec = Vector( );
-	//}
 	Stage::Collision col = stage->getCollisionWall( _pos, _vec, WORLD_SCALE );
 	if ( col.isOverlapped_x ) {
 		_pos.x += col.adjust.x;
@@ -32,7 +29,10 @@ void Ball::update( StagePtr stage ) {
 		_pos.y += col.adjust.y;
 		_vec.y = 0;
 	}
-
+	if ( _axis ) {
+		_vec = Vector( );
+		_axis = false;
+	}
 	_pos += _vec;
 }
 
@@ -115,6 +115,7 @@ void Ball::moveRotetionSide( BallPtr target, Vector device_dir ) {
 	}
 	_vec += device_dir.normalize( ) * ACCEL;
 	if ( device_dir.getLength( ) < 10 ) {
+		_axis = true;
 		_vec -= _vec.normalize( ) * ACCEL;
 	}
 }

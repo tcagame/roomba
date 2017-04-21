@@ -9,10 +9,10 @@
 
 static const Vector START_POS[ 2 ] {
 	Vector( 10, 6 ) * WORLD_SCALE + Vector( 0, 0, 0 ),
-	Vector( 10, 6 ) * WORLD_SCALE + Vector( WORLD_SCALE * 2, 0, 0 )
+	Vector( 10, 6 ) * WORLD_SCALE + Vector( WORLD_SCALE * 4, 0, 0 )
 };
-static const double CENTRIPETAL_POWER = 0.02;
-static const double CENTRIPETAL_MIN = 3.5;
+static const double CENTRIPETAL_POWER = 0.01;
+static const double CENTRIPETAL_MIN = 7;
 
 Roomba::Roomba( ) :
 _state( MOVE_STATE_TRANSLATION ) {
@@ -44,15 +44,21 @@ void Roomba::move( StagePtr stage, CameraPtr camera ) {
 		// ボールの加速度を計算
 
 	for ( int i = 0; i < 2; i++ ) {
-
 		_balls[ i ]->move( camera_dir, _state, _balls[ i % 2 == 0 ] );
 		// ボールの加速度に求心力を加算
-		Vector vec = getCentralPos( ) - _balls[ i ]->getPos( );
-		if ( vec.getLength( ) < CENTRIPETAL_MIN ) {
+		Vector pos0 = _balls[ i ]->getPos( ) + _balls[ i ]->getVec( );
+		Vector pos1 = _balls[ ( i == 0 ) ]->getPos( );
+		Vector distance = pos1 - pos0;
+		Vector vec = distance - distance.normalize( ) * CENTRIPETAL_MIN;
+		if ( distance.getLength( ) < CENTRIPETAL_MIN ) {
+			Vector target_pos = pos1 - distance.normalize( ) * CENTRIPETAL_MIN;
+			_balls[ i ]->setAccel( target_pos - _balls[ i ]->getPos( ) );
 			continue;
 		}
-		vec -= vec.normalize( ) * CENTRIPETAL_MIN;
 		vec *= CENTRIPETAL_POWER;
+		if ( _balls[ i ]->getVec( ).getLength( ) < 0.1 ) {
+			vec *= ( 0.2 / CENTRIPETAL_POWER );
+		}
 		_balls[ i ]->setAccel( _balls[ i ]->getVec( ) + vec );
 	}
 }
