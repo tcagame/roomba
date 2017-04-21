@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include <list>
-#include <array>
 #include "Drawer.h"
 
 PTR( Crystal );
