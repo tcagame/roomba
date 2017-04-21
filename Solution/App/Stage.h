@@ -27,7 +27,7 @@ public:
 private:
 	static const int STAGE_WIDTH_NUM = 40;
 	static const int STAGE_HEIGHT_NUM = 35;
-	static const int MAX_WAVE = 1;
+	static const int MAX_WAVE = 3;
 private:
 	void updateCrystal( );
 	void drawCrystal( ) const;
