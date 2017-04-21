@@ -21,13 +21,8 @@ void Ball::update( StagePtr stage ) {
 		_vec = _vec.normalize( ) * MAX_SPEED;
 	}
 	Stage::Collision col = stage->getCollisionWall( _pos, _vec, WORLD_SCALE );
-	if ( col.isOverlapped_x ) {
-		_pos.x += col.adjust.x;
-		_vec.x = 0;
-	}
-	if ( col.isOverlapped_y ) {
-		_pos.y += col.adjust.y;
-		_vec.y = 0;
+	if ( col.isOverlapped ) {
+		_vec = Vector( );
 	}
 	if ( _axis ) {
 		_vec = Vector( );
