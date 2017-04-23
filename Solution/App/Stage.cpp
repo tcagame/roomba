@@ -166,7 +166,6 @@ _finished( false ) {
 
 
 	};
-	//loadModel( );
 	loadEarth( );
 	loadWave( );
 }
@@ -247,93 +246,6 @@ void Stage::loadCrystalData( ) {
 			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, 0 );
 			_crystals.push_back( CrystalPtr( new Crystal( pos ) ) );
 		}
-	}
-}
-
-void Stage::loadModel( ) {
-	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
-	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
-	const double ROTE[ 4 ] = { PI / 2 * 0, PI / 2 * 1, PI / 2 * 3, PI / 2 * 2 };
-
-	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		//•Ç¶¬
-		int x = i % STAGE_WIDTH_NUM;
-		int y = i / STAGE_WIDTH_NUM;
-		Vector pos( x * WORLD_SCALE + WORLD_SCALE / 2, y * WORLD_SCALE + WORLD_SCALE / 2, 0 );
-		Vector adjust_pos;
-		int type = _stage_data[ i ];
-		if ( type != 0 && type != 1 ) {
-			continue;
-		}
-		unsigned char flag = 0;
-		for ( int j = 0; j < 4; j++ ) {
-			int tmp_x = x * 2 + j % 2;
-			int tmp_y = y * 2 + j / 2;
-			int map_idx = tmp_x % ( STAGE_WIDTH_NUM * 2 ) + tmp_y * STAGE_WIDTH_NUM * 2;
-			if ( x + OFFSET_X[ j ] < 0 ||
-				 x + OFFSET_X[ j ] >= STAGE_WIDTH_NUM ) {
-				_map_data[ map_idx ] = 1;
-				continue;
-			}
-			if ( y + OFFSET_Y[ j ] < 0 ||
-				 y + OFFSET_Y[ j ] >= STAGE_HEIGHT_NUM ) {
-				_map_data[ map_idx ] = 1;
-				continue;
-			}
-
-			int idx0 = i + OFFSET_X[ j ];
-			int idx1 = i + OFFSET_Y[ j ] * STAGE_WIDTH_NUM;
-
-			if ( type == 1 ) {
-				_map_data[ map_idx ] = 1;
-				if ( _stage_data[ idx0 ] == 0 && _stage_data[ idx1 ] == 0 ) {
-					_map_data[ map_idx ] = 2;
-					flag |= 1 << j;
-				}
-			}
-			if ( type == 0 ) {
-				if ( _stage_data[ idx0 ] == 1 && _stage_data[ idx1 ] == 1 ) {
-					flag |= 1 << j;
-					_map_data[ map_idx ] = 3;
-				}
-			}
-		}
-		if ( type == 1 ) {
-			if ( flag == 1 ||
-				 flag == 3 ||
-				 flag == 5 ||
-				 flag == 15 ) {
-				adjust_pos = Vector( -WORLD_SCALE / 2, 0, 0 );
-			}
-		}
-		if ( type == 0 ) {
-			const Vector ADJUST[ 16 ] {
-				Vector( 0, 0 ),
-				Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
-				Vector( WORLD_SCALE / 2, -WORLD_SCALE / 8 ),
-				Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
-				Vector( -WORLD_SCALE / 2, WORLD_SCALE / 8 ),
-				Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
-				Vector( 0, 0 ),
-				Vector( 0, 0 ),
-				Vector( WORLD_SCALE / 8, WORLD_SCALE / 2 ),
-				Vector( 0, 0 ),
-				Vector( WORLD_SCALE / 2, -WORLD_SCALE / 8 ),
-				Vector( 0, 0 ),
-				Vector( -WORLD_SCALE / 2, WORLD_SCALE / 8 ),
-				Vector( 0, 0 ),
-				Vector( 0, 0 ),
-				Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 )
-			};
-
-			adjust_pos += ADJUST[ flag ];
-		}
-		//adjust_pos -= Vector( WORLD_SCALE, WORLD_SCALE );
-		if ( type == 0 && flag == 0 ) {
-				continue;
-		}
-		MDL wall_type = (MDL)( MDL_WALL_0_0 + type * 16 + flag );
-		_walls.push_back( Drawer::ModelMDL( pos - adjust_pos, wall_type ) );
 	}
 }
 

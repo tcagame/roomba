@@ -34,7 +34,6 @@ private:
 	void drawWall( ) const;
 	void drawBackground( ) const;
 	void loadCrystalData( );
-	void loadModel( );
 	void loadEarth( );
 	void loadWall( );
 	void loadWave( );
