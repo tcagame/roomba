@@ -420,10 +420,8 @@ Stage::Collision Stage::getCollisionWall( Vector pos, Vector vec, const double r
 	Vector f_pos = Vector( pos + vec + vec.normalize( ) * radius ) * ( 1.0 / WORLD_SCALE );
 	int x = (int)( pos.x + vec.x );
 	int y = (int)( pos.y + vec.y );
-	int c_idx = (int)( pos.x ) + (int)( pos.y ) * STAGE_WIDTH_NUM * 2;
-	int col[ 9 ] = { 0 };
 
-	for ( int i = 0; i < 9; i++ ) {
+	for ( int i = 0; i < 8; i++ ) {
 		int tmp_x = x + OFFSET_X[ i ];
 		int tmp_y = y + OFFSET_Y[ i ];
 		int idx = tmp_x + tmp_y * STAGE_WIDTH_NUM * 2;
@@ -434,25 +432,28 @@ Stage::Collision Stage::getCollisionWall( Vector pos, Vector vec, const double r
 		case 0: break;
 		case 1://ŽlŠp
 			result.adjust_pos = Vector( );
+			if ( i == 4 || i == 5 ) {
+				result.adjust_pos.x = vec.x;
+			}
+			if ( i == 6 || i == 7 ) {
+				result.adjust_pos.y = vec.y;
+			}
 			result.isOverlapped = true;
 			break;
 		case 2://”¼X‰~’Œ
-			if ( _map_data[ idx ] == 0 ) {
-
-			}
-			if ( _map_data[ idx ] != 0 ) {
-			}
-			result.adjust_pos = Vector( );			
-			//if ( Vector( tmp_x - f_pos.x, tmp_y - f_pos.y ).getLength( ) < WORLD_SCALE / 2 ) {
-			//result.adjust_pos = Vector( tmp_x, tmp_y ) - vec.normalize( ) * WORLD_SCALE * 0.5;
-			result.isOverlapped = true;
-			//}
-			break;
-		case 3://LŽš
-			if ( ( pos - ( pos + vec ) ).getLength( ) > WORLD_SCALE / 2 ) {
+		{
+			int add_x = 0;
+			int add_y = 0;
+			if ( tmp_x % 2 == 0 ) add_x = (int)( WORLD_SCALE / 2 );
+			if ( tmp_y % 2 == 0 ) add_y = (int)( WORLD_SCALE / 2 );
+			Vector check_pos( tmp_x + add_x, tmp_y + add_y );
+			if ( ( ( pos + vec ) - check_pos ).getLength( ) < WORLD_SCALE / 2 + radius ) {
+				result.isOverlapped = true;
 				result.adjust_pos = Vector( );
 			}
-			result.isOverlapped = true;
+		}
+			break;
+		case 3://LŽš
 			break;
 		}
 	}
