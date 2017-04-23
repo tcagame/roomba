@@ -505,14 +505,15 @@ Stage::Collision Stage::getCollisionWall( Vector pos, Vector vec, const double r
 	Collision result = Collision( vec );
 	const int OFFSET_X[ 9 ] = { -1, 1, -1, 1, 0, 0, -1, 1, 0 };
 	const int OFFSET_Y[ 9 ] = { -1, -1, 1, 1, -1, 1, 0, 0, 0 };
-	Vector f_pos = Vector(pos + vec + vec.normalize() * radius) * (1.0 / WORLD_SCALE);
-	int x = (int)((pos.x + vec.x));
-	int y = (int)((pos.y + vec.y));
+	Vector f_pos = Vector( pos + vec + vec.normalize( ) * radius ) * ( 1.0 / WORLD_SCALE );
+	int x = (int)( pos.x + vec.x );
+	int y = (int)( pos.y + vec.y );
+	int c_idx = (int)( pos.x ) + (int)( pos.y ) * STAGE_WIDTH_NUM * 2;
 	int col[ 9 ] = { 0 };
 
 	for ( int i = 0; i < 9; i++ ) {
-		int tmp_x = x + OFFSET_X[i];
-		int tmp_y = y + OFFSET_Y[i];
+		int tmp_x = x + OFFSET_X[ i ];
+		int tmp_y = y + OFFSET_Y[ i ];
 		int idx = tmp_x + tmp_y * STAGE_WIDTH_NUM * 2;
 		if ( idx < 0 || idx >= STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 ) {
 			continue;
@@ -520,22 +521,26 @@ Stage::Collision Stage::getCollisionWall( Vector pos, Vector vec, const double r
 		switch ( _map_data[ idx ] ) {
 		case 0: break;
 		case 1://éläp
-			//result.adjust_pos = Vector( tmp_x * WORLD_SCALE / 2, tmp_y * WORLD_SCALE / 2 ) - vec.normalize( ) * WORLD_SCALE * 0.5;
 			result.adjust_pos = Vector( );
 			result.isOverlapped = true;
 			break;
 		case 2://îºÅXâ~íå
+			if ( _map_data[ idx ] == 0 ) {
+
+			}
+			if ( _map_data[ idx ] != 0 ) {
+			}
+			result.adjust_pos = Vector( );			
 			//if ( Vector( tmp_x - f_pos.x, tmp_y - f_pos.y ).getLength( ) < WORLD_SCALE / 2 ) {
-				result.adjust_pos = Vector( tmp_x, tmp_y ) - vec.normalize( ) * WORLD_SCALE * 0.5;
-				result.isOverlapped = true;
-				result.adjust_pos = Vector( );
+			//result.adjust_pos = Vector( tmp_x, tmp_y ) - vec.normalize( ) * WORLD_SCALE * 0.5;
+			result.isOverlapped = true;
 			//}
 			break;
 		case 3://Léö
-			//if ( Vector( ( tmp_x + OFFSET_X[ i ] ) - f_pos.x, ( tmp_y + OFFSET_Y[ i ] ) - f_pos.y ).getLength( ) > WORLD_SCALE / 2 + WORLD_SCALE ) {
+			if ( ( pos - ( pos + vec ) ).getLength( ) > WORLD_SCALE / 2 ) {
 				result.adjust_pos = Vector( );
-				result.isOverlapped = true;
-			//}
+			}
+			result.isOverlapped = true;
 			break;
 		}
 	}

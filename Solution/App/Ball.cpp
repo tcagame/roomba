@@ -22,7 +22,7 @@ void Ball::update( StagePtr stage ) {
 	}
 	Stage::Collision col = stage->getCollisionWall( _pos, _vec, WORLD_SCALE );
 	if ( col.isOverlapped ) {
-		_vec = Vector( );
+		_vec = col.adjust_pos;
 	}
 	if ( _axis ) {
 		_vec = Vector( );
