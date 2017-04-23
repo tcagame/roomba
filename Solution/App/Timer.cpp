@@ -3,7 +3,7 @@
 #include "define.h"
 
 static const int FPS = 60;
-static const int START_TIME = 3 * FPS;
+static const int START_TIME = 20 * FPS;
 static const int ADD_TIME = 1;
 
 Timer::Timer( ) :
