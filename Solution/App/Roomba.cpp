@@ -29,7 +29,10 @@ Roomba::~Roomba( ) {
 }
 
 void Roomba::update( StagePtr stage, CameraPtr camera, TimerPtr timer ) {
-	checkLeftRight( camera );
+	if ( _state != MOVE_STATE_ROTATION_SIDE ||
+		 _state != MOVE_STATE_ROTATION_BOTH ) {
+		checkLeftRight( camera );
+	}
 	updateState( camera );
 	move( stage, camera );
 	for ( int i = 0; i < 2; i++ ) {
@@ -74,6 +77,9 @@ void Roomba::move( StagePtr stage, CameraPtr camera ) {
 	switch ( _state ) {
 	case MOVE_STATE_TRANSLATION:
 		moveTranslation( camera_dir, right_stick, left_stick );
+		break;
+	case MOVE_STATE_ROTATION_SIDE:
+		moveRotetionSide( camera_dir, right_stick, left_stick );
 		break;
 	}
 }
@@ -128,8 +134,8 @@ void Roomba::attack( StagePtr stage, TimerPtr timer ) {
 	}
 }
 
-void Roomba::moveTranslation( const Vector& inAxis, Vector right, Vector left ) {
-	Matrix mat = Matrix::makeTransformRotation( inAxis.cross( Vector( 0, -1 ) ), inAxis.angle( Vector( 0, -1 ) ) );
+void Roomba::moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left ) {
+	Matrix mat = Matrix::makeTransformRotation( camera_dir.cross( Vector( 0, -1 ) ), camera_dir.angle( Vector( 0, -1 ) ) );
 	for ( int i = 0; i < 2; i++ ) {
 		Vector dir = left;
 		if ( i == 1 ) {
@@ -145,8 +151,33 @@ void Roomba::moveRotetionBoth( ) {
 
 }
 
-void Roomba::moveRotetionSide( ) {
-
+void Roomba::moveRotetionSide( const Vector& camera_dir, Vector right, Vector left ) {
+	if ( fabs( right.x ) > 70 ) {
+		right.y = right.x;
+	}
+	if ( fabs( left.x ) > 70 ) {
+		left.y = left.x;
+	}
+	right.x = 0;
+	left.x = 0;
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
+	Vector roomba_dir = mat.multiply( _balls[ 0 ]->getPos( ) - _balls[ 1 ]->getPos( ) );
+	mat = Matrix::makeTransformRotation( roomba_dir.cross( Vector( 0, -1 ) ), roomba_dir.angle( Vector( 0, -1 ) ) );	
+	for ( int i = 0; i < 2; i++ ) {
+		Vector dir = left;
+		if ( i == 1 ) {
+			dir = right;
+		}
+		dir = mat.multiply( dir );
+		if ( i == 1 ) {
+			dir *= -1;
+		}
+		Vector vec = dir.normalize( ) * ACCEL;
+		_balls[ i ]->setAccel( _balls[ i ]->getVec( ) + vec );
+		if ( dir.getLength( ) < 10 ) {
+			_balls[ i ]->setAccel( Vector( ) );
+		}
+	}
 }
 
 void Roomba::draw( ) const {
@@ -181,7 +212,7 @@ void Roomba::checkLeftRight( CameraPtr camera ) {
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
 	Vector vec = mat.multiply( _balls[ 0 ]->getPos( ) - _balls[ 1 ]->getPos( ) );
 	double dot = camera->getDir( ).dot( vec );
-	if ( dot < 0 ) {
+	if ( dot > 0 ) {
 		BallPtr tmp = _balls[ 0 ];
 		_balls[ 0 ] = _balls[ 1 ];
 		_balls[ 1 ] = tmp;

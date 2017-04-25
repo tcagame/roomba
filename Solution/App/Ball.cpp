@@ -60,14 +60,6 @@ void Ball::move( Vector camera_dir, Roomba::MOVE_STATE state, BallPtr target ) {
 	}
 
 	deceleration( );
-	switch ( state ) {
-	case Roomba::MOVE_STATE_ROTATION_BOTH:
-		moveRotetionBoth( target, device_dir );
-		break;
-	case Roomba::MOVE_STATE_ROTATION_SIDE:
-		moveRotetionSide( target, device_dir );
-		break;
-	}
 }
 #if 0
 void Ball::moveTranslation( BallPtr target, Vector device_dir, Vector camera_dir ) {
@@ -76,7 +68,7 @@ void Ball::moveTranslation( BallPtr target, Vector device_dir, Vector camera_dir
 	_vec += device_dir.normalize( ) * ACCEL;
 	target->setAccel( target->getVec( ) + ( _vec - target->getVec( ) ) * 0.3 );
 }
-#endif
+
 void Ball::moveRotetionBoth( BallPtr target, Vector device_dir ) {
 	if ( fabs( device_dir.x ) > 70 ) {
 		device_dir.y = device_dir.x;
@@ -110,7 +102,7 @@ void Ball::moveRotetionSide( BallPtr target, Vector device_dir ) {
 		_vec -= _vec.normalize( ) * ACCEL;
 	}
 }
-
+#endif
 void Ball::deceleration( ) {
 	double length = _vec.getLength( );
 	length -= ACCEL / 2;
