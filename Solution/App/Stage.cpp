@@ -5,11 +5,6 @@
 
 static const double MODEL_SIZE = 4;
 
-Stage::Collision::Collision( Vector vec ) :
-	isOverlapped( false ),
-	adjust_pos( vec ) {
-}
-
 Stage::Stage( ) :
 _wave( -1 ),
 _finished( false ) {
@@ -414,9 +409,10 @@ void Stage::loadWave( ) {
 
 Stage::Collision Stage::getCollisionWall( Vector pos, Vector vec, const double radius ) {
 	// ボールと壁の当たり判定
-	Collision result = Collision( vec );
-	const int OFFSET_X[ 9 ] = { -1, 1, -1, 1, 0, 0, -1, 1, 0 };
-	const int OFFSET_Y[ 9 ] = { -1, -1, 1, 1, -1, 1, 0, 0, 0 };
+	Collision result;
+	result.adjust_vec = vec;
+	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
+	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
 	Vector f_pos = Vector( pos + vec + vec.normalize( ) * radius ) * ( 1.0 / WORLD_SCALE );
 	int x = (int)( pos.x + vec.x );
 	int y = (int)( pos.y + vec.y );
@@ -431,14 +427,14 @@ Stage::Collision Stage::getCollisionWall( Vector pos, Vector vec, const double r
 		switch ( _map_data[ idx ] ) {
 		case 0: break;
 		case 1://四角
-			result.adjust_pos = Vector( );
+			result.adjust_vec = Vector( );
+			/*
 			if ( i == 4 || i == 5 ) {
-				result.adjust_pos.x = vec.x;
+				result.adjust_vec.x = vec.x;
 			}
 			if ( i == 6 || i == 7 ) {
-				result.adjust_pos.y = vec.y;
-			}
-			result.isOverlapped = true;
+				result.adjust_vec.y = vec.y;
+			}*/
 			break;
 		case 2://半々円柱
 		{
@@ -448,8 +444,8 @@ Stage::Collision Stage::getCollisionWall( Vector pos, Vector vec, const double r
 			if ( tmp_y % 2 == 0 ) add_y = (int)( WORLD_SCALE / 2 );
 			Vector check_pos( tmp_x + add_x, tmp_y + add_y );
 			if ( ( ( pos + vec ) - check_pos ).getLength( ) < WORLD_SCALE / 2 + radius ) {
-				result.isOverlapped = true;
-				result.adjust_pos = Vector( );
+				// 移動しない
+				result.adjust_vec = Vector( );				
 			}
 		}
 			break;

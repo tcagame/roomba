@@ -15,7 +15,7 @@ public:
 	void draw( ) const;
 	Vector getPos( ) const;
 	Vector getVec( ) const;
-	void setAccel( Vector vec );
+	void setAccel( const Vector& vec );
 	bool isAttacking( ) const;
 	void move( Vector camera_dir, Roomba::MOVE_STATE state, BallPtr target );
 	void reset( Vector pos );
@@ -29,7 +29,6 @@ private:
 		MAX_KEY
 	};
 private:
-	void moveTranslation(  BallPtr target, Vector device_dir, Vector camera_dir );
 	void moveRotetionBoth( BallPtr target, Vector device_dir );
 	void moveRotetionSide( BallPtr target, Vector device_dir );
 	void deceleration( );

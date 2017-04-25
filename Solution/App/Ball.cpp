@@ -20,10 +20,10 @@ void Ball::update( StagePtr stage ) {
 	if ( _vec.getLength( ) > MAX_SPEED ) {
 		_vec = _vec.normalize( ) * MAX_SPEED;
 	}
+	
 	Stage::Collision col = stage->getCollisionWall( _pos, _vec, WORLD_SCALE );
-	if ( col.isOverlapped ) {
-		_vec = col.adjust_pos;
-	}
+	_vec = col.adjust_vec;
+
 	if ( _axis ) {
 		_vec = Vector( );
 		_axis = false;
@@ -49,7 +49,6 @@ void Ball::move( Vector camera_dir, Roomba::MOVE_STATE state, BallPtr target ) {
 
 	DevicePtr device = Device::getTask( );
 	Vector device_dir;
-	Vector other_pos = target->getPos( );
 
 	if ( !_left ) {
 		device_dir.x = device->getRightDirX( );
@@ -61,19 +60,8 @@ void Ball::move( Vector camera_dir, Roomba::MOVE_STATE state, BallPtr target ) {
 	}
 
 	deceleration( );
-	switch ( state ) {
-	case Roomba::MOVE_STATE_TRANSLATION:
-		moveTranslation( target, device_dir, camera_dir );
-		break;
-	case Roomba::MOVE_STATE_ROTETION_BOTH:
-		moveRotetionBoth( target, device_dir );
-		break;
-	case Roomba::MOVE_STATE_ROTETION_SIDE:
-		moveRotetionSide( target, device_dir );
-		break;
-	}
 }
-
+#if 0
 void Ball::moveTranslation( BallPtr target, Vector device_dir, Vector camera_dir ) {
 	Matrix mat = Matrix::makeTransformRotation( camera_dir.cross( Vector( 0, -1 ) ), camera_dir.angle( Vector( 0, -1 ) ) );
 	device_dir = mat.multiply( device_dir );
@@ -114,36 +102,17 @@ void Ball::moveRotetionSide( BallPtr target, Vector device_dir ) {
 		_vec -= _vec.normalize( ) * ACCEL;
 	}
 }
-
+#endif
 void Ball::deceleration( ) {
-	//Œ¸‘¬
-	if ( _vec.x > 0 ) {
-		_vec.x -= ACCEL / 2;
-		if ( _vec.x < 0 ) {
-			_vec.x = 0;
-		}
+	double length = _vec.getLength( );
+	length -= ACCEL / 2;
+	if ( length < 0 ) {
+		length = 0;
 	}
-	if ( _vec.y > 0 ) {
-		_vec.y -= ACCEL / 2;
-		if ( _vec.y < 0 ) {
-			_vec.y = 0;
-		}
-	}
-	if ( _vec.x < 0 ) {
-		_vec.x += ACCEL / 2;
-		if ( _vec.x > 0 ) {
-			_vec.x = 0;
-		}
-	}
-	if ( _vec.y < 0 ) {
-		_vec.y += ACCEL / 2;
-		if ( _vec.y > 0 ) {
-			_vec.y = 0;
-		}
-	}
+	_vec = _vec.normalize( ) * length;
 }
 
-void Ball::setAccel( Vector vec ) {
+void Ball::setAccel( const Vector& vec ) {
 	_vec = vec;
 }
 
