@@ -29,7 +29,7 @@ private:
 	void updateState( CameraPtr camera );
 	void attack( StagePtr stage, TimerPtr timer );
 	void moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left );
-	void moveRotetionBoth( );
+	void moveRotetionBoth( const Vector& camera_dir, Vector right, Vector left );
 	void moveRotetionSide( const Vector& camera_dir, Vector right, Vector left );
 	void checkLeftRight( CameraPtr camera );
 private:

@@ -81,6 +81,9 @@ void Roomba::move( StagePtr stage, CameraPtr camera ) {
 	case MOVE_STATE_ROTATION_SIDE:
 		moveRotetionSide( camera_dir, right_stick, left_stick );
 		break;
+	case MOVE_STATE_ROTATION_BOTH:
+		moveRotetionBoth( camera_dir, right_stick, left_stick );
+		break;
 	}
 }
 
@@ -147,8 +150,30 @@ void Roomba::moveTranslation( const Vector& camera_dir, const Vector& right, con
 	}
 }
 
-void Roomba::moveRotetionBoth( ) {
-
+void Roomba::moveRotetionBoth( const Vector& camera_dir, Vector right, Vector left ) {	
+	if ( fabs( right.x ) > 70 ) {
+		right.y = right.x;
+	}
+	if ( fabs( left.x ) > 70 ) {
+		left.y = left.x;
+	}
+	right.x = 0;
+	left.x = 0;
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
+	Vector roomba_dir = mat.multiply( _balls[ 0 ]->getPos( ) - _balls[ 1 ]->getPos( ) );
+	mat = Matrix::makeTransformRotation( roomba_dir.cross( Vector( 0, -1 ) ), roomba_dir.angle( Vector( 0, -1 ) ) );
+	for ( int i = 0; i < 2; i++ ) {
+		Vector dir = left;
+		if ( i == 1 ) {
+			dir = right;
+		}
+		dir = mat.multiply( dir );
+		if ( i == 1 ) {
+			dir *= -1;
+		}
+		Vector vec = dir.normalize( ) * ACCEL;
+		_balls[ i ]->setAccel( _balls[ i ]->getVec( ) + vec );
+	}
 }
 
 void Roomba::moveRotetionSide( const Vector& camera_dir, Vector right, Vector left ) {
