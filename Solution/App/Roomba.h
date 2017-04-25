@@ -12,8 +12,8 @@ class Roomba {
 public:
 	enum MOVE_STATE {
 		MOVE_STATE_TRANSLATION,
-		MOVE_STATE_ROTETION_SIDE,
-		MOVE_STATE_ROTETION_BOTH,
+		MOVE_STATE_ROTATION_SIDE,
+		MOVE_STATE_ROTATION_BOTH,
 		MAX_STATE,
 	};
 public:
@@ -28,6 +28,10 @@ private:
 	void move( StagePtr stage, CameraPtr camera );
 	void updateState( CameraPtr camera );
 	void attack( StagePtr stage, TimerPtr timer );
+	void moveTranslation( const Vector& inAxis, Vector right, Vector left );
+	void moveRotetionBoth( );
+	void moveRotetionSide( );
+	void checkLeftRight( CameraPtr camera );
 private:
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
