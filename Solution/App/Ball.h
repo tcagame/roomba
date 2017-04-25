@@ -13,29 +13,13 @@ public:
 public:
 	void update( StagePtr stage );
 	void draw( ) const;
+	void reset( Vector pos );
+	void setAccel( const Vector& vec );
+	void deceleration( const double accel );
 	Vector getPos( ) const;
 	Vector getVec( ) const;
-	void setAccel( const Vector& vec );
-	bool isAttacking( ) const;
-	void move( Vector camera_dir, Roomba::MOVE_STATE state, BallPtr target );
-	void reset( Vector pos );
-	void checkLeft( Vector camera_dir, Vector other_pos );
-private:
-	enum KEY {
-		KEY_UP,
-		KEY_DOWN,
-		KEY_LEFT,
-		KEY_RIGHT,
-		MAX_KEY
-	};
-private:
-	void moveRotetionBoth( BallPtr target, Vector device_dir );
-	void moveRotetionSide( BallPtr target, Vector device_dir );
-	void deceleration( );
 private:
 	Vector _pos;
 	Vector _vec;
-	bool _left;
-	bool _axis;
 };
 

@@ -11,13 +11,9 @@ public:
 	Stage( );
 	virtual ~Stage( );
 public:
-	struct Collision {
-		Vector adjust_vec;
-	};
-public:
 	void update( );
 	void draw( );
-	Collision getCollisionWall( Vector pos, Vector vec, const double radius );
+	Vector getCollisionWall( Vector pos, Vector vec, const double radius );
 	bool isFinished( ) const;
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 );
 	void reset( );

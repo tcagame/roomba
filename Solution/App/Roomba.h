@@ -11,6 +11,7 @@ PTR( Timer );
 class Roomba {
 public:
 	enum MOVE_STATE {
+		MOVE_STATE_NUTRAL,
 		MOVE_STATE_TRANSLATION,
 		MOVE_STATE_ROTATION_SIDE,
 		MOVE_STATE_ROTATION_BOTH,
@@ -25,7 +26,8 @@ public:
 	void reset( );
 	Vector getCentralPos( ) const;
 private:
-	void move( StagePtr stage, CameraPtr camera );
+	void move( CameraPtr camera );
+	void focus( );
 	void updateState( CameraPtr camera );
 	void attack( StagePtr stage, TimerPtr timer );
 	void moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left );

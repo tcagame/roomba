@@ -407,10 +407,9 @@ void Stage::loadWave( ) {
 	loadWall( );
 }
 
-Stage::Collision Stage::getCollisionWall( Vector pos, Vector vec, const double radius ) {
+Vector Stage::getCollisionWall( Vector pos, Vector vec, const double radius ) {
 	// ボールと壁の当たり判定
-	Collision result;
-	result.adjust_vec = vec;
+	Vector result = vec;
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
 	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
 	Vector f_pos = Vector( pos + vec + vec.normalize( ) * radius ) * ( 1.0 / WORLD_SCALE );
@@ -427,13 +426,12 @@ Stage::Collision Stage::getCollisionWall( Vector pos, Vector vec, const double r
 		switch ( _map_data[ idx ] ) {
 		case 0: break;
 		case 1://四角
-			result.adjust_vec = Vector( );
-			/*
-			if ( i == 4 || i == 5 ) {
-				result.adjust_vec.x = vec.x;
+			result = Vector( );			
+			/*if ( i == 4 || i == 5 ) {
+				result.x = vec.x;
 			}
 			if ( i == 6 || i == 7 ) {
-				result.adjust_vec.y = vec.y;
+				result.y = vec.y;
 			}*/
 			break;
 		case 2://半々円柱
@@ -445,7 +443,7 @@ Stage::Collision Stage::getCollisionWall( Vector pos, Vector vec, const double r
 			Vector check_pos( tmp_x + add_x, tmp_y + add_y );
 			if ( ( ( pos + vec ) - check_pos ).getLength( ) < WORLD_SCALE / 2 + radius ) {
 				// 移動しない
-				result.adjust_vec = Vector( );				
+				result = Vector( );				
 			}
 		}
 			break;
