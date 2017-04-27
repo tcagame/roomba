@@ -10,7 +10,7 @@
 static const int ON_NUTRAL_TIME = 3;
 static const double ACCEL = 0.18;
 static const double ATTACK_START_SPEED = 0.09;
-static const double CENTRIPETAL_POWER = 0.01;
+static const double CENTRIPETAL_POWER = 0.03;
 static const double CENTRIPETAL_MIN = 7;
 
 static const Vector START_POS[ 2 ] {
@@ -73,15 +73,11 @@ void Roomba::focus( int i ) {
 	Vector distance = pos1 - pos0;
 	Vector vec = distance - distance.normalize( ) * CENTRIPETAL_MIN;
 	if ( distance.getLength( ) < CENTRIPETAL_MIN ) {
-		Vector target_pos = pos1 - distance.normalize( ) * CENTRIPETAL_MIN;
-		_balls[ i ]->setAccel( target_pos - _balls[ i ]->getPos( ) );
+		_balls[ i ]->addForce( vec );
 		return;
 	}
 	vec *= CENTRIPETAL_POWER;
-	if ( _balls[ i ]->getVec( ).getLength( ) < 0.1 ) {
-		vec *= ( 0.2 / CENTRIPETAL_POWER );
-	}
-	_balls[ i ]->setAccel( _balls[ i ]->getVec( ) + vec );
+	_balls[ i ]->addForce( vec );
 }
 
 void Roomba::updateState( CameraPtr camera ) {
@@ -148,7 +144,7 @@ void Roomba::moveTranslation( int i, const Vector& camera_dir, const Vector& rig
 	}
 	dir = mat.multiply( dir );
 	Vector vec = dir.normalize( ) * ACCEL;
-	_balls[ i ]->setAccel( _balls[ i ]->getVec( ) + vec );
+	_balls[ i ]->addForce( vec );
 }
 
 void Roomba::moveRotetionBoth( int i, const Vector& camera_dir, Vector right, Vector left ) {	
@@ -165,13 +161,13 @@ void Roomba::moveRotetionBoth( int i, const Vector& camera_dir, Vector right, Ve
 	Vector ball1 = _balls[ 1 ]->getPos( ) + _balls[ 1 ]->getVec( );
 	Vector roomba_dir = mat.multiply( ball0 - ball1 );
 	mat = Matrix::makeTransformRotation( roomba_dir.cross( Vector( 0, -1 ) ), roomba_dir.angle( Vector( 0, -1 ) ) );
-	Vector dir = left;
+	Vector dir = left * -1;
 	if ( i == 1 ) {
-		dir = right;
+		dir = right * -1;
 	}
 	dir = mat.multiply( dir );
 	Vector vec = dir.normalize( ) * ACCEL;
-	_balls[ i ]->setAccel( _balls[ i ]->getVec( ) + vec );
+	_balls[ i ]->addForce( vec );
 }
 
 void Roomba::moveRotetionSide( int i, const Vector& camera_dir, Vector right, Vector left ) {
@@ -193,10 +189,10 @@ void Roomba::moveRotetionSide( int i, const Vector& camera_dir, Vector right, Ve
 	}
 	dir = mat.multiply( dir );
 	Vector vec = dir.normalize( ) * ACCEL;
-	_balls[ i ]->setAccel( _balls[ i ]->getVec( ) + vec );
+	_balls[ i ]->addForce( vec );
 	if ( dir.getLength( ) < 10 ) {
 		// Ž©g‚ªŽ²‚¾‚Á‚½‚ç‰Á‘¬“x‚ð‚O‚É‚·‚é
-		_balls[ i ]->setAccel( Vector( ) );
+		_balls[ i ]->addForce( _balls[ i ]->getVec( ) * -1 );
 	}
 	
 	

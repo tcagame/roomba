@@ -8,13 +8,13 @@ static const double BALL_RADIUS = WORLD_SCALE;
 
 class Ball {
 public:
-	Ball( Vector pos );
+	Ball( const Vector& pos );
 	virtual ~Ball( );
 public:
 	void update( StagePtr stage );
 	void draw( ) const;
-	void reset( Vector pos );
-	void setAccel( const Vector& vec );
+	void reset( const Vector& pos );
+	void addForce( const Vector& force );
 	void deceleration( const double accel );
 	Vector getPos( ) const;
 	Vector getVec( ) const;

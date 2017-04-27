@@ -3,9 +3,9 @@
 #include "Stage.h"
 #include "Device.h"
 
-static const double MAX_SPEED = 0.9;
+static const double MAX_SPEED = 1.1;
 
-Ball::Ball( Vector pos ) :
+Ball::Ball( const Vector& pos ) :
 _pos( pos ) {
 }
 
@@ -45,11 +45,11 @@ void Ball::deceleration( const double accel ) {
 	_vec = _vec.normalize( ) * length;
 }
 
-void Ball::setAccel( const Vector& vec ) {
-	_vec = vec;
+void Ball::addForce( const Vector& force ) {
+	_vec += force;
 }
 
-void Ball::reset( Vector pos ) {
+void Ball::reset( const Vector& pos ) {
 	_vec = Vector( );
 	_pos = pos;
 }
