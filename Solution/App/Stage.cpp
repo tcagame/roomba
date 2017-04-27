@@ -412,6 +412,12 @@ Vector Stage::getCollisionWall( Vector pos, Vector vec, const double radius ) {
 	Vector result = vec;
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
 	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
+	const Vector DIR[ 4 ] = {
+		Vector( -1, 1 ),  // ç∂è„
+		Vector( 1, 1 ),	  // âEè„
+		Vector( -1, -1 ), // ç∂â∫
+		Vector( 1, -1 )	  // âEâ∫
+	};
 	Vector f_pos = Vector( pos + vec + vec.normalize( ) * radius ) * ( 1.0 / WORLD_SCALE );
 	int x = (int)( pos.x + vec.x );
 	int y = (int)( pos.y + vec.y );
@@ -426,13 +432,12 @@ Vector Stage::getCollisionWall( Vector pos, Vector vec, const double radius ) {
 		switch ( _map_data[ idx ] ) {
 		case 0: break;
 		case 1://éläp
-			result = Vector( );			
-			/*if ( i == 4 || i == 5 ) {
-				result.x = vec.x;
+			if ( i == 4 || i == 5 ) {
+				result.x = vec.x * -1;
 			}
 			if ( i == 6 || i == 7 ) {
-				result.y = vec.y;
-			}*/
+				result.y = vec.y * -1;
+			}
 			break;
 		case 2://îºÅXâ~íå
 		{
@@ -441,10 +446,13 @@ Vector Stage::getCollisionWall( Vector pos, Vector vec, const double radius ) {
 			if ( tmp_x % 2 == 0 ) add_x = (int)( WORLD_SCALE / 2 );
 			if ( tmp_y % 2 == 0 ) add_y = (int)( WORLD_SCALE / 2 );
 			Vector check_pos( tmp_x + add_x, tmp_y + add_y );
-			if ( ( ( pos + vec ) - check_pos ).getLength( ) < WORLD_SCALE / 2 + radius ) {
+			Vector dir = ( check_pos - pos ).normalize( ) * vec.getLength( );
+			Matrix  mat = Matrix::makeTransformRotation( dir.cross( vec * -1 ), dir.angle( vec * -1 ) );
+			result = mat.multiply( dir );
+			/*if ( ( ( pos + vec ) - check_pos ).getLength( ) < WORLD_SCALE / 2 + radius ) {
 				// à⁄ìÆÇµÇ»Ç¢
 				result = Vector( );				
-			}
+			}*/
 		}
 			break;
 		case 3://Léö
