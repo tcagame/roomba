@@ -26,13 +26,13 @@ public:
 	void reset( );
 	Vector getCentralPos( ) const;
 private:
-	void move( int i, CameraPtr camera );
-	void focus( int i );
+	void move( CameraPtr camera );
+	void focus( );
 	void updateState( CameraPtr camera );
 	void attack( StagePtr stage, TimerPtr timer );
-	void moveTranslation( int i, const Vector& camera_dir, const Vector& right, const Vector& left );
-	void moveRotetionBoth( int i, const Vector& camera_dir, Vector right, Vector left );
-	void moveRotetionSide( int i, const Vector& camera_dir, Vector right, Vector left );
+	void moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left );
+	void moveRotetionBoth( const Vector& camera_dir, Vector right, Vector left );
+	void moveRotetionSide( const Vector& camera_dir, Vector right, Vector left );
 	void checkLeftRight( CameraPtr camera );
 private:
 	int _neutral;
