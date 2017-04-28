@@ -8,7 +8,7 @@
 
 const Vector START_CAMERA_POS = Vector( 0, -100, 75 );
 const Vector START_TARGET_POS = Vector( 0, 0, 0 );
-const double ROTE_SPEED = PI / 90;
+const double ROTE_SPEED = PI / 40;
 const int CAMERA_LENGTH = (int)( 100 * WORLD_SCALE );
 
 Camera::Camera( ) :
@@ -70,4 +70,12 @@ void Camera::reset( ) {
 	_pos = START_CAMERA_POS;
 	_target = START_TARGET_POS;
 	_dir = _target - _pos;
+}
+
+void Camera::rotation( Vector axis, double angle ) {
+	if ( angle > ROTE_SPEED ) {
+		angle = ROTE_SPEED;
+	}
+	Matrix mat = Matrix::makeTransformRotation( axis, angle );
+	_dir = mat.multiply( _dir );
 }
