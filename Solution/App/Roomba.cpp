@@ -118,7 +118,7 @@ void Roomba::updateState( CameraPtr camera ) {
 			state = _state;
 		}
 		_state = state;
-		checkLeftRight( camera );
+		//checkLeftRight( camera );
 	}
 }
 
