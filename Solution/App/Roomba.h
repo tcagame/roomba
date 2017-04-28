@@ -35,6 +35,11 @@ private:
 	void moveRotetionSide( const Vector& camera_dir, Vector right, Vector left );
 	void checkLeftRight( CameraPtr camera );
 private:
+	enum BALL {
+		BALL_LEFT,
+		BALL_RIGHT
+	};
+private:
 	int _neutral;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
