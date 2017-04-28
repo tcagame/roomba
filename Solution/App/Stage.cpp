@@ -413,15 +413,91 @@ Vector Stage::getCollisionWall( Vector pos, Vector vec, const double radius ) {
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
 	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
 	const Vector DIR[ 4 ] = {
-		Vector( -1, 1 ),  // ç∂è„
+		Vector( -1, 1 ),  // ç∂è„ 
 		Vector( 1, 1 ),	  // âEè„
 		Vector( -1, -1 ), // ç∂â∫
 		Vector( 1, -1 )	  // âEâ∫
 	};
-	Vector f_pos = Vector( pos + vec + vec.normalize( ) * radius ) * ( 1.0 / WORLD_SCALE );
-	int x = (int)( pos.x + vec.x );
-	int y = (int)( pos.y + vec.y );
 
+	double x = pos.x + vec.x;
+	double y = pos.y + vec.y;
+	for ( int i = 0; i < 2; i++ ) {
+		double rad = radius;
+		if ( i == 0 ) {
+			rad *= -1;
+		}
+		double fy = pos.y + vec.y + rad;
+		double fx = pos.x + vec.x + rad;
+		int idx_x = (int)fx + (int)y * STAGE_WIDTH_NUM * 2;
+		int idx_y = (int)x + (int)fy * STAGE_WIDTH_NUM * 2;
+		Vector dir = vec.normalize( ) * radius;
+		int tmp_x = (int)( pos.x + vec.x + dir.x );
+		int tmp_y = (int)( pos.y + vec.y + dir.y );
+		int idx = tmp_x + tmp_y * STAGE_WIDTH_NUM * 2;
+		if ( idx_x < 0 || idx_x >= STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 ) {
+				return Vector( );
+		}
+		if ( idx_y < 0 || idx_y >= STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 ) {
+				return Vector( );
+		}
+		if ( idx < 0 || idx >= STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 ) {
+				return Vector( );
+		}
+		switch ( _map_data[ idx_x ] ) {
+		case 1:
+			result.x = vec.x * -1;
+			break;
+		case 2:
+			{
+				int add_x = 0;
+				int add_y = 0;
+				if ( (int)fx % 2 == 0 ) add_x = (int)( WORLD_SCALE / 2 );
+				if ( (int)y % 2 == 0 ) add_y = (int)( WORLD_SCALE / 2 );
+				Vector check_pos( fx + add_x, y + add_y );
+				double length = ( check_pos - Vector( x, y ) ).getLength( );
+				if ( length < WORLD_SCALE / 2 + radius ) {
+					result.x = vec.x * -1;
+				}
+			}
+			break;
+		}
+		switch ( _map_data[ idx_y ] ) {
+		case 1:
+			result.y = vec.y * -1;
+			break;
+		case 2:
+			{
+				int add_x = 0;
+				int add_y = 0;
+				if ( (int)x % 2 == 0 ) add_x = (int)( WORLD_SCALE / 2 );
+				if ( (int)fy % 2 == 0 ) add_y = (int)( WORLD_SCALE / 2 );
+				Vector check_pos( x + add_x, fy + add_y );
+				double length = ( check_pos - Vector( x, y ) ).getLength( );
+				if ( length < WORLD_SCALE / 2 + radius ) {
+					result.y = vec.y * -1;
+				}
+			}
+			break;
+		}
+		switch ( _map_data[ idx ] ) {
+		case 1:
+			break;
+		case 2:
+			{
+				int add_x = 0;
+				int add_y = 0;
+				if ( tmp_x % 2 == 0 ) add_x = (int)( WORLD_SCALE / 2 );
+				if ( tmp_y % 2 == 0 ) add_y = (int)( WORLD_SCALE / 2 );
+				Vector check_pos( tmp_x + add_x, tmp_y + add_y );
+				double length = ( check_pos - Vector( x, y ) ).getLength( );
+				if ( length < WORLD_SCALE / 2 + radius ) {
+					result = vec * -1;
+				}
+			}
+			break;
+		}
+	}
+	/*ï€óØ
 	for ( int i = 0; i < 8; i++ ) {
 		int tmp_x = x + OFFSET_X[ i ];
 		int tmp_y = y + OFFSET_Y[ i ];
@@ -432,10 +508,12 @@ Vector Stage::getCollisionWall( Vector pos, Vector vec, const double radius ) {
 		switch ( _map_data[ idx ] ) {
 		case 0: break;
 		case 1://éläp
-			if ( i == 4 || i == 5 ) {
+			if ( ( DIR[ 0 ].cross( vec ).z > 0 && vec.angle( DIR[ 0 ] ) < PI / 2 ) ||
+				 ( DIR[ 3 ].cross( vec ).z > 0 && vec.angle( DIR[ 3 ] ) < PI / 2 ) ) {
 				result.x = vec.x * -1;
 			}
-			if ( i == 6 || i == 7 ) {
+			if ( ( DIR[ 1 ].cross( vec ).z > 0 && vec.angle( DIR[ 1 ] ) < PI / 2 ) ||
+				 ( DIR[ 2 ].cross( vec ).z > 0 && vec.angle( DIR[ 2 ] ) < PI / 2 ) ) {
 				result.y = vec.y * -1;
 			}
 			break;
@@ -449,16 +527,13 @@ Vector Stage::getCollisionWall( Vector pos, Vector vec, const double radius ) {
 			Vector dir = ( check_pos - pos ).normalize( ) * vec.getLength( );
 			Matrix  mat = Matrix::makeTransformRotation( dir.cross( vec * -1 ), dir.angle( vec * -1 ) );
 			result = mat.multiply( dir );
-			/*if ( ( ( pos + vec ) - check_pos ).getLength( ) < WORLD_SCALE / 2 + radius ) {
-				// à⁄ìÆÇµÇ»Ç¢
-				result = Vector( );				
-			}*/
 		}
 			break;
 		case 3://Léö
 			break;
 		}
 	}
+	*/
 	
 
 	return result;

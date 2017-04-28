@@ -4,7 +4,7 @@
 #include "define.h"
 
 PTR( Stage );
-static const double BALL_RADIUS = WORLD_SCALE;
+static const double BALL_RADIUS = WORLD_SCALE / 2;
 
 class Ball {
 public:
