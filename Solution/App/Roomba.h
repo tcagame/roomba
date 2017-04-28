@@ -36,6 +36,11 @@ private:
 	void checkLeftRight( CameraPtr camera );
 	void adjustCameraDir( CameraPtr camera );
 private:
+	enum BALL {
+		BALL_LEFT,
+		BALL_RIGHT
+	};
+private:
 	int _neutral;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;

@@ -20,8 +20,8 @@ static const Vector START_POS[ 2 ] {
 
 Roomba::Roomba( ) :
 _state( MOVE_STATE_TRANSLATION ) {
-	_balls[ 0 ] = BallPtr( new Ball( START_POS[ 0 ] ) );
-	_balls[ 1 ] = BallPtr( new Ball( START_POS[ 1 ] ) );
+	_balls[ BALL_LEFT ] = BallPtr( new Ball( START_POS[ 0 ] ) );
+	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS[ 1 ] ) );
 }
 
 
@@ -123,9 +123,9 @@ void Roomba::updateState( CameraPtr camera ) {
 }
 
 void Roomba::attack( StagePtr stage, TimerPtr timer ) {
-	if ( _balls[ 0 ]->getVec( ).getLength( ) > ATTACK_START_SPEED ||
-		 _balls[ 1 ]->getVec( ).getLength( ) > ATTACK_START_SPEED ) {
-		CrystalPtr crystal =  stage->getHittingCrystal( _balls[ 0 ]->getPos( ), _balls[ 1 ]->getPos( ) );
+	if ( _balls[ BALL_LEFT ]->getVec( ).getLength( ) > ATTACK_START_SPEED ||
+		 _balls[ BALL_RIGHT ]->getVec( ).getLength( ) > ATTACK_START_SPEED ) {
+		CrystalPtr crystal =  stage->getHittingCrystal( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
 		if ( crystal ) {
 			DrawerPtr drawer = Drawer::getTask( );
 			drawer->drawString( 0, 0, "Ç†ÇΩÇ¡ÇƒÇÈÇÊÅ[" );
@@ -137,15 +137,18 @@ void Roomba::attack( StagePtr stage, TimerPtr timer ) {
 
 void Roomba::moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left ) {
 	Matrix mat = Matrix::makeTransformRotation( camera_dir.cross( Vector( 0, -1 ) ), camera_dir.angle( Vector( 0, -1 ) ) );
-	Vector dir = left;
-	for ( int i = 0; i < 2; i++ ) {
-		if ( i == 1 ) {
-			dir = right;
-		}
-		dir = mat.multiply( dir );
-		Vector vec = dir.normalize( ) * ACCEL;
-		_balls[ i ]->addForce( vec );
-	}
+
+	Vector dir_left = left;
+	Vector dir_right = right;
+
+	dir_left = mat.multiply( dir_left );
+	dir_right = mat.multiply( dir_right );
+
+	Vector vec_left = dir_left.normalize( ) * ACCEL;
+	Vector vec_right = dir_right.normalize( ) * ACCEL;
+
+	_balls[ BALL_LEFT ]->addForce( vec_left );
+	_balls[ BALL_RIGHT ]->addForce( vec_right );
 }
 
 void Roomba::moveRotationBoth( const Vector& camera_dir, Vector right, Vector left ) {	
@@ -158,19 +161,22 @@ void Roomba::moveRotationBoth( const Vector& camera_dir, Vector right, Vector le
 	right.x = 0;
 	left.x = 0;
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
-	Vector ball0 = _balls[ 0 ]->getPos( ) + _balls[ 0 ]->getVec( );
-	Vector ball1 = _balls[ 1 ]->getPos( ) + _balls[ 1 ]->getVec( );
-	Vector roomba_dir = mat.multiply( ball0 - ball1 );
+	Vector ball_left = _balls[ BALL_LEFT ]->getPos( ) + _balls[ BALL_LEFT ]->getVec( );
+	Vector ball_right = _balls[ BALL_RIGHT ]->getPos( ) + _balls[ BALL_RIGHT ]->getVec( );
+	Vector roomba_dir = mat.multiply( ball_left - ball_right );
 	mat = Matrix::makeTransformRotation( roomba_dir.cross( Vector( 0, -1 ) ), roomba_dir.angle( Vector( 0, -1 ) ) );
-	Vector dir = left * -1;
-	for ( int i = 0; i < 2; i++ ) {
-		if ( i == 1 ) {
-			dir = right * -1;
-		}
-		dir = mat.multiply( dir );
-		Vector vec = dir.normalize( ) * ACCEL;
-		_balls[ i ]->addForce( vec );
-	}
+
+	Vector dir_left = left * -1;
+	Vector dir_right = right * -1;
+
+	dir_left = mat.multiply( dir_left );
+	dir_right = mat.multiply( dir_right );
+
+	Vector vec_left = dir_left.normalize( ) * ACCEL;
+	Vector vec_right = dir_right.normalize( ) * ACCEL;
+
+	_balls[ BALL_LEFT ]->addForce( vec_left );
+	_balls[ BALL_RIGHT ]->addForce( vec_right );
 }
 
 void Roomba::moveRotationSide( CameraPtr camera, const Vector& camera_dir, Vector right, Vector left ) {
@@ -183,21 +189,26 @@ void Roomba::moveRotationSide( CameraPtr camera, const Vector& camera_dir, Vecto
 	right.x = 0;
 	left.x = 0;
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
-	Vector roomba_dir = mat.multiply( _balls[ 0 ]->getPos( ) - _balls[ 1 ]->getPos( ) );
+	Vector roomba_dir = mat.multiply( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) );
 	mat = Matrix::makeTransformRotation( roomba_dir.cross( Vector( 0, -1 ) ), roomba_dir.angle( Vector( 0, -1 ) ) );
 	
-	Vector dir = left * -1;
-	for ( int i = 0; i < 2; i++ ) {
-		if ( i == 1 ) {
-			dir = right * -1;
-		}
-		dir = mat.multiply( dir );
-		Vector vec = dir.normalize( ) * ACCEL;
-		_balls[ i ]->addForce( vec );
+	Vector dir_left = left * -1;
+	Vector dir_right = right * -1;
 
-		if( dir.getLength( ) < 10 ) {
-			_balls[ i ]->addForce( _balls[ i ]->getVec( ) * -1 );
-		}
+	dir_left = mat.multiply( dir_left );
+	dir_right = mat.multiply( dir_right );
+
+	Vector vec_left = dir_left.normalize( ) * ACCEL;
+	Vector vec_right = dir_right.normalize( ) * ACCEL;
+
+	_balls[ BALL_LEFT ]->addForce( vec_left );
+	_balls[ BALL_RIGHT ]->addForce( vec_right );
+
+	if ( dir_left.getLength2( ) < 100 ) {
+		_balls[ BALL_LEFT ]->addForce( _balls[ BALL_LEFT ]->getVec( ) * -1 );
+	}
+	if ( dir_right.getLength2( ) < 100 ) {
+		_balls[ BALL_RIGHT ]->addForce( _balls[ BALL_RIGHT ]->getVec( ) * -1 );
 	}
 	
 }
@@ -208,9 +219,9 @@ void Roomba::draw( ) const {
 		_balls[ i ]->draw( );
 	}
 
-	if ( _balls[ 0 ]->getVec( ).getLength( ) > ATTACK_START_SPEED ||
-		 _balls[ 1 ]->getVec( ).getLength( ) > ATTACK_START_SPEED ) {
-		drawer->drawLine( _balls[ 0 ]->getPos( ), _balls[ 1 ]->getPos( ) );
+	if ( _balls[ BALL_LEFT ]->getVec( ).getLength( ) > ATTACK_START_SPEED ||
+		 _balls[ BALL_RIGHT ]->getVec( ).getLength( ) > ATTACK_START_SPEED ) {
+		drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
 	}
 }
 
@@ -225,18 +236,18 @@ Vector Roomba::getCentralPos( ) const {
 }
 
 void Roomba::reset( ) {
-	_balls[ 0 ]->reset( START_POS[ 0 ] );
-	_balls[ 1 ]->reset( START_POS[ 1 ] );
+	_balls[ BALL_LEFT ]->reset( START_POS[ 0 ] );
+	_balls[ BALL_RIGHT ]->reset( START_POS[ 1 ] );
 }
 
 void Roomba::checkLeftRight( CameraPtr camera ) {	
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
-	Vector vec = mat.multiply( _balls[ 0 ]->getPos( ) - _balls[ 1 ]->getPos( ) );
+	Vector vec = mat.multiply( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) );
 	double dot = camera->getDir( ).dot( vec );
 	if ( dot > 0 ) {
-		BallPtr tmp = _balls[ 0 ];
-		_balls[ 0 ] = _balls[ 1 ];
-		_balls[ 1 ] = tmp;
+		BallPtr tmp = _balls[ BALL_LEFT ];
+		_balls[ BALL_LEFT ] = _balls[ BALL_RIGHT ];
+		_balls[ BALL_RIGHT ] = tmp;
 	}
 }
 
