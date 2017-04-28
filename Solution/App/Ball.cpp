@@ -3,7 +3,7 @@
 #include "Stage.h"
 #include "Device.h"
 
-static const double MAX_SPEED = 1.1;
+static const double MAX_SPEED = 0.7;
 
 Ball::Ball( const Vector& pos ) :
 _pos( pos ) {

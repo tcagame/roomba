@@ -31,9 +31,10 @@ private:
 	void updateState( CameraPtr camera );
 	void attack( StagePtr stage, TimerPtr timer );
 	void moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left );
-	void moveRotetionBoth( const Vector& camera_dir, Vector right, Vector left );
-	void moveRotetionSide( const Vector& camera_dir, Vector right, Vector left );
+	void moveRotationBoth( const Vector& camera_dir, Vector right, Vector left );
+	void moveRotationSide( CameraPtr camera, const Vector& camera_dir, Vector right, Vector left );
 	void checkLeftRight( CameraPtr camera );
+	void adjustCameraDir( CameraPtr camera );
 private:
 	int _neutral;
 	MOVE_STATE _state;
