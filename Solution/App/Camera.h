@@ -15,7 +15,6 @@ public:
 	void update( RoombaPtr Roomba );
 	void move( );
 	void reset( );
-	void rotation( Vector axis, double angle );
 	Vector getDir( ) const;
 protected:
 	Vector _pos;

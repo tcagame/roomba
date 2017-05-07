@@ -71,11 +71,3 @@ void Camera::reset( ) {
 	_target = START_TARGET_POS;
 	_dir = _target - _pos;
 }
-
-void Camera::rotation( Vector axis, double angle ) {
-	if ( angle > ROTE_SPEED ) {
-		angle = ROTE_SPEED;
-	}
-	Matrix mat = Matrix::makeTransformRotation( axis, angle );
-	_dir = mat.multiply( _dir );
-}

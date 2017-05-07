@@ -39,7 +39,6 @@ void Roomba::update( StagePtr stage, CameraPtr camera, TimerPtr timer ) {
 
 	//UŒ‚
 	attack( stage, timer );
-	adjustCameraDir( camera );
 }
 
 void Roomba::move( CameraPtr camera ) {	
@@ -53,9 +52,6 @@ void Roomba::move( CameraPtr camera ) {
 		break;
 	case MOVE_STATE_TRANSLATION:
 		moveTranslation( camera_dir, right_stick, left_stick );
-		break;
-	case MOVE_STATE_ROTATION_SIDE:
-		moveRotationSide( camera, camera_dir, right_stick, left_stick );
 		break;
 	case MOVE_STATE_ROTATION_BOTH:
 		moveRotationBoth( camera_dir, right_stick, left_stick );
@@ -248,23 +244,5 @@ void Roomba::checkLeftRight( CameraPtr camera ) {
 		BallPtr tmp = _balls[ BALL_LEFT ];
 		_balls[ BALL_LEFT ] = _balls[ BALL_RIGHT ];
 		_balls[ BALL_RIGHT ] = tmp;
-	}
-}
-
-void Roomba::adjustCameraDir( CameraPtr camera ) {
-	if ( _state == MOVE_STATE_NEUTRAL || 
-		 _state == MOVE_STATE_ROTATION_SIDE || 
-		 _state == MOVE_STATE_TRANSLATION ) {
-		Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, -1 ), PI / 2 );
-		Vector roomba_dir = mat.multiply( _balls[ 0 ]->getPos( ) - _balls[ 1 ]->getPos( ) );
-		Vector camera_dir = camera->getDir( );
-		camera_dir.z = 0;
-		camera_dir = camera_dir.normalize( );
-		roomba_dir = roomba_dir.normalize( );
-		Vector axis = roomba_dir.cross( camera_dir );
-		double angle = roomba_dir.angle( camera_dir );
-		if ( angle > 0.01 ) {
-			camera->rotation( axis, angle );
-		}
 	}
 }
