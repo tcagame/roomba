@@ -31,11 +31,20 @@ void Timer::draw( ) const {
 	const int u[ ] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	int picth = 0;
 	int time = _timer / FPS;
-
+	{
+		Drawer::Sprite sprite( Drawer::Transform( x, y, u[ ( _timer % FPS ) / 6 ] * TW, 0, TW, TH, x + TW, y + TH ), GRAPH_TIMER_NUM );
+		drawer->setSprite( sprite );
+	}
+	{
+		picth += TW / 2;
+		Drawer::Sprite sprite( Drawer::Transform( x - picth, y, 10 * TW, 0, TW / 2, TH, x - picth + TW / 2, y + TH ), GRAPH_TIMER_NUM );
+		drawer->setSprite( sprite );
+		picth += TW;
+	}
 	while ( time > 0 ) {
 		Drawer::Sprite sprite( Drawer::Transform( x - picth, y, u[ time % 10 ] * TW, 0, TW, TH, x - picth + TW, y + TH ), GRAPH_TIMER_NUM );
 		drawer->setSprite( sprite );
-		picth += 50;
+		picth += TW;
 		time /= 10;
 		
 		if ( time == 0 ) {
