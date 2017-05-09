@@ -13,7 +13,6 @@ public:
 	enum MOVE_STATE {
 		MOVE_STATE_NEUTRAL,
 		MOVE_STATE_TRANSLATION,
-		MOVE_STATE_ROTATION_SIDE,
 		MOVE_STATE_ROTATION_BOTH,
 		MAX_STATE,
 	};
@@ -27,14 +26,11 @@ public:
 	Vector getCentralPos( ) const;
 private:
 	void move( CameraPtr camera );
-	void focus( );
 	void updateState( CameraPtr camera );
 	void attack( StagePtr stage, TimerPtr timer );
 	void moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left );
 	void moveRotationBoth( const Vector& camera_dir, Vector right, Vector left );
-	void moveRotationSide( CameraPtr camera, const Vector& camera_dir, Vector right, Vector left );
 	void checkLeftRight( CameraPtr camera );
-	void adjustCameraDir( CameraPtr camera );
 private:
 	enum BALL {
 		BALL_LEFT,
