@@ -17,6 +17,7 @@ public:
 	bool isFinished( ) const;
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 );
 	void reset( );
+	void drawMapLine( );
 private:
 	static const int STAGE_WIDTH_NUM = 40;
 	static const int STAGE_HEIGHT_NUM = 35;

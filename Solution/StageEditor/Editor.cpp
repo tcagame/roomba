@@ -79,4 +79,5 @@ void Editor::update( ) {
 	_stage->update( );
 	_camera->update( );
 	_stage->draw( );
+	_stage->drawMapLine( );
 }

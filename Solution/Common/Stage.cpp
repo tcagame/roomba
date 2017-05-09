@@ -684,3 +684,18 @@ void Stage::reset( ) {
 	loadWave( );
 }
 
+void Stage::drawMapLine( ) {
+	DrawerPtr drawer = Drawer::getTask( );
+	for ( int i = 0; i <= STAGE_WIDTH_NUM; i++ ) {
+		double x = MODEL_SIZE / WORLD_SCALE * (double)i;
+		Vector pos0( x, 0 );
+		Vector pos1( x, MODEL_SIZE / WORLD_SCALE * STAGE_HEIGHT_NUM );
+		drawer->drawLine( pos0, pos1 );
+	}
+	for ( int i = 0; i <= STAGE_HEIGHT_NUM; i++ ) {
+		double y = MODEL_SIZE / WORLD_SCALE * (double)i;
+		Vector pos0( 0, y );
+		Vector pos1( MODEL_SIZE / WORLD_SCALE * STAGE_WIDTH_NUM, y );
+		drawer->drawLine( pos0, pos1 );
+	}
+}
