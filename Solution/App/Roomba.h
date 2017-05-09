@@ -5,7 +5,7 @@
 
 PTR( Ball );
 PTR( Stage );
-PTR( Camera );
+PTR( AppCamera );
 PTR( Timer );
 
 class Roomba {
@@ -20,17 +20,17 @@ public:
 	Roomba( );
 	virtual ~Roomba( );
 public:
-	void update( StagePtr stage, CameraPtr camera, TimerPtr timer );
+	void update( StagePtr stage, AppCameraPtr camera, TimerPtr timer );
 	void draw( ) const;
 	void reset( );
 	Vector getCentralPos( ) const;
 private:
-	void move( CameraPtr camera );
-	void updateState( CameraPtr camera );
+	void move( AppCameraPtr camera );
+	void updateState( AppCameraPtr camera );
 	void attack( StagePtr stage, TimerPtr timer );
 	void moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left );
 	void moveRotationBoth( const Vector& camera_dir, Vector right, Vector left );
-	void checkLeftRight( CameraPtr camera );
+	void checkLeftRight( AppCameraPtr camera );
 private:
 	enum BALL {
 		BALL_LEFT,

@@ -2,7 +2,7 @@
 #include <string>
 
 PTR( Game );
-PTR( Camera );
+PTR( AppCamera );
 PTR( Roomba );
 PTR( Stage );
 PTR( Timer );
@@ -27,7 +27,7 @@ private:
 private:
 	void drawResult( );
 private:
-	CameraPtr _camera;
+	AppCameraPtr _camera;
 	RoombaPtr _roomba;
 	StagePtr _stage;
 	TimerPtr _timer;

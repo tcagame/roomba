@@ -2,7 +2,7 @@
 #include "define.h"
 #include "Stage.h"
 #include "Ball.h"
-#include "Camera.h"
+#include "AppCamera.h"
 #include "Crystal.h"
 #include "Timer.h"
 #include "Device.h"
@@ -28,7 +28,7 @@ _state( MOVE_STATE_TRANSLATION ) {
 Roomba::~Roomba( ) {
 }
 
-void Roomba::update( StagePtr stage, CameraPtr camera, TimerPtr timer ) {
+void Roomba::update( StagePtr stage, AppCameraPtr camera, TimerPtr timer ) {
 	updateState( camera );
 	move( camera );
 	for ( int i = 0; i < 2; i++ ) {
@@ -40,7 +40,7 @@ void Roomba::update( StagePtr stage, CameraPtr camera, TimerPtr timer ) {
 	attack( stage, timer );
 }
 
-void Roomba::move( CameraPtr camera ) {	
+void Roomba::move( AppCameraPtr camera ) {	
 	Vector camera_dir = camera->getDir( );
 	camera_dir.z = 0;
 	DevicePtr device = Device::getTask( );
@@ -58,7 +58,7 @@ void Roomba::move( CameraPtr camera ) {
 	}
 }
 
-void Roomba::updateState( CameraPtr camera ) {
+void Roomba::updateState( AppCameraPtr camera ) {
 	DevicePtr device = Device::getTask( );
 	Vector right_stick( device->getRightDirX( ), device->getRightDirY( ) );
 	Vector left_stick( device->getDirX( ), device->getDirY( ) );
@@ -175,7 +175,7 @@ void Roomba::reset( ) {
 	_balls[ BALL_RIGHT ]->reset( START_POS[ 1 ] );
 }
 
-void Roomba::checkLeftRight( CameraPtr camera ) {	
+void Roomba::checkLeftRight( AppCameraPtr camera ) {	
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
 	Vector vec = mat.multiply( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) );
 	double dot = camera->getDir( ).dot( vec );

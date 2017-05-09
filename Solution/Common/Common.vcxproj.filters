@@ -1,6 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="test.cpp" />
+    <ClInclude Include="Stage.h" />
+    <ClInclude Include="define.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Crystal.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Stage.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Crystal.cpp" />
   </ItemGroup>
 </Project>
