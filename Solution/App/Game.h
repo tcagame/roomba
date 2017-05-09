@@ -1,11 +1,14 @@
 #include "Task.h"
+#include "Scene.h"
 #include <string>
+#include <list>
 
 PTR( Game );
 PTR( AppCamera );
 PTR( Roomba );
 PTR( Stage );
 PTR( Timer );
+PTR( Scene );
 
 class Game : public Task {
 public:
@@ -26,11 +29,14 @@ private:
 	};
 private:
 	void drawResult( );
+	void changeScene( );
 private:
+	ScenePtr _scene;
 	AppCameraPtr _camera;
 	RoombaPtr _roomba;
 	StagePtr _stage;
 	TimerPtr _timer;
 	STATE _state;
 	char _select;
+	Scene::NEXT _next;
 };

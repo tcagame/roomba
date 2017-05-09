@@ -1,5 +1,7 @@
 #include "Game.h"
 #include "Application.h"
+#include "Scene.h"
+#include "SceneTitle.h"
 #include "Drawer.h"
 #include "AppCamera.h"
 #include "Roomba.h"
@@ -17,7 +19,8 @@ GamePtr Game::getTask( ) {
 
 Game::Game( ) :
 	_state( STATE_NORMAL ),
-	_select( 0 ) {
+	_select( 0 ),
+	_next( Scene::NEXT_TITLE ) {
 	
 }
 
@@ -82,6 +85,9 @@ void Game::initialize( ) {
 }
 
 void Game::update( ) {
+	//_next = _scene->update( );
+	changeScene( );
+
 	if ( _state == STATE_NORMAL ) {
 		_roomba->update( _stage, _camera, _timer );
 		_stage->update( );
@@ -136,3 +142,12 @@ void Game::drawResult( ) {
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( width / 2 - 128, select_y, 384, 0, 64, 64 ), GRAPH_SELECT_MENU ) );
 	}
 }
+
+void Game::changeScene( ) {
+	switch ( _next ) {
+	case Scene::NEXT_TITLE:
+		_scene = ScenePtr( new SceneTitle );
+		break;
+	}
+}
+
