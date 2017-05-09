@@ -164,6 +164,11 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Roomba.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneResult.cpp" />
+    <ClCompile Include="SceneSelect.cpp" />
+    <ClCompile Include="SceneStage.cpp" />
+    <ClCompile Include="SceneTitle.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
@@ -174,6 +179,11 @@
     <ClInclude Include="define.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Roomba.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneResult.h" />
+    <ClInclude Include="SceneSelect.h" />
+    <ClInclude Include="SceneStage.h" />
+    <ClInclude Include="SceneTitle.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
