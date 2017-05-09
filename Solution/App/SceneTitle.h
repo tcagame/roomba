@@ -1,0 +1,8 @@
+#pragma once
+#include "Scene.h"
+class SceneTitle :	public Scene {//ƒ^ƒCƒgƒ‹
+public:
+	SceneTitle( );
+	virtual ~SceneTitle( );
+};
+
