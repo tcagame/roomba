@@ -103,10 +103,13 @@ void Editor::updateStage( ) {
 	}
 
 	KeyboardPtr keyboard = Keyboard::getTask( );
+	DrawerPtr drawer = Drawer::getTask( );
 	if ( keyboard->isPushKey( "F1" ) ) {
+		drawer->drawString( 0, 20, "ロード" );
 		_stage->load( );
 	}
 	if ( keyboard->isPushKey( "F2" ) ) {
+		drawer->drawString( 0, 20, "セーブ" );
 		_stage->save( );
 	}
 	if ( keyboard->isPushKey( "NUM0" ) ) {
