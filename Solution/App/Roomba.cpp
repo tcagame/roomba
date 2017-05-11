@@ -12,8 +12,8 @@ static const double ACCEL = 0.18;
 static const double ATTACK_START_SPEED = 0.09;
 static const double CENTRIPETAL_POWER = 0.03;
 static const double CENTRIPETAL_MIN = 7;
-static const double MAX_SCALE = 20;
-static const double MIN_SCALE = 7;
+static const double MAX_SCALE = 25;
+static const double MIN_SCALE = 8;
 
 static const Vector START_POS[ 2 ] {
 	Vector( 15, 15 ) * WORLD_SCALE,
@@ -34,7 +34,7 @@ void Roomba::update( StagePtr stage, AppCameraPtr camera, TimerPtr timer ) {
 	updateState( camera );
 	move( camera );
 	for ( int i = 0; i < 2; i++ ) {
-		_balls[ i ]->deceleration( ACCEL );
+		//_balls[ i ]->deceleration( ACCEL );
 		_balls[ i ]->update( stage );
 	}
 
@@ -50,6 +50,9 @@ void Roomba::move( AppCameraPtr camera ) {
 	Vector left_stick( device->getDirX( ), device->getDirY( ) );
 	switch ( _state ) {
 	case MOVE_STATE_NEUTRAL:
+		for ( int i = 0; i < 2; i++ ) {
+			_balls[ i ]->deceleration( ACCEL );
+		}
 		break;
 	case MOVE_STATE_TRANSLATION:
 		moveTranslation( camera_dir, right_stick, left_stick );
@@ -114,14 +117,14 @@ void Roomba::moveTranslation( const Vector& camera_dir, const Vector& right, con
 	Vector scale_left = Vector( );
 	Vector scale_right = Vector( );
 
-	if ( fabs( left.x ) > fabs( left.y ) ) {
+	if ( fabs( vec_left.x ) > fabs( vec_left.y ) ) {
 		scale_left.y = vec_left.y;
 		vec_left.y = 0;
 	} else {
 		scale_left.x = vec_left.x;
 		vec_left.x = 0;
 	}
-	if ( fabs( right.x ) > fabs( right.y ) ) {
+	if ( fabs( vec_right.x ) > fabs( vec_right.y ) ) {
 		scale_right.y = vec_right.y;
 		vec_right.y = 0;
 	} else {
@@ -135,18 +138,25 @@ void Roomba::moveTranslation( const Vector& camera_dir, const Vector& right, con
 }
 
 void Roomba::moveScale( Vector scale_left, Vector scale_right ) {
+	DrawerPtr drawer = Drawer::getTask( );
 	Vector vec_left = scale_left;
 	Vector vec_right = scale_right;
 	Vector scale = _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( );
-/*
+
 	if ( ( vec_left + vec_right + scale ).getLength( ) > MAX_SCALE ) { 
-		vec_left = Vector( );
-		vec_right = Vector( );
+		drawer->drawString( 10, 10, "‚È‚ª‚¢‚æ`" );
+		Vector left_dir = _balls[ BALL_RIGHT ]->getPos( ) - _balls[ BALL_LEFT ]->getPos( );
+		Vector right_dir = _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( );
+		vec_left = left_dir.normalize( );
+		vec_right = right_dir.normalize( );
 	}
 	if ( ( vec_left + vec_right + scale ).getLength( ) < MIN_SCALE ) { 
-		vec_left = Vector( );
-		vec_right = Vector( );
-	}*/
+		drawer->drawString( 10, 20, "‚Ý‚¶‚©‚¢‚æ`" );
+		Vector left_dir = _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( );
+		Vector right_dir = _balls[ BALL_RIGHT ]->getPos( ) - _balls[ BALL_LEFT ]->getPos( );
+		vec_left = left_dir.normalize( ) * ( ( vec_left + vec_right + scale ).getLength( ) * 0.5 );
+		vec_right = right_dir.normalize( ) * ( ( vec_left + vec_right + scale ).getLength( ) * 0.5 );
+	}
 
 	_balls[ BALL_LEFT  ]->addForce( vec_left );
 	_balls[ BALL_RIGHT ]->addForce( vec_right );
