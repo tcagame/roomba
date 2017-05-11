@@ -45,6 +45,6 @@ Vector Camera::getPos( ) {
 	return _pos;
 }
 
-Vector Camera::getTarget( ) {
+Vector Camera::getTarget( ) const {
 	return _target;
 }

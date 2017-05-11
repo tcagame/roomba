@@ -5,6 +5,7 @@
 
 PTR( Crystal );
 PTR( Timer );
+PTR( Camera );
 
 class Stage {
 public:
@@ -18,30 +19,42 @@ public:
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 );
 	void reset( );
 	void drawMapLine( );
+	void load( );
+	void save( ) const;
+	void setPhase( int phase );
+	void drawEditor( ) const;
+	void editWall( CameraPtr camera );
+	void editCrystal( CameraPtr camera );
 private:
 	static const int STAGE_WIDTH_NUM = 40;
 	static const int STAGE_HEIGHT_NUM = 35;
-	static const int MAX_WAVE = 10;
+	static const int MAX_PHASE = 10;
 	static const int MAX_STAGE = 4;
+private:
+	struct DATA {
+		std::array< char, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > wall;
+		std::array< std::array< char, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_PHASE > crystal;
+		std::array< std::array< char, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_PHASE > station;
+	};
 private:
 	void updateCrystal( );
 	void drawCrystal( ) const;
 	void drawEarth( ) const;
 	void drawWall( ) const;
 	void drawBackground( ) const;
-	void loadCrystalData( );
+	void loadCrystal( );
 	void loadEarth( );
 	void loadWall( );
-	void loadWave( );
+	void loadPhase( );
 	void drawCollisionLine( ) const;
+	Vector convertCursorToStage( Vector cursor, CameraPtr camera );
 private:
 	std::list< CrystalPtr > _crystals;
-	std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _stage_data;
-	std::array< std::array< int, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_WAVE > _waves;
-	int _wave;
+	int _phase;
 	bool _finished;
-	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _earth;
 	std::vector< Drawer::ModelMDL > _walls;
+	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _earth;
 	std::array< char, STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 > _map_data;
+	DATA _data;
 };
 

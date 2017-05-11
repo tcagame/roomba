@@ -4,6 +4,7 @@
 #include "Drawer.h"
 #include "define.h"
 #include "Stage.h"
+#include "Keyboard.h"
 
 static const double STAGE_MODEL_SIZE = 4;
 
@@ -76,8 +77,58 @@ void Editor::initialize( ) {
 }
 
 void Editor::update( ) {
-	_stage->update( );
 	_camera->update( );
+	updateStage( );
+	updateMode( );
+}
+
+void Editor::updateStage( ) {
 	_stage->draw( );
+	_stage->drawEditor( );
 	_stage->drawMapLine( );
+
+	switch ( _mode ) {
+	case MODE_WALL:
+		_stage->editWall( _camera );
+		break;
+	case MODE_CRYSTAL:
+		_stage->editCrystal( _camera );
+		break;
+	}
+
+	KeyboardPtr keyboard = Keyboard::getTask( );
+	if ( keyboard->isPushKey( "F1" ) ) {
+		_stage->load( );
+	}
+	if ( keyboard->isPushKey( "F2" ) ) {
+		_stage->save( );
+	}
+	if ( keyboard->isPushKey( "NUM0" ) ) {
+		_stage->setPhase( 0 );
+	}
+	if ( keyboard->isPushKey( "NUM1" ) ) {
+		_stage->setPhase( 1 );
+	}
+	if ( keyboard->isPushKey( "NUM2" ) ) {
+		_stage->setPhase( 2 );
+	}
+	if ( keyboard->isPushKey( "NUM3" ) ) {
+		_stage->setPhase( 3 );
+	}
+	if ( keyboard->isPushKey( "NUM4" ) ) {
+		_stage->setPhase( 4 );
+	}
+}
+
+void Editor::updateMode( ) {
+	KeyboardPtr keyboard = Keyboard::getTask( );
+	if ( keyboard->isPushKey( "0" ) ) {
+		_mode = MODE_WALL;
+	}
+	if ( keyboard->isPushKey( "1" ) ) {
+		_mode = MODE_CRYSTAL;
+	}
+	if ( keyboard->isPushKey( "2" ) ) {
+		_mode = MODE_STATION;
+	}
 }
