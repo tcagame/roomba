@@ -324,6 +324,7 @@ void Stage::draw( ) {
 	drawWall( );
 	//drawCollisionLine( );
 	drawCrystal( );
+	drawStation( );
 }
 
 void Stage::drawBackground( ) const {
@@ -358,6 +359,19 @@ void Stage::drawCrystal( ) const {
 		ite++;
 	}
 }
+
+void Stage::drawStation( ) const {
+    DrawerPtr drawer = Drawer::getTask( );
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		if ( _data.station[ _phase ][ i ] == 1 ) {
+			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
+			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
+			Drawer::ModelMDL model( Vector( x, y, 0 ), MDL_STATION );
+			drawer->setModelMDL( model );
+		}
+	}
+}
+
 
 void Stage::loadCrystal( ) {
 	_crystals.clear( );

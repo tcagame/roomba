@@ -40,6 +40,7 @@ private:
 private:
 	void updateCrystal( );
 	void drawCrystal( ) const;
+	void drawStation( ) const;
 	void drawEarth( ) const;
 	void drawWall( ) const;
 	void drawBackground( ) const;
