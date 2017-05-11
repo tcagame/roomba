@@ -3,10 +3,14 @@
 #include "Crystal.h"
 #include "define.h"
 #include <array>
+#include "Application.h"
+#include "Binary.h"
+#include "Mouse.h"
+#include "Camera.h"
 
 static const double MODEL_SIZE = 4;
 
-const std::array< int, 35 * 40 > stage_1 = {
+const std::array< char, 35 * 40 > stage_1 = {
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -44,7 +48,7 @@ const std::array< int, 35 * 40 > stage_1 = {
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 };
 
-const std::array< int, 35 * 40 > stage_2 = {
+const std::array< char, 35 * 40 > stage_2 = {
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -82,7 +86,7 @@ const std::array< int, 35 * 40 > stage_2 = {
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 };
 
-const std::array< int, 35 * 40 > stage_3 = {
+const std::array< char, 35 * 40 > stage_3 = {
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -120,7 +124,7 @@ const std::array< int, 35 * 40 > stage_3 = {
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 };
 
-const std::array< int, 35 * 40 > stage_test = {
+const std::array< char, 35 * 40 > stage_test = {
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -160,11 +164,11 @@ const std::array< int, 35 * 40 > stage_test = {
 
 
 Stage::Stage( ) :
-_wave( -1 ),
+_phase( -1 ),
 _finished( false ) {
-	_stage_data = stage_test;
-	//クリスタル																											    
-	_waves[ 0 ] = {																											 
+	_data.wall = stage_test;
+	//クリスタル
+	_data.crystal[ 0 ] = {																											 
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
@@ -202,7 +206,7 @@ _finished( false ) {
 
 
 	};
-	_waves[ 1 ] = {																											 
+	_data.crystal[ 1 ] = {																											 
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -240,7 +244,7 @@ _finished( false ) {
 
 
 	};
-	_waves[ 2 ] = {																											 
+	_data.crystal[ 2 ] = {																											 
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
@@ -279,7 +283,8 @@ _finished( false ) {
 
 	};
 	loadEarth( );
-	loadWave( );
+	loadWall( );
+	loadPhase( );
 }
 
 Stage::~Stage( ) {
@@ -291,7 +296,7 @@ void Stage::update( ) {
 
 void Stage::updateCrystal( ) {
 	if ( _crystals.size( ) == 0 ) {
-		loadWave( );
+		loadPhase( );
 	}
 	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
 	while ( ite != _crystals.end( ) ) {
@@ -349,12 +354,12 @@ void Stage::drawCrystal( ) const {
 	}
 }
 
-void Stage::loadCrystalData( ) {
+void Stage::loadCrystal( ) {
 	_crystals.clear( );
 	
 
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( _waves[ _wave ][ i ] == 1 ) {
+		if ( _data.crystal[ _phase ][ i ] == 1 ) {
 			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, -WORLD_SCALE );
 			_crystals.push_back( CrystalPtr( new Crystal( pos ) ) );
 		}
@@ -362,7 +367,7 @@ void Stage::loadCrystalData( ) {
 }
 
 void Stage::drawCollisionLine( ) const {
-	if ( _wave >= MAX_WAVE ) {
+	if ( _phase >= MAX_PHASE ) {
 		return;	
 	}
     DrawerPtr drawer = Drawer::getTask( );
@@ -375,7 +380,7 @@ void Stage::drawCollisionLine( ) const {
 	}
 
     for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-        if ( _stage_data[ i ] == 1 ) {
+        if ( _data.wall[ i ] == 1 ) {
             Vector vec1 = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE, 0.1 );
             Vector vec2 = vec1 + Vector( WORLD_SCALE, 0, 0 );
             Vector vec3 = vec1 + Vector( 0, WORLD_SCALE, 0 );
@@ -410,7 +415,6 @@ void Stage::loadEarth( ) {
 		int x = i % STAGE_WIDTH_NUM;
 		int y = i / STAGE_WIDTH_NUM;
 		Vector pos( x * WORLD_SCALE + WORLD_SCALE / 2, y * WORLD_SCALE + WORLD_SCALE / 2, 0 );
-		// 地面生成
 		Vector adjust_pos = Vector( WORLD_SCALE + WORLD_SCALE / 2, WORLD_SCALE + WORLD_SCALE / 3 );
 		_earth[ i ] = Drawer::ModelMDL( pos + adjust_pos, MDL_EARTH );
 	}
@@ -438,7 +442,7 @@ void Stage::loadWall( ) {
 		int y = i / STAGE_WIDTH_NUM;
 		Vector pos( x * WORLD_SCALE + WORLD_SCALE / 2, y * WORLD_SCALE + WORLD_SCALE / 2, 0 );
 		Vector adjust_pos;
-		int type = _stage_data[ i ];
+		int type = _data.wall[ i ];
 		if ( type != 0 && type != 1 ) {
 			continue;
 		}
@@ -463,13 +467,13 @@ void Stage::loadWall( ) {
 
 			if ( type == 1 ) {
 				_map_data[ map_idx ] = 1;
-				if ( _stage_data[ idx0 ] == 0 && _stage_data[ idx1 ] == 0 ) {
+				if ( _data.wall[ idx0 ] == 0 && _data.wall[ idx1 ] == 0 ) {
 					_map_data[ map_idx ] = 2;
 					flag |= 1 << j;
 				}
 			}
 			if ( type == 0 ) {
-				if ( _stage_data[ idx0 ] == 1 && _stage_data[ idx1 ] == 1 ) {
+				if ( _data.wall[ idx0 ] == 1 && _data.wall[ idx1 ] == 1 ) {
 					flag |= 1 << j;
 					_map_data[ map_idx ] = 3;
 				}
@@ -514,14 +518,13 @@ void Stage::loadWall( ) {
 	}
 }
 
-void Stage::loadWave( ) {
-	_wave++;
-	if ( _wave >= MAX_WAVE ) {
+void Stage::loadPhase( ) {
+	_phase++;
+	if ( _phase >= MAX_PHASE ) {
 		_finished = true;
 		return;
 	}
-	loadCrystalData( );
-	loadWall( );
+	loadCrystal( );
 }
 
 Vector Stage::getCollisionWall( Vector pos, Vector vec, const double radius ) {
@@ -679,9 +682,9 @@ CrystalPtr Stage::getHittingCrystal( Vector pos0, Vector pos1 ) {
 }
 
 void Stage::reset( ) {
-	_wave = -1;
+	_phase = -1;
 	_finished = false;
-	loadWave( );
+	loadPhase( );
 }
 
 void Stage::drawMapLine( ) {
@@ -698,4 +701,108 @@ void Stage::drawMapLine( ) {
 		Vector pos1( MODEL_SIZE / WORLD_SCALE * STAGE_WIDTH_NUM, y );
 		drawer->drawLine( pos0, pos1 );
 	}
+}
+
+void Stage::load( ) {
+	DrawerPtr drawer = Drawer::getTask( );
+	ApplicationPtr app = Application::getInstance( );
+	drawer->drawString( 0, 0, "ロード" );
+	std::string filename = app->inputString( 0, 40 );
+	if ( !filename.find( ".stage" ) ) {
+		return;
+	}
+	BinaryPtr data( new Binary );
+	app->loadBinary( filename, data );
+	_data = *(DATA*)data->getPtr( );
+	loadCrystal( );
+	loadWall( );
+}
+
+void Stage::save( ) const {
+	BinaryPtr data = BinaryPtr( new Binary );
+	data->ensure( sizeof( _data ) );
+	data->write( (void*)&_data, sizeof( _data ) );
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->drawString( 0, 0, "セーブ" );
+	ApplicationPtr app = Application::getInstance( );
+	std::string filename = app->inputString( 0, 40 );
+	app->saveBinary( filename, data );
+}
+
+void Stage::setPhase( int phase ) {
+	if ( phase < 0 || phase >= MAX_PHASE ) {
+		return;
+	}
+	_phase = phase;
+	loadCrystal( );
+}
+
+void Stage::drawEditor( ) const {
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->drawString( 0, 120, "WAVE:%d", _phase );
+}
+
+void Stage::editWall( CameraPtr camera ) {
+	MousePtr mouse = Mouse::getTask( );
+	if ( mouse->isHoldLeftButton( ) ) {
+		Vector cursor = convertCursorToStage( mouse->getPos( ), camera );
+		int x = (int)( cursor.x / WORLD_SCALE );
+		int y = (int)( cursor.y / WORLD_SCALE );
+		int idx = y * STAGE_WIDTH_NUM + x;
+		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
+			return;
+		}
+		if ( _data.wall[ idx ] == 0 ) {
+			_data.wall[ idx ] = 1;
+			loadWall( );
+		}
+	}
+	if ( mouse->isHoldRightButton( ) ) {
+		Vector cursor = convertCursorToStage( mouse->getPos( ), camera );
+		int x = (int)( cursor.x / WORLD_SCALE );
+		int y = (int)( cursor.y / WORLD_SCALE );
+		int idx = y * STAGE_WIDTH_NUM + x;
+		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
+			return;
+		}
+		if ( _data.wall[ idx ] == 1 ) {
+			_data.wall[ idx ] = 0;
+			loadWall( );
+		}
+	}
+}
+
+void Stage::editCrystal( CameraPtr camera ) {
+	MousePtr mouse = Mouse::getTask( );
+	if ( mouse->isHoldLeftButton( ) ) {
+		Vector cursor = convertCursorToStage( mouse->getPos( ), camera );
+		int x = (int)( cursor.x / WORLD_SCALE );
+		int y = (int)( cursor.y / WORLD_SCALE );
+		int idx = y * STAGE_WIDTH_NUM + x;
+		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
+			return;
+		}
+		if ( _data.crystal[ _phase ][ idx ] == 0 ) {
+			_data.crystal[ _phase ][ idx ] = 1;
+			loadCrystal( );
+		}
+	}
+	if ( mouse->isHoldRightButton( ) ) {
+		Vector cursor = convertCursorToStage( mouse->getPos( ), camera );
+		int x = (int)( cursor.x / WORLD_SCALE );
+		int y = (int)( cursor.y / WORLD_SCALE );
+		int idx = y * STAGE_WIDTH_NUM + x;
+		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
+			return;
+		}
+		if ( _data.crystal[ _phase ][ idx ] == 1 ) {
+			_data.crystal[ _phase ][ idx ] = 0;
+			loadCrystal( );
+		}
+	}
+}
+
+Vector Stage::convertCursorToStage( Vector cursor, CameraPtr camera ) {
+	Vector target = camera->getTarget( );
+	return target;
 }
