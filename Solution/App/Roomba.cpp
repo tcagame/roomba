@@ -57,8 +57,8 @@ void Roomba::move( AppCameraPtr camera ) {
 	case MOVE_STATE_TRANSLATION:
 		moveTranslation( camera_dir, right_stick, left_stick );
 		break;
-	case MOVE_STATE_ROTATION_BOTH:
-	//	moveRotationBoth( camera_dir, right_stick, left_stick );
+	case MOVE_STATE_ROTATION:
+		moveRotation( camera_dir, right_stick, left_stick );
 		break;
 	}
 }
@@ -73,7 +73,7 @@ void Roomba::updateState( AppCameraPtr camera ) {
 		 ( right_stick.x < 0  && left_stick.x > 0 ) ||
 		 ( right_stick.y > 0  && left_stick.y < 0 ) ||
 		 ( right_stick.y < 0  && left_stick.y > 0 ) ) {
-		state = MOVE_STATE_ROTATION_BOTH;
+		state = MOVE_STATE_ROTATION;
 	}
 	if ( ( right_stick.x < 0 && left_stick.x < 0 ) ||
 		 ( right_stick.x > 0 && left_stick.x > 0 ) ||
@@ -138,20 +138,17 @@ void Roomba::moveTranslation( const Vector& camera_dir, const Vector& right, con
 }
 
 void Roomba::moveScale( Vector scale_left, Vector scale_right ) {
-	DrawerPtr drawer = Drawer::getTask( );
 	Vector vec_left = scale_left;
 	Vector vec_right = scale_right;
 	Vector scale = _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( );
 
 	if ( ( vec_left + vec_right + scale ).getLength( ) > MAX_SCALE ) { 
-		drawer->drawString( 10, 10, "‚È‚ª‚¢‚æ`" );
 		Vector left_dir = _balls[ BALL_RIGHT ]->getPos( ) - _balls[ BALL_LEFT ]->getPos( );
 		Vector right_dir = _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( );
 		vec_left = left_dir.normalize( );
 		vec_right = right_dir.normalize( );
 	}
 	if ( ( vec_left + vec_right + scale ).getLength( ) < MIN_SCALE ) { 
-		drawer->drawString( 10, 20, "‚Ý‚¶‚©‚¢‚æ`" );
 		Vector left_dir = _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( );
 		Vector right_dir = _balls[ BALL_RIGHT ]->getPos( ) - _balls[ BALL_LEFT ]->getPos( );
 		vec_left = left_dir.normalize( ) * ( ( vec_left + vec_right + scale ).getLength( ) * 0.5 );
@@ -162,7 +159,9 @@ void Roomba::moveScale( Vector scale_left, Vector scale_right ) {
 	_balls[ BALL_RIGHT ]->addForce( vec_right );
 }
 
-void Roomba::moveRotationBoth( const Vector& camera_dir, Vector right, Vector left ) {	
+void Roomba::moveRotation( const Vector& camera_dir, Vector right, Vector left ) {	
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->drawString( 20, 10, "length %lf", ( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).getLength( ) );
 	if ( fabs( right.x ) > 70 ) {
 		right.y = right.x;
 	}
@@ -185,6 +184,10 @@ void Roomba::moveRotationBoth( const Vector& camera_dir, Vector right, Vector le
 
 	Vector vec_left = dir_left.normalize( ) * ACCEL;
 	Vector vec_right = dir_right.normalize( ) * ACCEL;
+
+	vec_left += ( _balls[ BALL_RIGHT ]->getPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).normalize( ) * ACCEL;
+	vec_right += ( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).normalize( ) * ACCEL;
+
 
 	_balls[ BALL_LEFT ]->addForce( vec_left );
 	_balls[ BALL_RIGHT ]->addForce( vec_right );
