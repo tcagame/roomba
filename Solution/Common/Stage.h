@@ -16,7 +16,7 @@ public:
 	void draw( );
 	Vector getCollisionWall( Vector pos, Vector vec, const double radius );
 	bool isFinished( ) const;
-	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 );
+	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 ) const;
 	void reset( );
 	void load( );
 	void save( ) const;
@@ -45,7 +45,7 @@ private:
 	void drawWall( ) const;
 	void drawBackground( ) const;
 	void loadData( int stage_num );
-	DATA getFileData( std::string filename );
+	DATA getFileData( std::string filename ) const;
 	void loadCrystal( );
 	void loadEarth( );
 	void loadWall( );
@@ -53,14 +53,14 @@ private:
 	void drawCollisionLine( ) const;
 private:
 	std::list< CrystalPtr > _crystals;
-	int _phase;
-	bool _finished;
 	std::vector< Drawer::ModelMDL > _walls;
 	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _earth;
 	std::array< char, STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 > _map_data;
 	DATA _data;
+	int _phase;
 	int _cursor_x;
 	int _cursor_y;
 	int _count;
+	bool _finished;
 };
 

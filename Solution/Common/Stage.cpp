@@ -18,7 +18,7 @@ _finished( false ),
 _cursor_x( 0 ),
 _cursor_y( 0 ),
 _count( 0 ) {
-	loadData( 0 );
+	loadData( 3 );//0~2:通常 3:test_stage
 	//クリスタル
 	loadEarth( );
 	loadWall( );
@@ -106,10 +106,19 @@ void Stage::drawStation( ) const {
 }
 
 void Stage::loadData( int stage_num ) {
-	std::string filename;
+	std::string filename = "../Resource/Map/";
 	switch ( stage_num ) {
 	case 0:
-		filename = "00.stage";
+		filename += "00.stage";
+		break;
+	case 1:
+		filename += "01.stage";
+		break;
+	case 2:
+		filename += "02.stage";
+		break;
+	case 3:
+		filename += "test.stage";
 		break;
 	}
 	_data = getFileData( filename );
@@ -185,6 +194,24 @@ void Stage::loadWall( ) {
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
 	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
 	const double ROTE[ 4 ] = { PI / 2 * 0, PI / 2 * 1, PI / 2 * 3, PI / 2 * 2 };
+	const Vector ADJUST[ 16 ] {
+		Vector( 0, 0 ),
+		Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
+		Vector( WORLD_SCALE / 2, -WORLD_SCALE / 8 ),
+		Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
+		Vector( -WORLD_SCALE / 2, WORLD_SCALE / 8 ),
+		Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
+		Vector( 0, 0 ),
+		Vector( 0, 0 ),
+		Vector( WORLD_SCALE / 8, WORLD_SCALE / 2 ),
+		Vector( 0, 0 ),
+		Vector( WORLD_SCALE / 2, -WORLD_SCALE / 8 ),
+		Vector( 0, 0 ),
+		Vector( -WORLD_SCALE / 2, WORLD_SCALE / 8 ),
+		Vector( 0, 0 ),
+		Vector( 0, 0 ),
+		Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 )
+	};
 	_walls.clear( );
 
 	for ( int i = 0; i < 16; i++ ) {
@@ -249,25 +276,6 @@ void Stage::loadWall( ) {
 			}
 		}
 		if ( type == 0 ) {
-			const Vector ADJUST[ 16 ] {
-				Vector( 0, 0 ),
-				Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
-				Vector( WORLD_SCALE / 2, -WORLD_SCALE / 8 ),
-				Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
-				Vector( -WORLD_SCALE / 2, WORLD_SCALE / 8 ),
-				Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
-				Vector( 0, 0 ),
-				Vector( 0, 0 ),
-				Vector( WORLD_SCALE / 8, WORLD_SCALE / 2 ),
-				Vector( 0, 0 ),
-				Vector( WORLD_SCALE / 2, -WORLD_SCALE / 8 ),
-				Vector( 0, 0 ),
-				Vector( -WORLD_SCALE / 2, WORLD_SCALE / 8 ),
-				Vector( 0, 0 ),
-				Vector( 0, 0 ),
-				Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 )
-			};
-
 			adjust_pos += ADJUST[ flag ];
 		}
 		//adjust_pos -= Vector( WORLD_SCALE, WORLD_SCALE );
@@ -282,6 +290,7 @@ void Stage::loadWall( ) {
 void Stage::loadPhase( ) {
 	_phase++;
 	if ( _phase >= MAX_PHASE ) {
+		_phase = MAX_PHASE - 1;
 		_finished = true;
 		return;
 	}
@@ -424,7 +433,7 @@ bool Stage::isFinished( ) const {
 	return _finished;
 }
 
-CrystalPtr Stage::getHittingCrystal( Vector pos0, Vector pos1 ) {
+CrystalPtr Stage::getHittingCrystal( Vector pos0, Vector pos1 ) const {
 	CrystalPtr hitting = CrystalPtr( );
 	//あたっているクリスタルをhittingに代入する
 	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
@@ -449,14 +458,12 @@ void Stage::reset( ) {
 }
 
 void Stage::load( ) {
-	DrawerPtr drawer = Drawer::getTask( );
 	ApplicationPtr app = Application::getInstance( );
-	drawer->drawString( 0, 20, "ロード" );
-	std::string filename = app->inputString( 0, 40 );
+	std::string filename = "../Resource/Map/" + app->inputString( 0, 40 );
 	_data = getFileData( filename );
 }
 
-Stage::DATA Stage::getFileData( std::string filename ) {
+Stage::DATA Stage::getFileData( std::string filename ) const {
 	ApplicationPtr app = Application::getInstance( );
 	BinaryPtr data( new Binary );
 	if ( filename.find( ".stage" ) == std::string::npos ) {
@@ -472,10 +479,8 @@ void Stage::save( ) const {
 	BinaryPtr data = BinaryPtr( new Binary );
 	data->ensure( sizeof( _data ) );
 	data->write( (void*)&_data, sizeof( _data ) );
-	DrawerPtr drawer = Drawer::getTask( );
-	drawer->drawString( 0, 20, "セーブ" );
 	ApplicationPtr app = Application::getInstance( );
-	std::string filename = app->inputString( 0, 40 );
+	std::string filename = "../Resource/Map/" + app->inputString( 0, 40 );
 	if ( filename.find( ".stage" ) == std::string::npos ) {
 		filename += ".stage";
 	}
@@ -579,7 +584,6 @@ void Stage::editStation( ) {
 		}
 		if ( _data.station[ _phase ][ idx ] == 0 ) {
 			_data.station[ _phase ][ idx ] = 1;
-			//loadStation( );
 		}
 	}
 
@@ -590,7 +594,6 @@ void Stage::editStation( ) {
 		}
 		if ( _data.station[ _phase ][ idx ] == 1 ) {
 			_data.station[ _phase ][ idx ] = 0;
-			//loadStation( );
 		}
 	}
 }
