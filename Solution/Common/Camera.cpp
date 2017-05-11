@@ -3,7 +3,6 @@
 #include "Drawer.h"
 
 Camera::Camera( Vector pos, Vector target ) :
-_mouse_x( 0 ),
 _pos( pos ),
 _target( target ) {
 	_dir = target - pos;
@@ -41,7 +40,7 @@ void Camera::setDir( Vector dir ) {
 	_dir = dir;
 }
 
-Vector Camera::getPos( ) {
+Vector Camera::getPos( ) const {
 	return _pos;
 }
 

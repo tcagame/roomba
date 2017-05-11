@@ -18,13 +18,14 @@ public:
 	bool isFinished( ) const;
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 );
 	void reset( );
-	void drawMapLine( );
 	void load( );
 	void save( ) const;
 	void setPhase( int phase );
 	void drawEditor( ) const;
-	void editWall( CameraPtr camera );
-	void editCrystal( CameraPtr camera );
+	void updateCursor( );
+	void editWall( );
+	void editCrystal( );
+	void editStation( );
 private:
 	static const int STAGE_WIDTH_NUM = 40;
 	static const int STAGE_HEIGHT_NUM = 35;
@@ -39,6 +40,7 @@ private:
 private:
 	void updateCrystal( );
 	void drawCrystal( ) const;
+	void drawStation( ) const;
 	void drawEarth( ) const;
 	void drawWall( ) const;
 	void drawBackground( ) const;
@@ -47,7 +49,6 @@ private:
 	void loadWall( );
 	void loadPhase( );
 	void drawCollisionLine( ) const;
-	Vector convertCursorToStage( Vector cursor, CameraPtr camera );
 private:
 	std::list< CrystalPtr > _crystals;
 	int _phase;
@@ -56,5 +57,8 @@ private:
 	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _earth;
 	std::array< char, STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 > _map_data;
 	DATA _data;
+	int _cursor_x;
+	int _cursor_y;
+	int _count;
 };
 

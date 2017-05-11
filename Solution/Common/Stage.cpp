@@ -7,8 +7,10 @@
 #include "Binary.h"
 #include "Mouse.h"
 #include "Camera.h"
+#include "Keyboard.h"
 
 static const double MODEL_SIZE = 4;
+static const int CURSOR_WAIT_TIME = 2;
 
 const std::array< char, 35 * 40 > stage_1 = {
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -165,7 +167,10 @@ const std::array< char, 35 * 40 > stage_test = {
 
 Stage::Stage( ) :
 _phase( -1 ),
-_finished( false ) {
+_finished( false ),
+_cursor_x( 0 ),
+_cursor_y( 0 ),
+_count( 0 ) {
 	_data.wall = stage_test;
 	//クリスタル
 	_data.crystal[ 0 ] = {																											 
@@ -319,6 +324,7 @@ void Stage::draw( ) {
 	drawWall( );
 	//drawCollisionLine( );
 	drawCrystal( );
+	drawStation( );
 }
 
 void Stage::drawBackground( ) const {
@@ -353,6 +359,19 @@ void Stage::drawCrystal( ) const {
 		ite++;
 	}
 }
+
+void Stage::drawStation( ) const {
+    DrawerPtr drawer = Drawer::getTask( );
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		if ( _data.station[ _phase ][ i ] == 1 ) {
+			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
+			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
+			Drawer::ModelMDL model( Vector( x, y, 0 ), MDL_STATION );
+			drawer->setModelMDL( model );
+		}
+	}
+}
+
 
 void Stage::loadCrystal( ) {
 	_crystals.clear( );
@@ -687,32 +706,18 @@ void Stage::reset( ) {
 	loadPhase( );
 }
 
-void Stage::drawMapLine( ) {
-	DrawerPtr drawer = Drawer::getTask( );
-	for ( int i = 0; i <= STAGE_WIDTH_NUM; i++ ) {
-		double x = MODEL_SIZE / WORLD_SCALE * (double)i;
-		Vector pos0( x, 0 );
-		Vector pos1( x, MODEL_SIZE / WORLD_SCALE * STAGE_HEIGHT_NUM );
-		drawer->drawLine( pos0, pos1 );
-	}
-	for ( int i = 0; i <= STAGE_HEIGHT_NUM; i++ ) {
-		double y = MODEL_SIZE / WORLD_SCALE * (double)i;
-		Vector pos0( 0, y );
-		Vector pos1( MODEL_SIZE / WORLD_SCALE * STAGE_WIDTH_NUM, y );
-		drawer->drawLine( pos0, pos1 );
-	}
-}
-
 void Stage::load( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	ApplicationPtr app = Application::getInstance( );
-	drawer->drawString( 0, 0, "ロード" );
+	drawer->drawString( 0, 20, "ロード" );
 	std::string filename = app->inputString( 0, 40 );
-	if ( !filename.find( ".stage" ) ) {
+	BinaryPtr data( new Binary );
+	if ( filename.find( ".stage" ) == std::string::npos ) {
+		filename += ".stage";
+	}
+	if ( !app->loadBinary( filename, data ) ) {
 		return;
 	}
-	BinaryPtr data( new Binary );
-	app->loadBinary( filename, data );
 	_data = *(DATA*)data->getPtr( );
 	loadCrystal( );
 	loadWall( );
@@ -723,9 +728,12 @@ void Stage::save( ) const {
 	data->ensure( sizeof( _data ) );
 	data->write( (void*)&_data, sizeof( _data ) );
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->drawString( 0, 0, "セーブ" );
+	drawer->drawString( 0, 20, "セーブ" );
 	ApplicationPtr app = Application::getInstance( );
 	std::string filename = app->inputString( 0, 40 );
+	if ( filename.find( ".stage" ) == std::string::npos ) {
+		filename += ".stage";
+	}
 	app->saveBinary( filename, data );
 }
 
@@ -739,16 +747,34 @@ void Stage::setPhase( int phase ) {
 
 void Stage::drawEditor( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->drawString( 0, 120, "WAVE:%d", _phase );
+	Vector cursor_pos( _cursor_x * WORLD_SCALE + WORLD_SCALE / 2, _cursor_y * WORLD_SCALE  + WORLD_SCALE / 4 );
+	drawer->setModelMDL( Drawer::ModelMDL( cursor_pos, MDL_CURSOR ) );
+	drawer->drawString( 0, 60, "WAVE:%d", _phase );
+	drawer->drawString( 0, 0, "壁編集:1　クリスタル編集:2　ステーション編集:3　セーブ:F1　ロード:F2　フェーズ変更:テンキー" );
+
+
+	for ( int i = 0; i <= STAGE_WIDTH_NUM; i++ ) {
+		double x = MODEL_SIZE / WORLD_SCALE * (double)i;
+		Vector pos0( x, 0 );
+		Vector pos1( x, MODEL_SIZE / WORLD_SCALE * STAGE_HEIGHT_NUM );
+		drawer->drawLine( pos0, pos1 );
+	}
+	for ( int i = 0; i <= STAGE_HEIGHT_NUM; i++ ) {
+		double y = MODEL_SIZE / WORLD_SCALE * (double)i;
+		Vector pos0( 0, y );
+		Vector pos1( MODEL_SIZE / WORLD_SCALE * STAGE_WIDTH_NUM, y );
+		drawer->drawLine( pos0, pos1 );
+	}
+
 }
 
-void Stage::editWall( CameraPtr camera ) {
+void Stage::editWall( ) {
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->drawString( 0, 80, "MODE:壁配置" );
 	MousePtr mouse = Mouse::getTask( );
-	if ( mouse->isHoldLeftButton( ) ) {
-		Vector cursor = convertCursorToStage( mouse->getPos( ), camera );
-		int x = (int)( cursor.x / WORLD_SCALE );
-		int y = (int)( cursor.y / WORLD_SCALE );
-		int idx = y * STAGE_WIDTH_NUM + x;
+	KeyboardPtr keyboard = Keyboard::getTask( );
+	if ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) ) {
+		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
@@ -757,11 +783,8 @@ void Stage::editWall( CameraPtr camera ) {
 			loadWall( );
 		}
 	}
-	if ( mouse->isHoldRightButton( ) ) {
-		Vector cursor = convertCursorToStage( mouse->getPos( ), camera );
-		int x = (int)( cursor.x / WORLD_SCALE );
-		int y = (int)( cursor.y / WORLD_SCALE );
-		int idx = y * STAGE_WIDTH_NUM + x;
+	if ( mouse->isHoldRightButton( ) || keyboard->isHoldKey( "BACK_SPACE" ) ) {
+		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
@@ -772,13 +795,13 @@ void Stage::editWall( CameraPtr camera ) {
 	}
 }
 
-void Stage::editCrystal( CameraPtr camera ) {
+void Stage::editCrystal( ) {
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->drawString( 0, 80, "MODE:クリスタル配置" );
 	MousePtr mouse = Mouse::getTask( );
-	if ( mouse->isHoldLeftButton( ) ) {
-		Vector cursor = convertCursorToStage( mouse->getPos( ), camera );
-		int x = (int)( cursor.x / WORLD_SCALE );
-		int y = (int)( cursor.y / WORLD_SCALE );
-		int idx = y * STAGE_WIDTH_NUM + x;
+	KeyboardPtr keyboard = Keyboard::getTask( );
+	if ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) ) {
+		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
@@ -787,11 +810,8 @@ void Stage::editCrystal( CameraPtr camera ) {
 			loadCrystal( );
 		}
 	}
-	if ( mouse->isHoldRightButton( ) ) {
-		Vector cursor = convertCursorToStage( mouse->getPos( ), camera );
-		int x = (int)( cursor.x / WORLD_SCALE );
-		int y = (int)( cursor.y / WORLD_SCALE );
-		int idx = y * STAGE_WIDTH_NUM + x;
+	if ( mouse->isHoldRightButton( ) || keyboard->isHoldKey( "BACK_SPACE" ) ) {
+		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
@@ -802,7 +822,57 @@ void Stage::editCrystal( CameraPtr camera ) {
 	}
 }
 
-Vector Stage::convertCursorToStage( Vector cursor, CameraPtr camera ) {
-	Vector target = camera->getTarget( );
-	return target;
+void Stage::editStation( ) {
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->drawString( 0, 80, "MODE:ステーション配置" );
+	MousePtr mouse = Mouse::getTask( );
+	KeyboardPtr keyboard = Keyboard::getTask( );
+	if ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) ) {
+		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
+		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
+			return;
+		}
+		if ( _data.station[ _phase ][ idx ] == 0 ) {
+			_data.station[ _phase ][ idx ] = 1;
+			//loadStation( );
+		}
+	}
+
+	if ( mouse->isHoldRightButton( ) || keyboard->isHoldKey( "BACK_SPACE" ) ) {
+		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
+		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
+			return;
+		}
+		if ( _data.station[ _phase ][ idx ] == 1 ) {
+			_data.station[ _phase ][ idx ] = 0;
+			//loadStation( );
+		}
+	}
+}
+
+void Stage::updateCursor( ) {
+	KeyboardPtr keyboard = Keyboard::getTask( );
+	int cursor_x = 0;
+	int cursor_y = 0;
+	if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
+		cursor_y++;
+	}
+	if ( keyboard->isHoldKey( "ARROW_DOWN" ) ) {
+		cursor_y--;
+	}
+	if ( keyboard->isHoldKey( "ARROW_LEFT" ) ) {
+		cursor_x++;
+	}
+	if ( keyboard->isHoldKey( "ARROW_RIGHT" ) ) {
+		cursor_x--;
+	}
+	if ( cursor_x != 0 || cursor_y != 0 ) {
+		_count++;
+		if ( _count % CURSOR_WAIT_TIME == 0 ) {
+			_cursor_x += cursor_x;
+			_cursor_y += cursor_y;
+		}
+	} else {
+		_count = 0;
+	}
 }

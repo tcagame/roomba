@@ -7,5 +7,7 @@ public:
 	virtual ~EditorCamera( );
 private:
 	void move( );
+private:
+	Vector _before_mouse_pos;
 };
 

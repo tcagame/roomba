@@ -27,8 +27,10 @@ void Editor::initialize( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
 	drawer->loadGraph( GRAPH_SELECT_MENU, "UI/UI_retry_select.png" );
+	Matrix size = Matrix::makeTransformScaling( Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE ) ); 
+	drawer->loadMDLModel( MDL_STATION, "Model/Station/station.mdl", "Model/Station/blue.jpg", size );
 	
-	Matrix size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / 2, WORLD_SCALE / 2, WORLD_SCALE / 2 ) ); 
+	size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / 2, WORLD_SCALE / 2, WORLD_SCALE / 2 ) ); 
 	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/crystal.jpg", size );
 	drawer->loadMDLModel( MDL_BG, "Model/Stage/bg.mdl", "Model/Stage/bg01_DM.jpg" );
 	drawer->loadMDLModel( MDL_BALL, "Model/Roomba/roomba.mdl", "Model/Roomba/texture.jpg", size );
@@ -36,6 +38,7 @@ void Editor::initialize( ) {
 	size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE ) );
 	
 	drawer->loadMDLModel( MDL_EARTH, "Model/Stage/earth.mdl", "Model/Stage/earth.jpg", size );
+	drawer->loadMDLModel( MDL_CURSOR, "Model/Editor/cursor.mdl", "Model/Editor/red.jpg", size );
 
 	drawer->loadMDLModel( MDL_WALL_0_0 , "Model/Stage/0_0.mdl" , "Model/Stage/wall.jpg", size );
 	drawer->loadMDLModel( MDL_WALL_0_1 , "Model/Stage/0_1.mdl" , "Model/Stage/wall.jpg", size );
@@ -83,16 +86,19 @@ void Editor::update( ) {
 }
 
 void Editor::updateStage( ) {
+	_stage->updateCursor( );
 	_stage->draw( );
 	_stage->drawEditor( );
-	_stage->drawMapLine( );
 
 	switch ( _mode ) {
 	case MODE_WALL:
-		_stage->editWall( _camera );
+		_stage->editWall( );
 		break;
 	case MODE_CRYSTAL:
-		_stage->editCrystal( _camera );
+		_stage->editCrystal( );
+		break;
+	case MODE_STATION:
+		_stage->editStation( );
 		break;
 	}
 
@@ -122,13 +128,13 @@ void Editor::updateStage( ) {
 
 void Editor::updateMode( ) {
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	if ( keyboard->isPushKey( "0" ) ) {
+	if ( keyboard->isPushKey( "1" ) ) {
 		_mode = MODE_WALL;
 	}
-	if ( keyboard->isPushKey( "1" ) ) {
+	if ( keyboard->isPushKey( "2" ) ) {
 		_mode = MODE_CRYSTAL;
 	}
-	if ( keyboard->isPushKey( "2" ) ) {
+	if ( keyboard->isPushKey( "3" ) ) {
 		_mode = MODE_STATION;
 	}
 }
