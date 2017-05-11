@@ -13,7 +13,7 @@ public:
 	enum MOVE_STATE {
 		MOVE_STATE_NEUTRAL,
 		MOVE_STATE_TRANSLATION,
-		MOVE_STATE_ROTATION_BOTH,
+		MOVE_STATE_ROTATION,
 		MAX_STATE,
 	};
 public:
@@ -30,7 +30,7 @@ private:
 	void attack( StagePtr stage, TimerPtr timer );
 	void moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left );
 	void moveScale( Vector scale_left, Vector scale_right );
-	void moveRotationBoth( const Vector& camera_dir, Vector right, Vector left );
+	void moveRotation( const Vector& camera_dir, Vector right, Vector left );
 	void checkLeftRight( AppCameraPtr camera );
 private:
 	enum BALL {
