@@ -13,5 +13,7 @@ public:
 private:
 	void move( );
 	RoombaPtr _roomba;
+private:
+	int _mouse_x;
 };
 

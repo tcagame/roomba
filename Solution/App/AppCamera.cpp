@@ -11,7 +11,8 @@ const int CAMERA_LENGTH = (int)( 100 * WORLD_SCALE );
 
 AppCamera::AppCamera( RoombaPtr roomba ) :
 Camera( START_CAMERA_POS, START_TARGET_POS ),
-_roomba( roomba ) {
+_roomba( roomba ),
+_mouse_x( 0 ) {
 
 }
 
