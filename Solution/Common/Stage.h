@@ -44,6 +44,8 @@ private:
 	void drawEarth( ) const;
 	void drawWall( ) const;
 	void drawBackground( ) const;
+	void loadData( int stage_num );
+	DATA getFileData( std::string filename );
 	void loadCrystal( );
 	void loadEarth( );
 	void loadWall( );
