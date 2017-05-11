@@ -3,7 +3,7 @@
 #include "define.h"
 
 static const int FPS = 60;
-static const int START_TIME = 20 * FPS;
+static const int START_TIME = 3 * FPS;
 static const int ADD_TIME = 1;
 
 Timer::Timer( ) :
@@ -41,7 +41,7 @@ void Timer::draw( ) const {
 		drawer->setSprite( sprite );
 		picth += TW;
 	}
-	while ( time > 0 ) {
+	while ( time >= 0 ) {
 		Drawer::Sprite sprite( Drawer::Transform( x - picth, y, u[ time % 10 ] * TW, 0, TW, TH, x - picth + TW, y + TH ), GRAPH_TIMER_NUM );
 		drawer->setSprite( sprite );
 		picth += TW;
@@ -63,7 +63,7 @@ void Timer::reset( ) {
 }
 
 bool Timer::isTimeOver( ) const {
-	if ( _timer / FPS <= 0 ) {
+	if ( _timer < 0 ) {
 		return true;
 	}
 	return false;
