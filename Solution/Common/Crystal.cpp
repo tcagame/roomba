@@ -1,6 +1,5 @@
 #include "Crystal.h"
 #include "Drawer.h"
-#include "define.h"
 #include "mathmatics.h"
 #include "Stage.h"
 #include "Roomba.h"
@@ -9,10 +8,11 @@ static const double CRYSTAL_RADIUS = 0.5;
 static const double MAX_SPEED = 0.8;
 static const double DECELERATION = 0.2;
 
-Crystal::Crystal( Vector pos ) :
+Crystal::Crystal( Vector pos, MDL type ) :
 _pos( pos ),
 _finished( false ),
-_drop_down( false ) {
+_drop_down( false ),
+_type( type ) {
 
 }
 
@@ -23,7 +23,7 @@ Crystal::~Crystal( ) {
 
 void Crystal::draw( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::ModelMDL model( _pos, MDL::MDL_CRYSTAL );
+	Drawer::ModelMDL model( _pos, _type );
 	drawer->setModelMDL( model );
 }
 

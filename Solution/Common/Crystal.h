@@ -1,12 +1,13 @@
 #pragma once
 #include "Drawer.h"
+#include "define.h"
 
 PTR( Stage );
 PTR( Roomba );
 
 class Crystal {
 public:
-	Crystal( Vector pos );
+	Crystal( Vector pos, MDL type );
 	virtual ~Crystal( );
 public:
 	void update( StagePtr stage, RoombaPtr roomba );
@@ -23,5 +24,6 @@ private:
 	Vector _vec;
 	bool _finished;
 	bool _drop_down;
+	MDL _type;
 };
 

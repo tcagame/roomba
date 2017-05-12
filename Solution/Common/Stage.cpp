@@ -116,10 +116,11 @@ void Stage::drawCrystal( ) const {
 void Stage::drawStation( ) const {
     DrawerPtr drawer = Drawer::getTask( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( _data.station[ _phase ][ i ] == 1 ) {
+		if ( _data.station[ _phase ][ i ] != 0 ) {
+			MDL mdl = (MDL)( (int)MDL_STATION_0 + _data.station[ _phase ][ i ] - 1 );
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			Drawer::ModelMDL model( Vector( x, y, 0 ), MDL_STATION );
+			Drawer::ModelMDL model( Vector( x, y, 0 ), mdl );
 			drawer->setModelMDL( model );
 		}
 	}
@@ -149,9 +150,10 @@ void Stage::loadCrystal( ) {
 	
 
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( _data.crystal[ _phase ][ i ] == 1 ) {
+		if ( _data.crystal[ _phase ][ i ] != 0 ) {
 			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, -WORLD_SCALE );
-			_crystals.push_back( CrystalPtr( new Crystal( pos ) ) );
+			MDL mdl = (MDL)( (int)MDL_CRYSTAL_0 + _data.crystal[ _phase ][ i ] - 1 );
+			_crystals.push_back( CrystalPtr( new Crystal( pos, mdl ) ) );
 		}
 	}
 }
@@ -464,6 +466,7 @@ void Stage::load( ) {
 	ApplicationPtr app = Application::getInstance( );
 	std::string filename = "../Resource/Map/" + app->inputString( 0, 40 );
 	_data = getFileData( filename );
+	reset( );
 }
 
 Stage::DATA Stage::getFileData( std::string filename ) const {
@@ -551,15 +554,34 @@ void Stage::editWall( ) {
 void Stage::editCrystal( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->drawString( 0, 80, "MODE:クリスタル配置" );
+	
+	bool num[ MAX_LINK ];
+	for ( int i = 0; i < MAX_LINK; i++ ) {
+		num[ i ] = false;
+	}
+
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		if ( _data.crystal[ _phase ][ i ] > 0 ) {
+			num[ _data.crystal[ _phase ][ i ] - 1 ] = true;
+		}
+	}
+	int number = 0;
+	for ( int i = 0; i < MAX_LINK; i++ ) {
+		if ( !num[ i ] ) {
+			number = i + 1;
+			break;
+		}
+	}
+
 	MousePtr mouse = Mouse::getTask( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	if ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) ) {
+	if ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) && number != 0 ) {
 		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
 		if ( _data.crystal[ _phase ][ idx ] == 0 ) {
-			_data.crystal[ _phase ][ idx ] = 1;
+			_data.crystal[ _phase ][ idx ] = number;
 			loadCrystal( );
 		}
 	}
@@ -568,7 +590,7 @@ void Stage::editCrystal( ) {
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
-		if ( _data.crystal[ _phase ][ idx ] == 1 ) {
+		if ( _data.crystal[ _phase ][ idx ] != 0 ) {
 			_data.crystal[ _phase ][ idx ] = 0;
 			loadCrystal( );
 		}
@@ -578,15 +600,33 @@ void Stage::editCrystal( ) {
 void Stage::editStation( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->drawString( 0, 80, "MODE:ステーション配置" );
+	bool num[ MAX_LINK ] = { false };
+	for ( int i = 0; i < MAX_LINK; i++ ) {
+		num[ i ] = false;
+	}
+
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		if ( _data.station[ _phase ][ i ] ) {
+			num[ _data.station[ _phase ][ i ] - 1 ] = true;
+		}
+	}
+	int number = 0;
+	for ( int i = 0; i < MAX_LINK; i++ ) {
+		if ( !num[ i ] ) {
+			number = i + 1;
+			break;
+		}
+	}
+
 	MousePtr mouse = Mouse::getTask( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	if ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) ) {
+	if ( ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) ) && number != 0 ) {
 		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
 		if ( _data.station[ _phase ][ idx ] == 0 ) {
-			_data.station[ _phase ][ idx ] = 1;
+			_data.station[ _phase ][ idx ] = number;
 		}
 	}
 
@@ -595,7 +635,7 @@ void Stage::editStation( ) {
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
-		if ( _data.station[ _phase ][ idx ] == 1 ) {
+		if ( _data.station[ _phase ][ idx ] != 0 ) {
 			_data.station[ _phase ][ idx ] = 0;
 		}
 	}

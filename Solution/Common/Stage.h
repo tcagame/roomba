@@ -33,6 +33,7 @@ private:
 	static const int STAGE_HEIGHT_NUM = 35;
 	static const int MAX_PHASE = 10;
 	static const int MAX_STAGE = 4;
+	static const int MAX_LINK = 5;
 private:
 	struct DATA {
 		std::array< char, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > wall;
