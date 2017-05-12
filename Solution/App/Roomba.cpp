@@ -162,32 +162,21 @@ void Roomba::moveScale( Vector scale_left, Vector scale_right ) {
 void Roomba::moveRotation( const Vector& camera_dir, Vector right, Vector left ) {	
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->drawString( 20, 10, "length %lf", ( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).getLength( ) );
-	if ( fabs( right.x ) > 70 ) {
-		right.y = right.x;
-	}
-	if ( fabs( left.x ) > 70 ) {
-		left.y = left.x;
-	}
-	right.x = 0;
-	left.x = 0;
+
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
-	Vector ball_left = _balls[ BALL_LEFT ]->getPos( ) + _balls[ BALL_LEFT ]->getVec( );
-	Vector ball_right = _balls[ BALL_RIGHT ]->getPos( ) + _balls[ BALL_RIGHT ]->getVec( );
+	Vector ball_left = _balls[ BALL_LEFT ]->getPos( );
+	Vector ball_right = _balls[ BALL_RIGHT ]->getPos( );
 	Vector roomba_dir = mat.multiply( ball_left - ball_right );
 	mat = Matrix::makeTransformRotation( roomba_dir.cross( Vector( 0, -1 ) ), roomba_dir.angle( Vector( 0, -1 ) ) );
+	double x = fabs( ball_left.x - getCentralPos( ).x );
+	double y = fabs( ball_left.y - getCentralPos( ).y );
+	Vector rudias( x, y );
 
-	Vector dir_left = left * -1;
-	Vector dir_right = right * -1;
-
-	dir_left = mat.multiply( dir_left );
-	dir_right = mat.multiply( dir_right );
-
-	Vector vec_left = dir_left.normalize( ) * ACCEL;
-	Vector vec_right = dir_right.normalize( ) * ACCEL;
-
-	vec_left += ( _balls[ BALL_RIGHT ]->getPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).normalize( ) * ACCEL;
-	vec_right += ( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).normalize( ) * ACCEL;
-
+	rudias = mat.multiply( rudias );
+	Vector vec_left = ( ( rudias + getCentralPos( ) ) - ball_left ).normalize( ) * ACCEL;
+	mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI );
+	rudias = mat.multiply( rudias );
+	Vector vec_right = ( ( rudias + getCentralPos( ) ) - ball_right ).normalize( ) * ACCEL;
 
 	_balls[ BALL_LEFT ]->addForce( vec_left );
 	_balls[ BALL_RIGHT ]->addForce( vec_right );
