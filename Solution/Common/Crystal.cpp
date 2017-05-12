@@ -50,3 +50,7 @@ void Crystal::damage( ) {
 bool Crystal::isFinished( ) const {
 	return _finished;
 }
+
+Vector Crystal::getPos( ) const {
+	return _pos;
+}

@@ -46,13 +46,20 @@ void Stage::updateCrystal( ) {
 	if ( _crystals.size( ) == 0 ) {
 		loadPhase( );
 	}
+	ApplicationPtr app = Application::getInstance( );
+	int scr_width = app->getWindowWidth( );
+	DrawerPtr drawer = Drawer::getTask( );
 	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
+	int num = 0;
 	while ( ite != _crystals.end( ) ) {
 		CrystalPtr crystal = (*ite);
 		if ( !crystal ) {
 			ite++;
 			continue;
 		}
+		Vector pos = crystal->getPos( );
+		drawer->drawString( scr_width - 280, num * 20, "[ƒNƒŠƒXƒ^ƒ‹%2d] x:%04.1f y:%04.1f", num, pos.x, pos.y );
+		num++;
 		if ( crystal->isFinished( ) ) {
 			ite = _crystals.erase( ite );
 			continue;
