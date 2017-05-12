@@ -6,15 +6,17 @@
 PTR( Crystal );
 PTR( Timer );
 PTR( Camera );
+PTR( Roomba );
 
-class Stage {
+class Stage : public std::enable_shared_from_this< Stage > {
 public:
 	Stage( );
 	virtual ~Stage( );
 public:
-	void update( );
+	void update( RoombaPtr roomba );
 	void draw( );
-	Vector getCollisionWall( Vector pos, Vector vec, const double radius );
+	Vector adjustCollisionToWall( Vector pos, Vector vec, const double radius );
+	Vector adjustCollisionToCrystal( Vector pos, Vector vec, const double radius );
 	bool isFinished( ) const;
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 ) const;
 	void reset( );
@@ -38,7 +40,7 @@ private:
 		std::array< std::array< char, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_PHASE > station;
 	};
 private:
-	void updateCrystal( );
+	void updateCrystal( RoombaPtr roomba );
 	void drawCrystal( ) const;
 	void drawStation( ) const;
 	void drawEarth( ) const;

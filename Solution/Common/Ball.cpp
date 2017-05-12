@@ -17,7 +17,8 @@ void Ball::update( StagePtr stage ) {
 	if ( _vec.getLength( ) > MAX_SPEED ) {
 		_vec = _vec.normalize( ) * MAX_SPEED;
 	}
-	Vector adjust_vec = stage->getCollisionWall( _pos, _vec, BALL_RADIUS );
+	Vector adjust_vec = stage->adjustCollisionToWall( _pos, _vec, BALL_RADIUS );
+	adjust_vec += stage->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS );
 	_vec = adjust_vec;
 	_pos += _vec;
 }

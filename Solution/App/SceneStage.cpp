@@ -24,8 +24,8 @@ SceneStage::~SceneStage( ) {
 
 Scene::NEXT SceneStage::update( ) {
 	if ( _state == STATE_NORMAL ) {
-		_roomba->update( _stage, _camera, _timer );
-		_stage->update( );
+		_roomba->update( _stage, _camera );
+		_stage->update( _roomba );
 		_camera->update( );
 		//_timer->update( );
 	

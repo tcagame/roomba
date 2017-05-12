@@ -6,7 +6,7 @@
 PTR( Ball );
 PTR( Stage );
 PTR( AppCamera );
-PTR( Timer );
+PTR( Crystal );
 
 class Roomba {
 public:
@@ -20,14 +20,14 @@ public:
 	Roomba( );
 	virtual ~Roomba( );
 public:
-	void update( StagePtr stage, AppCameraPtr camera, TimerPtr timer );
+	void update( StagePtr stage, AppCameraPtr camera );
 	void draw( ) const;
 	void reset( );
 	Vector getCentralPos( ) const;
 private:
 	void move( AppCameraPtr camera );
 	void updateState( AppCameraPtr camera );
-	void attack( StagePtr stage, TimerPtr timer );
+	void holdCrystal( StagePtr stage );
 	void moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left );
 	void moveScale( Vector scale_left, Vector scale_right );
 	void moveRotation( const Vector& camera_dir, Vector right, Vector left );
@@ -41,5 +41,6 @@ private:
 	int _neutral;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
+	CrystalPtr _crystal;
 };
 

@@ -3,8 +3,6 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Roomba.cpp" />
-    <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Scene.cpp">
       <Filter>Scene</Filter>
@@ -25,8 +23,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
-    <ClInclude Include="Roomba.h" />
-    <ClInclude Include="Ball.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Scene.h">
       <Filter>Scene</Filter>
