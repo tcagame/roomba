@@ -2,8 +2,10 @@
 #include "Drawer.h"
 #include "define.h"
 #include "mathmatics.h"
+#include "Stage.h"
 
-static const double CRYSTAL_RADIUS = 2.0;
+static const double CRYSTAL_RADIUS = 0.5;
+static const double MAX_SPEED = 0.8;
 
 Crystal::Crystal( Vector pos ) :
 _pos( pos ),
@@ -16,10 +18,18 @@ Crystal::~Crystal( ) {
 
 }
 
-void Crystal::draw( ) {
+void Crystal::draw( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	Drawer::ModelMDL model( _pos, MDL::MDL_CRYSTAL );
 	drawer->setModelMDL( model );
+}
+
+void Crystal::update( StagePtr stage ) {
+	if ( _vec.getLength( ) > MAX_SPEED ) {
+		_vec = _vec.normalize( ) * MAX_SPEED;
+	}
+	_vec = stage->getCollisionWall( _pos, _vec, CRYSTAL_RADIUS	);
+	_pos += _vec;
 }
 
 bool Crystal::isHitting( Vector pos0, Vector pos1 ) {
@@ -55,7 +65,7 @@ Vector Crystal::getPos( ) const {
 	return _pos;
 }
 
-void Crystal::setPos( Vector pos ) {
-	pos.z = _pos.z;
-	_pos = pos;
+void Crystal::setVec( Vector vec ) {
+	vec.z = 0;
+	_vec = vec;
 }

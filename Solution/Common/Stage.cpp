@@ -57,6 +57,7 @@ void Stage::updateCrystal( ) {
 			ite++;
 			continue;
 		}
+		crystal->update( shared_from_this( ) );
 		Vector pos = crystal->getPos( );
 		drawer->drawString( scr_width - 280, num * 20, "[ƒNƒŠƒXƒ^ƒ‹%2d] x:%04.1f y:%04.1f", num, pos.x, pos.y );
 		num++;

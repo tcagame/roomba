@@ -103,7 +103,7 @@ void Roomba::holdCrystal( StagePtr stage ) {
 	if ( _crystal ) {
 		DrawerPtr drawer = Drawer::getTask( );
 		drawer->drawString( 300, 20, "‚à‚Á‚Ä‚é‚æ[" );
-		_crystal->setPos( getCentralPos( ) );
+		_crystal->setVec( getCentralPos( ) - _crystal->getPos( ) );
 	}
 }
 

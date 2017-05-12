@@ -7,7 +7,7 @@ PTR( Crystal );
 PTR( Timer );
 PTR( Camera );
 
-class Stage {
+class Stage : public std::enable_shared_from_this< Stage > {
 public:
 	Stage( );
 	virtual ~Stage( );
