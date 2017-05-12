@@ -30,7 +30,7 @@ _state( MOVE_STATE_NEUTRAL ) {
 Roomba::~Roomba( ) {
 }
 
-void Roomba::update( StagePtr stage, AppCameraPtr camera, TimerPtr timer ) {
+void Roomba::update( StagePtr stage, AppCameraPtr camera ) {
 	updateState( camera );
 	move( camera );
 	for ( int i = 0; i < 2; i++ ) {
@@ -38,8 +38,8 @@ void Roomba::update( StagePtr stage, AppCameraPtr camera, TimerPtr timer ) {
 		_balls[ i ]->update( stage );
 	}
 
-	//攻撃
-	attack( stage, timer );
+	//レーザー
+	holdCrystal( stage );
 }
 
 void Roomba::move( AppCameraPtr camera ) {	
@@ -96,16 +96,14 @@ void Roomba::updateState( AppCameraPtr camera ) {
 	}
 }
 
-void Roomba::attack( StagePtr stage, TimerPtr timer ) {
-	if ( _balls[ BALL_LEFT ]->getVec( ).getLength( ) > ATTACK_START_SPEED ||
-		 _balls[ BALL_RIGHT ]->getVec( ).getLength( ) > ATTACK_START_SPEED ) {
-		CrystalPtr crystal =  stage->getHittingCrystal( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
-		if ( crystal ) {
-			DrawerPtr drawer = Drawer::getTask( );
-			drawer->drawString( 0, 0, "あたってるよー" );
-			crystal->damage( );
-			timer->addTime( );
-		}
+void Roomba::holdCrystal( StagePtr stage ) {
+	if ( !_crystal ) {
+		_crystal =  stage->getHittingCrystal( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
+	}
+	if ( _crystal ) {
+		DrawerPtr drawer = Drawer::getTask( );
+		drawer->drawString( 300, 20, "もってるよー" );
+		_crystal->setPos( getCentralPos( ) );
 	}
 }
 

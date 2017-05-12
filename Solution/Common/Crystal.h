@@ -11,6 +11,7 @@ public:
 	void damage( );
 	bool isFinished( ) const;
 	Vector getPos( ) const;
+	void setPos( Vector pos );
 private:
 	Vector _pos;
 	bool _finished;

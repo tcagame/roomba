@@ -54,3 +54,8 @@ bool Crystal::isFinished( ) const {
 Vector Crystal::getPos( ) const {
 	return _pos;
 }
+
+void Crystal::setPos( Vector pos ) {
+	pos.z = _pos.z;
+	_pos = pos;
+}
