@@ -29,6 +29,16 @@ Stage::~Stage( ) {
 }
 
 void Stage::update( ) {
+#if _DEBUG
+	KeyboardPtr keyboard = Keyboard::getTask( );
+	for ( int i = 0; i < MAX_STAGE; i++ ) {
+		std::string key = std::to_string( i );
+		if ( keyboard->isPushKey( key ) ) {
+			loadData( i );
+			reset( );
+		}
+	}
+#endif
 	updateCrystal( );
 }
 
@@ -454,6 +464,8 @@ CrystalPtr Stage::getHittingCrystal( Vector pos0, Vector pos1 ) const {
 void Stage::reset( ) {
 	_phase = -1;
 	_finished = false;
+	loadEarth( );
+	loadWall( );
 	loadPhase( );
 }
 

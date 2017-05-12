@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "Mouse.h"
 #include "Device.h"
+#include "Keyboard.h"
 
 void main( ) {
 	Application::initialize( );
@@ -10,9 +11,11 @@ void main( ) {
 	TaskPtr mouse( new Mouse );
 	TaskPtr game( new Game );
 	TaskPtr device( new Device );
+	TaskPtr keyboard( new Keyboard );
 	ApplicationPtr app = Application::getInstance( );
 	app->addTask( Drawer::getTag( ), drawer );
 	app->addTask( Mouse::getTag( ), mouse );
 	app->addTask( Device::getTag( ), device );
+	app->addTask( Keyboard::getTag( ), keyboard );
 	app->addTask( Game::getTag( ), game );
 }
