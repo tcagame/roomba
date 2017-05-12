@@ -3,7 +3,7 @@
 #include "Drawer.h"
 #include "AppCamera.h"
 #include "Roomba.h"
-#include "Stage.h"
+#include "AppStage.h"
 #include "Timer.h"
 #include "define.h"
 
@@ -12,9 +12,9 @@
 
 SceneStage::SceneStage( ) :
 _state( STATE_NORMAL ) {	
-	_stage = StagePtr( new Stage );
+	_stage = StagePtr( new AppStage( 3 ) );//0-2:’Êí 3:test_stage
 	_roomba = RoombaPtr( new Roomba );
-	_camera = AppCameraPtr( new AppCamera( _roomba ) );
+	_camera = CameraPtr( new AppCamera( _roomba ) );
 	_timer = TimerPtr( new Timer );
 }
 
@@ -25,7 +25,7 @@ SceneStage::~SceneStage( ) {
 Scene::NEXT SceneStage::update( ) {
 	if ( _state == STATE_NORMAL ) {
 		_roomba->update( _stage, _camera );
-		_stage->update( _roomba );
+		_stage->update( );
 		_camera->update( );
 		//_timer->update( );
 	

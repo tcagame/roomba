@@ -3,8 +3,8 @@
 #include "Task.h"
 
 PTR( Editor );
-PTR( EditorCamera );
 PTR( Stage );
+PTR( Camera );
 
 class Editor : public Task {
 public:
@@ -17,18 +17,7 @@ public:
 	void initialize( );
 	void update( );
 private:
-	enum MODE {
-		MODE_WALL,
-		MODE_CRYSTAL,
-		MODE_STATION,
-		MODE_NONE
-	};
-private:
-	void updateMode( );
-	void updateStage( );
-private:
-	EditorCameraPtr _camera;
+	CameraPtr _camera;
 	StagePtr _stage;
-	MODE _mode;
 };
 

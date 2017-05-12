@@ -1,6 +1,7 @@
 #pragma once
 
 static const double WORLD_SCALE = 2;
+static const double STAGE_MODEL_SIZE = 4;
 
 enum MDL {
 	MDL_NONE,

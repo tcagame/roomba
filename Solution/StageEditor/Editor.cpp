@@ -1,13 +1,11 @@
 #include "Editor.h"
 #include "EditorCamera.h"
+#include "EditorStage.h"
 #include "Application.h"
 #include "Drawer.h"
 #include "define.h"
 #include "Stage.h"
 #include "Keyboard.h"
-
-static const double STAGE_MODEL_SIZE = 4;
-
 
 EditorPtr Editor::getTask( ) {
 	ApplicationPtr app = Application::getInstance( );
@@ -84,69 +82,12 @@ void Editor::initialize( ) {
 	drawer->loadMDLModel( MDL_WALL_1_15, "Model/Stage/1_15.mdl", "Model/Stage/wall.jpg", size );
 
 
-	_camera = EditorCameraPtr( new EditorCamera );
-	_stage = StagePtr( new Stage );
+	_camera = CameraPtr( new EditorCamera );
+	_stage = StagePtr( new EditorStage );
 }
 
 void Editor::update( ) {
 	_camera->update( );
-	updateStage( );
-	updateMode( );
-}
-
-void Editor::updateStage( ) {
-	_stage->updateCursor( );
+	_stage->update( );
 	_stage->draw( );
-	_stage->drawEditor( );
-
-	switch ( _mode ) {
-	case MODE_WALL:
-		_stage->editWall( );
-		break;
-	case MODE_CRYSTAL:
-		_stage->editCrystal( );
-		break;
-	case MODE_STATION:
-		_stage->editStation( );
-		break;
-	}
-
-	KeyboardPtr keyboard = Keyboard::getTask( );
-	DrawerPtr drawer = Drawer::getTask( );
-	if ( keyboard->isPushKey( "F1" ) ) {
-		drawer->drawString( 0, 20, "ロード" );
-		_stage->load( );
-	}
-	if ( keyboard->isPushKey( "F2" ) ) {
-		drawer->drawString( 0, 20, "セーブ" );
-		_stage->save( );
-	}
-	if ( keyboard->isPushKey( "NUM0" ) ) {
-		_stage->setPhase( 0 );
-	}
-	if ( keyboard->isPushKey( "NUM1" ) ) {
-		_stage->setPhase( 1 );
-	}
-	if ( keyboard->isPushKey( "NUM2" ) ) {
-		_stage->setPhase( 2 );
-	}
-	if ( keyboard->isPushKey( "NUM3" ) ) {
-		_stage->setPhase( 3 );
-	}
-	if ( keyboard->isPushKey( "NUM4" ) ) {
-		_stage->setPhase( 4 );
-	}
-}
-
-void Editor::updateMode( ) {
-	KeyboardPtr keyboard = Keyboard::getTask( );
-	if ( keyboard->isPushKey( "1" ) ) {
-		_mode = MODE_WALL;
-	}
-	if ( keyboard->isPushKey( "2" ) ) {
-		_mode = MODE_CRYSTAL;
-	}
-	if ( keyboard->isPushKey( "3" ) ) {
-		_mode = MODE_STATION;
-	}
 }

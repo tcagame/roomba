@@ -10,8 +10,6 @@
 #include "Timer.h"
 #include "define.h"
 
-static const double STAGE_MODEL_SIZE = 4;
-
 GamePtr Game::getTask( ) {
 	ApplicationPtr app = Application::getInstance( );
 	return std::dynamic_pointer_cast< Game >( app->getTask( getTag( ) ) );

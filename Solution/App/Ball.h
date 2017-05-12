@@ -1,9 +1,10 @@
 #pragma once
 #include "Drawer.h"
-#include "Roomba.h"
 #include "define.h"
 
+PTR( AppStage );
 PTR( Stage );
+
 static const double BALL_RADIUS = WORLD_SCALE / 2;
 
 class Ball {

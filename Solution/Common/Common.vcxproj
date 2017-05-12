@@ -155,18 +155,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Ball.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Crystal.h" />
     <ClInclude Include="define.h" />
-    <ClInclude Include="Roomba.h" />
     <ClInclude Include="Stage.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Crystal.cpp" />
-    <ClCompile Include="Roomba.cpp" />
     <ClCompile Include="Stage.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

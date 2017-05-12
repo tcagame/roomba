@@ -1,7 +1,7 @@
 #include "Crystal.h"
 #include "Drawer.h"
 #include "mathmatics.h"
-#include "Stage.h"
+#include "AppStage.h"
 #include "Roomba.h"
 
 static const double CRYSTAL_RADIUS = 0.5;
@@ -27,7 +27,7 @@ void Crystal::draw( ) const {
 	drawer->setModelMDL( model );
 }
 
-void Crystal::update( StagePtr stage, RoombaPtr roomba ) {
+void Crystal::update( AppStagePtr stage ) {
 	_drop_down = false;
 	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
 	if ( ( adjust - _vec ).getLength( ) > 0.1 ) {

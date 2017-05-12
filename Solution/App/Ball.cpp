@@ -1,6 +1,5 @@
 #include "Ball.h"
-#include "define.h"
-#include "Stage.h"
+#include "AppStage.h"
 #include "Device.h"
 
 static const double MAX_SPEED = 0.7;
@@ -14,11 +13,12 @@ Ball::~Ball( ) {
 }
 
 void Ball::update( StagePtr stage ) {
+	AppStagePtr stage_ptr = std::dynamic_pointer_cast< AppStage >( stage );
 	if ( _vec.getLength( ) > MAX_SPEED ) {
 		_vec = _vec.normalize( ) * MAX_SPEED;
 	}
-	Vector adjust_vec = stage->adjustCollisionToWall( _pos, _vec, BALL_RADIUS );
-	adjust_vec += stage->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS );
+	Vector adjust_vec = stage_ptr->adjustCollisionToWall( _pos, _vec, BALL_RADIUS );
+	adjust_vec += stage_ptr->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS );
 	_vec = adjust_vec;
 	_pos += _vec;
 }

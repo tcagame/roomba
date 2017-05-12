@@ -159,8 +159,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppCamera.cpp" />
+    <ClCompile Include="AppStage.cpp" />
+    <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="Crystal.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Roomba.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneResult.cpp" />
     <ClCompile Include="SceneSelect.cpp" />
@@ -170,7 +174,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppCamera.h" />
+    <ClInclude Include="AppStage.h" />
+    <ClInclude Include="Ball.h" />
+    <ClInclude Include="Crystal.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Roomba.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneResult.h" />
     <ClInclude Include="SceneSelect.h" />

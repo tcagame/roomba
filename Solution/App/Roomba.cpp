@@ -1,10 +1,9 @@
 #include "Roomba.h"
 #include "define.h"
-#include "Stage.h"
 #include "Ball.h"
 #include "AppCamera.h"
+#include "AppStage.h"
 #include "Crystal.h"
-#include "Timer.h"
 #include "Device.h"
 
 static const int ON_NUTRAL_TIME = 3;
@@ -29,7 +28,7 @@ _state( MOVE_STATE_NEUTRAL ) {
 Roomba::~Roomba( ) {
 }
 
-void Roomba::update( StagePtr stage, AppCameraPtr camera ) {
+void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	updateState( camera );
 	move( camera );
 	for ( int i = 0; i < 2; i++ ) {
@@ -41,7 +40,7 @@ void Roomba::update( StagePtr stage, AppCameraPtr camera ) {
 	holdCrystal( stage );
 }
 
-void Roomba::move( AppCameraPtr camera ) {	
+void Roomba::move( CameraPtr camera ) {	
 	Vector camera_dir = camera->getDir( );
 	camera_dir.z = 0;
 	DevicePtr device = Device::getTask( );
@@ -62,7 +61,7 @@ void Roomba::move( AppCameraPtr camera ) {
 	}
 }
 
-void Roomba::updateState( AppCameraPtr camera ) {
+void Roomba::updateState( CameraPtr camera ) {
 	DevicePtr device = Device::getTask( );
 	Vector right_stick( device->getRightDirX( ), device->getRightDirY( ) );
 	Vector left_stick( device->getDirX( ), device->getDirY( ) );
@@ -96,8 +95,9 @@ void Roomba::updateState( AppCameraPtr camera ) {
 }
 
 void Roomba::holdCrystal( StagePtr stage ) {
+	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( stage );
 	if ( !_crystal ) {
-		_crystal =  stage->getHittingCrystal( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
+		_crystal =  app_stage->getHittingCrystal( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
 	}
 	if ( _crystal ) {
 		DrawerPtr drawer = Drawer::getTask( );
@@ -207,7 +207,7 @@ void Roomba::reset( ) {
 	_crystal = CrystalPtr( );
 }
 
-void Roomba::checkLeftRight( AppCameraPtr camera ) {	
+void Roomba::checkLeftRight( CameraPtr camera ) {	
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
 	Vector vec = mat.multiply( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) );
 	double dot = camera->getDir( ).dot( vec );

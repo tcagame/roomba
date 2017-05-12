@@ -2,15 +2,15 @@
 #include "Drawer.h"
 #include "define.h"
 
-PTR( Stage );
-PTR( Roomba );
+PTR( Crystal );
+PTR( AppStage );
 
 class Crystal {
 public:
 	Crystal( Vector pos, MDL type );
 	virtual ~Crystal( );
 public:
-	void update( StagePtr stage, RoombaPtr roomba );
+	void update( AppStagePtr stage );
 	void draw( ) const;
 	bool isHitting( Vector pos0, Vector pos1 );
 	Vector adjustHitToRoomba( Vector pos, Vector vec, double radius );

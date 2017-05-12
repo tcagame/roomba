@@ -3,7 +3,7 @@
 #include "smart_ptr.h"
 
 PTR( Roomba );
-PTR( AppCamera );
+PTR( Camera );
 PTR( Stage );
 PTR( Timer );
 
@@ -20,7 +20,7 @@ private:
 		MAX_STATE,
 	};
 private:
-	AppCameraPtr _camera;
+	CameraPtr _camera;
 	StagePtr _stage;
 	RoombaPtr _roomba;
 	TimerPtr _timer;

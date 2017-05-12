@@ -4,15 +4,9 @@
     <ClInclude Include="Stage.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Crystal.h" />
-    <ClInclude Include="Roomba.h" />
-    <ClInclude Include="Ball.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Crystal.cpp" />
-    <ClCompile Include="Roomba.cpp" />
-    <ClCompile Include="Ball.cpp" />
   </ItemGroup>
 </Project>
