@@ -9,7 +9,6 @@
 
 static const int ON_NUTRAL_TIME = 3;
 static const double ACCEL = 0.18;
-static const double ATTACK_START_SPEED = 0.09;
 static const double CENTRIPETAL_POWER = 0.03;
 static const double CENTRIPETAL_MIN = 7;
 static const double MAX_SCALE = 25;
@@ -104,6 +103,10 @@ void Roomba::holdCrystal( StagePtr stage ) {
 		DrawerPtr drawer = Drawer::getTask( );
 		drawer->drawString( 300, 20, "‚à‚Á‚Ä‚é‚æ[" );
 		_crystal->setVec( getCentralPos( ) - _crystal->getPos( ) );
+
+		if ( _crystal->isDropDown( ) ) {
+			_crystal = CrystalPtr( );
+		}
 	}
 }
 
@@ -196,11 +199,7 @@ void Roomba::draw( ) const {
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ]->draw( );
 	}
-
-	if ( _balls[ BALL_LEFT ]->getVec( ).getLength( ) > ATTACK_START_SPEED ||
-		 _balls[ BALL_RIGHT ]->getVec( ).getLength( ) > ATTACK_START_SPEED ) {
-		drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
-	}
+	drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
 }
 
 Vector Roomba::getCentralPos( ) const {
@@ -216,6 +215,7 @@ Vector Roomba::getCentralPos( ) const {
 void Roomba::reset( ) {
 	_balls[ BALL_LEFT ]->reset( START_POS[ 0 ] );
 	_balls[ BALL_RIGHT ]->reset( START_POS[ 1 ] );
+	_crystal = CrystalPtr( );
 }
 
 void Roomba::checkLeftRight( AppCameraPtr camera ) {	

@@ -8,6 +8,7 @@
 #include "Mouse.h"
 #include "Camera.h"
 #include "Keyboard.h"
+#include "Roomba.h"
 
 static const double MODEL_SIZE = 4;
 static const int CURSOR_WAIT_TIME = 2;
@@ -28,7 +29,7 @@ _count( 0 ) {
 Stage::~Stage( ) {
 }
 
-void Stage::update( ) {
+void Stage::update( RoombaPtr roomba ) {
 #if _DEBUG
 	KeyboardPtr keyboard = Keyboard::getTask( );
 	for ( int i = 0; i < MAX_STAGE; i++ ) {
@@ -36,13 +37,14 @@ void Stage::update( ) {
 		if ( keyboard->isPushKey( key ) ) {
 			loadData( i );
 			reset( );
+			roomba->reset( );
 		}
 	}
 #endif
-	updateCrystal( );
+	updateCrystal( roomba );
 }
 
-void Stage::updateCrystal( ) {
+void Stage::updateCrystal( RoombaPtr roomba ) {
 	if ( _crystals.size( ) == 0 ) {
 		loadPhase( );
 	}
@@ -57,7 +59,7 @@ void Stage::updateCrystal( ) {
 			ite++;
 			continue;
 		}
-		crystal->update( shared_from_this( ) );
+		crystal->update( shared_from_this( ), roomba );
 		Vector pos = crystal->getPos( );
 		drawer->drawString( scr_width - 280, num * 20, "[クリスタル%2d] x:%04.1f y:%04.1f", num, pos.x, pos.y );
 		num++;
@@ -209,6 +211,10 @@ void Stage::loadEarth( ) {
 }
 
 void Stage::loadWall( ) {
+	_walls.clear( );
+	for ( int i = 0; i < STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2; i++ ) {
+		_map_data[ i ] = 0;
+	}
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
 	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
 	const double ROTE[ 4 ] = { PI / 2 * 0, PI / 2 * 1, PI / 2 * 3, PI / 2 * 2 };
@@ -315,7 +321,7 @@ void Stage::loadPhase( ) {
 	loadCrystal( );
 }
 
-Vector Stage::getCollisionWall( Vector pos, Vector vec, const double radius ) {
+Vector Stage::adjustCollisionToWall( Vector pos, Vector vec, const double radius ) {
 	// ボールと壁の当たり判定
 	Vector result = vec;
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
@@ -405,45 +411,22 @@ Vector Stage::getCollisionWall( Vector pos, Vector vec, const double radius ) {
 			break;
 		}
 	}
-	/*保留
-	for ( int i = 0; i < 8; i++ ) {
-		int tmp_x = x + OFFSET_X[ i ];
-		int tmp_y = y + OFFSET_Y[ i ];
-		int idx = tmp_x + tmp_y * STAGE_WIDTH_NUM * 2;
-		if ( idx < 0 || idx >= STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 ) {
+	return result;
+}
+
+Vector Stage::adjustCollisionToCrystal( Vector pos, Vector vec, const double radius ) {
+	Vector result;
+	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
+	while ( ite != _crystals.end( ) ) {
+		CrystalPtr crystal = (*ite);
+		if ( !crystal ) {
+			ite++;
 			continue;
 		}
-		switch ( _map_data[ idx ] ) {
-		case 0: break;
-		case 1://四角
-			if ( ( DIR[ 0 ].cross( vec ).z > 0 && vec.angle( DIR[ 0 ] ) < PI / 2 ) ||
-				 ( DIR[ 3 ].cross( vec ).z > 0 && vec.angle( DIR[ 3 ] ) < PI / 2 ) ) {
-				result.x = vec.x * -1;
-			}
-			if ( ( DIR[ 1 ].cross( vec ).z > 0 && vec.angle( DIR[ 1 ] ) < PI / 2 ) ||
-				 ( DIR[ 2 ].cross( vec ).z > 0 && vec.angle( DIR[ 2 ] ) < PI / 2 ) ) {
-				result.y = vec.y * -1;
-			}
-			break;
-		case 2://半々円柱
-		{
-			int add_x = 0;
-			int add_y = 0;
-			if ( tmp_x % 2 == 0 ) add_x = (int)( WORLD_SCALE / 2 );
-			if ( tmp_y % 2 == 0 ) add_y = (int)( WORLD_SCALE / 2 );
-			Vector check_pos( tmp_x + add_x, tmp_y + add_y );
-			Vector dir = ( check_pos - pos ).normalize( ) * vec.getLength( );
-			Matrix  mat = Matrix::makeTransformRotation( dir.cross( vec * -1 ), dir.angle( vec * -1 ) );
-			result = mat.multiply( dir );
-		}
-			break;
-		case 3://L字
-			break;
-		}
+		Vector adjust = crystal->adjustHitToRoomba( pos, vec, radius );
+		result += adjust;
+		ite++;
 	}
-	*/
-	
-
 	return result;
 }
 

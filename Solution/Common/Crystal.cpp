@@ -3,13 +3,16 @@
 #include "define.h"
 #include "mathmatics.h"
 #include "Stage.h"
+#include "Roomba.h"
 
 static const double CRYSTAL_RADIUS = 0.5;
 static const double MAX_SPEED = 0.8;
+static const double DECELERATION = 0.2;
 
 Crystal::Crystal( Vector pos ) :
 _pos( pos ),
-_finished( false ) {
+_finished( false ),
+_drop_down( false ) {
 
 }
 
@@ -24,11 +27,22 @@ void Crystal::draw( ) const {
 	drawer->setModelMDL( model );
 }
 
-void Crystal::update( StagePtr stage ) {
+void Crystal::update( StagePtr stage, RoombaPtr roomba ) {
+	_drop_down = false;
+	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
+	if ( ( adjust - _vec ).getLength( ) > 0.1 ) {
+		_vec = adjust;
+		_drop_down = true;
+	}
+
+	if ( _vec.getLength( ) > DECELERATION ) {
+		_vec -= _vec.normalize( ) * DECELERATION;
+	} else {
+		_vec = Vector( );
+	}
 	if ( _vec.getLength( ) > MAX_SPEED ) {
 		_vec = _vec.normalize( ) * MAX_SPEED;
 	}
-	_vec = stage->getCollisionWall( _pos, _vec, CRYSTAL_RADIUS	);
 	_pos += _vec;
 }
 
@@ -53,6 +67,20 @@ bool Crystal::isHitting( Vector pos0, Vector pos1 ) {
 	return hitting;
 }
 
+Vector Crystal::adjustHitToRoomba( Vector pos, Vector vec, double radius ) {
+	//pos0とpos1の間にクリスタルがあるかどうか
+	bool hitting = false;
+	Vector tmp_vec = vec;
+	Vector future_pos = pos + vec;
+	future_pos.z = _pos.z;
+	Vector distance = future_pos - _pos;//ボール→クリスタル
+	if ( distance.getLength( ) < CRYSTAL_RADIUS + radius ) {
+		Vector tmp_vec = distance * -1;
+		vec = tmp_vec.normalize( ) * vec.getLength( );
+	}
+	return tmp_vec - vec;
+}
+
 void Crystal::damage( ) {
 	_finished = true;
 }
@@ -68,4 +96,8 @@ Vector Crystal::getPos( ) const {
 void Crystal::setVec( Vector vec ) {
 	vec.z = 0;
 	_vec = vec;
+}
+
+bool Crystal::isDropDown( ) const {
+	return _drop_down;
 }
