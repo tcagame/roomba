@@ -4,6 +4,7 @@ class Scene {
 public:
 	enum NEXT {
 		NEXT_CONTINUE,
+		NEXT_STAGE_SELECT,
 		NEXT_TITLE,
 		NEXT_STAGE,
 		NEXT_DEBUG_RESULT,

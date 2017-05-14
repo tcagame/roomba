@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "Scene.h"
 #include "SceneTitle.h"
+#include "SceneSelect.h"
 #include "SceneStage.h"
 #include "Drawer.h"
 #include "AppCamera.h"
@@ -150,6 +151,9 @@ void Game::changeScene( ) {
 	switch ( _next ) {
 	case Scene::NEXT_TITLE:
 		_scene = ScenePtr( new SceneTitle );
+		break;
+	case Scene::NEXT_STAGE_SELECT:
+		_scene = ScenePtr( new SceneSelect );
 		break;
 	case Scene::NEXT_STAGE:
 		_scene = ScenePtr( new SceneStage );

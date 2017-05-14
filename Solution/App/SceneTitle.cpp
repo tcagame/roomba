@@ -19,8 +19,8 @@ SceneTitle::~SceneTitle( ) {
 Scene::NEXT SceneTitle::update( ) {
 	draw( );
 	DevicePtr device = Device::getTask( );
-	if ( device->getButton( ) && BUTTON_D ) {
-		return NEXT_STAGE;
+	if ( device->getPush( ) && BUTTON_D ) {
+		return NEXT_STAGE_SELECT;
 	}
 	return NEXT_CONTINUE;
 }
