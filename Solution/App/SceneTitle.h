@@ -7,5 +7,6 @@ public:
 	virtual ~SceneTitle( );
 private:
 	NEXT update( );
+	void draw( );
 };
 
