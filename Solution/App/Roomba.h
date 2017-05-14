@@ -34,6 +34,7 @@ private:
 	void checkLeftRight( CameraPtr camera );
 	void addForceLeft( const Vector& force );
 	void addForceRight( const Vector& force );
+	void deceleration( );
 private:
 	enum BALL {
 		BALL_LEFT,

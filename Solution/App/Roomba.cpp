@@ -54,12 +54,7 @@ void Roomba::move( CameraPtr camera ) {
 	Vector left_stick( device->getDirX( ), device->getDirY( ) );
 	switch ( _state ) {
 	case MOVE_STATE_NEUTRAL:
-		// caution
-		/*
-		for ( int i = 0; i < 2; i++ ) {
-			_balls[ i ]->deceleration( SPEED );
-		}
-		*/
+		deceleration( );
 		break;
 	case MOVE_STATE_TRANSLATION:
 		moveTranslation( camera_dir, right_stick, left_stick );
@@ -227,4 +222,15 @@ void Roomba::addForceLeft( const Vector& force ) {
 
 void Roomba::addForceRight( const Vector& force ) {
 	_force[ BALL_RIGHT ] += force;
+}
+
+void Roomba::deceleration( ) {
+	for ( int i = 0; i < 2; i++ ) {
+		double length = _force[ i ].getLength( );
+		length -= SPEED / 2;
+		if ( length < 0 ) {
+			length = 0;
+		}
+		_force[ i ] = _force[ i ].normalize( ) * length;
+	}
 }
