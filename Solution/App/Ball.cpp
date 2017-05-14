@@ -2,7 +2,7 @@
 #include "AppStage.h"
 #include "Device.h"
 
-static const double MAX_SPEED = 0.7;
+static const double BALL_RADIUS = WORLD_SCALE / 2;
 
 Ball::Ball( const Vector& pos ) :
 _pos( pos ) {
@@ -14,9 +14,6 @@ Ball::~Ball( ) {
 
 void Ball::update( StagePtr stage ) {
 	AppStagePtr stage_ptr = std::dynamic_pointer_cast< AppStage >( stage );
-	if ( _vec.getLength( ) > MAX_SPEED ) {
-		_vec = _vec.normalize( ) * MAX_SPEED;
-	}
 	Vector adjust_vec = stage_ptr->adjustCollisionToWall( _pos, _vec, BALL_RADIUS );
 	adjust_vec += stage_ptr->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS );
 	_vec = adjust_vec;
@@ -37,17 +34,8 @@ Vector Ball::getVec( ) const {
 	return _vec;
 }
 
-void Ball::deceleration( const double accel ) {
-	double length = _vec.getLength( );
-	length -= accel / 2;
-	if ( length < 0 ) {
-		length = 0;
-	}
-	_vec = _vec.normalize( ) * length;
-}
-
-void Ball::addForce( const Vector& force ) {
-	_vec += force;
+void Ball::setForce( const Vector& force ) {
+	_vec = force;
 }
 
 void Ball::reset( const Vector& pos ) {

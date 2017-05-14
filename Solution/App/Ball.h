@@ -5,8 +5,6 @@
 PTR( AppStage );
 PTR( Stage );
 
-static const double BALL_RADIUS = WORLD_SCALE / 2;
-
 class Ball {
 public:
 	Ball( const Vector& pos );
@@ -15,8 +13,7 @@ public:
 	void update( StagePtr stage );
 	void draw( ) const;
 	void reset( const Vector& pos );
-	void addForce( const Vector& force );
-	void deceleration( const double accel );
+	void setForce( const Vector& force );
 	Vector getPos( ) const;
 	Vector getVec( ) const;
 private:

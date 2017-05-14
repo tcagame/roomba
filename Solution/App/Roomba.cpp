@@ -5,13 +5,16 @@
 #include "AppStage.h"
 #include "Crystal.h"
 #include "Device.h"
+#include <assert.h>
 
 static const int ON_NUTRAL_TIME = 3;
-static const double ACCEL = 0.18;
+static const double SPEED = 0.18;
+static const double MAX_SPEED = 0.7;
 static const double CENTRIPETAL_POWER = 0.03;
 static const double CENTRIPETAL_MIN = 7;
 static const double MAX_SCALE = 25;
 static const double MIN_SCALE = 8;
+
 
 static const Vector START_POS[ 2 ] {
 	Vector( 15, 15 ) * WORLD_SCALE,
@@ -32,7 +35,10 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	updateState( camera );
 	move( camera );
 	for ( int i = 0; i < 2; i++ ) {
-		//_balls[ i ]->deceleration( ACCEL );
+		if ( _force[ i ].getLength2( ) > MAX_SPEED * MAX_SPEED ) {
+			_force[ i ] = _force[ i ].normalize( ) * MAX_SPEED;
+		}
+		_balls[ i ]->setForce( _force[ i ] );
 		_balls[ i ]->update( stage );
 	}
 
@@ -48,15 +54,21 @@ void Roomba::move( CameraPtr camera ) {
 	Vector left_stick( device->getDirX( ), device->getDirY( ) );
 	switch ( _state ) {
 	case MOVE_STATE_NEUTRAL:
+		// caution
+		/*
 		for ( int i = 0; i < 2; i++ ) {
-			_balls[ i ]->deceleration( ACCEL );
+			_balls[ i ]->deceleration( SPEED );
 		}
+		*/
 		break;
 	case MOVE_STATE_TRANSLATION:
 		moveTranslation( camera_dir, right_stick, left_stick );
 		break;
-	case MOVE_STATE_ROTATION:
-		moveRotation( camera_dir, right_stick, left_stick );
+	case MOVE_STATE_ROTATION_RIGHT:
+		moveRotation( -1 );
+		break;
+	case MOVE_STATE_ROTATION_LEFT:
+		moveRotation( 1 );
 		break;
 	}
 }
@@ -67,11 +79,11 @@ void Roomba::updateState( CameraPtr camera ) {
 	Vector left_stick( device->getDirX( ), device->getDirY( ) );
 	
 	MOVE_STATE state = MOVE_STATE_NEUTRAL;
-	if ( ( right_stick.x > 0  && left_stick.x < 0 ) ||
-		 ( right_stick.x < 0  && left_stick.x > 0 ) ||
-		 ( right_stick.y > 0  && left_stick.y < 0 ) ||
-		 ( right_stick.y < 0  && left_stick.y > 0 ) ) {
-		state = MOVE_STATE_ROTATION;
+	if ( right_stick.y > 0  && left_stick.y < 0 ) {
+		state = MOVE_STATE_ROTATION_RIGHT;
+	}
+	if ( right_stick.y < 0  && left_stick.y > 0 ) {
+		state = MOVE_STATE_ROTATION_LEFT;
 	}
 	if ( ( right_stick.x < 0 && left_stick.x < 0 ) ||
 		 ( right_stick.x > 0 && left_stick.x > 0 ) ||
@@ -113,8 +125,8 @@ void Roomba::holdCrystal( StagePtr stage ) {
 void Roomba::moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left ) {
 	Matrix mat = Matrix::makeTransformRotation( camera_dir.cross( Vector( 0, -1 ) ), camera_dir.angle( Vector( 0, -1 ) ) );
 
-	Vector vec_left  = mat.multiply( left  ).normalize( ) * ACCEL;
-	Vector vec_right = mat.multiply( right ).normalize( ) * ACCEL;
+	Vector vec_left  = mat.multiply( left  ).normalize( ) * SPEED;
+	Vector vec_right = mat.multiply( right ).normalize( ) * SPEED;
 	Vector scale_left = Vector( );
 	Vector scale_right = Vector( );
 
@@ -134,8 +146,8 @@ void Roomba::moveTranslation( const Vector& camera_dir, const Vector& right, con
 	}
 	
 	moveScale( scale_left, scale_right );
-	_balls[ BALL_LEFT  ]->addForce( vec_left );
-	_balls[ BALL_RIGHT ]->addForce( vec_right );
+	addForceLeft( vec_left );
+	addForceRight( vec_right );
 }
 
 void Roomba::moveScale( Vector scale_left, Vector scale_right ) {
@@ -156,31 +168,22 @@ void Roomba::moveScale( Vector scale_left, Vector scale_right ) {
 		vec_right = right_dir.normalize( ) * ( ( vec_left + vec_right + scale ).getLength( ) * 0.5 );
 	}
 
-	_balls[ BALL_LEFT  ]->addForce( vec_left );
-	_balls[ BALL_RIGHT ]->addForce( vec_right );
+	addForceLeft( vec_left );
+	addForceRight( vec_right );
 }
 
-void Roomba::moveRotation( const Vector& camera_dir, Vector right, Vector left ) {	
-	DrawerPtr drawer = Drawer::getTask( );
-	drawer->drawString( 20, 10, "length %lf", ( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).getLength( ) );
-
-	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
-	Vector ball_left = _balls[ BALL_LEFT ]->getPos( );
-	Vector ball_right = _balls[ BALL_RIGHT ]->getPos( );
-	Vector roomba_dir = mat.multiply( ball_left - ball_right );
-	mat = Matrix::makeTransformRotation( roomba_dir.cross( Vector( 0, -1 ) ), roomba_dir.angle( Vector( 0, -1 ) ) );
-	double x = fabs( ball_left.x - getCentralPos( ).x );
-	double y = fabs( ball_left.y - getCentralPos( ).y );
-	Vector rudias( x, y );
-
-	rudias = mat.multiply( rudias );
-	Vector vec_left = ( ( rudias + getCentralPos( ) ) - ball_left ).normalize( ) * ACCEL;
-	mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI );
-	rudias = mat.multiply( rudias );
-	Vector vec_right = ( ( rudias + getCentralPos( ) ) - ball_right ).normalize( ) * ACCEL;
-
-	_balls[ BALL_LEFT ]->addForce( vec_left );
-	_balls[ BALL_RIGHT ]->addForce( vec_right );
+void Roomba::moveRotation( int rotation_dir ) {
+	for ( int i = 0;  i < 2; i++ ) {
+		Vector radius = _balls[ i ]->getPos( ) - getCentralPos( );
+		Matrix mat_rot = Matrix::makeTransformRotation( Vector( 0, 0, rotation_dir ), SPEED / radius.getLength( ) );
+		radius = mat_rot.multiply( radius );
+		Vector vec = ( ( radius + getCentralPos( ) ) - _balls[ i ]->getPos( ) );
+		if ( i == 0 ) {
+			addForceLeft( vec );		
+		} else {
+			addForceRight( vec );
+		}
+	}
 }
 
 void Roomba::draw( ) const {
@@ -216,4 +219,12 @@ void Roomba::checkLeftRight( CameraPtr camera ) {
 		_balls[ BALL_LEFT ] = _balls[ BALL_RIGHT ];
 		_balls[ BALL_RIGHT ] = tmp;
 	}
+}
+
+void Roomba::addForceLeft( const Vector& force ) {
+	_force[ BALL_LEFT ] += force;
+}
+
+void Roomba::addForceRight( const Vector& force ) {
+	_force[ BALL_RIGHT ] += force;
 }

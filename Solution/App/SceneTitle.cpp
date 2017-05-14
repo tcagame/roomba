@@ -27,6 +27,6 @@ Scene::NEXT SceneTitle::update( ) {
 
 void SceneTitle::draw( ) {
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( TITLE_CENTER_X - TITLE_WIDTH / 2, TITLE_CENTER_Y - TITLE_HEIGHT / 2), GRAPH_TITLE );
+	Drawer::Sprite sprite( Drawer::Transform( TITLE_CENTER_X - TITLE_WIDTH / 2, TITLE_CENTER_Y - TITLE_HEIGHT / 2 ), GRAPH_TITLE );
 	drawer->setSprite( sprite );
 }

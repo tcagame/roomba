@@ -12,7 +12,8 @@ public:
 	enum MOVE_STATE {
 		MOVE_STATE_NEUTRAL,
 		MOVE_STATE_TRANSLATION,
-		MOVE_STATE_ROTATION,
+		MOVE_STATE_ROTATION_RIGHT,
+		MOVE_STATE_ROTATION_LEFT,
 		MAX_STATE,
 	};
 public:
@@ -29,8 +30,10 @@ private:
 	void holdCrystal( StagePtr stage );
 	void moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left );
 	void moveScale( Vector scale_left, Vector scale_right );
-	void moveRotation( const Vector& camera_dir, Vector right, Vector left );
+	void moveRotation( int rotation_dir );
 	void checkLeftRight( CameraPtr camera );
+	void addForceLeft( const Vector& force );
+	void addForceRight( const Vector& force );
 private:
 	enum BALL {
 		BALL_LEFT,
@@ -38,6 +41,7 @@ private:
 	};
 private:
 	int _neutral;
+	std::array< Vector, 2 > _force;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
 	CrystalPtr _crystal;
