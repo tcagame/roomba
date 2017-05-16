@@ -60,7 +60,7 @@ void AppStage::updateCrystal( ) {
 	ApplicationPtr app = Application::getInstance( );
 	int scr_width = app->getWindowWidth( );
 	DrawerPtr drawer = Drawer::getTask( );
-	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
+	std::list< CrystalPtr >::iterator ite = _crystals.begin( );
 	int num = 0;
 	while ( ite != _crystals.end( ) ) {
 		CrystalPtr crystal = (*ite);
@@ -68,21 +68,32 @@ void AppStage::updateCrystal( ) {
 			ite++;
 			continue;
 		}
+		if ( crystal->isFinished( ) ) {
+			crystal.~shared_ptr( );
+			ite = _crystals.erase( ite );
+			continue;
+		}
 		AppStagePtr stage = std::dynamic_pointer_cast< AppStage >( shared_from_this( ) );
 		crystal->update( stage );
 		Vector pos = crystal->getPos( );
 		drawer->drawString( scr_width - 280, num * 20, "[ƒNƒŠƒXƒ^ƒ‹%2d] x:%04.1f y:%04.1f", num, pos.x, pos.y );
 		num++;
-		if ( crystal->isFinished( ) ) {
-			ite = _crystals.erase( ite );
-			continue;
-		}
 		ite++;
 	}
 }
 
 
 void AppStage::loadCrystal( ) {
+	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
+	while ( ite != _crystals.end( ) ) {
+		CrystalPtr crystal = *ite;
+		if ( !crystal ) {
+			ite++;
+			continue;
+		}
+		crystal.~shared_ptr( );
+		ite++;
+	}
 	_crystals.clear( );
 	DATA data = getData( );
 	int phase = getPhase( );
@@ -327,4 +338,20 @@ void AppStage::loadMapData( ) {
 			}
 		}
 	}
+}
+
+bool AppStage::isOnStation( Vector pos, int type ) {
+	int x = ( int )( pos.x / WORLD_SCALE );
+	int y = ( int )( pos.y / WORLD_SCALE );
+	int idx = x + y * STAGE_WIDTH_NUM;
+
+	DATA data = getData( );
+	int phase = getPhase( );
+	if ( data.station[ getPhase( ) ][ idx ] == type ) {
+		data.station[ getPhase( ) ][ idx ] = 0;
+		setData( data );
+		return true;
+	}
+
+	return false;
 }

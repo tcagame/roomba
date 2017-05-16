@@ -29,6 +29,10 @@ void Crystal::draw( ) const {
 
 void Crystal::update( AppStagePtr stage ) {
 	_drop_down = false;
+	if ( stage->isOnStation( _pos, (int)( _type - MDL_CRYSTAL_0 ) + 1 ) ) {
+		_finished = true;
+	}
+
 	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
 	if ( ( adjust - _vec ).getLength( ) > 0.1 ) {
 		_vec = adjust;
@@ -79,10 +83,6 @@ Vector Crystal::adjustHitToRoomba( Vector pos, Vector vec, double radius ) {
 		vec = tmp_vec.normalize( ) * vec.getLength( );
 	}
 	return tmp_vec - vec;
-}
-
-void Crystal::damage( ) {
-	_finished = true;
 }
 
 bool Crystal::isFinished( ) const {

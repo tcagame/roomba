@@ -106,14 +106,15 @@ void Roomba::holdCrystal( StagePtr stage ) {
 	if ( !_crystal ) {
 		_crystal =  app_stage->getHittingCrystal( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
 	}
-	if ( _crystal ) {
+	if ( _crystal != CrystalPtr( ) ) {
+		if ( _crystal->isDropDown( ) || _crystal->isFinished( ) ) {
+			_crystal = CrystalPtr( );
+			return;
+		}
 		DrawerPtr drawer = Drawer::getTask( );
 		drawer->drawString( 300, 20, "‚à‚Á‚Ä‚é‚æ[" );
 		_crystal->setVec( getCentralPos( ) - _crystal->getPos( ) );
 
-		if ( _crystal->isDropDown( ) ) {
-			_crystal = CrystalPtr( );
-		}
 	}
 }
 
