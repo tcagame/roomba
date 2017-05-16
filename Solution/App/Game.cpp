@@ -17,7 +17,7 @@ GamePtr Game::getTask( ) {
 }
 
 Game::Game( ) :
-_next( Scene::NEXT_STAGE ) {
+_next( Scene::NEXT_STAGE_SELECT ) {
 	
 }
 
@@ -29,8 +29,6 @@ void Game::initialize( ) {
 	//drawer‰Šú‰»Œã
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_SELECT_MENU, "UI/UI_retry_select.png" );
-	drawer->loadGraph( GRAPH_TITLE, "title/roomb_title.png" );
-	drawer->loadGraph( STAGE_SELECT, "select/select.png");
 	changeScene( );
 
 }

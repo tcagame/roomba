@@ -8,5 +8,9 @@ public:
 private:
 	NEXT update( );
 	void draw( );
+	void drawRogo( );
+	void drawSelect( );
+private:
+	int _select;
 };
 

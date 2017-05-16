@@ -10,6 +10,8 @@ static const int TITLE_CENTER_Y = 180;
 
 
 SceneTitle::SceneTitle( ) {
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->loadGraph( GRAPH_TITLE, "title/roomb_title.png" );
 }
 
 
