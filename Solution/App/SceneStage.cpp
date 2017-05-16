@@ -14,7 +14,6 @@ static const int UI_STATION_Y = 200;
 static const int UI_NUM_WIDTH = 32;
 static const int UI_NUM_HEIGHT = 64;
 
-
 SceneStage::SceneStage( ) :
 _state( STATE_NORMAL ) {	
 	_stage = StagePtr( new AppStage( 3 ) );//0-2:í èÌ 3:test_stage

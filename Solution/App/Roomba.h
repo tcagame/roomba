@@ -42,6 +42,7 @@ private:
 	};
 private:
 	int _neutral;
+	double _speed;
 	std::array< Vector, 2 > _force;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;

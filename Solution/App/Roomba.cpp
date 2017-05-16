@@ -22,7 +22,8 @@ static const Vector START_POS[ 2 ] {
 };
 
 Roomba::Roomba( ) :
-_state( MOVE_STATE_NEUTRAL ) {
+_state( MOVE_STATE_NEUTRAL ),
+_speed( 0 ) {
 	_balls[ BALL_LEFT ] = BallPtr( new Ball( START_POS[ 0 ] ) );
 	_balls[ BALL_RIGHT ] = BallPtr( new Ball( START_POS[ 1 ] ) );
 }
@@ -54,7 +55,7 @@ void Roomba::move( CameraPtr camera ) {
 	Vector left_stick( device->getDirX( ), device->getDirY( ) );
 	switch ( _state ) {
 	case MOVE_STATE_NEUTRAL:
-		deceleration( );
+		//deceleration( );
 		break;
 	case MOVE_STATE_TRANSLATION:
 		moveTranslation( camera_dir, right_stick, left_stick );
@@ -120,7 +121,7 @@ void Roomba::holdCrystal( StagePtr stage ) {
 
 void Roomba::moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left ) {
 	Matrix mat = Matrix::makeTransformRotation( camera_dir.cross( Vector( 0, -1 ) ), camera_dir.angle( Vector( 0, -1 ) ) );
-
+	
 	Vector vec_left  = mat.multiply( left  ).normalize( ) * SPEED;
 	Vector vec_right = mat.multiply( right ).normalize( ) * SPEED;
 	Vector scale_left = Vector( );
@@ -169,11 +170,15 @@ void Roomba::moveScale( Vector scale_left, Vector scale_right ) {
 }
 
 void Roomba::moveRotation( int rotation_dir ) {
+	_speed += SPEED;
+	if ( _speed > MAX_SPEED ) {
+		_speed = MAX_SPEED;
+	}
 	for ( int i = 0;  i < 2; i++ ) {
 		Vector radius = _balls[ i ]->getPos( ) - getCentralPos( );
-		Matrix mat_rot = Matrix::makeTransformRotation( Vector( 0, 0, rotation_dir ), SPEED / radius.getLength( ) );
-		radius = mat_rot.multiply( radius );
-		Vector vec = ( ( radius + getCentralPos( ) ) - _balls[ i ]->getPos( ) );
+		Matrix mat_rot = Matrix::makeTransformRotation( Vector( 0, 0, rotation_dir ), _speed / radius.getLength( ) );
+		Vector radius2 = mat_rot.multiply( radius );
+		Vector vec = ( ( radius2 + getCentralPos( ) ) - _balls[ i ]->getPos( ) );
 		if ( i == 0 ) {
 			addForceLeft( vec );		
 		} else {
@@ -218,11 +223,11 @@ void Roomba::checkLeftRight( CameraPtr camera ) {
 }
 
 void Roomba::addForceLeft( const Vector& force ) {
-	_force[ BALL_LEFT ] += force;
+	_force[ BALL_LEFT ] = force;
 }
 
 void Roomba::addForceRight( const Vector& force ) {
-	_force[ BALL_RIGHT ] += force;
+	_force[ BALL_RIGHT ] = force;
 }
 
 void Roomba::deceleration( ) {
