@@ -10,7 +10,6 @@ PTR( Crystal );
 class Roomba {
 public:
 	enum MOVE_STATE {
-		MOVE_STATE_NEUTRAL,
 		MOVE_STATE_TRANSLATION,
 		MOVE_STATE_ROTATION_RIGHT,
 		MOVE_STATE_ROTATION_LEFT,
@@ -34,14 +33,12 @@ private:
 	void checkLeftRight( CameraPtr camera );
 	void addForceLeft( const Vector& force );
 	void addForceRight( const Vector& force );
-	void deceleration( );
 private:
 	enum BALL {
 		BALL_LEFT,
 		BALL_RIGHT
 	};
 private:
-	int _neutral;
 	double _speed;
 	std::array< Vector, 2 > _force;
 	MOVE_STATE _state;
