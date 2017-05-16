@@ -124,6 +124,7 @@ void EditorStage::edit( ) {
 	if ( keyboard->isPushKey( "F1" ) ) {
 		drawer->drawString( 0, 20, "ロード" );
 		loadFile( );
+		reset( );
 	}
 	if ( keyboard->isPushKey( "F2" ) ) {
 		drawer->drawString( 0, 20, "セーブ" );

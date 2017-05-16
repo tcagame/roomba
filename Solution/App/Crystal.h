@@ -14,7 +14,6 @@ public:
 	void draw( ) const;
 	bool isHitting( Vector pos0, Vector pos1 );
 	Vector adjustHitToRoomba( Vector pos, Vector vec, double radius );
-	void damage( );
 	bool isFinished( ) const;
 	Vector getPos( ) const;
 	void setVec( Vector vec );
