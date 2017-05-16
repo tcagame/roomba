@@ -84,8 +84,8 @@ void EditorStage::draw( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	Vector cursor_pos( _cursor_x * WORLD_SCALE + WORLD_SCALE / 2, _cursor_y * WORLD_SCALE  + WORLD_SCALE / 4 );
 	drawer->setModelMDL( Drawer::ModelMDL( cursor_pos, MDL_CURSOR ) );
-	drawer->drawString( 0, 60, "WAVE:%d", getPhase( ) );
-	drawer->drawString( 0, 0, "壁編集:Z　クリスタル編集:X　ステーション編集:C　セーブ:F1　ロード:F2　フェーズ変更:テンキー" );
+	drawer->drawString( 0, 60, "PHASE:%d", getPhase( ) );
+	drawer->drawString( 0, 0, "壁編集:Z　クリスタル編集:X　ステーション編集:C　ロード:F1　セーブ:F2　フェーズ変更:テンキー" );
 
 
 	for ( int i = 0; i <= STAGE_WIDTH_NUM; i++ ) {
@@ -130,20 +130,11 @@ void EditorStage::edit( ) {
 		drawer->drawString( 0, 20, "セーブ" );
 		saveFile( );
 	}
-	if ( keyboard->isPushKey( "NUM0" ) ) {
-		setPhase( 0 );
-	}
-	if ( keyboard->isPushKey( "NUM1" ) ) {
-		setPhase( 1 );
-	}
-	if ( keyboard->isPushKey( "NUM2" ) ) {
-		setPhase( 2 );
-	}
-	if ( keyboard->isPushKey( "NUM3" ) ) {
-		setPhase( 3 );
-	}
-	if ( keyboard->isPushKey( "NUM4" ) ) {
-		setPhase( 4 );
+	for ( int i = 0; i < 10; i++ ) {
+		std::string key = "NUM" + std::to_string( i );
+		if ( keyboard->isPushKey( key ) ) {
+			setPhase( i );
+		}
 	}
 
 	switch ( _mode ) {

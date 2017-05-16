@@ -5,6 +5,7 @@
 PTR( Roomba );
 PTR( Camera );
 PTR( Stage );
+PTR( AppStage );
 PTR( Timer );
 
 class SceneStage : public Scene {//ステージ
@@ -19,6 +20,8 @@ private:
 		STATE_SELECT_RETRY,
 		MAX_STATE,
 	};
+private:
+	void drawUI( ) const;
 private:
 	CameraPtr _camera;
 	StagePtr _stage;

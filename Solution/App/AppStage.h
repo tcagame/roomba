@@ -16,6 +16,7 @@ public:
 	Vector adjustCollisionToCrystal( Vector pos, Vector vec, const double radius );
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 ) const;
 	bool isOnStation( Vector pos, int type );
+	int getStationNum( ) const;
 private:
 	void updateCrystal( );
 	void drawCrystal( ) const;
