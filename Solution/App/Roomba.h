@@ -31,8 +31,6 @@ private:
 	void moveScale( Vector scale_left, Vector scale_right );
 	void moveRotation( int rotation_dir );
 	void checkLeftRight( CameraPtr camera );
-	void addForceLeft( const Vector& force );
-	void addForceRight( const Vector& force );
 private:
 	enum BALL {
 		BALL_LEFT,
@@ -40,7 +38,6 @@ private:
 	};
 private:
 	double _speed;
-	std::array< Vector, 2 > _force;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
 	CrystalPtr _crystal;
