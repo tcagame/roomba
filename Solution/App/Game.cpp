@@ -31,6 +31,7 @@ void Game::initialize( ) {
 	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
 	drawer->loadGraph( GRAPH_SELECT_MENU, "UI/UI_retry_select.png" );
 	drawer->loadGraph( GRAPH_TITLE, "title/roomb_title.png" );
+	drawer->loadGraph( STAGE_SELECT, "select/select.png");
 
 	
 	Matrix size = Matrix::makeTransformScaling( Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE ) ); 
