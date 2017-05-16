@@ -197,6 +197,12 @@ void Stage::loadPhase( ) {
 		return;
 	}
 	loadCrystal( );
+	_max_station = 0;
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		if ( _data.station[ _phase ][ i ] != 0 ) {
+			_max_station++;
+		}
+	}
 }
 
 void Stage::loadCrystal( ) {
@@ -244,4 +250,8 @@ void Stage::debug( ) {
 			reset( );
 		}
 	}
+}
+
+int Stage::getMaxStationNum( ) const {
+	return _max_station;
 }

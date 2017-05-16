@@ -2,6 +2,7 @@
 #include <vector>
 #include <array>
 #include "Drawer.h"
+#include "define.h"
 
 PTR( Stage );
 
@@ -14,10 +15,11 @@ public:
 	virtual void draw( ) const = 0;
 	bool isFinished( ) const;
 	virtual void reset( );
+	int getMaxStationNum( ) const;
+	int getPhase( ) const;
 protected:
 	static const int STAGE_WIDTH_NUM = 40;
 	static const int STAGE_HEIGHT_NUM = 35;
-	static const int MAX_PHASE = 10;
 	static const int MAX_STAGE = 4;
 	static const int MAX_LINK = 5;
 protected:
@@ -32,14 +34,12 @@ protected:
 	DATA getData( ) const;
 	void setPhase( int phase );
 	void drawModel( ) const;
-protected:
 	void load( int stage_num );
 	virtual void drawCrystal( ) const;
 	void loadEarth( );
 	void loadWall( );
 	void loadPhase( );
 	virtual void loadCrystal( );
-	int getPhase( ) const;
 private:
 	void drawBackground( ) const;
 	void drawEarth( ) const;
@@ -51,5 +51,6 @@ private:
 	DATA _data;
 	int _phase;
 	bool _finished;
+	int _max_station;
 };
 

@@ -347,11 +347,22 @@ bool AppStage::isOnStation( Vector pos, int type ) {
 
 	DATA data = getData( );
 	int phase = getPhase( );
-	if ( data.station[ getPhase( ) ][ idx ] == type ) {
-		data.station[ getPhase( ) ][ idx ] = 0;
+	if ( data.station[ phase ][ idx ] == type ) {
+		data.station[ phase ][ idx ] = 0;
 		setData( data );
 		return true;
 	}
-
 	return false;
+}
+
+int AppStage::getStationNum( ) const {
+	int num = 0;
+	DATA data = getData( );
+	int phase = getPhase( );
+	for ( int i = 0; i < STAGE_HEIGHT_NUM * STAGE_WIDTH_NUM; i++ ) {
+		if ( data.station[ phase ][ i ] != 0 ) {
+			num++;
+		}
+	}
+	return num;
 }
