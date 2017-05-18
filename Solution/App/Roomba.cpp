@@ -207,3 +207,7 @@ void Roomba::checkLeftRight( CameraPtr camera ) {
 		_balls[ BALL_RIGHT ] = tmp;
 	}
 }
+
+Vector Roomba::getBallPos( int ball ) const {
+	return _balls[ ball ]->getPos( );
+}
