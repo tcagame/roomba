@@ -17,6 +17,7 @@ public:
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 ) const;
 	bool isOnStation( Vector pos, int type );
 	int getStationNum( ) const;
+	std::list< CrystalPtr > getCrystalList( ) const;
 private:
 	void updateCrystal( );
 	void drawCrystal( ) const;

@@ -101,3 +101,7 @@ void Crystal::setVec( Vector vec ) {
 bool Crystal::isDropDown( ) const {
 	return _drop_down;
 }
+
+MDL Crystal::getType( ) const {
+	return _type;
+}

@@ -8,6 +8,12 @@ PTR( Stage );
 
 class Stage {
 public:
+	struct DATA {
+		std::array< char, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > wall;
+		std::array< std::array< char, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_PHASE > crystal;
+		std::array< std::array< char, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_PHASE > station;
+	};
+public:
 	Stage( );
 	virtual ~Stage( );
 public:
@@ -17,21 +23,13 @@ public:
 	virtual void reset( );
 	int getMaxStationNum( ) const;
 	int getPhase( ) const;
+	DATA getData( ) const;
 protected:
-	static const int STAGE_WIDTH_NUM = 40;
-	static const int STAGE_HEIGHT_NUM = 35;
 	static const int MAX_STAGE = 4;
 	static const int MAX_LINK = 5;
 protected:
-	struct DATA {
-		std::array< char, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > wall;
-		std::array< std::array< char, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_PHASE > crystal;
-		std::array< std::array< char, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_PHASE > station;
-	};
-protected:
 	void debug( );
 	void setData( DATA data );
-	DATA getData( ) const;
 	void setPhase( int phase );
 	void drawModel( ) const;
 	void load( int stage_num );

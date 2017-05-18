@@ -2,7 +2,6 @@
 #include "Drawer.h"
 #include "define.h"
 
-PTR( Crystal );
 PTR( AppStage );
 
 class Crystal {
@@ -18,6 +17,7 @@ public:
 	Vector getPos( ) const;
 	void setVec( Vector vec );
 	bool isDropDown( ) const;
+	MDL getType( ) const;
 private:
 	Vector _pos;
 	Vector _vec;

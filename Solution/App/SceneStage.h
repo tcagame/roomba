@@ -22,6 +22,7 @@ private:
 	};
 private:
 	void drawUI( ) const;
+	void drawMap( ) const;
 private:
 	CameraPtr _camera;
 	StagePtr _stage;
