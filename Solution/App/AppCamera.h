@@ -10,6 +10,7 @@ public:
 	virtual ~AppCamera( );
 public:
 	void reset( );
+	void update( );
 private:
 	void move( );
 	RoombaPtr _roomba;

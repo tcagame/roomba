@@ -215,8 +215,8 @@ void SceneStage::drawMap( ) const {
 	for ( int i = 0; i < 2; i++ ) {
 		Vector roomba_pos = _roomba->getBallPos( i );
 		int roomba_x = UI_MAP_X + (int)( ( STAGE_WIDTH_NUM - roomba_pos.x / WORLD_SCALE - 0.5 ) * UI_MAP_SIZE );
-		int roomba_y = scr_height - UI_MAP_FOOT_Y - (int)( roomba_pos.y / WORLD_SCALE * UI_MAP_SIZE );
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( roomba_x, roomba_y, 0, 16 * 5, 16, 16, roomba_x + UI_MAP_SIZE, roomba_y - UI_MAP_SIZE ), GRAPH_MAP ) );
+		int roomba_y = scr_height - UI_MAP_FOOT_Y - (int)( ( roomba_pos.y / WORLD_SCALE + 0.5 ) * UI_MAP_SIZE ) - UI_MAP_SIZE;
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( roomba_x, roomba_y, 0, 16 * 5, 16, 16, roomba_x + UI_MAP_SIZE, roomba_y + UI_MAP_SIZE ), GRAPH_MAP ) );
 	}
 	//クリスタル表示
 	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
@@ -231,7 +231,7 @@ void SceneStage::drawMap( ) const {
 		Vector pos = crystal->getPos( );
 		int type = (int)( crystal->getType( ) - MDL_CRYSTAL_0 );
 		int x = UI_MAP_X + (int)( ( STAGE_WIDTH_NUM - pos.x / WORLD_SCALE - 0.5 ) * UI_MAP_SIZE );
-		int y = scr_height - UI_MAP_FOOT_Y - (int)( ( pos.y / WORLD_SCALE ) * UI_MAP_SIZE ) - UI_MAP_SIZE;
+		int y = scr_height - UI_MAP_FOOT_Y - (int)( ( pos.y / WORLD_SCALE + 0.5 ) * UI_MAP_SIZE ) - UI_MAP_SIZE;
 		int tx = type * 16;
 		int ty = 64;
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, tx, ty, 16, 16, x + UI_MAP_SIZE, y + UI_MAP_SIZE ), GRAPH_MAP ) );
