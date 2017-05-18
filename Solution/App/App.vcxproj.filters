@@ -24,6 +24,9 @@
     <ClCompile Include="Crystal.cpp" />
     <ClCompile Include="Roomba.cpp" />
     <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="SceneRetry.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -48,6 +51,9 @@
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Crystal.h" />
     <ClInclude Include="Roomba.h" />
+    <ClInclude Include="SceneRetry.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scene">

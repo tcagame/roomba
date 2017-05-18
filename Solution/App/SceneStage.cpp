@@ -95,14 +95,15 @@ Scene::NEXT SceneStage::update( ) {
 		_roomba->update( _stage, _camera );
 		_stage->update( );
 		_camera->update( );
-		//_timer->update( );
+		_timer->update( );
 	
-		/*if ( _timer->isTimeOver( ) ) {
-			_state = STATE_SELECT_RETRY;
-		}*/
+		if ( _timer->isTimeOver( ) ) {
+			//_state = STATE_SELECT_RETRY;
+			return NEXT_RETRY;
+		}
 		if ( _stage->isFinished( ) ) {
 			_state = STATE_GAME_CLEAR;
-			return NEXT::NEXT_RESULT;
+			return NEXT_RESULT;
 		}
 	}
 	/*

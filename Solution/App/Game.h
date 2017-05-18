@@ -16,9 +16,11 @@ public:
 public:
 	void update( );
 	void initialize( );
+	void setStage( int stage_num );
 private:
 	void changeScene( );
 private:
+	int _stage_num;
 	Scene::NEXT _next;
 	ScenePtr _scene;
 };

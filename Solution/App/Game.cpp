@@ -5,6 +5,7 @@
 #include "SceneSelect.h"
 #include "SceneStage.h"
 #include "SceneResult.h"
+#include "SceneRetry.h"
 #include "Drawer.h"
 #include "AppCamera.h"
 #include "Roomba.h"
@@ -18,70 +19,23 @@ GamePtr Game::getTask( ) {
 }
 
 Game::Game( ) :
-_next( Scene::NEXT_STAGE_SELECT ) {
+_next( Scene::NEXT_TITLE ),
+_stage_num( 0 ) {
 	
 }
-
 
 Game::~Game( ) {
 }
 
 void Game::initialize( ) {
 	//drawer初期化後
-	DrawerPtr drawer = Drawer::getTask( );
-	drawer->loadGraph( GRAPH_SELECT_MENU, "UI/UI_retry_select.png" );
 	changeScene( );
-
 }
 
 void Game::update( ) {
 	_next = _scene->update( );
 	changeScene( );
-	/*
-	switch ( _next ) {
-	case Scene::NEXT_TITLE:
-		break;
-	case Scene::NEXT_STAGE:
-		if ( _state == STATE_NORMAL ) {
-			_roomba->update( _stage, _camera, _timer );
-			_stage->update( );
-			_camera->update( );
-			_timer->update( );
-
-			if ( _timer->isTimeOver( ) ) {
-				_state = STATE_SELECT_RETRY;
-			}
-			if ( _stage->isFinished( ) ) {
-				_state = STATE_GAME_CLEAR;
-			}
-		}
-		if ( _state == STATE_SELECT_RETRY ) {
-			//選択したらリセット
-			DevicePtr device = Device::getTask( );
-			if ( device->getDirY( ) > 0 ) {
-				_select = 1;
-			}
-			if ( device->getDirY( ) < 0 ) {
-				_select = 0;
-			}
-			if ( device->getButton( ) & BUTTON_D ) {
-				_roomba->reset( );
-				_stage->reset( );
-				_camera->reset( );
-				_timer->reset( );
-				_state = STATE_NORMAL;
-			}
-		}
-		_stage->draw( );
-		_roomba->draw( );
-		_timer->draw( );
-		drawResult( );
-		break;
-	}
-	*/
 }
-
-
 
 void Game::changeScene( ) {
 	if ( _next == Scene::NEXT_CONTINUE ) {
@@ -97,17 +51,21 @@ void Game::changeScene( ) {
 	case Scene::NEXT_STAGE_SELECT:
 		_scene = ScenePtr( new SceneSelect );
 		break;
-	case Scene::NEXT_STAGE_1:
-		_scene = ScenePtr( new SceneStage( 0 ) );
-		break;
-	case Scene::NEXT_STAGE_2:
-		_scene = ScenePtr( new SceneStage( 1 ) );
-		break;
-	case Scene::NEXT_STAGE_3:
-		_scene = ScenePtr( new SceneStage( 2 ) );
+	case Scene::NEXT_STAGE:
+		_scene = ScenePtr( new SceneStage( _stage_num ) );
 		break;
 	case Scene::NEXT_RESULT:
 		_scene = ScenePtr( new SceneResult );
+		break;
+	case Scene::NEXT_RETRY:
+		_scene = ScenePtr( new SceneRetry( _stage_num ) );
 	}
 }
 
+void Game::setStage( int stage_num ) {
+	_stage_num = stage_num;
+	if ( stage_num < 0 ||
+		 stage_num > 3 ) {
+		_stage_num = 0;
+	}
+}

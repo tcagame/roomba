@@ -159,8 +159,10 @@ void Roomba::holdCrystal( StagePtr stage ) {
 void Roomba::moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left ) {
 	Matrix mat = Matrix::makeTransformRotation( camera_dir.cross( Vector( 0, -1 ) ), camera_dir.angle( Vector( 0, -1 ) ) );
 	
-	Vector vec_left  = mat.multiply( left  ).normalize( ) * _trans_speed;
-	Vector vec_right = mat.multiply( right ).normalize( ) * _trans_speed;
+	Vector dir_left  = mat.multiply( left  ).normalize( ) + _vec_trans[ 0 ].normalize( );
+	Vector dir_right = mat.multiply( right ).normalize( ) + _vec_trans[ 1 ].normalize( );
+	Vector vec_left  = dir_left.normalize( ) * _trans_speed;
+	Vector vec_right = dir_right.normalize( ) * _trans_speed;
 	Vector scale_left = Vector( );
 	Vector scale_right = Vector( );
 
@@ -205,7 +207,7 @@ void Roomba::moveRotation( int rotation_dir ) {
 		Vector radius2 = mat_rot.multiply( radius );
 		vec[ i ] = ( ( radius2 + getCentralPos( ) ) - _balls[ i ]->getPos( ) );
 	}
-	setVecTrans( vec[ 0 ], vec[ 1 ] );
+	setVecRot( vec[ 0 ], vec[ 1 ] );
 }
 
 void Roomba::draw( ) const {

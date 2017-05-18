@@ -2,6 +2,7 @@
 #include "Device.h"
 #include "define.h"
 #include "Drawer.h"
+#include "Game.h"
 
 static const int SELECT_WIDTH  = 1024;
 static const int SELECT_HEIGHT = 256;
@@ -28,15 +29,9 @@ Scene::NEXT SceneSelect::update( ) {
 	draw( );
 	DevicePtr device = Device::getTask( );
 	if ( device->getPush( ) && BUTTON_D ) {
-		switch ( _select ) {
-		case 1:
-			return NEXT_STAGE_1;
-		case 2:
-			return NEXT_STAGE_2;
-		case 3:
-			return NEXT_STAGE_3;
-		}
-		
+		GamePtr game = Game::getTask( );
+		game->setStage( _select );
+		return NEXT_STAGE;
 	}
 	if ( device->getDirY( ) > 0 && !_ispush ) {
 		_select++;
@@ -50,9 +45,6 @@ Scene::NEXT SceneSelect::update( ) {
 		_ispush = false;
 	}
 	_select = abs( _select ) % 3;
-	if ( _select == 0 ) {
-		_select = 3;
-	}
 	return NEXT_CONTINUE;
 }
 
@@ -71,12 +63,15 @@ void SceneSelect::drawSelect( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	int x = 100;
 	int y = 250;
-	
+	int select = _select;
+	if ( _select == 0 ) {
+		select = 3;
+	}
 	// –îˆó
 	Drawer::Sprite sprite( Drawer::Transform( 150, 300 ), STAGE_SELECTER );
 	drawer->setSprite( sprite );
 
-	GRAPH graph = (GRAPH)( STAGE_SELECT_1 + ( _select - 1 ) );
+	GRAPH graph = (GRAPH)( STAGE_SELECT_1 + ( select - 1 ) );
 
 	// stage
 	for ( int i = 0; i < 3; i++, graph = (GRAPH)( graph + 1 ) ) {
