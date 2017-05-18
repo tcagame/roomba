@@ -10,7 +10,7 @@ PTR( Timer );
 
 class SceneStage : public Scene {//ステージ
 public:
-	SceneStage( );
+	SceneStage( int stage_num );
 	virtual ~SceneStage( );
 	Scene::NEXT update( );
 private:

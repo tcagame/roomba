@@ -12,5 +12,6 @@ private:
 	void drawSelect( );
 private:
 	int _select;
+	bool _ispush;
 };
 

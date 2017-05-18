@@ -18,7 +18,7 @@ static const int UI_MAP_SIZE = 6;
 static const int UI_MAP_X = 100;
 static const int UI_MAP_Y = 500;
 
-SceneStage::SceneStage( ) :
+SceneStage::SceneStage( int stage_num ) :
 _state( STATE_NORMAL ) {	
 	_stage = StagePtr( new AppStage( 3 ) );//0-2:í èÌ 3:test_stage
 	_roomba = RoombaPtr( new Roomba );
