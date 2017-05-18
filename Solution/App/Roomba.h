@@ -23,6 +23,7 @@ public:
 	void draw( ) const;
 	void reset( );
 	Vector getCentralPos( ) const;
+	Vector getBallPos( int ball ) const;
 private:
 	void move( CameraPtr camera );
 	void updateState( CameraPtr camera );

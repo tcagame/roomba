@@ -7,7 +7,7 @@ public:
 	Camera( Vector pos, Vector target );
 	virtual ~Camera( );
 public:
-	void update( );
+	virtual void update( );
 	Vector getPos( ) const;
 	Vector getDir( ) const;
 	Vector getTarget( ) const;
@@ -16,7 +16,7 @@ protected:
 	void setPos( Vector pos );
 	void setTarget( Vector target );
 	void setDir( Vector dir );
-protected:
+private:
 	Vector _pos;
 	Vector _dir;
 	Vector _target;

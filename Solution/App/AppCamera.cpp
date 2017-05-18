@@ -4,21 +4,46 @@
 #include "Device.h"
 #include "Roomba.h"
 
-const Vector START_CAMERA_POS = Vector( 0, -100, 75 );
-const Vector START_TARGET_POS = Vector( 0, 0, 0 );
+const Vector START_DIR( 0, 4, -2 );
 const double ROTE_SPEED = PI / 40;
-const int CAMERA_LENGTH = (int)( 100 * WORLD_SCALE );
+const int CAMERA_LENGTH = (int)( 20 * WORLD_SCALE );
 
 AppCamera::AppCamera( RoombaPtr roomba ) :
-Camera( START_CAMERA_POS, START_TARGET_POS ),
 _roomba( roomba ),
-_mouse_x( 0 ) {
-
+_mouse_x( 0 ),
+Camera( roomba->getCentralPos( ) - START_DIR.normalize( ) * CAMERA_LENGTH, roomba->getCentralPos( ) ) {
+	setDir( START_DIR );
 }
 
 
 AppCamera::~AppCamera( ) {
 
+}
+
+void AppCamera::update( ) {
+	move( );
+	Vector dir = getDir( ).normalize( );
+	Vector pos = getPos( );
+	Vector target = getTarget( );
+	double length = (target - pos ).getLength( );
+	if ( pos.x < 0 ) {
+		pos.z -= -pos.x;
+		pos.x = 0;
+	}
+	if ( pos.x > STAGE_WIDTH_NUM * WORLD_SCALE - 1 ) {
+		pos.z += pos.x - STAGE_WIDTH_NUM * WORLD_SCALE - 1;
+		pos.x = STAGE_WIDTH_NUM * WORLD_SCALE - 1;
+	}
+	if ( pos.y < 0 ) {
+		pos.z -= pos.y;
+		pos.y = 0;
+	}
+	if ( pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE ) {
+		pos.z += pos.y - STAGE_HEIGHT_NUM * WORLD_SCALE - 1;
+		pos.y = STAGE_HEIGHT_NUM * WORLD_SCALE - 1;
+	}
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->setCamera( pos, target );
 }
 
 void AppCamera::move( ) {
@@ -45,15 +70,20 @@ void AppCamera::move( ) {
 		axis = 1;
 	}
 
+	Vector dir = getDir( );
+	Vector pos = getPos( );
+	Vector target = getTarget( );
 	if ( axis != 0 ) {
 		Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, axis ), ROTE_SPEED );
-		setDir( mat.multiply( getDir( ) ) );
+		dir = mat.multiply( dir ).normalize( );
+		setDir( dir );
 	}
-	setPos( getTarget( ) - getDir( ).normalize( ) * CAMERA_LENGTH );
+	pos = target - dir.normalize( ) * CAMERA_LENGTH;
+	setPos( pos );
 }
 
 void AppCamera::reset( ) {
-	setPos( START_CAMERA_POS );
-	setTarget( START_TARGET_POS );
-	setDir( _target - _pos );
+	setPos( _roomba->getCentralPos( ) - START_DIR.normalize( ) * CAMERA_LENGTH );
+	setTarget( _roomba->getCentralPos( ) );
+	setDir( START_DIR );
 }
