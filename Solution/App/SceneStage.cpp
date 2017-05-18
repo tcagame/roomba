@@ -103,6 +103,7 @@ Scene::NEXT SceneStage::update( ) {
 		}*/
 		if ( _stage->isFinished( ) ) {
 			_state = STATE_GAME_CLEAR;
+			return NEXT::NEXT_RESULT;
 		}
 	}
 	/*

@@ -4,6 +4,7 @@
 #include "SceneTitle.h"
 #include "SceneSelect.h"
 #include "SceneStage.h"
+#include "SceneResult.h"
 #include "Drawer.h"
 #include "AppCamera.h"
 #include "Roomba.h"
@@ -105,6 +106,8 @@ void Game::changeScene( ) {
 	case Scene::NEXT_STAGE_3:
 		_scene = ScenePtr( new SceneStage( 2 ) );
 		break;
+	case Scene::NEXT_RESULT:
+		_scene = ScenePtr( new SceneResult );
 	}
 }
 

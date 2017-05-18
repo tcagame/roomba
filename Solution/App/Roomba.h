@@ -29,16 +29,21 @@ private:
 	void updateState( CameraPtr camera );
 	void holdCrystal( StagePtr stage );
 	void moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left );
-	void moveScale( Vector scale_left, Vector scale_right );
 	void moveRotation( int rotation_dir );
+	void acceleration( Vector right_stick, Vector left_stick );
 	void checkLeftRight( CameraPtr camera );
+	void setVecTrans( Vector vec_left, Vector vec_right );
+	void setVecRot( Vector vec_left, Vector vec_right );
 private:
 	enum BALL {
 		BALL_LEFT,
 		BALL_RIGHT
 	};
 private:
-	double _speed;
+	double _trans_speed;
+	double _rot_speed;
+	std::array< Vector, 2 > _vec_trans;
+	std::array< Vector, 2 > _vec_rot;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
 	CrystalPtr _crystal;
