@@ -128,7 +128,9 @@ void Roomba::updateState( CameraPtr camera ) {
 	if ( ( right_stick.x < 0 && left_stick.x < 0 ) ||
 		 ( right_stick.x > 0 && left_stick.x > 0 ) ||
 		 ( right_stick.y < 0 && left_stick.y < 0 ) ||
-		 ( right_stick.y > 0 && left_stick.y > 0 ) ) {
+		 ( right_stick.y > 0 && left_stick.y > 0 ) ||
+		 ( right_stick.x > 0 && left_stick.x < 0 ) ||
+		 ( right_stick.x < 0 && left_stick.x > 0 ) ) {
 		state = MOVE_STATE_TRANSLATION;
 	}
 	if ( state != _state ) {
