@@ -3,6 +3,8 @@
 static const double WORLD_SCALE = 2;
 static const double STAGE_MODEL_SIZE = 4;
 static const int MAX_PHASE = 10;
+static const int STAGE_WIDTH_NUM = 40;
+static const int STAGE_HEIGHT_NUM = 35;
 
 enum MDL {
 	MDL_NONE,
@@ -66,6 +68,7 @@ enum GRAPH {
 	GRAPH_SELECT_MENU,
 	GRAPH_TITLE,
 	GRAPH_PHASE,
+	GRAPH_MAP,
 	STAGE_SELECT_ROGO,
 	STAGE_SELECT_1,
 	STAGE_SELECT_2,

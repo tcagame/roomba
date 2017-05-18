@@ -6,6 +6,7 @@
 #include "AppStage.h"
 #include "Timer.h"
 #include "define.h"
+#include "Crystal.h"
 
 static const int UI_PHASE_X = 1400;
 static const int UI_PHASE_Y = 100;
@@ -13,6 +14,9 @@ static const int UI_STATION_X = 1400;
 static const int UI_STATION_Y = 200;
 static const int UI_NUM_WIDTH = 32;
 static const int UI_NUM_HEIGHT = 64;
+static const int UI_MAP_SIZE = 6;
+static const int UI_MAP_X = 100;
+static const int UI_MAP_Y = 500;
 
 SceneStage::SceneStage( ) :
 _state( STATE_NORMAL ) {	
@@ -25,6 +29,7 @@ _state( STATE_NORMAL ) {
 	drawer->loadGraph( GRAPH_STATION, "UI/station.png" );
 	drawer->loadGraph( GRAPH_PHASE, "UI/phase.png" );
 	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
+	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
 	Matrix size = Matrix::makeTransformScaling( Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE ) ); 
 	drawer->loadMDLModel( MDL_STATION_0, "Model/Station/station.mdl", "Model/Station/purple.jpg", size );
 	drawer->loadMDLModel( MDL_STATION_1, "Model/Station/station.mdl", "Model/Station/green.jpg", size );
@@ -173,5 +178,44 @@ void SceneStage::drawUI( ) const {
 		}
 	};
 	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x - 32, y ), GRAPH_STATION ) );
+	drawMap( );
+}
 
+void SceneStage::drawMap( ) const {
+	DrawerPtr drawer = Drawer::getTask( );
+	int map_width = UI_MAP_X + UI_MAP_SIZE * STAGE_WIDTH_NUM;
+	int map_height = UI_MAP_Y + UI_MAP_SIZE * STAGE_HEIGHT_NUM;
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( UI_MAP_X, UI_MAP_Y, 0, 0, 32, 32, map_width, map_height ), GRAPH_MAP ) );
+	Stage::DATA data = _stage->getData( );
+	int phase = _stage->getPhase( );
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		int x = UI_MAP_X + ( ( STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM - i - 1 ) % STAGE_WIDTH_NUM ) * UI_MAP_SIZE;
+		int y = UI_MAP_Y + ( ( STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM - i - 1 ) / STAGE_WIDTH_NUM ) * UI_MAP_SIZE;
+		if ( data.wall[ i ] == 1 ) {
+			drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, 32, 0, 32, 32, x + UI_MAP_SIZE, y + UI_MAP_SIZE ), GRAPH_MAP ) );
+		}
+		if ( data.station[ phase ][ i ] != 0 ) {
+			int tx = ( data.station[ phase ][ i ] - 1 ) * 32;
+			int ty = 32;
+			drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, tx, ty, 32, 32, x + UI_MAP_SIZE, y + UI_MAP_SIZE ), GRAPH_MAP ) );
+		}
+	}
+	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
+	std::list< CrystalPtr > crystals = app_stage->getCrystalList( );
+	std::list< CrystalPtr >::const_iterator crystal_ite = crystals.begin( );
+	while ( crystal_ite != crystals.end( ) ) {
+		CrystalPtr crystal = *crystal_ite;
+		if ( !crystal ) {
+			crystal_ite++;
+			continue;
+		}
+		Vector pos = crystal->getPos( );
+		int type = (int)( crystal->getType( ) - MDL_CRYSTAL_0 );
+		int x = UI_MAP_X + (int)( ( STAGE_WIDTH_NUM - pos.x / WORLD_SCALE ) * UI_MAP_SIZE );
+		int y = UI_MAP_Y + (int)( ( STAGE_HEIGHT_NUM - pos.y / WORLD_SCALE ) * UI_MAP_SIZE );
+		int tx = type * 16;
+		int ty = 64;
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, tx, ty, 16, 16, x + UI_MAP_SIZE, y + UI_MAP_SIZE ), GRAPH_MAP ) );
+		crystal_ite++;
+	}
 }

@@ -366,3 +366,7 @@ int AppStage::getStationNum( ) const {
 	}
 	return num;
 }
+
+std::list< CrystalPtr > AppStage::getCrystalList( ) const {
+	return _crystals;
+}
