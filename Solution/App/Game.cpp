@@ -96,8 +96,14 @@ void Game::changeScene( ) {
 	case Scene::NEXT_STAGE_SELECT:
 		_scene = ScenePtr( new SceneSelect );
 		break;
-	case Scene::NEXT_STAGE:
-		_scene = ScenePtr( new SceneStage );
+	case Scene::NEXT_STAGE_1:
+		_scene = ScenePtr( new SceneStage( 0 ) );
+		break;
+	case Scene::NEXT_STAGE_2:
+		_scene = ScenePtr( new SceneStage( 1 ) );
+		break;
+	case Scene::NEXT_STAGE_3:
+		_scene = ScenePtr( new SceneStage( 2 ) );
 		break;
 	}
 }

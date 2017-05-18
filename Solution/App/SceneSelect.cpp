@@ -28,7 +28,15 @@ Scene::NEXT SceneSelect::update( ) {
 	draw( );
 	DevicePtr device = Device::getTask( );
 	if ( device->getPush( ) && BUTTON_D ) {
-		return NEXT_STAGE;
+		switch ( _select ) {
+		case 1:
+			return NEXT_STAGE_1;
+		case 2:
+			return NEXT_STAGE_2;
+		case 3:
+			return NEXT_STAGE_3;
+		}
+		
 	}
 	if ( device->getDirY( ) > 0 && !_ispush ) {
 		_select++;
