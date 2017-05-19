@@ -6,7 +6,7 @@
 
 AppStage::AppStage( int stage_num ) :
 Stage( ) {
-	load( stage_num );//0~2:í èÌ 3:test_stage
+	load( 3 );//0~2:í èÌ 3:test_stage
 	reset( );
 }
 
@@ -150,20 +150,20 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 		Vector( 1, -1 )	  // âEâ∫
 	};
 
+	if ( pos.x < 0 ) {
+		pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
+	}
+	if ( pos.x > STAGE_WIDTH_NUM * WORLD_SCALE ) {
+		pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
+	}
+	if ( pos.y < 0 ) {
+		pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
+	}
+	if ( pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE - 1 ) {	
+		pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE - 1;
+	}
 	double x = pos.x + vec.x;
 	double y = pos.y + vec.y;
-	if ( x < 0 ) {
-		x += STAGE_WIDTH_NUM * WORLD_SCALE;
-	}
-	if ( x > STAGE_WIDTH_NUM * WORLD_SCALE ) {
-		x -= STAGE_WIDTH_NUM * WORLD_SCALE;
-	}
-	if ( y < 0 ) {
-		y += STAGE_HEIGHT_NUM * WORLD_SCALE;
-	}
-	if ( y > STAGE_HEIGHT_NUM * WORLD_SCALE - 1 ) {	
-		y -= STAGE_HEIGHT_NUM * WORLD_SCALE - 1;
-	}
 	for ( int i = 0; i < 2; i++ ) {
 		double rad = radius;
 		if ( i == 0 ) {
@@ -389,28 +389,12 @@ std::list< CrystalPtr > AppStage::getCrystalList( ) const {
 
 void AppStage::drawEarth( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	Vector pos[ 9 ] = {
-		Vector( 0, 0, 0 ),
-		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
-		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
-		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( 0,  STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( 0,  -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-	};
-	for ( int i = 0; i < 9; i++ ) {
-		int x = i % STAGE_WIDTH_NUM;
-		int y = i / STAGE_WIDTH_NUM;
-		Vector adjust_pos = Vector( WORLD_SCALE + WORLD_SCALE / 2, WORLD_SCALE + WORLD_SCALE / 3 );
-		drawer->setModelMDL( Drawer::ModelMDL( pos[ i ] + adjust_pos, MDL_EARTH ) );
-	}
+	Vector adjust_pos = Vector( -STAGE_WIDTH_NUM * WORLD_SCALE / 2, -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 );
+	drawer->setModelMDL( Drawer::ModelMDL( adjust_pos, MDL_EARTH ) );
 }
 
 void AppStage::drawWall( ) const {
-	Vector pos[ 9 ] = {
-		Vector( 0, 0, 0 ),
+	Vector pos[ 8 ] = {
 		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
 		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
 		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
@@ -425,7 +409,15 @@ void AppStage::drawWall( ) const {
 	std::vector< Drawer::ModelMDL >::const_iterator ite = walls.begin( );
 	while ( ite != walls.end( ) ) {
 		Drawer::ModelMDL model = (*ite);
-		for ( int i = 0; i < 9; i++ ) {
+		drawer->setModelMDL( model );
+		for ( int i = 0; i < 8; i++ ) {
+			int view_num = 8;
+			if ( model.pos.x > view_num * WORLD_SCALE &&
+				 model.pos.x < ( STAGE_WIDTH_NUM - view_num ) * WORLD_SCALE &&
+				 model.pos.y > view_num * WORLD_SCALE &&
+				 model.pos.y < ( STAGE_HEIGHT_NUM - view_num ) * WORLD_SCALE ) {
+				continue;
+			}
 			model.pos += pos[ i ];
 			drawer->setModelMDL( model );
 		}

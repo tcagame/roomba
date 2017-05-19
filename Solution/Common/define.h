@@ -9,7 +9,6 @@ static const int STAGE_HEIGHT_NUM = 35;
 
 enum MDL {
 	MDL_NONE,
-	MDL_BG,
 	MDL_BALL,
 	MDL_EARTH,
 	MDL_CURSOR,

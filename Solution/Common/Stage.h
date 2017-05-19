@@ -41,7 +41,6 @@ protected:
 private:
 	virtual void drawEarth( ) const = 0;
 	virtual void drawWall( ) const = 0;
-	void drawBackground( ) const;
 	void drawStation( ) const;
 private:
 	std::vector< Drawer::ModelMDL > _walls;

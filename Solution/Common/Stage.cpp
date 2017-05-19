@@ -14,7 +14,6 @@ Stage::~Stage( ) {
 }
 
 void Stage::drawModel( ) const {
-	drawBackground( );
 	drawCrystal( );
 	drawStation( );
 }
@@ -42,12 +41,6 @@ void Stage::load( int stage_num ) {
 		return;
 	}
 	_data = *(DATA*)binary->getPtr( );
-}
-
-
-void Stage::drawBackground( ) const {
-	DrawerPtr drawer = Drawer::getTask( );
-	drawer->setModelMDL( Drawer::ModelMDL( Vector( ), MDL_BG ) );
 }
 
 void Stage::drawCrystal( ) const {

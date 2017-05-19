@@ -22,7 +22,7 @@ static const int START_COUNTDOWN_TIME = 3 * 60;
 
 SceneStage::SceneStage( int stage_num ) :
 _countdown( START_COUNTDOWN_TIME ) {	
-	_stage = StagePtr( new AppStage( 3 ) );//0-2:’Êí 3:test_stage
+	_stage = StagePtr( new AppStage( stage_num ) );//0-2:’Êí 3:test_stage
 	_roomba = RoombaPtr( new Roomba );
 	_camera = CameraPtr( new AppCamera( _roomba ) );
 	_timer = TimerPtr( new Timer );
@@ -46,12 +46,11 @@ _countdown( START_COUNTDOWN_TIME ) {
 	drawer->loadMDLModel( MDL_CRYSTAL_3, "Model/Crystal/crystal.mdl", "Model/Crystal/red.jpg", crystal_size );
 	drawer->loadMDLModel( MDL_CRYSTAL_4, "Model/Crystal/crystal.mdl", "Model/Crystal/yellow.jpg", crystal_size );
 
-	drawer->loadMDLModel( MDL_BG, "Model/Stage/bg.mdl", "Model/Stage/bg01_DM.jpg" );
 	
 	Matrix roomba_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE ) );
 	drawer->loadMDLModel( MDL_BALL, "Model/Roomba/roomba.mdl", "Model/Roomba/texture.jpg", roomba_size );
 	
-	Matrix earth_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_WIDTH_NUM, WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_HEIGHT_NUM, WORLD_SCALE / STAGE_MODEL_SIZE ) );
+	Matrix earth_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_WIDTH_NUM * 2, WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_HEIGHT_NUM * 2, WORLD_SCALE / STAGE_MODEL_SIZE ) );
 	drawer->loadMDLModel( MDL_EARTH, "Model/Stage/earth.mdl", "Model/Stage/earth.jpg", earth_size );
 	Matrix stage_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE ) );
 
