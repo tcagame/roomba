@@ -18,9 +18,10 @@ static const int UI_NUM_HEIGHT = 64;
 static const int UI_MAP_SIZE = 6;
 static const int UI_MAP_X = 100;
 static const int UI_MAP_FOOT_Y = 50;
+static const int START_COUNTDOWN_TIME = 15 * 60;
 
 SceneStage::SceneStage( int stage_num ) :
-_state( STATE_NORMAL ) {	
+_countdown( START_COUNTDOWN_TIME ) {	
 	_stage = StagePtr( new AppStage( 3 ) );//0-2:通常 3:test_stage
 	_roomba = RoombaPtr( new Roomba );
 	_camera = CameraPtr( new AppCamera( _roomba ) );
@@ -93,38 +94,37 @@ SceneStage::~SceneStage( ) {
 }
 
 Scene::NEXT SceneStage::update( ) {
-	if ( _state == STATE_NORMAL ) {
-		_roomba->update( _stage, _camera );
-		_stage->update( );
-		_camera->update( );
-		_timer->update( );
-	
-		if ( _timer->isTimeOver( ) ) {
-			//_state = STATE_SELECT_RETRY;
-			//return NEXT_RETRY;
-		}
-		if ( _stage->isFinished( ) ) {
-			_state = STATE_GAME_CLEAR;
-			return NEXT_RESULT;
-		}
+	if ( _countdown / 60 < 1 ) {
+		updateGame( );
+	} else {
+		countdown( );
+		drawCountdown( );
 	}
-	/*
-	if ( _state == STATE_SELECT_RETRY ) {
-		//選択したらリセット
-		DevicePtr device = Device::getTask( );
-		if ( device->getButton( ) & BUTTON_D ) {
-			_roomba->reset( );
-			_stage->reset( );
-			_camera->reset( );
-			_timer->reset( );
-			_state = STATE_NORMAL;
-		}
-	}*/
+
+	// カメラだけは常に更新する
+	_camera->update( );
+
+	if ( _timer->isTimeOver( ) ) {
+		return NEXT_RETRY;
+	}
+	if ( _stage->isFinished( ) ) {
+		return NEXT_RESULT;
+	}
 	_stage->draw( );
 	_roomba->draw( );
 	_timer->draw( );
 	drawUI( );
 	return Scene::NEXT_CONTINUE;
+}
+
+void SceneStage::countdown( ) {
+	_countdown--;
+}
+
+void SceneStage::updateGame( ) {
+	_roomba->update( _stage, _camera );
+	_stage->update( );
+	//_timer->update( );	
 }
 
 void SceneStage::drawUI( ) const {
@@ -239,4 +239,23 @@ void SceneStage::drawMap( ) const {
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, tx, ty, 16, 16, x + UI_MAP_SIZE, y + UI_MAP_SIZE ), GRAPH_MAP ) );
 		crystal_ite++;
 	}
+}
+
+void SceneStage::drawCountdown( ) const {
+	if ( _countdown / 60 < 1 ) {
+		return;
+	}
+
+	DrawerPtr drawer = Drawer::getTask( );
+	const int FPS = 60;
+	const int sx = 720 - 100;
+	const int sy = 400 - 200;
+	const int sx2 = sx + 200;
+	const int sy2 = sy + 400;
+	const int TW = 32;
+	const int TH = 64;
+	const int u[ ] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+	Drawer::Sprite sprite( Drawer::Transform( sx, sy, u[ _countdown / FPS ] * TW, 0, TW, TH, sx2, sy2 ), GRAPH_TIMER_NUM );
+	drawer->setSprite( sprite );
 }
