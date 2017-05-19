@@ -1,6 +1,7 @@
 #pragma once
 
 static const double WORLD_SCALE = 2;
+static const double ROOMBA_SCALE = 0.2;
 static const double STAGE_MODEL_SIZE = 4;
 static const int MAX_PHASE = 10;
 static const int STAGE_WIDTH_NUM = 40;
