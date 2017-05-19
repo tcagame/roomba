@@ -3,6 +3,7 @@
 #include "Binary.h"
 #include "define.h"
 #include "Crystal.h"
+#include "Viewer.h"
 
 AppStage::AppStage( int stage_num ) :
 Stage( ) {
@@ -394,33 +395,25 @@ void AppStage::drawEarth( ) const {
 }
 
 void AppStage::drawWall( ) const {
-	Vector pos[ 8 ] = {
-		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
-		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
-		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( 0,  STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( 0,  -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-	};
-	DrawerPtr drawer = Drawer::getTask( );
+	ViewerPtr viewer = ViewerPtr( new Viewer );
 	std::vector< Drawer::ModelMDL > walls = getWalls( );
 	std::vector< Drawer::ModelMDL >::const_iterator ite = walls.begin( );
 	while ( ite != walls.end( ) ) {
-		Drawer::ModelMDL model = (*ite);
-		drawer->setModelMDL( model );
-		for ( int i = 0; i < 8; i++ ) {
-			int view_num = 8;
-			if ( model.pos.x > view_num * WORLD_SCALE &&
-				 model.pos.x < ( STAGE_WIDTH_NUM - view_num ) * WORLD_SCALE &&
-				 model.pos.y > view_num * WORLD_SCALE &&
-				 model.pos.y < ( STAGE_HEIGHT_NUM - view_num ) * WORLD_SCALE ) {
-				continue;
-			}
-			model.pos += pos[ i ];
-			drawer->setModelMDL( model );
-		}
+		viewer->drawModelMDL( *ite );
 		ite++;
+	}
+}
+
+void AppStage::drawStation( ) const {
+	ViewerPtr viewer = ViewerPtr( new Viewer );
+	DATA data = getData( );
+	int phase = getPhase( );
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		if ( data.station[ phase ][ i ] != 0 ) {
+			MDL mdl = (MDL)( (int)MDL_STATION_0 + data.station[ phase ][ i ] - 1 );
+			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
+			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
+			viewer->drawModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), mdl ) );
+		}
 	}
 }

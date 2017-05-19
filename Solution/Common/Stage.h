@@ -41,7 +41,7 @@ protected:
 private:
 	virtual void drawEarth( ) const = 0;
 	virtual void drawWall( ) const = 0;
-	void drawStation( ) const;
+	virtual void drawStation( ) const = 0;
 private:
 	std::vector< Drawer::ModelMDL > _walls;
 	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _earth;

@@ -307,3 +307,17 @@ void EditorStage::drawWall( ) const {
 		ite++;
 	}
 }
+
+void EditorStage::drawStation( ) const {
+	DrawerPtr drawer = Drawer::getTask( );
+	DATA data = getData( );
+	int phase = getPhase( );
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		if ( data.station[ phase ][ i ] != 0 ) {
+			MDL mdl = (MDL)( (int)MDL_STATION_0 + data.station[ phase ][ i ] - 1 );
+			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
+			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
+			drawer->setModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), mdl ) );
+		}
+	}
+}

@@ -23,6 +23,7 @@ private:
 	void drawEarth( ) const;
 	void drawWall( ) const;
 	void drawCrystal( ) const;
+	void drawStation( ) const;
 	void drawCollisionLine( ) const;
 	void loadCrystal( );
 	void loadMapData( );

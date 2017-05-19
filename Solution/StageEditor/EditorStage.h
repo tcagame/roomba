@@ -29,6 +29,7 @@ private:
 	void drawCrystal( ) const;
 	void drawEarth( ) const;
 	void drawWall( ) const;
+	void drawStation( ) const;
 private:
 	int _cursor_x;
 	int _cursor_y;

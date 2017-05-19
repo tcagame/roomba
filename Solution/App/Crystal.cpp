@@ -23,8 +23,8 @@ Crystal::~Crystal( ) {
 }
 
 void Crystal::draw( ) const {
-	DrawerPtr drawer = Drawer::getTask( );
-	Viewer::drawModelMDL( Drawer::ModelMDL( _pos, _type ) );
+	ViewerPtr viewer( new Viewer );
+	viewer->drawModelMDL( Drawer::ModelMDL( _pos, _type ) );
 }
 
 void Crystal::update( AppStagePtr stage ) {

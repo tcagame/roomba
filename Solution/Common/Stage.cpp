@@ -47,17 +47,6 @@ void Stage::load( int stage_num ) {
 void Stage::drawCrystal( ) const {
 }
 
-void Stage::drawStation( ) const {
-	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( _data.station[ _phase ][ i ] != 0 ) {
-			MDL mdl = (MDL)( (int)MDL_STATION_0 + _data.station[ _phase ][ i ] - 1 );
-			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
-			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			Viewer::drawModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), mdl ) );
-		}
-	}
-}
-
 void Stage::loadWall( ) {
 	_walls.clear( );
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
