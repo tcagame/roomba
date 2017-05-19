@@ -160,11 +160,9 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 	}
 	if ( y < 0 ) {
 		y += STAGE_HEIGHT_NUM * WORLD_SCALE;
-
 	}
-	if ( y > STAGE_HEIGHT_NUM * WORLD_SCALE ) {
-		y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
-
+	if ( y > STAGE_HEIGHT_NUM * WORLD_SCALE - 1 ) {	
+		y -= STAGE_HEIGHT_NUM * WORLD_SCALE - 1;
 	}
 	for ( int i = 0; i < 2; i++ ) {
 		double rad = radius;

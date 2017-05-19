@@ -14,20 +14,16 @@ public:
 	virtual ~SceneStage( );
 	Scene::NEXT update( );
 private:
-	enum STATE {
-		STATE_NORMAL,
-		STATE_GAME_CLEAR,
-		STATE_SELECT_RETRY,
-		MAX_STATE,
-	};
-private:
+	void countdown( );
+	void updateGame( );
+	void drawCountdown( ) const;
 	void drawUI( ) const;
 	void drawMap( ) const;
 private:
+	int _countdown;
 	CameraPtr _camera;
 	StagePtr _stage;
 	RoombaPtr _roomba;
 	TimerPtr _timer;
-	STATE _state;
 };
 
