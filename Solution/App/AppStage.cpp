@@ -75,8 +75,8 @@ void AppStage::updateCrystal( ) {
 		}
 		AppStagePtr stage = std::dynamic_pointer_cast< AppStage >( shared_from_this( ) );
 		crystal->update( stage );
-		Vector pos = crystal->getPos( );
-		drawer->drawString( scr_width - 280, num * 20, "[クリスタル%2d] x:%04.1f y:%04.1f", num, pos.x, pos.y );
+		//Vector pos = crystal->getPos( );
+		//drawer->drawString( scr_width - 280, num * 20, "[クリスタル%2d] x:%04.1f y:%04.1f", num, pos.x, pos.y );
 		num++;
 		ite++;
 	}

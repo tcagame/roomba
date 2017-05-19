@@ -184,7 +184,6 @@ void Stage::loadWall( ) {
 		if ( type == 0 && flag == 0 ) {
 				continue;
 		}
-		adjust_pos.z -= WORLD_SCALE * 2;
 		MDL wall_type = (MDL)( MDL_WALL_0_0 + type * 16 + flag );
 		_walls.push_back( Drawer::ModelMDL( pos - adjust_pos, wall_type ) );
 	}
