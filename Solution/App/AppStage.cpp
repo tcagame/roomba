@@ -26,6 +26,8 @@ void AppStage::update( ) {
 
 void AppStage::draw( ) const {
 	drawModel( );
+	drawEarth( );
+	drawWall( );
 }
 
 void AppStage::load( int stage_num ) {
@@ -150,6 +152,20 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 
 	double x = pos.x + vec.x;
 	double y = pos.y + vec.y;
+	if ( x < 0 ) {
+		x += STAGE_WIDTH_NUM * WORLD_SCALE;
+	}
+	if ( x > STAGE_WIDTH_NUM * WORLD_SCALE ) {
+		x -= STAGE_WIDTH_NUM * WORLD_SCALE;
+	}
+	if ( y < 0 ) {
+		y += STAGE_HEIGHT_NUM * WORLD_SCALE;
+
+	}
+	if ( y > STAGE_HEIGHT_NUM * WORLD_SCALE ) {
+		y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
+
+	}
 	for ( int i = 0; i < 2; i++ ) {
 		double rad = radius;
 		if ( i == 0 ) {
@@ -164,13 +180,13 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 		int tmp_y = (int)( pos.y + vec.y + dir.y );
 		int idx = tmp_x + tmp_y * STAGE_WIDTH_NUM * 2;
 		if ( idx_x < 0 || idx_x >= STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 ) {
-				return Vector( );
+				return result;
 		}
 		if ( idx_y < 0 || idx_y >= STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 ) {
-				return Vector( );
+				return result;
 		}
 		if ( idx < 0 || idx >= STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 ) {
-				return Vector( );
+				return result;
 		}
 		switch ( _map_data[ idx_x ] ) {
 		case 1:
@@ -311,19 +327,21 @@ void AppStage::loadMapData( ) {
 			int tmp_x = x * 2 + j % 2;
 			int tmp_y = y * 2 + j / 2;
 			int map_idx = tmp_x % ( STAGE_WIDTH_NUM * 2 ) + tmp_y * STAGE_WIDTH_NUM * 2;
-			if ( x + OFFSET_X[ j ] < 0 ||
-				 x + OFFSET_X[ j ] >= STAGE_WIDTH_NUM ) {
-				_map_data[ map_idx ] = 1;
-				continue;
-			}
-			if ( y + OFFSET_Y[ j ] < 0 ||
-				 y + OFFSET_Y[ j ] >= STAGE_HEIGHT_NUM ) {
-				_map_data[ map_idx ] = 1;
-				continue;
-			}
-
 			int idx0 = i + OFFSET_X[ j ];
 			int idx1 = i + OFFSET_Y[ j ] * STAGE_WIDTH_NUM;
+			if ( x + OFFSET_X[ j ] < 0 ) {
+				idx0 += STAGE_WIDTH_NUM;
+			}
+			if ( x + OFFSET_X[ j ] >= STAGE_WIDTH_NUM ) {
+				idx0 -= STAGE_WIDTH_NUM;
+			}
+			if ( y + OFFSET_Y[ j ] < 0 ) {
+				idx1 += STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM;
+			}
+			if ( y + OFFSET_Y[ j ] >= STAGE_HEIGHT_NUM ) {
+				idx1 -= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM;
+			}
+
 
 			if ( type == 1 ) {
 				_map_data[ map_idx ] = 1;
@@ -369,4 +387,50 @@ int AppStage::getStationNum( ) const {
 
 std::list< CrystalPtr > AppStage::getCrystalList( ) const {
 	return _crystals;
+}
+
+void AppStage::drawEarth( ) const {
+	DrawerPtr drawer = Drawer::getTask( );
+	Vector pos[ 9 ] = {
+		Vector( 0, 0, 0 ),
+		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
+		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
+		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( 0,  STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( 0,  -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+	};
+	for ( int i = 0; i < 9; i++ ) {
+		int x = i % STAGE_WIDTH_NUM;
+		int y = i / STAGE_WIDTH_NUM;
+		Vector adjust_pos = Vector( WORLD_SCALE + WORLD_SCALE / 2, WORLD_SCALE + WORLD_SCALE / 3 );
+		drawer->setModelMDL( Drawer::ModelMDL( pos[ i ] + adjust_pos, MDL_EARTH ) );
+	}
+}
+
+void AppStage::drawWall( ) const {
+	Vector pos[ 9 ] = {
+		Vector( 0, 0, 0 ),
+		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
+		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
+		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( 0,  STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( 0,  -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+	};
+	DrawerPtr drawer = Drawer::getTask( );
+	std::vector< Drawer::ModelMDL > walls = getWalls( );
+	std::vector< Drawer::ModelMDL >::const_iterator ite = walls.begin( );
+	while ( ite != walls.end( ) ) {
+		Drawer::ModelMDL model = (*ite);
+		for ( int i = 0; i < 9; i++ ) {
+			model.pos += pos[ i ];
+			drawer->setModelMDL( model );
+		}
+		ite++;
+	}
 }

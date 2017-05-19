@@ -81,6 +81,8 @@ void EditorStage::updateCursor( ) {
 
 void EditorStage::draw( ) const {
 	drawModel( );
+	drawEarth( );
+	drawWall( );
 	DrawerPtr drawer = Drawer::getTask( );
 	Vector cursor_pos( _cursor_x * WORLD_SCALE + WORLD_SCALE / 2, _cursor_y * WORLD_SCALE  + WORLD_SCALE / 4 );
 	drawer->setModelMDL( Drawer::ModelMDL( cursor_pos, MDL_CURSOR ) );
@@ -287,5 +289,21 @@ void EditorStage::updateMode( ) {
 	}
 	if ( keyboard->isPushKey( "C" ) ) {
 		_mode = EDIT_MODE_STATION;
+	}
+}
+
+void EditorStage::drawEarth( ) const {
+	Vector adjust_pos = Vector( WORLD_SCALE + WORLD_SCALE / 2, WORLD_SCALE + WORLD_SCALE / 3 );
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->setModelMDL( Drawer::ModelMDL( adjust_pos, MDL_EARTH ) );
+}
+
+void EditorStage::drawWall( ) const {
+	DrawerPtr drawer = Drawer::getTask( );
+	std::vector< Drawer::ModelMDL > walls = getWalls( );
+	std::vector< Drawer::ModelMDL >::const_iterator ite = walls.begin( );
+	while ( ite != walls.end( ) ) {
+		drawer->setModelMDL( (*ite) );
+		ite++;
 	}
 }

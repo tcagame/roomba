@@ -27,6 +27,8 @@ private:
 	void updateCursor( );
 	void updateMode( );
 	void drawCrystal( ) const;
+	void drawEarth( ) const;
+	void drawWall( ) const;
 private:
 	int _cursor_x;
 	int _cursor_y;

@@ -7,7 +7,7 @@ public:
 	Camera( Vector pos, Vector target );
 	virtual ~Camera( );
 public:
-	virtual void update( );
+	void update( );
 	Vector getPos( ) const;
 	Vector getDir( ) const;
 	Vector getTarget( ) const;

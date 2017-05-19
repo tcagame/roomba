@@ -14,6 +14,7 @@ public:
 	void draw( ) const;
 	void reset( const Vector& pos );
 	void setForce( const Vector& force );
+	void setPos( Vector pos );
 	Vector getPos( ) const;
 	Vector getVec( ) const;
 private:

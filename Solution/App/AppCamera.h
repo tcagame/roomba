@@ -14,7 +14,6 @@ public:
 private:
 	void move( );
 	RoombaPtr _roomba;
-	Vector adjustPos( );
 private:
 	int _mouse_x;
 };

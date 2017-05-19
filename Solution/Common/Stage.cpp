@@ -13,13 +13,8 @@ Stage::Stage( ) {
 Stage::~Stage( ) {
 }
 
-void Stage::update( ) {
-}
-
 void Stage::drawModel( ) const {
 	drawBackground( );
-	drawEarth( );
-	drawWall( );
 	drawCrystal( );
 	drawStation( );
 }
@@ -55,22 +50,6 @@ void Stage::drawBackground( ) const {
 	drawer->setModelMDL( Drawer::ModelMDL( Vector( ), MDL_BG ) );
 }
 
-void Stage::drawEarth( ) const {
-	DrawerPtr drawer = Drawer::getTask( );
-	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		drawer->setModelMDL( _earth[ i ] );
-	}
-}
-
-void Stage::drawWall( ) const {
-	DrawerPtr drawer = Drawer::getTask( );
-	std::vector< Drawer::ModelMDL >::const_iterator ite = _walls.begin( );
-	while ( ite != _walls.end( ) ) {
-		drawer->setModelMDL( (*ite) );
-		ite++;
-	}
-}
-
 void Stage::drawCrystal( ) const {
 }
 
@@ -84,16 +63,6 @@ void Stage::drawStation( ) const {
 			Drawer::ModelMDL model( Vector( x, y, 0 ), mdl );
 			drawer->setModelMDL( model );
 		}
-	}
-}
-
-void Stage::loadEarth( ) {
-	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		int x = i % STAGE_WIDTH_NUM;
-		int y = i / STAGE_WIDTH_NUM;
-		Vector pos( x * WORLD_SCALE + WORLD_SCALE / 2, y * WORLD_SCALE + WORLD_SCALE / 2, 0 );
-		Vector adjust_pos = Vector( WORLD_SCALE + WORLD_SCALE / 2, WORLD_SCALE + WORLD_SCALE / 3 );
-		_earth[ i ] = Drawer::ModelMDL( pos + adjust_pos, MDL_EARTH );
 	}
 }
 
@@ -120,7 +89,17 @@ void Stage::loadWall( ) {
 		Vector( 0, 0 ),
 		Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 )
 	};
-	_walls.clear( );
+	Vector copy_pos[ 9 ] = {
+		Vector( 0, 0, 0 ),
+		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
+		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
+		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( 0,  STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+		Vector( 0,  -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
+	};
 
 	for ( int i = 0; i < 16; i++ ) {
 		int tmp = 1;
@@ -220,7 +199,6 @@ bool Stage::isFinished( ) const {
 void Stage::reset( ) {
 	_phase = -1;
 	_finished = false;
-	loadEarth( );
 	loadWall( );
 	loadPhase( );
 }
@@ -254,4 +232,9 @@ void Stage::debug( ) {
 
 int Stage::getMaxStationNum( ) const {
 	return _max_station;
+}
+
+
+std::vector< Drawer::ModelMDL > Stage::getWalls( ) const {
+	return _walls;
 }

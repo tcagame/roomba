@@ -42,3 +42,7 @@ void Ball::reset( const Vector& pos ) {
 	_vec = Vector( );
 	_pos = pos;
 }
+
+void Ball::setPos( Vector pos ) {
+	_pos = pos;
+}

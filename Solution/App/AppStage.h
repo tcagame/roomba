@@ -20,6 +20,8 @@ public:
 	std::list< CrystalPtr > getCrystalList( ) const;
 private:
 	void updateCrystal( );
+	void drawEarth( ) const;
+	void drawWall( ) const;
 	void drawCrystal( ) const;
 	void drawCollisionLine( ) const;
 	void loadCrystal( );

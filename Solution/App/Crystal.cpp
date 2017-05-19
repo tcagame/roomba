@@ -48,6 +48,19 @@ void Crystal::update( AppStagePtr stage ) {
 		_vec = _vec.normalize( ) * MAX_SPEED;
 	}
 	_pos += _vec;
+
+	if ( _pos.x < 0  ) {
+		_pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
+	}
+	if ( _pos.x > STAGE_WIDTH_NUM * WORLD_SCALE - 1 ) {
+		_pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
+	}
+	if ( _pos.y < 0  ) {
+		_pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
+	}
+	if ( _pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE - 1  ) {
+		_pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
+	}
 }
 
 bool Crystal::isHitting( Vector pos0, Vector pos1 ) {

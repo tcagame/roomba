@@ -20,13 +20,6 @@ AppCamera::~AppCamera( ) {
 
 }
 
-void AppCamera::update( ) {
-	move( );
-	
-	DrawerPtr drawer = Drawer::getTask( );
-	drawer->setCamera( adjustPos( ), getTarget( ) );
-}
-
 void AppCamera::move( ) {
 	setTarget( _roomba->getCentralPos( ) );
 	//‰ñ“]
@@ -67,25 +60,4 @@ void AppCamera::reset( ) {
 	setPos( _roomba->getCentralPos( ) - START_DIR.normalize( ) * CAMERA_LENGTH );
 	setTarget( _roomba->getCentralPos( ) );
 	setDir( START_DIR );
-}
-
-Vector AppCamera::adjustPos( ) {
-	Vector pos = getPos( );
-	if ( pos.x < 0 ) {
-		pos.z -= pos.x / 2;
-		pos.x = 0;
-	}
-	if ( pos.x > STAGE_WIDTH_NUM * WORLD_SCALE - 1 ) {
-		pos.z += ( pos.x - STAGE_WIDTH_NUM * WORLD_SCALE - 1 ) / 2;
-		pos.x = STAGE_WIDTH_NUM * WORLD_SCALE - 1;
-	}
-	if ( pos.y < 0 ) {
-		pos.z -= pos.y / 2;
-		pos.y = 0;
-	}
-	if ( pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE ) {
-		pos.z += ( pos.y - STAGE_HEIGHT_NUM * WORLD_SCALE - 1 ) / 2;
-		pos.y = STAGE_HEIGHT_NUM * WORLD_SCALE - 1;
-	}
-	return pos;
 }

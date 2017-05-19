@@ -34,14 +34,14 @@ protected:
 	void drawModel( ) const;
 	void load( int stage_num );
 	virtual void drawCrystal( ) const;
-	void loadEarth( );
 	void loadWall( );
 	void loadPhase( );
 	virtual void loadCrystal( );
+	std::vector< Drawer::ModelMDL > getWalls( ) const;
 private:
+	virtual void drawEarth( ) const = 0;
+	virtual void drawWall( ) const = 0;
 	void drawBackground( ) const;
-	void drawEarth( ) const;
-	void drawWall( ) const;
 	void drawStation( ) const;
 private:
 	std::vector< Drawer::ModelMDL > _walls;

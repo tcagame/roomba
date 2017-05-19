@@ -46,9 +46,37 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 
 		_balls[ i ]->update( stage );
 	}
-
-	//レーザー
 	holdCrystal( stage );
+
+	//ステージ端
+	Vector pos[ 2 ];
+	pos[ 0 ] = _balls[ 0 ]->getPos( );
+	pos[ 1 ] = _balls[ 1 ]->getPos( );
+	Vector central_pos =  getCentralPos( );
+	if ( central_pos.x < 0 ) {
+		for ( int i = 0; i < 2; i++ ) {
+			pos[ i ].x += STAGE_WIDTH_NUM * WORLD_SCALE;
+			_balls[ i ]->setPos( pos[ i ] );
+		}
+	}
+	if ( central_pos.x > STAGE_WIDTH_NUM * WORLD_SCALE - 1 ) {
+		for ( int i = 0; i < 2; i++ ) {
+			pos[ i ].x -= STAGE_WIDTH_NUM * WORLD_SCALE;
+			_balls[ i ]->setPos( pos[ i ] );
+		}
+	}
+	if ( central_pos.y < 0  ) {
+		for ( int i = 0; i < 2; i++ ) {
+			pos[ i ].y += STAGE_HEIGHT_NUM * WORLD_SCALE;
+			_balls[ i ]->setPos( pos[ i ] );
+		}
+	}
+	if ( central_pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE - 1 ) {
+		for ( int i = 0; i < 2; i++ ) {
+			pos[ i ].y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
+			_balls[ i ]->setPos( pos[ i ] );
+		}
+	}
 }
 
 void Roomba::move( CameraPtr camera ) {
@@ -151,8 +179,22 @@ void Roomba::holdCrystal( StagePtr stage ) {
 		}
 		DrawerPtr drawer = Drawer::getTask( );
 		drawer->drawString( 300, 20, "もってるよー" );
-		_crystal->setVec( getCentralPos( ) - _crystal->getPos( ) );
-
+		Vector central_pos = getCentralPos( );
+		Vector crystal_pos = _crystal->getPos( );
+		Vector distance = central_pos - crystal_pos;
+		if ( distance.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
+			central_pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
+		}
+		if ( -distance.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
+			central_pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
+		}
+		if ( distance.y > STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
+			central_pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
+		}
+		if ( -distance.y > STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
+			central_pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
+		}
+		_crystal->setVec( central_pos - crystal_pos );
 	}
 }
 
