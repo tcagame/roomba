@@ -27,6 +27,7 @@
     <ClCompile Include="SceneRetry.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -54,6 +55,7 @@
     <ClInclude Include="SceneRetry.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Viewer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scene">

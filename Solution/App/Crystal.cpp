@@ -3,6 +3,7 @@
 #include "mathmatics.h"
 #include "AppStage.h"
 #include "Roomba.h"
+#include "Viewer.h"
 
 static const double CRYSTAL_RADIUS = 0.5;
 static const double MAX_SPEED = 0.8;
@@ -23,29 +24,7 @@ Crystal::~Crystal( ) {
 
 void Crystal::draw( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::ModelMDL model( _pos, _type );
-	drawer->setModelMDL( model );
-	Vector pos[ 8 ] = {
-		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
-		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
-		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( 0,  STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( 0,  -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-	};
-	for ( int i = 0; i < 8; i++ ) {
-		Drawer::ModelMDL mdl( _pos + pos[ i ], _type );
-		int view_num = 8;
-		if ( mdl.pos.x > view_num * WORLD_SCALE &&
-			 mdl.pos.x < ( STAGE_WIDTH_NUM - view_num ) * WORLD_SCALE &&
-			 mdl.pos.y > view_num * WORLD_SCALE &&
-			 mdl.pos.y < ( STAGE_HEIGHT_NUM - view_num ) * WORLD_SCALE ) {
-			continue;
-		}
-		drawer->setModelMDL( mdl );
-	}
+	Viewer::drawModelMDL( Drawer::ModelMDL( _pos, _type ) );
 }
 
 void Crystal::update( AppStagePtr stage ) {

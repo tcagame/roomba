@@ -5,6 +5,7 @@
 #include "Mouse.h"
 #include "Camera.h"
 #include "Keyboard.h"
+#include "Viewer.h"
 
 
 Stage::Stage( ) {
@@ -47,14 +48,12 @@ void Stage::drawCrystal( ) const {
 }
 
 void Stage::drawStation( ) const {
-    DrawerPtr drawer = Drawer::getTask( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( _data.station[ _phase ][ i ] != 0 ) {
 			MDL mdl = (MDL)( (int)MDL_STATION_0 + _data.station[ _phase ][ i ] - 1 );
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			Drawer::ModelMDL model( Vector( x, y, 0 ), mdl );
-			drawer->setModelMDL( model );
+			Viewer::drawModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), mdl ) );
 		}
 	}
 }
