@@ -17,7 +17,6 @@ public:
 	Vector getPos( ) const;
 	void setVec( Vector vec );
 	bool isDropDown( ) const;
-	MDL getType( ) const;
 private:
 	Vector _pos;
 	Vector _vec;

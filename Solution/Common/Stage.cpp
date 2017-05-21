@@ -70,17 +70,6 @@ void Stage::loadWall( ) {
 		Vector( 0, 0 ),
 		Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 )
 	};
-	Vector copy_pos[ 9 ] = {
-		Vector( 0, 0, 0 ),
-		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
-		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
-		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( 0,  STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-		Vector( 0,  -STAGE_HEIGHT_NUM * WORLD_SCALE, 0 ),
-	};
 
 	for ( int i = 0; i < 16; i++ ) {
 		int tmp = 1;
@@ -104,20 +93,20 @@ void Stage::loadWall( ) {
 		}
 		unsigned char flag = 0;
 		for ( int j = 0; j < 4; j++ ) {
-			int tmp_x = x * 2 + j % 2;
-			int tmp_y = y * 2 + j / 2;
-			int map_idx = tmp_x % ( STAGE_WIDTH_NUM * 2 ) + tmp_y * STAGE_WIDTH_NUM * 2;
-			if ( x + OFFSET_X[ j ] < 0 ||
-				 x + OFFSET_X[ j ] >= STAGE_WIDTH_NUM ) {
-				continue;
-			}
-			if ( y + OFFSET_Y[ j ] < 0 ||
-				 y + OFFSET_Y[ j ] >= STAGE_HEIGHT_NUM ) {
-				continue;
-			}
-
 			int idx0 = i + OFFSET_X[ j ];
 			int idx1 = i + OFFSET_Y[ j ] * STAGE_WIDTH_NUM;
+			if ( x + OFFSET_X[ j ] < 0 ) {
+				idx0 += STAGE_WIDTH_NUM;
+			}
+			if ( x + OFFSET_X[ j ] >= STAGE_WIDTH_NUM ) {
+				idx0 -= STAGE_WIDTH_NUM;
+			}
+			if ( y + OFFSET_Y[ j ] < 0 ) {
+				idx1 += STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM;
+			}
+			if ( y + OFFSET_Y[ j ] >= STAGE_HEIGHT_NUM ) {
+				idx1 -= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM;
+			}
 			if ( type == 1 ) {
 				if ( _data.wall[ idx0 ] == 0 && _data.wall[ idx1 ] == 0 ) {
 					flag |= 1 << j;

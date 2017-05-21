@@ -35,7 +35,7 @@ protected:
 	void load( int stage_num );
 	virtual void drawCrystal( ) const;
 	void loadWall( );
-	void loadPhase( );
+	virtual void loadPhase( );
 	virtual void loadCrystal( );
 	std::vector< Drawer::ModelMDL > getWalls( ) const;
 private:

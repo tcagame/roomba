@@ -111,7 +111,7 @@ void EditorStage::drawCrystal( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( data.crystal[ phase ][ i ] != 0 ) {
-			MDL mdl = (MDL)( (int)MDL_CRYSTAL_0 + data.crystal[ phase ][ i ] - 1 );
+			MDL mdl = (MDL)( MDL_CRYSTAL );
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			Drawer::ModelMDL model( Vector( x, y, 0 ), mdl );
@@ -189,33 +189,23 @@ void EditorStage::editCrystal( ) {
 	
 	int phase = getPhase( );
 	DATA data = getData( );
-	bool num[ MAX_LINK ];
-	for ( int i = 0; i < MAX_LINK; i++ ) {
-		num[ i ] = false;
-	}
-
+	int count = 0;
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( data.crystal[ phase ][ i ] > 0 ) {
-			num[ data.crystal[ phase ][ i ] - 1 ] = true;
-		}
-	}
-	int number = 0;
-	for ( int i = 0; i < MAX_LINK; i++ ) {
-		if ( !num[ i ] ) {
-			number = i + 1;
-			break;
+			data.crystal[ phase ][ i ] = 1;//修正用
+			count++;
 		}
 	}
 
 	MousePtr mouse = Mouse::getTask( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	if ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) && number != 0 ) {
+	if ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) && count < MAX_LINK ) {
 		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
 		if ( data.crystal[ phase ][ idx ] == 0 ) {
-			data.crystal[ phase ][ idx ] = number;
+			data.crystal[ phase ][ idx ] = 1;
 			setData( data );
 		}
 	}
@@ -236,19 +226,16 @@ void EditorStage::editStation( ) {
 	drawer->drawString( 0, 80, "MODE:ステーション配置" );
 	int phase = getPhase( );
 	DATA data = getData( );
-	bool num[ MAX_LINK ];
-	for ( int i = 0; i < MAX_LINK; i++ ) {
-		num[ i ] = false;
-	}
+	bool placed[ MAX_LINK ] = { };
 
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( data.station[ phase ][ i ] ) {
-			num[ data.station[ phase ][ i ] - 1 ] = true;
+			placed[ data.station[ phase ][ i ] - 1 ] = true;
 		}
 	}
 	int number = 0;
 	for ( int i = 0; i < MAX_LINK; i++ ) {
-		if ( !num[ i ] ) {
+		if ( !placed[ i ] ) {
 			number = i + 1;
 			break;
 		}
@@ -314,10 +301,9 @@ void EditorStage::drawStation( ) const {
 	int phase = getPhase( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( data.station[ phase ][ i ] != 0 ) {
-			MDL mdl = (MDL)( (int)MDL_STATION_0 + data.station[ phase ][ i ] - 1 );
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			drawer->setModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), mdl ) );
+			drawer->setModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), MDL_STATION ) );
 		}
 	}
 }

@@ -29,8 +29,9 @@ void Crystal::draw( ) const {
 
 void Crystal::update( AppStagePtr stage ) {
 	_drop_down = false;
-	if ( stage->isOnStation( _pos, (int)( _type - MDL_CRYSTAL_0 ) + 1 ) ) {
+	if ( stage->isOnStation( _pos ) ) {
 		_finished = true;
+		return;
 	}
 
 	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
@@ -113,8 +114,4 @@ void Crystal::setVec( Vector vec ) {
 
 bool Crystal::isDropDown( ) const {
 	return _drop_down;
-}
-
-MDL Crystal::getType( ) const {
-	return _type;
 }

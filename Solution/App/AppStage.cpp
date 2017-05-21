@@ -6,7 +6,7 @@
 #include "Viewer.h"
 
 AppStage::AppStage( int stage_num ) :
-Stage( ) {
+_station_count( 1 ) {
 	load( 3 );//0~2:í èÌ 3:test_stage
 	reset( );
 }
@@ -103,8 +103,7 @@ void AppStage::loadCrystal( ) {
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if (  data.crystal[ phase ][ i ] != 0 ) {
 			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, -WORLD_SCALE );
-			MDL mdl = (MDL)( (int)MDL_CRYSTAL_0 + data.crystal[ phase ][ i ] - 1 );
-			_crystals.push_back( CrystalPtr( new Crystal( pos, mdl ) ) );
+			_crystals.push_back( CrystalPtr( new Crystal( pos, MDL_CRYSTAL ) ) );
 		}
 	}
 }
@@ -309,10 +308,7 @@ void AppStage::drawCollisionLine( ) const {
 void AppStage::loadMapData( ) {
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
 	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
-
-	for ( int i = 0; i < STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2; i++ ) {
-		_map_data[ i ] = 0;
-	}
+	_map_data = { };
 
 	DATA data = getData( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
@@ -357,19 +353,21 @@ void AppStage::loadMapData( ) {
 	}
 }
 
-bool AppStage::isOnStation( Vector pos, int type ) {
+bool AppStage::isOnStation( Vector pos ) {
+	bool result = false;
 	int x = ( int )( pos.x / WORLD_SCALE );
 	int y = ( int )( pos.y / WORLD_SCALE );
 	int idx = x + y * STAGE_WIDTH_NUM;
 
 	DATA data = getData( );
 	int phase = getPhase( );
-	if ( data.station[ phase ][ idx ] == type ) {
+	if ( data.station[ phase ][ idx ] == _station_count ) {
 		data.station[ phase ][ idx ] = 0;
+		_station_count++;
 		setData( data );
-		return true;
+		result = true;
 	}
-	return false;
+	return result;
 }
 
 int AppStage::getStationNum( ) const {
@@ -389,9 +387,10 @@ std::list< CrystalPtr > AppStage::getCrystalList( ) const {
 }
 
 void AppStage::drawEarth( ) const {
-	DrawerPtr drawer = Drawer::getTask( );
-	Vector adjust_pos = Vector( -STAGE_WIDTH_NUM * WORLD_SCALE / 2, -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 );
-	drawer->setModelMDL( Drawer::ModelMDL( adjust_pos, MDL_EARTH ) );
+	Vector adjust_pos = Vector( WORLD_SCALE * 2, WORLD_SCALE * 2 + WORLD_SCALE / 3 );
+	Drawer::ModelMDL model( adjust_pos, MDL_EARTH );
+	ViewerPtr viewer( new Viewer );
+	viewer->drawModelMDLTransfer( model );
 }
 
 void AppStage::drawWall( ) const {
@@ -409,11 +408,19 @@ void AppStage::drawStation( ) const {
 	DATA data = getData( );
 	int phase = getPhase( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( data.station[ phase ][ i ] != 0 ) {
-			MDL mdl = (MDL)( (int)MDL_STATION_0 + data.station[ phase ][ i ] - 1 );
+		if ( data.station[ phase ][ i ] == _station_count ) {
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			viewer->drawModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), mdl ) );
+			viewer->drawModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), MDL_STATION ) );
 		}
 	}
+}
+
+int AppStage::getStationCount( ) const {
+	return _station_count;
+}
+
+void AppStage::loadPhase( ) {
+	_station_count = 1;
+	Stage::loadPhase( );
 }

@@ -33,24 +33,24 @@ _countdown( START_COUNTDOWN_TIME ) {
 	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
 	Matrix size = Matrix::makeTransformScaling( Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE ) ); 
-	drawer->loadMDLModel( MDL_STATION_0, "Model/Station/station.mdl", "Model/Station/purple.jpg", size );
-	drawer->loadMDLModel( MDL_STATION_1, "Model/Station/station.mdl", "Model/Station/green.jpg", size );
-	drawer->loadMDLModel( MDL_STATION_2, "Model/Station/station.mdl", "Model/Station/blue.jpg", size );
-	drawer->loadMDLModel( MDL_STATION_3, "Model/Station/station.mdl", "Model/Station/red.jpg", size );
-	drawer->loadMDLModel( MDL_STATION_4, "Model/Station/station.mdl", "Model/Station/yellow.jpg", size );
+	drawer->loadMDLModel( MDL_STATION, "Model/Station/station.mdl", "Model/Station/blue.jpg", size );
+	//drawer->loadMDLModel( MDL_STATION_1, "Model/Station/station.mdl", "Model/Station/green.jpg", size );
+	//drawer->loadMDLModel( MDL_STATION_2, "Model/Station/station.mdl", "Model/Station/blue.jpg", size );
+	//drawer->loadMDLModel( MDL_STATION_3, "Model/Station/station.mdl", "Model/Station/red.jpg", size );
+	//drawer->loadMDLModel( MDL_STATION_4, "Model/Station/station.mdl", "Model/Station/yellow.jpg", size );
 
 	Matrix crystal_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / 2, WORLD_SCALE / 2, WORLD_SCALE / 2 ) ); 
-	drawer->loadMDLModel( MDL_CRYSTAL_0, "Model/Crystal/crystal.mdl", "Model/Crystal/purple.jpg", crystal_size );
-	drawer->loadMDLModel( MDL_CRYSTAL_1, "Model/Crystal/crystal.mdl", "Model/Crystal/green.jpg", crystal_size );
-	drawer->loadMDLModel( MDL_CRYSTAL_2, "Model/Crystal/crystal.mdl", "Model/Crystal/blue.jpg", crystal_size );
-	drawer->loadMDLModel( MDL_CRYSTAL_3, "Model/Crystal/crystal.mdl", "Model/Crystal/red.jpg", crystal_size );
-	drawer->loadMDLModel( MDL_CRYSTAL_4, "Model/Crystal/crystal.mdl", "Model/Crystal/yellow.jpg", crystal_size );
+	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/purple.jpg", crystal_size );
+	//drawer->loadMDLModel( MDL_CRYSTAL_1, "Model/Crystal/crystal.mdl", "Model/Crystal/green.jpg", crystal_size );
+	//drawer->loadMDLModel( MDL_CRYSTAL_2, "Model/Crystal/crystal.mdl", "Model/Crystal/blue.jpg", crystal_size );
+	//drawer->loadMDLModel( MDL_CRYSTAL_3, "Model/Crystal/crystal.mdl", "Model/Crystal/red.jpg", crystal_size );
+	//drawer->loadMDLModel( MDL_CRYSTAL_4, "Model/Crystal/crystal.mdl", "Model/Crystal/yellow.jpg", crystal_size );
 
 	
 	Matrix roomba_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE ) );
 	drawer->loadMDLModel( MDL_BALL, "Model/Roomba/roomba.mdl", "Model/Roomba/texture.jpg", roomba_size );
 	
-	Matrix earth_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_WIDTH_NUM * 2, WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_HEIGHT_NUM * 2, WORLD_SCALE / STAGE_MODEL_SIZE ) );
+	Matrix earth_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_WIDTH_NUM, WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_HEIGHT_NUM, WORLD_SCALE / STAGE_MODEL_SIZE ) );
 	drawer->loadMDLModel( MDL_EARTH, "Model/Stage/earth.mdl", "Model/Stage/earth.jpg", earth_size );
 	Matrix stage_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE ) );
 
@@ -190,6 +190,7 @@ void SceneStage::drawUI( ) const {
 void SceneStage::drawMap( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	ApplicationPtr app = Application::getInstance( );
+	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
 	int scr_height = app->getWindowHeight( );
 	int map_width = UI_MAP_SIZE * STAGE_WIDTH_NUM;
 	int map_height = UI_MAP_SIZE * STAGE_HEIGHT_NUM;
@@ -207,8 +208,8 @@ void SceneStage::drawMap( ) const {
 			drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, 32, 0, 32, 32, x + UI_MAP_SIZE, y + UI_MAP_SIZE ), GRAPH_MAP ) );
 		}
 		//ステーション表示
-		if ( data.station[ phase ][ i ] != 0 ) {
-			int tx = ( data.station[ phase ][ i ] - 1 ) * 32;
+		if ( data.station[ phase ][ i ] == app_stage->getStationCount( ) ) {
+			int tx = 32 * 2;
 			int ty = 32;
 			drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, tx, ty, 32, 32, x + UI_MAP_SIZE, y - UI_MAP_SIZE ), GRAPH_MAP ) );
 		}
@@ -221,7 +222,6 @@ void SceneStage::drawMap( ) const {
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( roomba_x, roomba_y, 0, 16 * 5, 16, 16, roomba_x + UI_MAP_SIZE, roomba_y + UI_MAP_SIZE ), GRAPH_MAP ) );
 	}
 	//クリスタル表示
-	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
 	std::list< CrystalPtr > crystals = app_stage->getCrystalList( );
 	std::list< CrystalPtr >::const_iterator crystal_ite = crystals.begin( );
 	while ( crystal_ite != crystals.end( ) ) {
@@ -231,10 +231,9 @@ void SceneStage::drawMap( ) const {
 			continue;
 		}
 		Vector pos = crystal->getPos( );
-		int type = (int)( crystal->getType( ) - MDL_CRYSTAL_0 );
 		int x = UI_MAP_X + (int)( ( STAGE_WIDTH_NUM - pos.x / WORLD_SCALE - 0.5 ) * UI_MAP_SIZE );
 		int y = scr_height - UI_MAP_FOOT_Y - (int)( ( pos.y / WORLD_SCALE + 0.5 ) * UI_MAP_SIZE ) - UI_MAP_SIZE;
-		int tx = type * 16;
+		int tx = 0;
 		int ty = 64;
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, tx, ty, 16, 16, x + UI_MAP_SIZE, y + UI_MAP_SIZE ), GRAPH_MAP ) );
 		crystal_ite++;

@@ -9,8 +9,9 @@ public:
 	Viewer( );
 	virtual ~Viewer( );
 public:
-	void drawModelMDL( Drawer::ModelMDL mdl );
+	void drawModelMDL( Drawer::ModelMDL mdl ) const;
+	void drawModelMDLTransfer( Drawer::ModelMDL mdl ) const;
 private:
-	char getInViewFlag( Vector pos );
+	char getInViewFlag( Vector pos ) const;
 };
 
