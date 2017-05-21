@@ -20,8 +20,8 @@ GamePtr Game::getTask( ) {
 
 Game::Game( ) :
 _next( Scene::NEXT_TITLE ),
-_stage_num( 0 ) {
-	
+_stage_num( 0 ),
+_result_time( 0 ) {
 }
 
 Game::~Game( ) {
@@ -41,7 +41,7 @@ void Game::changeScene( ) {
 	if ( _next == Scene::NEXT_CONTINUE ) {
 		return;
 	}
-
+	_scene.~shared_ptr( );
 	_scene.reset( );
 
 	switch ( _next ) {
@@ -55,7 +55,7 @@ void Game::changeScene( ) {
 		_scene = ScenePtr( new SceneStage( _stage_num ) );
 		break;
 	case Scene::NEXT_RESULT:
-		_scene = ScenePtr( new SceneResult );
+		_scene = ScenePtr( new SceneResult( _result_time ) );
 		break;
 	case Scene::NEXT_RETRY:
 		_scene = ScenePtr( new SceneRetry( _stage_num ) );
@@ -68,4 +68,8 @@ void Game::setStage( int stage_num ) {
 		 stage_num > 3 ) {
 		_stage_num = 0;
 	}
+}
+
+void Game::setResultTime( int time ) {
+	_result_time = time;
 }

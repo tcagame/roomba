@@ -192,8 +192,8 @@ Stage::DATA Stage::getData( ) const {
 void Stage::debug( ) {
 	KeyboardPtr keyboard = Keyboard::getTask( );
 	for ( int i = 0; i < MAX_STAGE; i++ ) {
-		std::string key = std::to_string( i );
-		if ( keyboard->isPushKey( key ) ) {
+		std::string num = std::to_string( i );
+		if ( keyboard->isPushKey( num ) ) {
 			load( i );
 			reset( );
 		}

@@ -1,6 +1,7 @@
 #include "Timer.h"
 #include "Drawer.h"
 #include "define.h"
+#include "Game.h"
 
 static const int FPS = 60;
 static const int START_TIME = 10 * FPS;
@@ -76,4 +77,9 @@ bool Timer::isTimeOver( ) const {
 		return true;
 	}
 	return false;
+}
+
+void Timer::finalize( ) {
+	GamePtr game = Game::getTask( );
+	game->setResultTime( _timer * 10 / FPS );
 }

@@ -4,6 +4,7 @@
 #include "define.h"
 #include "Crystal.h"
 #include "Viewer.h"
+#include "Keyboard.h"
 
 AppStage::AppStage( int stage_num ) :
 _station_count( 1 ) {
@@ -23,6 +24,13 @@ void AppStage::reset( ) {
 void AppStage::update( ) {
 	updateCrystal( );
 	debug( );
+	KeyboardPtr keyboard = Keyboard::getTask( );
+	for ( int i = 0; i < MAX_PHASE; i++ ) {
+		std::string num = std::to_string( i );
+		if ( keyboard->isPushKey( num ) && keyboard->isHoldKey( "SPACE" ) ) {
+			setPhase( i );
+		}
+	}
 }
 
 void AppStage::draw( ) const {

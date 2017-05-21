@@ -9,6 +9,7 @@ public:
 	void draw( ) const;
 	void addTime( );
 	void reset( );
+	void finalize( );
 	bool isTimeOver( ) const;
 private:
 	int _timer;

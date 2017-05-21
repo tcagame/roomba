@@ -2,10 +2,13 @@
 #include "Scene.h"
 class SceneResult : public Scene {//ƒŠƒUƒ‹ƒg
 public:
-	SceneResult( );
+	SceneResult( int time );
 	virtual ~SceneResult( );
 private:
 	NEXT update( );
-	void draw( );
+	void draw( ) const;
+	void drawTimer( ) const;
+private:
+	int _time;
 };
 

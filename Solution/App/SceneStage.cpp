@@ -8,6 +8,7 @@
 #include "define.h"
 #include "Crystal.h"
 #include "Application.h"
+#include "Game.h"
 
 static const int UI_PHASE_FOOT_X = 60;
 static const int UI_PHASE_Y = 100;
@@ -108,6 +109,7 @@ Scene::NEXT SceneStage::update( ) {
 		return NEXT_RETRY;
 	}
 	if ( _stage->isFinished( ) ) {
+		_timer->finalize( );
 		return NEXT_RESULT;
 	}
 	_stage->draw( );
