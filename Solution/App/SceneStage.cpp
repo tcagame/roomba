@@ -88,6 +88,8 @@ _countdown( START_COUNTDOWN_TIME ) {
 	drawer->loadMDLModel( MDL_WALL_1_13, "Model/Stage/1_13.mdl", "Model/Stage/wall.jpg", stage_size );
 	drawer->loadMDLModel( MDL_WALL_1_14, "Model/Stage/1_14.mdl", "Model/Stage/wall.jpg", stage_size );
 	drawer->loadMDLModel( MDL_WALL_1_15, "Model/Stage/1_15.mdl", "Model/Stage/wall.jpg", stage_size );
+
+	drawer->loadEffect( EFFECT_LASER, "Effect/laser.efk" );
 }
 
 
