@@ -74,3 +74,7 @@ enum GRAPH {
 	STAGE_SELECTER,
 	MAX_GRAPH
 };
+
+enum EFFECT {
+	EFFECT_LASER,
+};
