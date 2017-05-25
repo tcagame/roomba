@@ -102,7 +102,7 @@ void Roomba::move( CameraPtr camera ) {
 }
 
 void Roomba::acceleration( Vector right_stick, Vector left_stick ) {
-	if ( right_stick != Vector( ) ||
+	if ( right_stick != Vector( ) &&
 		 left_stick != Vector( ) ) {
 		// 加速
 		switch ( _state ) {
@@ -258,8 +258,9 @@ void Roomba::draw( ) const {
 		_balls[ i ]->draw( );
 	}
 	// レーザー
-	drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
-	double size = ( ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).getLength( ) ) / 10; // 大きさは左右どちらからでも変わらないため左を基準に取る
+	//drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
+	const int ratio = 10; // effekseerのツールで作った際の大きさ
+	double size = ( ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).getLength( ) ) / ratio; // 大きさは左右どちらからでも変わらないため左を基準に取る
 	double angle_left = ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).angle( Vector( 1, 0 ) );
 	if ( ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).cross( Vector( 1, 0 ) ).z == 1 ) {
 		angle_left = PI2 - angle_left;
