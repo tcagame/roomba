@@ -139,15 +139,17 @@ void Roomba::updateState( CameraPtr camera ) {
 	Vector right_stick( device->getRightDirX( ), device->getRightDirY( ) );
 	Vector left_stick( device->getDirX( ), device->getDirY( ) );
 	
-	MOVE_STATE state = MOVE_STATE_TRANSLATION;
-	if ( right_stick.y > 0  && left_stick.y < 0 ) {
+	MOVE_STATE state = _state;
+	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		state = MOVE_STATE_ROTATION;
 		_rot_dir = -1;
-	}
-	if ( right_stick.y < 0  && left_stick.y > 0 ) {
+	} else if ( right_stick.y < 0 && left_stick.y > 0 ) {
 		state = MOVE_STATE_ROTATION;
 		_rot_dir = 1;
+	} else {
+		state = MOVE_STATE_TRANSLATION;
 	}
+
 	if ( state != _state ) {
 		_state = state;
 		checkLeftRight( camera );
@@ -186,31 +188,29 @@ void Roomba::holdCrystal( StagePtr stage ) {
 }
 
 void Roomba::moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left ) {
+	Vector ball_left_small_dir = ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).normalize( );
+	Vector ball_right_small_dir = ( getCentralPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).normalize( );
+	Vector ball_left_big_dir = ( _balls[ BALL_LEFT ]->getPos( ) - getCentralPos( ) ).normalize( );
+	Vector ball_right_big_dir = ( _balls[ BALL_RIGHT ]->getPos( ) - getCentralPos( ) ).normalize( );
+
 	Matrix mat = Matrix::makeTransformRotation( camera_dir.cross( Vector( 0, -1 ) ), camera_dir.angle( Vector( 0, -1 ) ) );
-	
 	Vector dir_left  = mat.multiply( left  ).normalize( ) + _vec_trans[ 0 ].normalize( );
 	Vector dir_right = mat.multiply( right ).normalize( ) + _vec_trans[ 1 ].normalize( );
 	Vector vec_left  = dir_left.normalize( ) * _trans_speed;
 	Vector vec_right = dir_right.normalize( ) * _trans_speed;
-	Vector scale_left = Vector( );
-	Vector scale_right = Vector( );
 
 	// translationとscaleに分解
-	if ( fabs( vec_left.x ) > fabs( vec_left.y ) ) {
-		scale_left.y = vec_left.y;
-		vec_left.y = 0;
-	} else {
-		scale_left.x = vec_left.x;
-		vec_left.x = 0;
-	}
-	if ( fabs( vec_right.x ) > fabs( vec_right.y ) ) {
-		scale_right.y = vec_right.y;
-		vec_right.y = 0;
-	} else {
-		scale_right.x = vec_right.x;
-		vec_right.x = 0;
-	}
+	// scaleを算出
+	Vector small_left = Vector( vec_left.dot( Vector( ball_left_small_dir.x, 0 ) ), vec_left.dot( Vector( 0, ball_left_small_dir.y ) ) );
+	Vector small_right = Vector( vec_right.dot( Vector( ball_right_small_dir.x, 0 ) ), vec_right.dot( Vector( 0, ball_right_small_dir.y ) ) );
+	Vector big_left = Vector( vec_left.dot( Vector( ball_left_big_dir.x, 0 ) ), vec_left.dot( Vector( 0, ball_left_big_dir.y ) ) );
+	Vector big_right = Vector( vec_right.dot( Vector( ball_right_big_dir.x, 0 ) ), vec_right.dot( Vector( 0, ball_right_big_dir.y ) ) );
 
+	Vector scale_left( small_left + big_left );
+	Vector scale_right( small_right + big_right );
+	Vector trans_left_vec =  vec_left - scale_left;
+	Vector trans_right_vec =  vec_right - scale_right;
+	
 	// scale移動判定
 	if ( _state == MOVE_STATE_TRANSLATION ) {
 		Vector scale = _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( );
@@ -227,7 +227,7 @@ void Roomba::moveTranslation( const Vector& camera_dir, const Vector& right, con
 			scale_right = right_dir.normalize( ) * ( ( scale_left + scale_right + scale ).getLength( ) * 0.5 );
 		}
 	}
-	setVecTrans( vec_left + scale_left, vec_right + scale_right );
+	setVecTrans( trans_left_vec + scale_left, trans_right_vec + scale_right );
 
 }
 
@@ -248,7 +248,7 @@ void Roomba::draw( ) const {
 		_balls[ i ]->draw( );
 	}
 	// レーザー
-	//drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
+	drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
 	const int ratio = 10; // effekseerのツールで作った際の大きさ
 	double size = ( ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).getLength( ) ) / ratio; // 大きさは左右どちらからでも変わらないため左を基準に取る
 	double angle_left = ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).angle( Vector( 1, 0 ) );
