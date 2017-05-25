@@ -11,8 +11,7 @@ class Roomba {
 public:
 	enum MOVE_STATE {
 		MOVE_STATE_TRANSLATION,
-		MOVE_STATE_ROTATION_RIGHT,
-		MOVE_STATE_ROTATION_LEFT,
+		MOVE_STATE_ROTATION,
 		MAX_STATE,
 	};
 public:
@@ -42,6 +41,7 @@ private:
 private:
 	double _trans_speed;
 	double _rot_speed;
+	int _rot_dir;
 	std::array< Vector, 2 > _vec_trans;
 	std::array< Vector, 2 > _vec_rot;
 	MOVE_STATE _state;

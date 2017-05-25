@@ -6,7 +6,7 @@
 
 const Vector START_DIR( 0, 3, -2 );
 const double ROTE_SPEED = PI / 40;
-const int CAMERA_LENGTH = (int)( 30 * WORLD_SCALE );
+const int CAMERA_LENGTH = (int)( 40 * WORLD_SCALE );
 
 AppCamera::AppCamera( RoombaPtr roomba ) :
 _roomba( roomba ),
