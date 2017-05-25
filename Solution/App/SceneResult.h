@@ -7,8 +7,13 @@ public:
 private:
 	NEXT update( );
 	void draw( ) const;
-	void drawTimer( ) const;
+	int drawTime( int x, int y, int time ) const;
+	void drawThisTime( ) const;
+	void drawBestTime( ) const;
+	void loadBestTime( );
+	void saveBestTime( );
 private:
-	int _time;
+	int _this_time;
+	int _best_time;
 };
 
