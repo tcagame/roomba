@@ -16,8 +16,8 @@ static const double MIN_SCALE = 8;
 
 
 static const Vector START_POS[ 2 ] {
-	Vector( 15, 15 ) * WORLD_SCALE,
-	Vector( 20, 20 ) * WORLD_SCALE
+	( Vector( 15, 15 ) + Vector( STAGE_WIDTH_NUM, STAGE_HEIGHT_NUM ) ) * WORLD_SCALE,
+	( Vector( 20, 20 ) + Vector( STAGE_WIDTH_NUM, STAGE_HEIGHT_NUM ) ) * WORLD_SCALE
 };
 
 Roomba::Roomba( ) :
@@ -57,27 +57,15 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	pos[ 0 ] = _balls[ 0 ]->getPos( );
 	pos[ 1 ] = _balls[ 1 ]->getPos( );
 	Vector central_pos =  getCentralPos( );
-	if ( central_pos.x < 0 ) {
+	if ( central_pos.x < STAGE_WIDTH_NUM * WORLD_SCALE - 1 ) {
 		for ( int i = 0; i < 2; i++ ) {
 			pos[ i ].x += STAGE_WIDTH_NUM * WORLD_SCALE;
 			_balls[ i ]->setPos( pos[ i ] );
 		}
 	}
-	if ( central_pos.x > STAGE_WIDTH_NUM * WORLD_SCALE - 1 ) {
-		for ( int i = 0; i < 2; i++ ) {
-			pos[ i ].x -= STAGE_WIDTH_NUM * WORLD_SCALE;
-			_balls[ i ]->setPos( pos[ i ] );
-		}
-	}
-	if ( central_pos.y < 0  ) {
+	if ( central_pos.y < STAGE_HEIGHT_NUM * WORLD_SCALE - 1 ) {
 		for ( int i = 0; i < 2; i++ ) {
 			pos[ i ].y += STAGE_HEIGHT_NUM * WORLD_SCALE;
-			_balls[ i ]->setPos( pos[ i ] );
-		}
-	}
-	if ( central_pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE - 1 ) {
-		for ( int i = 0; i < 2; i++ ) {
-			pos[ i ].y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
 			_balls[ i ]->setPos( pos[ i ] );
 		}
 	}

@@ -7,6 +7,7 @@ PTR( Camera );
 PTR( Stage );
 PTR( AppStage );
 PTR( Timer );
+PTR( Viewer );
 
 class SceneStage : public Scene {//ステージ
 public:
@@ -25,5 +26,6 @@ private:
 	StagePtr _stage;
 	RoombaPtr _roomba;
 	TimerPtr _timer;
+	ViewerPtr _viewer;
 };
 

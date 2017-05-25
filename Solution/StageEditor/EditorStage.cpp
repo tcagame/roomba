@@ -280,7 +280,7 @@ void EditorStage::updateMode( ) {
 }
 
 void EditorStage::drawEarth( ) const {
-	Vector adjust_pos = Vector( WORLD_SCALE * 2, WORLD_SCALE * 2 + WORLD_SCALE / 3 );
+	Vector adjust_pos = Vector( WORLD_SCALE * 2, WORLD_SCALE * 2 + WORLD_SCALE / 3, WORLD_SCALE / 6 );
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->setModelMDL( Drawer::ModelMDL( adjust_pos, MDL_EARTH ) );
 }

@@ -3,10 +3,11 @@
 #include <list>
 
 PTR( Crystal );
+PTR( Viewer );
 
 class AppStage : public Stage, public std::enable_shared_from_this< Stage > {
 public:
-	AppStage( int stage_num );
+	AppStage( int stage_num, ViewerPtr viewer );
 	virtual ~AppStage( );
 public:
 	void update( );
@@ -34,5 +35,7 @@ private:
 	std::list< CrystalPtr > _crystals;
 	std::array< char, STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 > _map_data;
 	int _station_count;
+	ViewerPtr _viewer;
+
 };
 

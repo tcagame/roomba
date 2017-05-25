@@ -9,17 +9,31 @@ static const Vector OFFSET[ 5 ] = {
 	Vector( )
 };
 
-Viewer::Viewer( ) {
+Viewer::Viewer( ) :
+_map_num_x( 1 ),
+_map_num_y( 1 ) {
 }
 
 
 Viewer::~Viewer( ) {
 }
 
+void Viewer::update( Vector roomba_pos ) {
+	_map_num_x = roomba_pos.x / STAGE_WIDTH_NUM / WORLD_SCALE;
+	_map_num_y = roomba_pos.y / STAGE_HEIGHT_NUM / WORLD_SCALE;
+}
+
 void Viewer::drawModelMDL( Drawer::ModelMDL mdl ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->setModelMDL( mdl );
+	while ( mdl.pos.x > STAGE_WIDTH_NUM * WORLD_SCALE ) {
+		mdl.pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
+	}
+	while ( mdl.pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE ) {
+		mdl.pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
+	}
 	char flag = getInViewFlag( mdl.pos );
+	mdl.pos += Vector( _map_num_x * STAGE_WIDTH_NUM * WORLD_SCALE, _map_num_y * STAGE_HEIGHT_NUM * WORLD_SCALE );
+	drawer->setModelMDL( mdl );
 	if ( flag != 0 ) {
 		char check = 1;
 		for ( int i = 0; i < 4; i++ ) {
@@ -35,6 +49,7 @@ void Viewer::drawModelMDL( Drawer::ModelMDL mdl ) const {
 
 void Viewer::drawModelMDLTransfer( Drawer::ModelMDL mdl ) const {
 	DrawerPtr drawer = Drawer::getTask( );
+	mdl.pos += Vector( _map_num_x * STAGE_WIDTH_NUM * WORLD_SCALE, _map_num_y * STAGE_HEIGHT_NUM * WORLD_SCALE );
 	drawer->setModelMDL( mdl );
 	const int OFF_X[ 8 ] = { 4, 4, 0, 0, 0, 1, 1, 1 };
 	const int OFF_Y[ 8 ] = { 2, 3, 2, 4, 3, 2, 4, 3 };

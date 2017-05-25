@@ -22,8 +22,7 @@ Crystal::~Crystal( ) {
 
 }
 
-void Crystal::draw( ) const {
-	ViewerPtr viewer( new Viewer );
+void Crystal::draw( ViewerPtr viewer ) const {
 	viewer->drawModelMDL( Drawer::ModelMDL( _pos, _type ) );
 }
 
@@ -32,6 +31,10 @@ void Crystal::update( AppStagePtr stage ) {
 	if ( stage->isOnStation( _pos ) ) {
 		_finished = true;
 		return;
+	}
+
+	if ( fabs( _pos.z + 2 ) > 0.2 ) {
+		int check = 0;
 	}
 
 	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
@@ -49,26 +52,26 @@ void Crystal::update( AppStagePtr stage ) {
 		_vec = _vec.normalize( ) * MAX_SPEED;
 	}
 	_pos += _vec;
-
-	if ( _pos.x < 0  ) {
+	if ( _pos.x < STAGE_WIDTH_NUM * WORLD_SCALE - 1 ) {
 		_pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
 	}
-	if ( _pos.x > STAGE_WIDTH_NUM * WORLD_SCALE - 1 ) {
-		_pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
-	}
-	if ( _pos.y < 0  ) {
+	if ( _pos.y < STAGE_HEIGHT_NUM * WORLD_SCALE - 1  ) {
 		_pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
-	}
-	if ( _pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE - 1  ) {
-		_pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
 }
 
 bool Crystal::isHitting( Vector pos0, Vector pos1 ) {
+	int roomba_map_x = (int)( pos0.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
+	int roomba_map_y = (int)( pos0.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
+	int crystal_map_x = (int)( _pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
+	int crystal_map_y = (int)( _pos.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
+	Vector pos = _pos;
+	pos.x += ( roomba_map_x - crystal_map_x ) * STAGE_WIDTH_NUM * WORLD_SCALE;
+	pos.y += ( roomba_map_y - crystal_map_y ) * STAGE_HEIGHT_NUM * WORLD_SCALE;
 	//pos0とpos1の間にクリスタルがあるかどうか
 	bool hitting = false;
-	Vector pos = _pos;
-	pos.z = pos0.z;
+	pos0.z = pos.z;
+	pos1.z = pos.z;
 	Vector vec0 = pos - pos0;
 	Vector vec1 = pos1 - pos0;
 	double angle = vec0.angle( vec1 );
@@ -81,17 +84,26 @@ bool Crystal::isHitting( Vector pos0, Vector pos1 ) {
 	double distance = vec0.getLength( ) * fabs( sin( angle ) );
 	if ( fabs( distance ) < CRYSTAL_RADIUS ) {
 		hitting = true;
+		_pos = pos;
 	}
 	return hitting;
 }
 
 Vector Crystal::adjustHitToRoomba( Vector pos, Vector vec, double radius ) {
-	//pos0とpos1の間にクリスタルがあるかどうか
 	bool hitting = false;
+
+	int roomba_map_x = (int)( pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
+	int roomba_map_y = (int)( pos.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
+	int crystal_map_x = (int)( _pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
+	int crystal_map_y = (int)( _pos.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
+	Vector tmp_pos = _pos;
+	tmp_pos.x += ( roomba_map_x - crystal_map_x ) * STAGE_WIDTH_NUM * WORLD_SCALE;
+	tmp_pos.y += ( roomba_map_y - crystal_map_y ) * STAGE_HEIGHT_NUM * WORLD_SCALE;
+
 	Vector tmp_vec = vec;
 	Vector future_pos = pos + vec;
 	future_pos.z = _pos.z;
-	Vector distance = future_pos - _pos;//ボール→クリスタル
+	Vector distance = future_pos - tmp_pos;//ボール→クリスタル
 	if ( distance.getLength( ) < CRYSTAL_RADIUS + radius ) {
 		Vector tmp_vec = distance * -1;
 		vec = tmp_vec.normalize( ) * vec.getLength( );

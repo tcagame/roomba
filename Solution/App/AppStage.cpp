@@ -6,8 +6,9 @@
 #include "Viewer.h"
 #include "Keyboard.h"
 
-AppStage::AppStage( int stage_num ) :
-_station_count( 1 ) {
+AppStage::AppStage( int stage_num, ViewerPtr viewer ) :
+_station_count( 1 ),
+_viewer( viewer ) {
 	load( 3 );//0~2:í èÌ 3:test_stage
 	reset( );
 }
@@ -123,7 +124,7 @@ void AppStage::drawCrystal( ) const {
 			ite++;
 			continue;
 		}
-		(*ite)->draw( );
+		(*ite)->draw( _viewer );
 		ite++;
 	}
 }
@@ -157,18 +158,11 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 		Vector( -1, -1 ), // ç∂â∫
 		Vector( 1, -1 )	  // âEâ∫
 	};
-
-	if ( pos.x < 0 ) {
-		pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
-	}
-	if ( pos.x > STAGE_WIDTH_NUM * WORLD_SCALE ) {
+	while ( pos.x > STAGE_WIDTH_NUM * WORLD_SCALE ) {
 		pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
 	}
-	if ( pos.y < 0 ) {
-		pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
-	}
-	if ( pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE - 1 ) {	
-		pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE - 1;
+	while ( pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE ) {	
+		pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
 	double x = pos.x + vec.x;
 	double y = pos.y + vec.y;
@@ -363,8 +357,8 @@ void AppStage::loadMapData( ) {
 
 bool AppStage::isOnStation( Vector pos ) {
 	bool result = false;
-	int x = ( int )( pos.x / WORLD_SCALE );
-	int y = ( int )( pos.y / WORLD_SCALE );
+	int x = ( int )( pos.x / WORLD_SCALE ) % STAGE_WIDTH_NUM;
+	int y = ( int )( pos.y / WORLD_SCALE ) % STAGE_HEIGHT_NUM;
 	int idx = x + y * STAGE_WIDTH_NUM;
 
 	DATA data = getData( );
@@ -395,31 +389,28 @@ std::list< CrystalPtr > AppStage::getCrystalList( ) const {
 }
 
 void AppStage::drawEarth( ) const {
-	Vector adjust_pos = Vector( WORLD_SCALE * 2, WORLD_SCALE * 2 + WORLD_SCALE / 3 );
+	Vector adjust_pos = Vector( WORLD_SCALE * 2, WORLD_SCALE * 2 + WORLD_SCALE / 3, WORLD_SCALE / 6 );
 	Drawer::ModelMDL model( adjust_pos, MDL_EARTH );
-	ViewerPtr viewer( new Viewer );
-	viewer->drawModelMDLTransfer( model );
+	_viewer->drawModelMDLTransfer( model );
 }
 
 void AppStage::drawWall( ) const {
-	ViewerPtr viewer = ViewerPtr( new Viewer );
 	std::vector< Drawer::ModelMDL > walls = getWalls( );
 	std::vector< Drawer::ModelMDL >::const_iterator ite = walls.begin( );
 	while ( ite != walls.end( ) ) {
-		viewer->drawModelMDL( *ite );
+		_viewer->drawModelMDL( *ite );
 		ite++;
 	}
 }
 
 void AppStage::drawStation( ) const {
-	ViewerPtr viewer = ViewerPtr( new Viewer );
 	DATA data = getData( );
 	int phase = getPhase( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( data.station[ phase ][ i ] == _station_count ) {
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			viewer->drawModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), MDL_STATION ) );
+			_viewer->drawModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), MDL_STATION ) );
 		}
 	}
 }

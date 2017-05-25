@@ -3,6 +3,7 @@
 #include "define.h"
 
 PTR( AppStage );
+PTR( Viewer );
 
 class Crystal {
 public:
@@ -10,7 +11,7 @@ public:
 	virtual ~Crystal( );
 public:
 	void update( AppStagePtr stage );
-	void draw( ) const;
+	void draw( ViewerPtr viewer ) const;
 	bool isHitting( Vector pos0, Vector pos1 );
 	Vector adjustHitToRoomba( Vector pos, Vector vec, double radius );
 	bool isFinished( ) const;
