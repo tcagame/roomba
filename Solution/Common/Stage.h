@@ -37,7 +37,7 @@ protected:
 	void loadWall( );
 	virtual void loadPhase( );
 	virtual void loadCrystal( );
-	std::vector< Drawer::ModelMDL > getWalls( ) const;
+	const std::vector< Drawer::ModelMDL >& getWalls( ) const;
 private:
 	virtual void drawEarth( ) const = 0;
 	virtual void drawWall( ) const = 0;

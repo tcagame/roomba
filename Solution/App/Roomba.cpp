@@ -154,8 +154,6 @@ void Roomba::holdCrystal( StagePtr stage ) {
 			_crystal = CrystalPtr( );
 			return;
 		}
-		DrawerPtr drawer = Drawer::getTask( );
-		drawer->drawString( 300, 20, "‚à‚Á‚Ä‚é‚æ[" );
 		Vector central_pos = getCentralPos( );
 		Vector crystal_pos = _crystal->getPos( );
 		Vector distance = central_pos - crystal_pos;
