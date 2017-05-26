@@ -37,7 +37,7 @@ Roomba::~Roomba( ) {
 
 void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	updateState( camera );
-	move( stage );
+	move( );
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ]->setForce( _vec_trans[ i ] + _vec_rot[ i ] );
 		if ( _balls[ i ]->getVec( ).getLength2( ) > MAX_SPEED * MAX_SPEED ) {
@@ -65,12 +65,9 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 			_balls[ i ]->setPos( pos[ i ] );
 		}
 	}
-
-	DrawerPtr drawer = Drawer::getTask( );
-	drawer->drawString( 10,10, "%lf", (_balls[0]->getPos() - _balls[1]->getPos()).getLength() );
 }
 
-void Roomba::move( StagePtr stage ) {
+void Roomba::move( ) {
 	acceleration( );
 	moveTranslation( );
 	moveRotation( );
@@ -123,6 +120,12 @@ void Roomba::updateState( CameraPtr camera ) {
 	MOVE_STATE state = _state;
 	_move_dir = Vector( );
 	_scale_dir = SCALE_NONE;
+
+	if ( right_stick == Vector( ) ||
+		 left_stick == Vector( ) ) {
+		return;
+	}
+
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		state = MOVE_STATE_ROTATION;
 		_move_dir.z = -1;
@@ -178,7 +181,6 @@ void Roomba::holdCrystal( StagePtr stage ) {
 }
 
 void Roomba::moveTranslation( ) {
-
 	Vector dir_left  = _move_dir.normalize( ) + _vec_trans[ 0 ].normalize( );
 	Vector dir_right = _move_dir.normalize( ) + _vec_trans[ 1 ].normalize( );
 
