@@ -24,7 +24,7 @@ public:
 	Vector getCentralPos( ) const;
 	Vector getBallPos( int ball ) const;
 private:
-	void move( StagePtr stage );
+	void move( );
 	void updateState( CameraPtr camera );
 	void holdCrystal( StagePtr stage );
 	void moveTranslation( );

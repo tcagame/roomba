@@ -37,7 +37,7 @@ Roomba::~Roomba( ) {
 
 void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	updateState( camera );
-	move( stage );
+	move( );
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ]->setForce( _vec_trans[ i ] + _vec_rot[ i ] );
 		if ( _balls[ i ]->getVec( ).getLength2( ) > MAX_SPEED * MAX_SPEED ) {
@@ -65,12 +65,9 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 			_balls[ i ]->setPos( pos[ i ] );
 		}
 	}
-
-	DrawerPtr drawer = Drawer::getTask( );
-	drawer->drawString( 10,10, "%lf", (_balls[0]->getPos() - _balls[1]->getPos()).getLength() );
 }
 
-void Roomba::move( StagePtr stage ) {
+void Roomba::move( ) {
 	acceleration( );
 	moveTranslation( );
 	moveRotation( );
