@@ -182,11 +182,11 @@ void Stage::setPhase( int phase ) {
 	loadCrystal( );
 }
 
-void Stage::setData( DATA data ) {
+void Stage::setData( DATA& data ) {
 	_data = data;
 }
 
-Stage::DATA Stage::getData( ) const {
+const Stage::DATA& Stage::getData( ) const {
 	return _data;
 }
 

@@ -233,8 +233,8 @@ void SceneStage::drawMap( ) const {
 	//ƒ‹ƒ“ƒo•\Ž¦
 	for ( int i = 0; i < 2; i++ ) {
 		Vector roomba_pos = _roomba->getBallPos( i );
-		int x = ( roomba_pos.x / WORLD_SCALE - base_x ) * UI_MAP_SIZE;
-		int y = ( roomba_pos.y / WORLD_SCALE - base_y ) * UI_MAP_SIZE;
+		int x = (int)( ( roomba_pos.x / WORLD_SCALE - base_x ) * UI_MAP_SIZE );
+		int y = (int)( ( roomba_pos.y / WORLD_SCALE - base_y ) * UI_MAP_SIZE );
 		x = UI_MAP_X + ( STAGE_WIDTH_NUM - 1 ) * UI_MAP_SIZE - x;
 		y = scr_height - UI_MAP_FOOT_Y - y - UI_MAP_SIZE;
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, 0, 16 * 5, 16, 16, x + UI_MAP_SIZE, y + UI_MAP_SIZE ), GRAPH_MAP ) );
@@ -249,8 +249,8 @@ void SceneStage::drawMap( ) const {
 			continue;
 		}
 		Vector pos = crystal->getPos( );
-		int x = ( pos.x / WORLD_SCALE - base_x ) * UI_MAP_SIZE;
-		int y = ( pos.y / WORLD_SCALE - base_y ) * UI_MAP_SIZE;
+		int x = (int)( ( pos.x / WORLD_SCALE - base_x ) * UI_MAP_SIZE );
+		int y = (int)( ( pos.y / WORLD_SCALE - base_y ) * UI_MAP_SIZE );
 		int diff_x = (int)( pos.x / WORLD_SCALE / STAGE_WIDTH_NUM - base_x / STAGE_WIDTH_NUM );
 		int diff_y = (int)( pos.y / WORLD_SCALE / STAGE_HEIGHT_NUM - base_y / STAGE_HEIGHT_NUM );
 		x = UI_MAP_X + ( STAGE_WIDTH_NUM - 1 ) * UI_MAP_SIZE - x;

@@ -23,13 +23,13 @@ public:
 	virtual void reset( );
 	int getMaxStationNum( ) const;
 	int getPhase( ) const;
-	DATA getData( ) const;
+	const DATA& getData( ) const;
 protected:
 	static const int MAX_STAGE = 4;
 	static const int MAX_LINK = 5;
 protected:
 	void debug( );
-	void setData( DATA data );
+	void setData( DATA& data );
 	void setPhase( int phase );
 	void drawModel( ) const;
 	void load( int stage_num );

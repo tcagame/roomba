@@ -19,8 +19,8 @@ Viewer::~Viewer( ) {
 }
 
 void Viewer::update( Vector roomba_pos ) {
-	_map_num_x = roomba_pos.x / STAGE_WIDTH_NUM / WORLD_SCALE;
-	_map_num_y = roomba_pos.y / STAGE_HEIGHT_NUM / WORLD_SCALE;
+	_map_num_x = (int)( roomba_pos.x / STAGE_WIDTH_NUM / WORLD_SCALE );
+	_map_num_y = (int)( roomba_pos.y / STAGE_HEIGHT_NUM / WORLD_SCALE );
 }
 
 void Viewer::drawModelMDL( Drawer::ModelMDL mdl ) const {
