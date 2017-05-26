@@ -6,7 +6,7 @@
 #include "Viewer.h"
 
 static const double CRYSTAL_RADIUS = 0.5;
-static const double MAX_SPEED = 0.8;
+static const double MAX_SPEED = 0.9;
 static const double DECELERATION = 0.2;
 
 Crystal::Crystal( Vector pos, MDL type ) :
@@ -37,20 +37,21 @@ void Crystal::update( AppStagePtr stage ) {
 		int check = 0;
 	}
 
+	if ( _vec.getLength( ) > MAX_SPEED ) {
+		_vec = _vec.normalize( ) * MAX_SPEED;
+	}
+	if ( _vec.getLength( ) > DECELERATION ) {
+		_vec -= _vec.normalize( ) * DECELERATION;
+	} else {
+		_vec = Vector( );
+	}
+
 	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
 	if ( ( adjust - _vec ).getLength( ) > 0.1 ) {
 		_vec = adjust;
 		_drop_down = true;
 	}
 
-	if ( _vec.getLength( ) > DECELERATION ) {
-		_vec -= _vec.normalize( ) * DECELERATION;
-	} else {
-		_vec = Vector( );
-	}
-	if ( _vec.getLength( ) > MAX_SPEED ) {
-		_vec = _vec.normalize( ) * MAX_SPEED;
-	}
 	_pos += _vec;
 	if ( _pos.x < STAGE_WIDTH_NUM * WORLD_SCALE - 1 ) {
 		_pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;

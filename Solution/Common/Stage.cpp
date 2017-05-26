@@ -206,6 +206,6 @@ int Stage::getMaxStationNum( ) const {
 }
 
 
-std::vector< Drawer::ModelMDL > Stage::getWalls( ) const {
+const std::vector< Drawer::ModelMDL >& Stage::getWalls( ) const {
 	return _walls;
 }
