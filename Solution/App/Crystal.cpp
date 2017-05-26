@@ -61,10 +61,10 @@ void Crystal::update( AppStagePtr stage ) {
 }
 
 bool Crystal::isHitting( Vector pos0, Vector pos1 ) {
-	int roomba_map_x = (int)( pos0.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
-	int roomba_map_y = (int)( pos0.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
-	int crystal_map_x = (int)( _pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
-	int crystal_map_y = (int)( _pos.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
+	int roomba_map_x = (int)( pos0.x / WORLD_SCALE / STAGE_WIDTH_NUM );
+	int roomba_map_y = (int)( pos0.y / WORLD_SCALE / STAGE_HEIGHT_NUM );
+	int crystal_map_x = (int)( _pos.x / WORLD_SCALE / STAGE_WIDTH_NUM );
+	int crystal_map_y = (int)( _pos.y / WORLD_SCALE / STAGE_HEIGHT_NUM );
 	Vector pos = _pos;
 	pos.x += ( roomba_map_x - crystal_map_x ) * STAGE_WIDTH_NUM * WORLD_SCALE;
 	pos.y += ( roomba_map_y - crystal_map_y ) * STAGE_HEIGHT_NUM * WORLD_SCALE;

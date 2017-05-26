@@ -112,6 +112,7 @@ void AppStage::loadCrystal( ) {
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if (  data.crystal[ phase ][ i ] != 0 ) {
 			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, -WORLD_SCALE );
+			pos += Vector( STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE );
 			_crystals.push_back( CrystalPtr( new Crystal( pos, MDL_CRYSTAL ) ) );
 		}
 	}
