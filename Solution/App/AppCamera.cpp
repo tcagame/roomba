@@ -24,7 +24,7 @@ void AppCamera::move( ) {
 	setTarget( _roomba->getCentralPos( ) );
 	//‰ñ“]
 	int axis = 0;
-	MousePtr mouse = Mouse::getTask( );
+	/*MousePtr mouse = Mouse::getTask( );
 	int mouse_x = (int)mouse->getPos( ).x;
 	if ( mouse->isHoldLeftButton( ) ) {
 		if ( mouse_x > _mouse_x ) {
@@ -42,7 +42,7 @@ void AppCamera::move( ) {
 	}
 	if ( device->getButton( ) & BUTTON_E ) {
 		axis = 1;
-	}
+	}*/
 
 	Vector dir = getDir( );
 	Vector pos = getPos( );
