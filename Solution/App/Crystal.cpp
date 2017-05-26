@@ -61,17 +61,27 @@ void Crystal::update( AppStagePtr stage ) {
 }
 
 bool Crystal::isHitting( Vector pos0, Vector pos1 ) {
-	int roomba_map_x = (int)( pos0.x / WORLD_SCALE / STAGE_WIDTH_NUM );
-	int roomba_map_y = (int)( pos0.y / WORLD_SCALE / STAGE_HEIGHT_NUM );
-	int crystal_map_x = (int)( _pos.x / WORLD_SCALE / STAGE_WIDTH_NUM );
-	int crystal_map_y = (int)( _pos.y / WORLD_SCALE / STAGE_HEIGHT_NUM );
-	Vector pos = _pos;
-	pos.x += ( roomba_map_x - crystal_map_x ) * STAGE_WIDTH_NUM * WORLD_SCALE;
-	pos.y += ( roomba_map_y - crystal_map_y ) * STAGE_HEIGHT_NUM * WORLD_SCALE;
 	//pos0‚Æpos1‚ÌŠÔ‚ÉƒNƒŠƒXƒ^ƒ‹‚ª‚ ‚é‚©‚Ç‚¤‚©
 	bool hitting = false;
-	pos0.z = pos.z;
-	pos1.z = pos.z;
+	pos0.z = _pos.z;
+	pos1.z = _pos.z;
+
+	double min_x = pos0.x;
+	double min_y = pos0.y;
+	if ( min_x > pos1.x ) {
+		min_x = pos1.x;
+	}
+	if ( min_y > pos1.y ) {
+		min_y = pos1.y;
+	}
+	Vector pos = _pos;
+	while ( min_x > pos.x ) {
+		pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
+	}
+	while ( min_y > pos.y ) {
+		pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
+	}
+
 	Vector vec0 = pos - pos0;
 	Vector vec1 = pos1 - pos0;
 	double angle = vec0.angle( vec1 );
