@@ -46,7 +46,8 @@ private:
 private:
 	double _trans_speed;
 	double _rot_speed;
-	Vector _move_dir; // z‚Í‰ñ“]•ûŒü
+	int _rot_dir;
+	Vector _move_dir;
 	SCALE _scale_dir;
 	std::array< Vector, 2 > _vec_trans;
 	std::array< Vector, 2 > _vec_rot;

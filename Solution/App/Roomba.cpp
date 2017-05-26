@@ -65,6 +65,8 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 			_balls[ i ]->setPos( pos[ i ] );
 		}
 	}
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->drawString( 10, 10, "right %lf left %lf", _balls[1]->getPos().z, _balls[0]->getPos().z );
 }
 
 void Roomba::move( ) {
@@ -75,7 +77,8 @@ void Roomba::move( ) {
 
 void Roomba::acceleration( ) {
 	if ( _move_dir != Vector( ) ||
-		 _scale_dir != SCALE_NONE ) {
+		 _scale_dir != SCALE_NONE ||
+		 _rot_dir != 0 ) {
 		// ‰Á‘¬
 		switch ( _state ) {
 		case MOVE_STATE_TRANSLATION:
@@ -118,6 +121,7 @@ void Roomba::updateState( CameraPtr camera ) {
 	Vector left_stick( device->getDirX( ), device->getDirY( ) );
 	
 	MOVE_STATE state = _state;
+	_rot_dir = 0;
 	_move_dir = Vector( );
 	_scale_dir = SCALE_NONE;
 
@@ -128,10 +132,10 @@ void Roomba::updateState( CameraPtr camera ) {
 
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		state = MOVE_STATE_ROTATION;
-		_move_dir.z = -1;
+		_rot_dir = -1;
 	} else if ( right_stick.y < 0 && left_stick.y > 0 ) {
 		state = MOVE_STATE_ROTATION;
-		_move_dir.z = 1;
+		_rot_dir = 1;
 	} else {
 		state = MOVE_STATE_TRANSLATION;
 		Vector dir = ( ( right_stick + left_stick ) *= -1 ).normalize( );
@@ -226,7 +230,7 @@ void Roomba::moveRotation( ) {
 	std::array< Vector, 2 > vec;
 	for ( int i = 0;  i < 2; i++ ) {
 		Vector radius = _balls[ i ]->getPos( ) - getCentralPos( );
-		Matrix mat_rot = Matrix::makeTransformRotation( Vector( 0, 0, _move_dir.z ), _rot_speed / radius.getLength( ) );
+		Matrix mat_rot = Matrix::makeTransformRotation( Vector( 0, 0, _rot_dir ), _rot_speed / radius.getLength( ) );
 		Vector radius2 = mat_rot.multiply( radius );
 		vec[ i ] = ( ( radius2 + getCentralPos( ) ) - _balls[ i ]->getPos( ) );
 	}
