@@ -151,98 +151,62 @@ CrystalPtr AppStage::getHittingCrystal( Vector pos0, Vector pos1 ) const {
 Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double radius ) {
 	// ボールと壁の当たり判定
 	Vector result = vec;
-	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
-	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
-	const Vector DIR[ 4 ] = {
-		Vector( -1, 1 ),  // 左上 
-		Vector( 1, 1 ),	  // 右上
-		Vector( -1, -1 ), // 左下
-		Vector( 1, -1 )	  // 右下
-	};
+	const int OFFSET_X[ 9 ] = { -1, 1, -1, 1, 0, 0, -1, 1, 0 };
+	const int OFFSET_Y[ 9 ] = { -1, -1, 1, 1, -1, 1, 0, 0, 0 };
 	while ( pos.x > STAGE_WIDTH_NUM * WORLD_SCALE ) {
 		pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
 	}
 	while ( pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE ) {	
 		pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
-	double x = pos.x + vec.x;
-	double y = pos.y + vec.y;
-	for ( int i = 0; i < 2; i++ ) {
-		double rad = radius;
-		if ( i == 0 ) {
-			rad *= -1;
+	Vector fpos = pos + vec;//未来座標
+	int x = (int)( fpos.x + 0.5 );
+	int y = (int)( fpos.y + 0.5 );
+	//未来座標(idx)の周りの状態を知る
+	for ( int i = 0; i < 9; i++ ) {
+		int fx = x + OFFSET_X[ i ];
+		int fy = y + OFFSET_Y[ i ];
+		if ( fx >= STAGE_WIDTH_NUM * 2 ) {
+			fx -= STAGE_WIDTH_NUM * 2;
 		}
-		double fy = pos.y + vec.y + rad;
-		double fx = pos.x + vec.x + rad;
-		int idx_x = (int)fx + (int)y * STAGE_WIDTH_NUM * 2;
-		int idx_y = (int)x + (int)fy * STAGE_WIDTH_NUM * 2;
-		Vector dir = vec.normalize( ) * radius;
-		int tmp_x = (int)( pos.x + vec.x + dir.x );
-		int tmp_y = (int)( pos.y + vec.y + dir.y );
-		int idx = tmp_x + tmp_y * STAGE_WIDTH_NUM * 2;
-		if ( idx_x < 0 || idx_x >= STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 ) {
-				return result;
+		if ( fx < 0 ) {
+			fx += STAGE_WIDTH_NUM * 2;
 		}
-		if ( idx_y < 0 || idx_y >= STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 ) {
-				return result;
+		if ( fy >= STAGE_HEIGHT_NUM * 2 ) {
+			fy -= STAGE_HEIGHT_NUM * 2;
 		}
-		if ( idx < 0 || idx >= STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 ) {
-				return result;
+		if ( fy < 0 ) {
+			fy += STAGE_HEIGHT_NUM * 2;
 		}
-		switch ( _map_data[ idx_x ] ) {
-		case 1:
-			result.x = vec.x * -1;
-			break;
-		case 2:
-			{
-				int add_x = 0;
-				int add_y = 0;
-				if ( (int)fx % 2 == 0 ) add_x = (int)( WORLD_SCALE / 2 );
-				if ( (int)y % 2 == 0 ) add_y = (int)( WORLD_SCALE / 2 );
-				Vector check_pos( fx + add_x, y + add_y );
-				double length = ( check_pos - Vector( x, y ) ).getLength( );
-				if ( length < WORLD_SCALE / 2 + radius ) {
-					result.x = vec.x * -1;
-				}
-			}
-			break;
-		}
-		switch ( _map_data[ idx_y ] ) {
-		case 1:
-			result.y = vec.y * -1;
-			break;
-		case 2:
-			{
-				int add_x = 0;
-				int add_y = 0;
-				if ( (int)x % 2 == 0 ) add_x = (int)( WORLD_SCALE / 2 );
-				if ( (int)fy % 2 == 0 ) add_y = (int)( WORLD_SCALE / 2 );
-				Vector check_pos( x + add_x, fy + add_y );
-				double length = ( check_pos - Vector( x, y ) ).getLength( );
-				if ( length < WORLD_SCALE / 2 + radius ) {
-					result.y = vec.y * -1;
-				}
-			}
-			break;
-		}
+		int idx = fx + fy * STAGE_WIDTH_NUM * 2;
 		switch ( _map_data[ idx ] ) {
-		case 1:
-			break;
-		case 2:
-			{
-				int add_x = 0;
-				int add_y = 0;
-				if ( tmp_x % 2 == 0 ) add_x = (int)( WORLD_SCALE / 2 );
-				if ( tmp_y % 2 == 0 ) add_y = (int)( WORLD_SCALE / 2 );
-				Vector check_pos( tmp_x + add_x, tmp_y + add_y );
-				double length = ( check_pos - Vector( x, y ) ).getLength( );
-				if ( length < WORLD_SCALE / 2 + radius ) {
-					result = vec * -1;
-				}
+		case 1://四角
+		{
+		Vector pos( fx, fy, fpos.z );
+			if ( isCollisionToSquare( pos, fpos, radius ) ) {
+				result = ( fpos - ( pos + Vector( WORLD_SCALE / 4, WORLD_SCALE / 4 ) ) ).normalize( ) * vec.getLength( );
 			}
+		}
+			break;
+		case 2://扇型
+		{
+			Vector pos( fx - ( fx % 2 ) + 1, fy - ( fy % 2 ) + 1, fpos.z );
+			if ( isCollisionToCircle( pos, fpos, radius ) ) {
+				result = ( fpos - pos ).normalize( ) * vec.getLength( );
+			}
+		}
+			break;
+		case 3://L字
+		{
+			Vector pos( fx + ( fx % 2 ), fy + ( fy % 2 ), fpos.z );
+			if ( isCollisionToL( pos, fpos, radius ) ) {
+				result = ( Vector( fx - ( fx % 2 ) + 1, fy - ( fy % 2 ) + 1, fpos.z ) - pos ).normalize( ) * vec.getLength( );
+			}
+		}
 			break;
 		}
 	}
+	
 	return result;
 }
 
@@ -423,4 +387,65 @@ int AppStage::getStationCount( ) const {
 void AppStage::loadPhase( ) {
 	_station_count = 1;
 	Stage::loadPhase( );
+}
+
+bool AppStage::isCollisionToSquare( Vector square_pos, Vector pos, double radius ) const {
+	bool result = false;
+	if ( square_pos.x - pos.x > STAGE_WIDTH_NUM ) {
+		pos.x += STAGE_WIDTH_NUM * 2;
+	}
+	if ( pos.x - square_pos.x > STAGE_WIDTH_NUM ) {
+		square_pos.x += STAGE_WIDTH_NUM * 2;
+	}
+	if ( square_pos.y - pos.y > STAGE_HEIGHT_NUM ) {
+		pos.y += STAGE_HEIGHT_NUM * 2;
+	}
+	if ( pos.y - square_pos.y > STAGE_HEIGHT_NUM ) {
+		square_pos.y += STAGE_HEIGHT_NUM * 2;
+	}
+	square_pos -= Vector( radius, radius );
+	double size = WORLD_SCALE / 2 + radius * 2;
+	if ( ( square_pos.x < pos.x ) &&
+		 ( square_pos.x + size > pos.x ) &&
+		 ( square_pos.y < pos.y ) &&
+		 ( square_pos.y + size > pos.y ) ) {
+		result = true;
+	}
+	return result;
+}
+
+bool AppStage::isCollisionToCircle( Vector circle_pos, Vector pos, double radius ) const {
+	if ( circle_pos.x - pos.x > STAGE_WIDTH_NUM ) {
+		pos.x += STAGE_WIDTH_NUM * 2;
+	}
+	if ( pos.x - circle_pos.x > STAGE_WIDTH_NUM ) {
+		circle_pos.x += STAGE_WIDTH_NUM * 2;
+	}
+	if ( circle_pos.y - pos.y > STAGE_HEIGHT_NUM ) {
+		pos.y += STAGE_HEIGHT_NUM * 2;
+	}
+	if ( pos.y - circle_pos.y > STAGE_HEIGHT_NUM ) {
+		circle_pos.y += STAGE_HEIGHT_NUM * 2;
+	}
+	double circle_radius = WORLD_SCALE / 2;
+	double distance = ( circle_pos - pos ).getLength( );
+	return ( circle_radius + radius > distance );
+}
+
+bool AppStage::isCollisionToL( Vector l_pos, Vector pos, double radius ) const {
+	if ( l_pos.x - pos.x > STAGE_WIDTH_NUM ) {
+		pos.x += STAGE_WIDTH_NUM * 2;
+	}
+	if ( pos.x - l_pos.x > STAGE_WIDTH_NUM ) {
+		l_pos.x += STAGE_WIDTH_NUM * 2;
+	}
+	if ( l_pos.y - pos.y > STAGE_HEIGHT_NUM ) {
+		pos.y += STAGE_HEIGHT_NUM * 2;
+	}
+	if ( pos.y - l_pos.y > STAGE_HEIGHT_NUM ) {
+		l_pos.y += STAGE_HEIGHT_NUM * 2;
+	}
+	double distance = ( l_pos - pos ).getLength( );
+	double size = WORLD_SCALE / 2;
+	return ( size - radius * 2 > distance );
 }

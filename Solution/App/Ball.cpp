@@ -17,6 +17,7 @@ void Ball::update( StagePtr stage ) {
 	Vector adjust_vec = stage_ptr->adjustCollisionToWall( _pos, _vec, BALL_RADIUS );
 	adjust_vec += stage_ptr->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS );
 	_vec = adjust_vec;
+	_vec.z = 0;
 	_pos += _vec;
 }
 
