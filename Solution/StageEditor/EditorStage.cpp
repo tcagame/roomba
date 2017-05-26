@@ -5,13 +5,16 @@
 #include "Binary.h"
 #include "define.h"
 
-static const int CURSOR_WAIT_TIME = 2;
+static const int CURSOR_WAIT_TIME = 4;
 
 EditorStage::EditorStage( ) :
 _cursor_x( 0 ),
 _cursor_y( 0 ),
 _count( 0 ) {
 	reset( );
+	MousePtr mouse = Mouse::getTask( );
+	_before_mouse_pos = mouse->getPos( );
+	//mouse->changeMouseImage( 0 );
 }
 
 
@@ -55,16 +58,31 @@ void EditorStage::updateCursor( ) {
 	KeyboardPtr keyboard = Keyboard::getTask( );
 	int cursor_x = 0;
 	int cursor_y = 0;
+	Vector mouse_pos = Mouse::getTask( )->getPos( );
+	Vector mouse_vec = mouse_pos - _before_mouse_pos;
+	_before_mouse_pos = mouse_pos;
 	if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
-		cursor_y++;
+		cursor_y += 3;
 	}
 	if ( keyboard->isHoldKey( "ARROW_DOWN" ) ) {
-		cursor_y--;
+		cursor_y -= 3;
 	}
 	if ( keyboard->isHoldKey( "ARROW_LEFT" ) ) {
-		cursor_x++;
+		cursor_x += 3;
 	}
 	if ( keyboard->isHoldKey( "ARROW_RIGHT" ) ) {
+		cursor_x -= 3;
+	}
+	if ( mouse_vec.y < -0.1 ) {
+		cursor_y++;
+	}
+	if ( mouse_vec.y > 0.1 ) {
+		cursor_y--;
+	}
+	if ( mouse_vec.x < -0.1 ) {
+		cursor_x++;
+	}
+	if ( mouse_vec.x > 0.1 ) {
 		cursor_x--;
 	}
 	if ( cursor_x != 0 || cursor_y != 0 ) {
@@ -75,6 +93,19 @@ void EditorStage::updateCursor( ) {
 		}
 	} else {
 		_count = 0;
+	}
+
+	if ( _cursor_x < 0 ) {
+		_cursor_x = 0;
+	}
+	if ( _cursor_y < 0 ) {
+		_cursor_y = 0;
+	}
+	if ( _cursor_x >= STAGE_WIDTH_NUM ) {
+		_cursor_x = STAGE_WIDTH_NUM - 1;
+	}
+	if ( _cursor_y >= STAGE_WIDTH_NUM  ) {
+		_cursor_y = STAGE_WIDTH_NUM - 1;
 	}
 }
 

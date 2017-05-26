@@ -34,6 +34,7 @@ private:
 	int _cursor_x;
 	int _cursor_y;
 	int _count;
+	Vector _before_mouse_pos;
 	EDIT_MODE _mode;
 };
 
