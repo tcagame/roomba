@@ -123,6 +123,12 @@ void Roomba::updateState( CameraPtr camera ) {
 	MOVE_STATE state = _state;
 	_move_dir = Vector( );
 	_scale_dir = SCALE_NONE;
+
+	if ( right_stick == Vector( ) ||
+		 left_stick == Vector( ) ) {
+		return;
+	}
+
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		state = MOVE_STATE_ROTATION;
 		_move_dir.z = -1;
@@ -180,7 +186,6 @@ void Roomba::holdCrystal( StagePtr stage ) {
 }
 
 void Roomba::moveTranslation( ) {
-
 	Vector dir_left  = _move_dir.normalize( ) + _vec_trans[ 0 ].normalize( );
 	Vector dir_right = _move_dir.normalize( ) + _vec_trans[ 1 ].normalize( );
 
