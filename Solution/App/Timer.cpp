@@ -2,9 +2,10 @@
 #include "Drawer.h"
 #include "define.h"
 #include "Game.h"
+#include "Application.h"
 
 static const int FPS = 60;
-static const int START_TIME = 10 * FPS;
+static const int START_TIME = 99 * FPS;
 static const int ADD_TIME = 1;
 
 Timer::Timer( ) :
@@ -24,8 +25,9 @@ void Timer::draw( ) const {
 		return;
 	}
 
+	ApplicationPtr app = Application::getInstance( );
 	DrawerPtr drawer = Drawer::getTask( );
-	int x = 720;
+	int x = app->getWindowWidth( ) / 2;
 	int y = 10;
 	const int TW = 32;
 	const int TH = 64;

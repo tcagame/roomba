@@ -132,7 +132,7 @@ void SceneStage::updateGame( ) {
 	_roomba->update( _stage, _camera );
 	_stage->update( );
 	_viewer->update( _roomba->getCentralPos( ) );
-	//_timer->update( );	
+	_timer->update( );	
 }
 
 void SceneStage::drawUI( ) const {
@@ -274,11 +274,14 @@ void SceneStage::drawCountdown( ) const {
 	if ( _countdown / 60 < 1 ) {
 		return;
 	}
-
+	
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
 	DrawerPtr drawer = Drawer::getTask( );
 	const int FPS = 60;
-	const int sx = 720 - 100;
-	const int sy = 400 - 200;
+	const int sx = WIDTH / 2 - 100;
+	const int sy = HEIGHT / 2 - 200;
 	const int sx2 = sx + 200;
 	const int sy2 = sy + 400;
 	const int TW = 32;

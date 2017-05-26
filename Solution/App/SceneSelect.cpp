@@ -3,6 +3,7 @@
 #include "define.h"
 #include "Drawer.h"
 #include "Game.h"
+#include "Application.h"
 
 static const int SELECT_WIDTH  = 1024;
 static const int SELECT_HEIGHT = 256;
@@ -54,21 +55,27 @@ void SceneSelect::draw( ) {
 }
 
 void SceneSelect::drawRogo( ) {
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( SELECT_CENTER_X - SELECT_WIDTH / 2, SELECT_CENTER_Y - SELECT_HEIGHT / 2 ), GRAPH_STAGE_SELECT_ROGO );
+	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - SELECT_WIDTH / 2, HEIGHT / 10 ), GRAPH_STAGE_SELECT_ROGO );
 	drawer->setSprite( sprite );
 }
 
 void SceneSelect::drawSelect( ) {
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
 	DrawerPtr drawer = Drawer::getTask( );
-	int x = 100;
-	int y = 250;
+	int x = WIDTH / 4;
+	int y = HEIGHT / 3;
 	int select = _select;
 	if ( _select == 0 ) {
 		select = 3;
 	}
 	// –îˆó
-	Drawer::Sprite sprite( Drawer::Transform( 150, 300 ), GRAPH_STAGE_SELECTER );
+	Drawer::Sprite sprite( Drawer::Transform( x, y + 64 ), GRAPH_STAGE_SELECTER );
 	drawer->setSprite( sprite );
 
 	GRAPH graph = (GRAPH)( GRAPH_STAGE_SELECT_1 + ( select - 1 ) );

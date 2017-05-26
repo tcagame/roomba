@@ -49,11 +49,11 @@ void SceneRetry::draw( ) {
 	//選択画面
 	DrawerPtr drawer = Drawer::getTask( );
 	ApplicationPtr app = Application::getInstance( );
-	int width = app->getWindowWidth( );
-	int height = app->getWindowHeight( );
-	int select_y = height / 2 + 64 + _select * 32;
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( 0, 0 ), GRAPH_GAMEOVER ) ); // ゲームオーバー
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( width / 2 - 64, height / 2, 0, 0, 128, 64 ), GRAPH_SELECT_MENU ) ); // リトライ文字
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( width / 2 - 32, height / 2 + 64, 0, 64, 64, 64 ), GRAPH_SELECT_MENU ) ); // yes no
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( width / 2 - 64, select_y, 64, 64, 64, 64 ), GRAPH_SELECT_MENU ) ); // →
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+	int select_y = HEIGHT / 2 + 64 + _select * 32;
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( WIDTH / 2 - 512, HEIGHT / 10 ), GRAPH_GAMEOVER ) ); // ゲームオーバー
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( WIDTH / 2 - 64, HEIGHT / 2, 0, 0, 128, 64 ), GRAPH_SELECT_MENU ) ); // リトライ文字
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( WIDTH / 2 - 32, HEIGHT / 2 + 64, 0, 64, 64, 64 ), GRAPH_SELECT_MENU ) ); // yes no
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( WIDTH / 2 - 64, select_y, 64, 64, 64, 64 ), GRAPH_SELECT_MENU ) ); // →
 }
