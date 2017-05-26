@@ -200,8 +200,8 @@ void SceneStage::drawMap( ) const {
 	ApplicationPtr app = Application::getInstance( );
 	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
 	Vector base_pos = _roomba->getCentralPos( );
-	double base_x = base_pos.x / WORLD_SCALE - STAGE_WIDTH_NUM / 2;
-	double base_y = base_pos.y / WORLD_SCALE - STAGE_HEIGHT_NUM / 2;
+	double base_x = base_pos.x / WORLD_SCALE - STAGE_WIDTH_NUM / 2.0;
+	double base_y = base_pos.y / WORLD_SCALE - STAGE_HEIGHT_NUM / 2.0;
 
 
 	int scr_height = app->getWindowHeight( );
@@ -217,17 +217,17 @@ void SceneStage::drawMap( ) const {
 		int x = (int)( base_x + ( i % STAGE_WIDTH_NUM ) ) % STAGE_WIDTH_NUM;
 		int y = (int)( base_y + ( i / STAGE_WIDTH_NUM ) ) % STAGE_HEIGHT_NUM;
 		int idx = x + y * STAGE_WIDTH_NUM;
-		x = UI_MAP_X + ( STAGE_WIDTH_NUM - ( i % STAGE_WIDTH_NUM ) - 1 ) * UI_MAP_SIZE;
-		y = map_sy - ( i / STAGE_WIDTH_NUM ) * UI_MAP_SIZE - UI_MAP_SIZE;
+		int sx = UI_MAP_X + ( STAGE_WIDTH_NUM - ( i % STAGE_WIDTH_NUM ) - 1 ) * UI_MAP_SIZE;
+		int sy = map_sy - ( i / STAGE_WIDTH_NUM ) * UI_MAP_SIZE - UI_MAP_SIZE;
 		//壁表示
 		if ( data.wall[ idx ] == 1 ) {
-			drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, 32, 0, 32, 32, x + UI_MAP_SIZE, y + UI_MAP_SIZE ), GRAPH_MAP ) );
+			drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 32, 0, 32, 32, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP ) );
 		}
 		//ステーション表示
 		if ( data.station[ phase ][ idx ] == app_stage->getStationCount( ) ) {
 			int tx = 32 * 2;
 			int ty = 32;
-			drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, tx, ty, 32, 32, x + UI_MAP_SIZE, y - UI_MAP_SIZE ), GRAPH_MAP ) );
+			drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, tx, ty, 32, 32, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP ) );
 		}
 	}
 	//ルンバ表示
@@ -248,18 +248,24 @@ void SceneStage::drawMap( ) const {
 			crystal_ite++;
 			continue;
 		}
-		Vector pos = crystal->getPos( );
-		int x = (int)( ( pos.x / WORLD_SCALE - base_x ) * UI_MAP_SIZE );
-		int y = (int)( ( pos.y / WORLD_SCALE - base_y ) * UI_MAP_SIZE );
-		int diff_x = (int)( pos.x / WORLD_SCALE / STAGE_WIDTH_NUM - base_x / STAGE_WIDTH_NUM );
-		int diff_y = (int)( pos.y / WORLD_SCALE / STAGE_HEIGHT_NUM - base_y / STAGE_HEIGHT_NUM );
-		x = UI_MAP_X + ( STAGE_WIDTH_NUM - 1 ) * UI_MAP_SIZE - x;
-		y = scr_height - UI_MAP_FOOT_Y - y - UI_MAP_SIZE;
-		x -= diff_x * STAGE_WIDTH_NUM * UI_MAP_SIZE;
-		y += diff_y * STAGE_HEIGHT_NUM * UI_MAP_SIZE;
+		Vector pos = crystal->getPos( ) * ( 1.0 / WORLD_SCALE );
+		int diff_map_x = (int)( ( base_x - pos.x ) / STAGE_WIDTH_NUM );
+		int diff_map_y = (int)( ( base_y - pos.y ) / STAGE_HEIGHT_NUM );
+		pos.x += diff_map_x * STAGE_WIDTH_NUM;
+		pos.y += diff_map_y * STAGE_HEIGHT_NUM;
+		int x = (int)( ( pos.x - base_x ) * UI_MAP_SIZE );
+		int y = (int)( ( pos.y - base_y ) * UI_MAP_SIZE );
+		if ( x < 0 ) {
+			x += STAGE_WIDTH_NUM * UI_MAP_SIZE;
+		}
+		if ( y < 0 ) {
+			y += STAGE_HEIGHT_NUM * UI_MAP_SIZE;
+		}
+		int sx = UI_MAP_X + ( STAGE_WIDTH_NUM - 1 ) * UI_MAP_SIZE - x;
+		int sy = scr_height - UI_MAP_FOOT_Y - y - UI_MAP_SIZE;
 		int tx = 0;
 		int ty = 64;
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, tx, ty, 16, 16, x + UI_MAP_SIZE, y + UI_MAP_SIZE ), GRAPH_MAP ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, tx, ty, 16, 16, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP ) );
 		crystal_ite++;
 	}
 }
