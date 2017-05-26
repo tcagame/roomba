@@ -24,12 +24,12 @@ public:
 	Vector getCentralPos( ) const;
 	Vector getBallPos( int ball ) const;
 private:
-	void move( CameraPtr camera );
+	void move( StagePtr stage );
 	void updateState( CameraPtr camera );
 	void holdCrystal( StagePtr stage );
-	void moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left );
-	void moveRotation( int rotation_dir );
-	void acceleration( Vector right_stick, Vector left_stick );
+	void moveTranslation( );
+	void moveRotation( );
+	void acceleration( );
 	void checkLeftRight( CameraPtr camera );
 	void setVecTrans( Vector vec_left, Vector vec_right );
 	void setVecRot( Vector vec_left, Vector vec_right );
@@ -38,10 +38,16 @@ private:
 		BALL_LEFT,
 		BALL_RIGHT
 	};
+	enum SCALE {
+		SCALE_NONE,
+		SCALE_SMALL,
+		SCALE_BIG,
+	};
 private:
 	double _trans_speed;
 	double _rot_speed;
-	int _rot_dir;
+	Vector _move_dir; // z‚Í‰ñ“]•ûŒü
+	SCALE _scale_dir;
 	std::array< Vector, 2 > _vec_trans;
 	std::array< Vector, 2 > _vec_rot;
 	MOVE_STATE _state;
