@@ -8,5 +8,7 @@ public:
 private:
 	NEXT update( );
 	void draw( );
+private:
+	int _count;
 };
 

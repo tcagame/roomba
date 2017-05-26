@@ -14,11 +14,11 @@ SceneSelect::SceneSelect( ) :
 _select( 1 ),
 _ispush( false ) {
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->loadGraph( STAGE_SELECT_ROGO, "select/select.png");
-	drawer->loadGraph( STAGE_SELECT_1, "select/stage1.png");
-	drawer->loadGraph( STAGE_SELECT_2, "select/stage2.png");
-	drawer->loadGraph( STAGE_SELECT_3, "select/stage3.png");
-	drawer->loadGraph( STAGE_SELECTER, "select/selecter.png");
+	drawer->loadGraph( GRAPH_STAGE_SELECT_ROGO, "select/select.png");
+	drawer->loadGraph( GRAPH_STAGE_SELECT_1, "select/stage1.png");
+	drawer->loadGraph( GRAPH_STAGE_SELECT_2, "select/stage2.png");
+	drawer->loadGraph( GRAPH_STAGE_SELECT_3, "select/stage3.png");
+	drawer->loadGraph( GRAPH_STAGE_SELECTER, "select/selecter.png");
 }
 
 
@@ -55,7 +55,7 @@ void SceneSelect::draw( ) {
 
 void SceneSelect::drawRogo( ) {
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( SELECT_CENTER_X - SELECT_WIDTH / 2, SELECT_CENTER_Y - SELECT_HEIGHT / 2 ), STAGE_SELECT_ROGO );
+	Drawer::Sprite sprite( Drawer::Transform( SELECT_CENTER_X - SELECT_WIDTH / 2, SELECT_CENTER_Y - SELECT_HEIGHT / 2 ), GRAPH_STAGE_SELECT_ROGO );
 	drawer->setSprite( sprite );
 }
 
@@ -68,15 +68,15 @@ void SceneSelect::drawSelect( ) {
 		select = 3;
 	}
 	// –îˆó
-	Drawer::Sprite sprite( Drawer::Transform( 150, 300 ), STAGE_SELECTER );
+	Drawer::Sprite sprite( Drawer::Transform( 150, 300 ), GRAPH_STAGE_SELECTER );
 	drawer->setSprite( sprite );
 
-	GRAPH graph = (GRAPH)( STAGE_SELECT_1 + ( select - 1 ) );
+	GRAPH graph = (GRAPH)( GRAPH_STAGE_SELECT_1 + ( select - 1 ) );
 
 	// stage
 	for ( int i = 0; i < 3; i++, graph = (GRAPH)( graph + 1 ) ) {
-		if ( graph == (GRAPH)( STAGE_SELECT_3 + 1 ) ) {
-			graph = STAGE_SELECT_1;
+		if ( graph == (GRAPH)( GRAPH_STAGE_SELECT_3 + 1 ) ) {
+			graph = GRAPH_STAGE_SELECT_1;
 		}
 		Drawer::Sprite sprite( Drawer::Transform( x + i * PITCH, y + i * PITCH ), graph );
 		drawer->setSprite( sprite );
