@@ -37,13 +37,9 @@ Roomba::~Roomba( ) {
 
 void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	updateState( camera );
-	move( camera );
+	move( stage );
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ]->setForce( _vec_trans[ i ] + _vec_rot[ i ] );
-		if ( _vec_trans[ i ].getLength( ) > 0.5 && _vec_rot[ i ].getLength( ) > 0.5 ) {
-			int check = 0;
-		}
-
 		if ( _balls[ i ]->getVec( ).getLength2( ) > MAX_SPEED * MAX_SPEED ) {
 			_balls[ i ]->setForce( _balls[ i ]->getVec( ).normalize( ) * MAX_SPEED );
 		}
@@ -69,23 +65,20 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 			_balls[ i ]->setPos( pos[ i ] );
 		}
 	}
+
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->drawString( 10,10, "%lf", (_balls[0]->getPos() - _balls[1]->getPos()).getLength() );
 }
 
-void Roomba::move( CameraPtr camera ) {
-	Vector camera_dir = camera->getDir( );
-	camera_dir.z = 0;
-	DevicePtr device = Device::getTask( );
-	Vector right_stick( device->getRightDirX( ), device->getRightDirY( ) );
-	Vector left_stick( device->getDirX( ), device->getDirY( ) );
-
-	acceleration( right_stick, left_stick );
-	moveTranslation( camera_dir, right_stick, left_stick );
-	moveRotation( _rot_dir );
+void Roomba::move( StagePtr stage ) {
+	acceleration( );
+	moveTranslation( );
+	moveRotation( );
 }
 
-void Roomba::acceleration( Vector right_stick, Vector left_stick ) {
-	if ( right_stick != Vector( ) &&
-		 left_stick != Vector( ) ) {
+void Roomba::acceleration( ) {
+	if ( _move_dir != Vector( ) ||
+		 _scale_dir != SCALE_NONE ) {
 		// ‰Á‘¬
 		switch ( _state ) {
 		case MOVE_STATE_TRANSLATION:
@@ -128,14 +121,25 @@ void Roomba::updateState( CameraPtr camera ) {
 	Vector left_stick( device->getDirX( ), device->getDirY( ) );
 	
 	MOVE_STATE state = _state;
+	_move_dir = Vector( );
+	_scale_dir = SCALE_NONE;
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		state = MOVE_STATE_ROTATION;
-		_rot_dir = -1;
+		_move_dir.z = -1;
 	} else if ( right_stick.y < 0 && left_stick.y > 0 ) {
 		state = MOVE_STATE_ROTATION;
-		_rot_dir = 1;
+		_move_dir.z = 1;
 	} else {
 		state = MOVE_STATE_TRANSLATION;
+		Vector dir = ( ( right_stick + left_stick ) *= -1 ).normalize( );
+		dir.z = 0;
+		_move_dir = dir;
+		if ( right_stick.x < 0 && left_stick.x > 0 ) {
+			_scale_dir = SCALE_SMALL;
+		}
+		if ( right_stick.x > 0 && left_stick.x < 0 ) {
+			_scale_dir = SCALE_BIG;
+		}
 	}
 
 	if ( state != _state ) {
@@ -173,30 +177,29 @@ void Roomba::holdCrystal( StagePtr stage ) {
 	}
 }
 
-void Roomba::moveTranslation( const Vector& camera_dir, const Vector& right, const Vector& left ) {
-	Vector ball_left_small_dir = ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).normalize( );
-	Vector ball_right_small_dir = ( getCentralPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).normalize( );
-	Vector ball_left_big_dir = ( _balls[ BALL_LEFT ]->getPos( ) - getCentralPos( ) ).normalize( );
-	Vector ball_right_big_dir = ( _balls[ BALL_RIGHT ]->getPos( ) - getCentralPos( ) ).normalize( );
+void Roomba::moveTranslation( ) {
 
-	Matrix mat = Matrix::makeTransformRotation( camera_dir.cross( Vector( 0, -1 ) ), camera_dir.angle( Vector( 0, -1 ) ) );
-	Vector dir_left  = mat.multiply( left  ).normalize( ) + _vec_trans[ 0 ].normalize( );
-	Vector dir_right = mat.multiply( right ).normalize( ) + _vec_trans[ 1 ].normalize( );
-	Vector vec_left  = dir_left.normalize( ) * _trans_speed;
-	Vector vec_right = dir_right.normalize( ) * _trans_speed;
+	Vector dir_left  = _move_dir.normalize( ) + _vec_trans[ 0 ].normalize( );
+	Vector dir_right = _move_dir.normalize( ) + _vec_trans[ 1 ].normalize( );
 
-	// translation‚Æscale‚É•ª‰ð
-	// scale‚ðŽZo
-	Vector small_left = Vector( vec_left.dot( Vector( ball_left_small_dir.x, 0 ) ), vec_left.dot( Vector( 0, ball_left_small_dir.y ) ) );
-	Vector small_right = Vector( vec_right.dot( Vector( ball_right_small_dir.x, 0 ) ), vec_right.dot( Vector( 0, ball_right_small_dir.y ) ) );
-	Vector big_left = Vector( vec_left.dot( Vector( ball_left_big_dir.x, 0 ) ), vec_left.dot( Vector( 0, ball_left_big_dir.y ) ) );
-	Vector big_right = Vector( vec_right.dot( Vector( ball_right_big_dir.x, 0 ) ), vec_right.dot( Vector( 0, ball_right_big_dir.y ) ) );
+	Vector trans_left_vec =  dir_left.normalize( ) * _trans_speed;
+	Vector trans_right_vec =  dir_right.normalize( ) * _trans_speed;
 
-	Vector scale_left( small_left + big_left );
-	Vector scale_right( small_right + big_right );
-	Vector trans_left_vec =  vec_left - scale_left;
-	Vector trans_right_vec =  vec_right - scale_right;
-	
+	Vector scale_left;
+	Vector scale_right;
+	if ( _scale_dir == SCALE_BIG ) {
+		Vector ball_left_big_dir = ( _balls[ BALL_LEFT ]->getPos( ) - getCentralPos( ) ).normalize( );
+		scale_left = ball_left_big_dir * _trans_speed;
+		Vector ball_right_big_dir = ( _balls[ BALL_RIGHT ]->getPos( ) - getCentralPos( ) ).normalize( );
+		scale_right = ball_right_big_dir * _trans_speed;
+	}
+	if ( _scale_dir == SCALE_SMALL ) {
+		Vector ball_left_small_dir = ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).normalize( );
+		scale_left = ball_left_small_dir * _trans_speed;
+		Vector ball_right_small_dir = ( getCentralPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).normalize( );
+		scale_right = ball_right_small_dir * _trans_speed;
+	}
+		
 	// scaleˆÚ“®”»’è
 	if ( _state == MOVE_STATE_TRANSLATION ) {
 		Vector scale = _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( );
@@ -213,15 +216,15 @@ void Roomba::moveTranslation( const Vector& camera_dir, const Vector& right, con
 			scale_right = right_dir.normalize( ) * ( ( scale_left + scale_right + scale ).getLength( ) * 0.5 );
 		}
 	}
-	setVecTrans( trans_left_vec + scale_left, trans_right_vec + scale_right );
 
+	setVecTrans( trans_left_vec + scale_left, trans_right_vec + scale_right );
 }
 
-void Roomba::moveRotation( int rotation_dir ) {
+void Roomba::moveRotation( ) {
 	std::array< Vector, 2 > vec;
 	for ( int i = 0;  i < 2; i++ ) {
 		Vector radius = _balls[ i ]->getPos( ) - getCentralPos( );
-		Matrix mat_rot = Matrix::makeTransformRotation( Vector( 0, 0, rotation_dir ), _rot_speed / radius.getLength( ) );
+		Matrix mat_rot = Matrix::makeTransformRotation( Vector( 0, 0, _move_dir.z ), _rot_speed / radius.getLength( ) );
 		Vector radius2 = mat_rot.multiply( radius );
 		vec[ i ] = ( ( radius2 + getCentralPos( ) ) - _balls[ i ]->getPos( ) );
 	}
