@@ -65,8 +65,6 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 			_balls[ i ]->setPos( pos[ i ] );
 		}
 	}
-	DrawerPtr drawer = Drawer::getTask( );
-	drawer->drawString( 10, 10, "right %lf left %lf", _balls[1]->getPos().z, _balls[0]->getPos().z );
 }
 
 void Roomba::move( ) {

@@ -210,7 +210,7 @@ void SceneStage::drawMap( ) const {
 	int map_sx = UI_MAP_X;
 	int map_sy = scr_height - UI_MAP_FOOT_Y;
 	//背景(地面)
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( map_sx, map_sy, 0, 0, 32, 32, map_sx + map_width, map_sy - map_height ), GRAPH_MAP ) );
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( map_sx, map_sy, 0, 0, 32, 32, map_sx + map_width, map_sy - map_height ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.5 ) );
 	Stage::DATA data = _stage->getData( );
 	int phase = _stage->getPhase( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
@@ -221,13 +221,13 @@ void SceneStage::drawMap( ) const {
 		int sy = map_sy - ( i / STAGE_WIDTH_NUM ) * UI_MAP_SIZE - UI_MAP_SIZE;
 		//壁表示
 		if ( data.wall[ idx ] == 1 ) {
-			drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 32, 0, 32, 32, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP ) );
+			drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 32, 0, 32, 32, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
 		}
 		//ステーション表示
 		if ( data.station[ phase ][ idx ] == app_stage->getStationCount( ) ) {
 			int tx = 32 * 2;
 			int ty = 32;
-			drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, tx, ty, 32, 32, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP ) );
+			drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, tx, ty, 32, 32, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
 		}
 	}
 	//ルンバ表示
@@ -237,7 +237,7 @@ void SceneStage::drawMap( ) const {
 		int y = (int)( ( roomba_pos.y / WORLD_SCALE - base_y ) * UI_MAP_SIZE );
 		x = UI_MAP_X + ( STAGE_WIDTH_NUM - 1 ) * UI_MAP_SIZE - x;
 		y = scr_height - UI_MAP_FOOT_Y - y - UI_MAP_SIZE;
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, 0, 16 * 5, 16, 16, x + UI_MAP_SIZE, y + UI_MAP_SIZE ), GRAPH_MAP ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, 0, 16 * 5, 16, 16, x + UI_MAP_SIZE, y + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
 	}
 	//クリスタル表示
 	std::list< CrystalPtr > crystals = app_stage->getCrystalList( );
@@ -265,7 +265,7 @@ void SceneStage::drawMap( ) const {
 		int sy = scr_height - UI_MAP_FOOT_Y - y - UI_MAP_SIZE;
 		int tx = 0;
 		int ty = 64;
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, tx, ty, 16, 16, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, tx, ty, 16, 16, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
 		crystal_ite++;
 	}
 }
