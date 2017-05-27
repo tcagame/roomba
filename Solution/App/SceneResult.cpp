@@ -7,10 +7,6 @@
 
 static const int RESULT_WIDTH  = 512;
 static const int RESULT_HEIGHT = 256;
-static const int RESULT_CENTER_X = 1450 / 2;
-static const int RESULT_CENTER_Y = 80;
-static const int THIS_TIME_Y = 200;
-static const int BEST_TIME_Y = 400;
 static const std::string DIRECTORY = "../Resource/Savedata/";
 static const std::string FILENAME = DIRECTORY + "best_time.dat";
 
@@ -83,10 +79,11 @@ int SceneResult::drawTime( int x, int y, int time ) const {
 }
 
 void SceneResult::drawThisTime( ) const {
-	ApplicationPtr app = Application::getInstance( );
-	int wnd_width = app->getWindowWidth( );
-	int x = wnd_width / 3 * 2;
-	int y = THIS_TIME_Y;
+	ApplicationPtr app = Application::getInstance();
+	const int WIDTH = app->getWindowWidth();
+	const int HEIGHT = app->getWindowHeight();
+	int x = WIDTH / 3 * 2;
+	int y = HEIGHT * 2 / 5;
 	x = drawTime( x, y, _this_time );
 	x -= 400;//文字サイズ
 	y -= 60;
@@ -96,10 +93,11 @@ void SceneResult::drawThisTime( ) const {
 }
 
 void SceneResult::drawBestTime( ) const {
-	ApplicationPtr app = Application::getInstance( );
-	int wnd_width = app->getWindowWidth( );
-	int x = wnd_width / 3 * 2;
-	int y = BEST_TIME_Y;
+	ApplicationPtr app = Application::getInstance();
+	const int WIDTH = app->getWindowWidth();
+	const int HEIGHT = app->getWindowHeight();
+	int x = WIDTH / 3 * 2;
+	int y = HEIGHT * 3 / 5;
 	x = drawTime( x, y, _best_time );
 	x -= 400;//文字サイズ
 	y -= 60;
