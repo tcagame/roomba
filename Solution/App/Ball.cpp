@@ -1,6 +1,5 @@
 #include "Ball.h"
 #include "AppStage.h"
-#include "Device.h"
 
 static const double BALL_RADIUS = WORLD_SCALE * ROOMBA_SCALE;
 
@@ -12,7 +11,9 @@ _pos( pos ) {
 Ball::~Ball( ) {
 }
 
-void Ball::update( StagePtr stage ) {
+void Ball::update( const Vector& vec, StagePtr stage ) {
+	_vec = vec;
+
 	AppStagePtr stage_ptr = std::dynamic_pointer_cast< AppStage >( stage );
 	Vector adjust_vec = stage_ptr->adjustCollisionToWall( _pos, _vec, BALL_RADIUS );
 	adjust_vec += stage_ptr->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS );
@@ -29,14 +30,6 @@ void Ball::draw( ) const {
 
 Vector Ball::getPos( ) const {
 	return _pos;
-}
-
-Vector Ball::getVec( ) const {
-	return _vec;
-}
-
-void Ball::setForce( const Vector& force ) {
-	_vec = force;
 }
 
 void Ball::reset( const Vector& pos ) {
