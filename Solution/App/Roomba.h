@@ -30,11 +30,6 @@ private:
 		BALL_LEFT,
 		BALL_RIGHT
 	};
-	enum SCALE {
-		SCALE_NONE,
-		SCALE_SMALL,
-		SCALE_BIG,
-	};
 	enum DIR {
 		DIR_RIGHT,
 		DIR_LEFT,
@@ -49,18 +44,17 @@ private:
 	void accelTranslation( );
 	void accelRotation( DIR dir );
 	void brakeTranslation( );
-	void brakeRotation( DIR dir );
+	void brakeRotation( );
 	void checkLeftRight( CameraPtr camera );
-	void setVecTrans( Vector vec_left, Vector vec_right );
+	void setVecTrans( Vector vec );
 	void setVecRot( Vector vec_left, Vector vec_right );
 	void updateBalls( StagePtr stage );
 	void shiftPos( );
 private:
-	double _trans_speed;
 	double _rot_speed;
+	Vector _trans_speed;
 	Vector _move_dir;
-	SCALE _scale_dir;
-	std::array< Vector, 2 > _vec_trans;
+	Vector _vec_trans;
 	std::array< Vector, 2 > _vec_rot;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;

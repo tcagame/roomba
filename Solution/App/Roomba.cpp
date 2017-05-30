@@ -7,7 +7,6 @@
 #include "Device.h"
 #include <assert.h>
 
-
 //デバッグのためスピード遅め
 static const double SPEED = 0.001;
 static const double MAX_SPEED = 0.2;
@@ -16,7 +15,6 @@ static const double CENTRIPETAL_MIN = 7;
 static const double MAX_SCALE = 25;
 static const double MIN_SCALE = 8;
 
-
 static const Vector START_POS[ 2 ] {
 	( Vector( 15, 15 ) + Vector( STAGE_WIDTH_NUM, STAGE_HEIGHT_NUM ) ) * WORLD_SCALE,
 	( Vector( 20, 20 ) + Vector( STAGE_WIDTH_NUM, STAGE_HEIGHT_NUM ) ) * WORLD_SCALE
@@ -24,11 +22,11 @@ static const Vector START_POS[ 2 ] {
 
 Roomba::Roomba( ) :
 _state( MOVE_STATE_NEUTRAL ),
-_trans_speed( 0 ),
+_trans_speed( Vector( ) ),
+_vec_trans( Vector( ) ),
 _rot_speed( 0 ) {
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ] = BallPtr( new Ball( START_POS[ i ] ) );
-		_vec_trans[ i ] = Vector( );
 		_vec_rot[ i ] = Vector( );
 	}
 }
@@ -60,8 +58,7 @@ void Roomba::updateState( ) {
 void Roomba::acceleration( ) {
 	switch ( _state ) {
 	case ACCEL_STATE_TRANSLATION:
-		brakeRotation( DIR_RIGHT );
-		brakeRotation( DIR_LEFT );
+		brakeRotation( );
 		accelTranslation( );
 		break;
 	case STATE_ACCEL_ROTATION_RIGHT:
@@ -74,12 +71,7 @@ void Roomba::acceleration( ) {
 		break;
 	case MOVE_STATE_NEUTRAL:
 		brakeTranslation( );
-		if ( _rot_speed > 0 ) {
-			brakeRotation( DIR_LEFT );
-		}
-		if ( _rot_speed < 0 ) {
-			brakeRotation( DIR_RIGHT );
-		}
+		brakeRotation( );
 	default:
 		assert( -1 );
 		break;
@@ -87,9 +79,28 @@ void Roomba::acceleration( ) {
 }
 
 void Roomba::accelTranslation( ) {
-	_trans_speed += SPEED;
-	if ( _trans_speed > MAX_SPEED ) {
-		_trans_speed = MAX_SPEED;
+	if ( _move_dir.x > 0 ) {
+		_trans_speed.x += SPEED;
+		if ( _trans_speed.x > MAX_SPEED ) {
+			_trans_speed.x = MAX_SPEED;
+		}
+	} else if ( _move_dir.x < 0 ) {
+		_trans_speed.x -= SPEED;
+		if ( _trans_speed.x < -MAX_SPEED ) {
+			_trans_speed.x = -MAX_SPEED;
+		}
+	}
+
+	if ( _move_dir.y > 0 ) {
+		_trans_speed.y += SPEED;
+		if ( _trans_speed.y > MAX_SPEED ) {
+			_trans_speed.y = MAX_SPEED;
+		}
+	} else if ( _move_dir.y < 0 ) {
+		_trans_speed.y -= SPEED;
+		if ( _trans_speed.y < -MAX_SPEED ) {
+			_trans_speed.y = -MAX_SPEED;
+		}
 	}
 }
 
@@ -108,26 +119,44 @@ void Roomba::accelRotation( DIR dir ) {
 }
 
 void Roomba::brakeTranslation( ) {
-	_trans_speed -= SPEED;
-	if ( _trans_speed < 0 ) {
-		_trans_speed = 0;
+	if ( _trans_speed.x > 0 ) {
+		_trans_speed.x -= SPEED;
+		if ( _trans_speed.x < 0 ) {
+			_trans_speed.x = 0;
+		}
+	} else {
+		_trans_speed.x += SPEED;
+		if ( _trans_speed.x > 0 ) {
+			_trans_speed.x = 0;
+		}
+	}
+
+	if ( _trans_speed.y > 0 ) {
+		_trans_speed.y -= SPEED;
+		if ( _trans_speed.y < 0 ) {
+			_trans_speed.y = 0;
+		}
+	} else {
+		_trans_speed.y += SPEED;
+		if ( _trans_speed.y > 0 ) {
+			_trans_speed.y = 0;
+		}
 	}
 }
 
-void Roomba::brakeRotation( DIR dir ) {
-	if ( dir == DIR_LEFT ) {
-		_rot_speed -= SPEED;
-		if ( _rot_speed < -MAX_SPEED ) {
+void Roomba::brakeRotation( ) {
+	if ( _rot_speed < 0 ) {
+		_rot_speed += SPEED;
+		if ( _rot_speed > 0 ) {
 			_rot_speed = 0;
 		}
 	} else {
-		_rot_speed += SPEED;
-		if ( _rot_speed > MAX_SPEED ) {
+		_rot_speed -= SPEED;
+		if ( _rot_speed < 0 ) {
 			_rot_speed = 0;
 		}
 	}
 }
-
 
 void Roomba::changeState( CameraPtr camera ) {
 	DevicePtr device = Device::getTask( );
@@ -136,7 +165,6 @@ void Roomba::changeState( CameraPtr camera ) {
 	
 	MOVE_STATE state = _state;
 	_move_dir = Vector( );
-	_scale_dir = SCALE_NONE;
 
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		state = STATE_ACCEL_ROTATION_RIGHT;
@@ -150,14 +178,7 @@ void Roomba::changeState( CameraPtr camera ) {
 		  right_stick.x < 0 && left_stick.x < 0 ){
 		state = ACCEL_STATE_TRANSLATION;
 		Vector dir = ( ( right_stick + left_stick ) *= -1 ).normalize( );
-		dir.z = 0;
 		_move_dir = dir;
-		if ( right_stick.x < 0 && left_stick.x > 0 ) {
-			_scale_dir = SCALE_SMALL;
-		}
-		if ( right_stick.x > 0 && left_stick.x < 0 ) {
-			_scale_dir = SCALE_BIG;
-		}
 	}
 	if ( right_stick == Vector( ) ||
 		 left_stick == Vector( ) ) {
@@ -200,45 +221,9 @@ void Roomba::holdCrystal( StagePtr stage ) {
 }
 
 void Roomba::moveTranslation( ) {
-	Vector dir_left  = _move_dir.normalize( ) + _vec_trans[ 0 ].normalize( );
-	Vector dir_right = _move_dir.normalize( ) + _vec_trans[ 1 ].normalize( );
-
-	Vector trans_left_vec =  dir_left.normalize( ) * _trans_speed;
-	Vector trans_right_vec =  dir_right.normalize( ) * _trans_speed;
-
-	Vector scale_left;
-	Vector scale_right;
-	if ( _scale_dir == SCALE_BIG ) {
-		Vector ball_left_big_dir = ( _balls[ BALL_LEFT ]->getPos( ) - getCentralPos( ) ).normalize( );
-		scale_left = ball_left_big_dir * _trans_speed;
-		Vector ball_right_big_dir = ( _balls[ BALL_RIGHT ]->getPos( ) - getCentralPos( ) ).normalize( );
-		scale_right = ball_right_big_dir * _trans_speed;
-	}
-	if ( _scale_dir == SCALE_SMALL ) {
-		Vector ball_left_small_dir = ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).normalize( );
-		scale_left = ball_left_small_dir * _trans_speed;
-		Vector ball_right_small_dir = ( getCentralPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).normalize( );
-		scale_right = ball_right_small_dir * _trans_speed;
-	}
-		
-	// scale移動判定
-	if ( _state == ACCEL_STATE_TRANSLATION ) {
-		Vector scale = _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( );
-		if ( ( scale_left + scale_right + scale ).getLength( ) > MAX_SCALE ) { 
-			Vector left_dir = _balls[ BALL_RIGHT ]->getPos( ) - _balls[ BALL_LEFT ]->getPos( );
-			Vector right_dir = _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( );
-			scale_left = left_dir.normalize( );
-			scale_right = right_dir.normalize( );
-		}
-		if ( ( scale_left + scale_right + scale ).getLength( ) < MIN_SCALE ) { 
-			Vector left_dir = _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( );
-			Vector right_dir = _balls[ BALL_RIGHT ]->getPos( ) - _balls[ BALL_LEFT ]->getPos( );
-			scale_left = left_dir.normalize( ) * ( ( scale_left + scale_right + scale ).getLength( ) * 0.5 );
-			scale_right = right_dir.normalize( ) * ( ( scale_left + scale_right + scale ).getLength( ) * 0.5 );
-		}
-	}
-
-	setVecTrans( trans_left_vec + scale_left, trans_right_vec + scale_right );
+	Vector dir = _move_dir.normalize( ) * SPEED + _vec_trans.normalize( ) * _trans_speed.getLength( );
+	Vector trans_vec = dir.normalize( ) * _trans_speed.getLength( );
+	setVecTrans( trans_vec );
 }
 
 void Roomba::moveRotation( ) {
@@ -305,9 +290,8 @@ Vector Roomba::getBallPos( int ball ) const {
 	return _balls[ ball ]->getPos( );
 }
 
-void Roomba::setVecTrans( Vector vec_left, Vector vec_right ) {
-	_vec_trans[ 0 ] = vec_left;
-	_vec_trans[ 1 ] = vec_right;
+void Roomba::setVecTrans( Vector vec ) {
+	_vec_trans = vec;
 }
 
 void Roomba::setVecRot( Vector vec_left, Vector vec_right ) {
@@ -317,7 +301,7 @@ void Roomba::setVecRot( Vector vec_left, Vector vec_right ) {
 
 void Roomba::updateBalls( StagePtr stage) {
 	for ( int i = 0; i < 2; i++ ) {
-		Vector vec = _vec_trans[ i ] + _vec_rot[ i ];
+		Vector vec = _vec_trans + _vec_rot[ i ];
 		_balls[ i ]->update( vec, stage );
 	}
 }
