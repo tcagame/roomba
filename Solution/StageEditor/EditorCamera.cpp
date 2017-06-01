@@ -2,7 +2,7 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 
-const Vector START_CAMERA_POS = Vector( 15, -15, 100 );
+const Vector START_CAMERA_POS = Vector( 15, -15, 15 );
 const Vector START_TARGET_POS = Vector( 15, 15, 0 );
 const double MOVE_SPEED = 1.0;
 const double ZOOM_SPEED = 9.0;
@@ -47,14 +47,14 @@ void EditorCamera::move( ) {
 	if ( keyboard->isHoldKey( "ARROW_LEFT" ) ) {
 		axis_z = -1;
 	}
-	if ( keyboard->isHoldKey( "ARROW_DOWN" ) ) {
+	if ( keyboard->isHoldKey( "ARROW_RIGHT" ) ) {
 		axis_z = 1;
 	}
 
 	MousePtr mouse = Mouse::getTask( );
 	Vector dir = getDir( );
 	if ( axis_z != 0 || axis_x != 0 ) {
-		Matrix mat = Matrix::makeTransformRotation( Vector( axis_x, 0, axis_z ), ROT_SPEED );
+		Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, axis_z ), ROT_SPEED );
 		dir = mat.multiply( dir ).normalize( );
 		dir.z += axis_x * ROT_SPEED * 2;
 		if ( dir.z < -0.5 ) {
