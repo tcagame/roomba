@@ -10,16 +10,16 @@
 #include "Game.h"
 #include "Viewer.h"
 
-static const int UI_PHASE_FOOT_X = 60;
+static const int UI_PHASE_FOOT_X = 30;
 static const int UI_PHASE_Y = 100;
 static const int UI_STATION_FOOT_X = 60;
 static const int UI_STATION_Y = 200;
 static const int UI_NUM_WIDTH = 32;
 static const int UI_NUM_HEIGHT = 64;
 static const int UI_MAP_SIZE = 6;
-static const int UI_MAP_X = 100;
-static const int UI_MAP_FOOT_Y = 50;
-static const int UI_MAP_RANGE = 30;
+static const int UI_MAP_X = 30;
+static const int UI_MAP_FOOT_Y = 30;
+static const int UI_MAP_RANGE = 20;
 static const int START_COUNTDOWN_TIME = 3 * 60;
 
 SceneStage::SceneStage( int stage_num ) :
@@ -214,32 +214,33 @@ void SceneStage::drawMap( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
 	Vector base_pos = _roomba->getCentralPos( );
-	Vector dir = _roomba->getDir( );
-	Matrix mat = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( dir ), Vector( 0, -1 ).angle( dir ) );
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( _roomba->getDir( ) ), Vector( 0, -1 ).angle( _roomba->getDir( ) ) );
 
 	ApplicationPtr app = Application::getInstance( );
-	int scr_height = app->getWindowHeight( );
 	int map_central_sx = UI_MAP_X + UI_MAP_SIZE * UI_MAP_RANGE;
-	int map_central_sy = scr_height - UI_MAP_FOOT_Y - UI_MAP_SIZE * UI_MAP_RANGE;
+	int map_central_sy = app->getWindowHeight( ) - UI_MAP_FOOT_Y - UI_MAP_SIZE * UI_MAP_RANGE;
+	const int RANGE = UI_MAP_RANGE * UI_MAP_SIZE / 4 * 3;
 	Stage::DATA data = _stage->getData( );
 	int phase = _stage->getPhase( );
 	{//背景(地面)
-		int sx = map_central_sx - (int)( UI_MAP_SIZE * UI_MAP_RANGE / 1.5 );
-		int sy = map_central_sy - (int)( UI_MAP_SIZE * UI_MAP_RANGE / 1.5 );
-		int sx2 = sx + UI_MAP_SIZE * (int)( UI_MAP_RANGE + UI_MAP_SIZE );
-		int sy2 = sy + UI_MAP_SIZE * (int)( UI_MAP_RANGE + UI_MAP_SIZE );
+		int sx = map_central_sx - UI_MAP_SIZE * UI_MAP_RANGE;
+		int sy = map_central_sy - UI_MAP_SIZE * UI_MAP_RANGE;
+		int sx2 = sx + UI_MAP_SIZE * UI_MAP_RANGE * 2 + UI_MAP_SIZE;
+		int sy2 = sy + UI_MAP_SIZE * UI_MAP_RANGE * 2 + UI_MAP_SIZE;
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 128, 0, 128, 128, sx2, sy2 ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.5 ) );
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 128, 128, 128, sx2, sy2 ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.5 ) );
 	}
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		//ステーション表示
+		//デリバー表示
 		if ( data.delivery[ phase ][ i ] == app_stage->getDeliveryCount( ) ) {
 			int x = i % STAGE_WIDTH_NUM;
 			int y = i / STAGE_WIDTH_NUM;
 			Vector station_pos( i % STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2, i / STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2 ); 
 			Vector distance = ( getAdjustPos( station_pos, base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
-			if ( distance.getLength( ) > UI_MAP_RANGE * UI_MAP_SIZE ) {
-				break;
+			double length = distance.getLength( );
+			if ( distance.getLength( ) > RANGE ) {
+				distance = distance.normalize( ) * RANGE;
+
 			}
 			distance = mat.multiply( distance );
 			int sx = (int)( map_central_sx + distance.x - WORLD_SCALE / 4 );
@@ -252,8 +253,8 @@ void SceneStage::drawMap( ) const {
 	for ( int i = 0; i < 2; i++ ) {
 		Vector distance = ( getAdjustPos( _roomba->getBallPos( i ), base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
 		distance = mat.multiply( distance );
-		if ( distance.getLength( ) > UI_MAP_RANGE * UI_MAP_SIZE ) {
-			break;
+		if ( distance.getLength( ) > RANGE ) {
+			distance = distance.normalize( ) * RANGE;
 		}
 		int sx = (int)( map_central_sx + distance.x );
 		int sy = (int)( map_central_sy + distance.y );
@@ -270,8 +271,8 @@ void SceneStage::drawMap( ) const {
 		}
 		Vector distance = ( getAdjustPos( crystal->getPos( ), base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
 		distance = mat.multiply( distance );
-		if ( distance.getLength( ) > UI_MAP_RANGE * UI_MAP_SIZE ) {
-			continue;
+		if ( distance.getLength( ) > RANGE ) {
+			distance = distance.normalize( ) * RANGE;
 		}
 		int sx = (int)( map_central_sx + distance.x );
 		int sy = (int)( map_central_sy + distance.y );
