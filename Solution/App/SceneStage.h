@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include "smart_ptr.h"
+#include "Drawer.h"
 
 PTR( Roomba );
 PTR( Camera );
@@ -20,6 +21,7 @@ private:
 	void drawCountdown( ) const;
 	void drawUI( ) const;
 	void drawMap( ) const;
+	Vector getAdjustPos( Vector pos, Vector base_pos ) const;
 private:
 	int _countdown;
 	CameraPtr _camera;
