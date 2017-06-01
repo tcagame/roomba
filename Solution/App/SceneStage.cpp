@@ -41,7 +41,7 @@ _link_time( 0 ) {
 	Matrix size = Matrix::makeTransformScaling( Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE ) ); 
 	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", size );
 
-	Matrix crystal_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / 2, WORLD_SCALE / 2, WORLD_SCALE / 2 ) ); 
+	Matrix crystal_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / 4, WORLD_SCALE / 4, WORLD_SCALE / 4 ) ); 
 	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/purple.jpg", crystal_size );
 
 	
