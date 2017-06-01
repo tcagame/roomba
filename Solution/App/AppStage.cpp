@@ -377,7 +377,7 @@ void AppStage::drawDelivery( ) const {
 		if ( data.delivery[ phase ][ i ] == _delivery_count ) {
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			_viewer->drawModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), MDL_STATION ) );
+			_viewer->drawModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), MDL_DELIVERY ) );
 		}
 	}
 }

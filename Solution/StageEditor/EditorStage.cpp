@@ -334,7 +334,7 @@ void EditorStage::drawDelivery( ) const {
 		if ( data.delivery[ phase ][ i ] != 0 ) {
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			drawer->setModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), MDL_STATION ) );
+			drawer->setModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), MDL_DELIVERY ) );
 		}
 	}
 }
