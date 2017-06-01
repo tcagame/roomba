@@ -52,8 +52,10 @@ private:
 	void setVecTrans( Vector vec );
 	void setVecRot( Vector vec_left, Vector vec_right );
 	void setVecScale( Vector vec_left, Vector vec_right );
+	void setVecReflection( Vector vec_left, Vector vec_right );
 	void updateBalls( StagePtr stage );
 	void shiftPos( );
+	void drawLaser( ) const;
 private:
 	double _rot_speed;
 	Vector _trans_speed;
@@ -61,6 +63,7 @@ private:
 	Vector _vec_trans;
 	std::array< Vector, 2 > _vec_rot;
 	std::array< Vector, 2 > _vec_scale;
+	std::array< Vector, 2 > _vec_reflection;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
 	CrystalPtr _crystal;
