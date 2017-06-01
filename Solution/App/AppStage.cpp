@@ -7,7 +7,7 @@
 #include "Keyboard.h"
 
 AppStage::AppStage( int stage_num, ViewerPtr viewer ) :
-_station_count( 1 ),
+_delivery_count( 1 ),
 _viewer( viewer ) {
 	load( 3 );//0~2:í èÌ 3:test_stage
 	reset( );
@@ -322,7 +322,7 @@ void AppStage::loadMapData( ) {
 	}
 }
 
-bool AppStage::isOnStation( Vector pos ) {
+bool AppStage::isOnDelivery( Vector pos ) {
 	bool result = false;
 	int x = ( int )( pos.x / WORLD_SCALE ) % STAGE_WIDTH_NUM;
 	int y = ( int )( pos.y / WORLD_SCALE ) % STAGE_HEIGHT_NUM;
@@ -330,21 +330,21 @@ bool AppStage::isOnStation( Vector pos ) {
 
 	DATA data = getData( );
 	int phase = getPhase( );
-	if ( data.station[ phase ][ idx ] == _station_count ) {
-		data.station[ phase ][ idx ] = 0;
-		_station_count++;
+	if ( data.delivery[ phase ][ idx ] == _delivery_count ) {
+		data.delivery[ phase ][ idx ] = 0;
+		_delivery_count++;
 		setData( data );
 		result = true;
 	}
 	return result;
 }
 
-int AppStage::getStationNum( ) const {
+int AppStage::getDeliveryNum( ) const {
 	int num = 0;
 	DATA data = getData( );
 	int phase = getPhase( );
 	for ( int i = 0; i < STAGE_HEIGHT_NUM * STAGE_WIDTH_NUM; i++ ) {
-		if ( data.station[ phase ][ i ] != 0 ) {
+		if ( data.delivery[ phase ][ i ] != 0 ) {
 			num++;
 		}
 	}
@@ -370,11 +370,11 @@ void AppStage::drawWall( ) const {
 	}
 }
 
-void AppStage::drawStation( ) const {
+void AppStage::drawDelivery( ) const {
 	DATA data = getData( );
 	int phase = getPhase( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( data.station[ phase ][ i ] == _station_count ) {
+		if ( data.delivery[ phase ][ i ] == _delivery_count ) {
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
 			_viewer->drawModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), MDL_STATION ) );
@@ -382,12 +382,12 @@ void AppStage::drawStation( ) const {
 	}
 }
 
-int AppStage::getStationCount( ) const {
-	return _station_count;
+int AppStage::getDeliveryCount( ) const {
+	return _delivery_count;
 }
 
 void AppStage::loadPhase( ) {
-	_station_count = 1;
+	_delivery_count = 1;
 	Stage::loadPhase( );
 }
 

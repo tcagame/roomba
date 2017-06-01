@@ -22,14 +22,14 @@ private:
 	void edit( );
 	void editWall( );
 	void editCrystal( );
-	void editStation( );
+	void editDelivery( );
 private:
 	void updateCursor( );
 	void updateMode( );
 	void drawCrystal( ) const;
 	void drawEarth( ) const;
 	void drawWall( ) const;
-	void drawStation( ) const;
+	void drawDelivery( ) const;
 private:
 	int _cursor_x;
 	int _cursor_y;
