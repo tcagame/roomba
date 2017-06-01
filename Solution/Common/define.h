@@ -6,6 +6,7 @@ static const double STAGE_MODEL_SIZE = 4;
 static const int MAX_PHASE = 10;
 static const int STAGE_WIDTH_NUM = 40;
 static const int STAGE_HEIGHT_NUM = 35;
+const double EARTH_POS_Z = WORLD_SCALE;
 
 enum MDL {
 	MDL_NONE,

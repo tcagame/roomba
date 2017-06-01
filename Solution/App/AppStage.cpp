@@ -7,6 +7,8 @@
 #include "Keyboard.h"
 
 const int REFLECTION_POWER = 5;
+const double DELIVERY_POS_Z = EARTH_POS_Z + WORLD_SCALE;
+const double CRYSTAL_POS_Z = EARTH_POS_Z - WORLD_SCALE;
 
 AppStage::AppStage( int stage_num, ViewerPtr viewer ) :
 _delivery_count( 1 ),
@@ -114,7 +116,7 @@ void AppStage::loadCrystal( ) {
 	int phase = getPhase( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if (  data.crystal[ phase ][ i ] != 0 ) {
-			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, -WORLD_SCALE );
+			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, CRYSTAL_POS_Z );
 			pos += Vector( STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE );
 			_crystals.push_back( CrystalPtr( new Crystal( pos, MDL_CRYSTAL ) ) );
 		}
@@ -362,7 +364,7 @@ std::list< CrystalPtr > AppStage::getCrystalList( ) const {
 }
 
 void AppStage::drawEarth( ) const {
-	Vector adjust_pos = Vector( WORLD_SCALE * 2, WORLD_SCALE * 2 + WORLD_SCALE / 3, WORLD_SCALE / 6 );
+	Vector adjust_pos = Vector( WORLD_SCALE * 2, WORLD_SCALE * 2 + WORLD_SCALE / 3, EARTH_POS_Z );
 	Drawer::ModelMDL model( adjust_pos, MDL_EARTH );
 	_viewer->drawModelMDLTransfer( model );
 }
@@ -383,7 +385,7 @@ void AppStage::drawDelivery( ) const {
 		if ( data.delivery[ phase ][ i ] == _delivery_count ) {
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			_viewer->drawModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), MDL_DELIVERY ) );
+			_viewer->drawModelMDL( Drawer::ModelMDL( Vector( x, y, DELIVERY_POS_Z ), MDL_DELIVERY ) );
 		}
 	}
 }

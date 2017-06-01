@@ -7,9 +7,8 @@
 #include "Camera.h"
 
 static const int CURSOR_WAIT_TIME = 4;
-static const double EARTH_POS_Z = WORLD_SCALE;
-static const double STATION_POS_Z = EARTH_POS_Z + WORLD_SCALE;
 static const double CURSOR_MOVE_SPEED = 0.4;
+static const double DELIVERY_POS_Z = EARTH_POS_Z + WORLD_SCALE;
 
 
 EditorStage::EditorStage( CameraPtr camera ) :
@@ -18,7 +17,6 @@ _camera( camera ) {
 	reset( );
 	MousePtr mouse = Mouse::getTask( );
 	_before_mouse_pos = mouse->getPos( );
-	//mouse->changeMouseImage( 0 );
 }
 
 
@@ -321,7 +319,7 @@ void EditorStage::drawDelivery( ) const {
 		if ( data.delivery[ phase ][ i ] != 0 ) {
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			drawer->setModelMDL( Drawer::ModelMDL( Vector( x, y, STATION_POS_Z ), MDL_DELIVERY ) );
+			drawer->setModelMDL( Drawer::ModelMDL( Vector( x, y, DELIVERY_POS_Z ), MDL_DELIVERY ) );
 		}
 	}
 }

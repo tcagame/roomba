@@ -13,8 +13,8 @@ static const double MAX_SPEED = 0.2;
 static const double SCALE_SIZE = 10;
 
 static const Vector START_POS[ 2 ] {
-	( Vector( 15, 20 ) + Vector( STAGE_WIDTH_NUM, STAGE_HEIGHT_NUM ) ) * WORLD_SCALE,
-	( Vector( 20, 20 ) + Vector( STAGE_WIDTH_NUM, STAGE_HEIGHT_NUM ) ) * WORLD_SCALE
+	( Vector( STAGE_WIDTH_NUM + 15, STAGE_HEIGHT_NUM + 20 ) * WORLD_SCALE + Vector( 0, 0, EARTH_POS_Z - WORLD_SCALE / 4 * 3 ) ),
+	( Vector( STAGE_WIDTH_NUM + 20, STAGE_HEIGHT_NUM + 20 ) * WORLD_SCALE + Vector( 0, 0, EARTH_POS_Z - WORLD_SCALE / 4 * 3 ) )
 };
 
 Roomba::Roomba( ) :
