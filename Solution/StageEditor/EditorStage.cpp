@@ -66,12 +66,24 @@ void EditorStage::updateCursor( ) {
 	if ( keyboard->isPushKey( "Q" ) ) {
 		_cursor_pos = Vector( (int)_cursor_pos.x, (int)_cursor_pos.y );
 	}
-	if ( mouse_vec.getLength( ) < 0.01 ) {
-		return;
-	}
 	_before_mouse_pos = mouse_pos;
 	mouse_vec.x *= 1;
 	mouse_vec.y *= 1;
+	if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
+		mouse_vec.y -= CURSOR_MOVE_SPEED;
+	}
+	if ( keyboard->isHoldKey( "ARROW_DOWN" ) ) {
+		mouse_vec.y += CURSOR_MOVE_SPEED;
+	}
+	if ( keyboard->isHoldKey( "ARROW_LEFT" ) ) {
+		mouse_vec.x -= CURSOR_MOVE_SPEED;
+	}
+	if ( keyboard->isHoldKey( "ARROW_RIGHT" ) ) {
+		mouse_vec.x += CURSOR_MOVE_SPEED;
+	}
+	if ( mouse_vec.getLength( ) < 0.01 ) {
+		return;
+	}
 	mouse_vec = mat.multiply( mouse_vec ).normalize( ) * CURSOR_MOVE_SPEED;
 	if ( keyboard->isHoldKey( "Q" ) ) {
 		double ratio = fabs( mouse_vec.x ) / fabs( mouse_vec.y );
@@ -79,6 +91,7 @@ void EditorStage::updateCursor( ) {
 		mouse_vec = mouse_vec.normalize( ) * CURSOR_MOVE_SPEED;
 	}
 	_cursor_pos += mouse_vec;
+
 
 	if ( _cursor_pos.x < 0 ) {
 		_cursor_pos.x = 0;

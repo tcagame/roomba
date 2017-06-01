@@ -4,9 +4,9 @@
 #include "Device.h"
 #include "Roomba.h"
 
-const double HEIGHT = 0.1;//0.4
+const double HEIGHT = 0.4;//0.4
 const double ROTE_SPEED = PI / 40;
-const int CAMERA_LENGTH = (int)( 20 * WORLD_SCALE );
+const int CAMERA_LENGTH = (int)( 40 * WORLD_SCALE );
 
 AppCamera::AppCamera( RoombaPtr roomba ) :
 _roomba( roomba ),

@@ -37,17 +37,17 @@ void EditorCamera::move( ) {
 		move.x += MOVE_SPEED;
 	}
 	int axis_x = 0;//c•ûŒü‰ñ“]
-	if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
+	if ( keyboard->isHoldKey( "U" ) ) {
 		axis_x = -1;
 	}
-	if ( keyboard->isHoldKey( "ARROW_DOWN" ) ) {
+	if ( keyboard->isHoldKey( "J" ) ) {
 		axis_x = 1;
 	}
 	int axis_z = 0;//‰¡•ûŒü‰ñ“]
-	if ( keyboard->isHoldKey( "ARROW_LEFT" ) ) {
+	if ( keyboard->isHoldKey( "H" ) ) {
 		axis_z = -1;
 	}
-	if ( keyboard->isHoldKey( "ARROW_RIGHT" ) ) {
+	if ( keyboard->isHoldKey( "K" ) ) {
 		axis_z = 1;
 	}
 

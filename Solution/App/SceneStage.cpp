@@ -40,17 +40,9 @@ _link_time( 0 ) {
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
 	Matrix size = Matrix::makeTransformScaling( Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE ) ); 
 	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", size );
-	//drawer->loadMDLModel( MDL_STATION_1, "Model/Station/station.mdl", "Model/Station/green.jpg", size );
-	//drawer->loadMDLModel( MDL_STATION_2, "Model/Station/station.mdl", "Model/Station/blue.jpg", size );
-	//drawer->loadMDLModel( MDL_STATION_3, "Model/Station/station.mdl", "Model/Station/red.jpg", size );
-	//drawer->loadMDLModel( MDL_STATION_4, "Model/Station/station.mdl", "Model/Station/yellow.jpg", size );
 
 	Matrix crystal_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / 2, WORLD_SCALE / 2, WORLD_SCALE / 2 ) ); 
 	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/purple.jpg", crystal_size );
-	//drawer->loadMDLModel( MDL_CRYSTAL_1, "Model/Crystal/crystal.mdl", "Model/Crystal/green.jpg", crystal_size );
-	//drawer->loadMDLModel( MDL_CRYSTAL_2, "Model/Crystal/crystal.mdl", "Model/Crystal/blue.jpg", crystal_size );
-	//drawer->loadMDLModel( MDL_CRYSTAL_3, "Model/Crystal/crystal.mdl", "Model/Crystal/red.jpg", crystal_size );
-	//drawer->loadMDLModel( MDL_CRYSTAL_4, "Model/Crystal/crystal.mdl", "Model/Crystal/yellow.jpg", crystal_size );
 
 	
 	Matrix roomba_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE ) );
@@ -234,9 +226,10 @@ void SceneStage::drawMap( ) const {
 	{//背景(地面)
 		int sx = map_central_sx - (int)( UI_MAP_SIZE * UI_MAP_RANGE / 1.5 );
 		int sy = map_central_sy - (int)( UI_MAP_SIZE * UI_MAP_RANGE / 1.5 );
-		int sx2 = sx + UI_MAP_SIZE * (int)( UI_MAP_RANGE * 1.5 + UI_MAP_SIZE );
-		int sy2 = sy + UI_MAP_SIZE *(int)( UI_MAP_RANGE * 1.5 + UI_MAP_SIZE );
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 64, 0, 64, 64, sx2, sy2 ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.5 ) );
+		int sx2 = sx + UI_MAP_SIZE * (int)( UI_MAP_RANGE + UI_MAP_SIZE );
+		int sy2 = sy + UI_MAP_SIZE * (int)( UI_MAP_RANGE + UI_MAP_SIZE );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 128, 0, 128, 128, sx2, sy2 ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.5 ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 128, 128, 128, sx2, sy2 ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.5 ) );
 	}
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		//ステーション表示
