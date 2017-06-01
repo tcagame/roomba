@@ -57,15 +57,15 @@ void Roomba::updateState( ) {
 
 void Roomba::acceleration( ) {
 	switch ( _state ) {
-	case ACCEL_STATE_TRANSLATION:
+	case MOVE_STATE_TRANSLATION:
 		brakeRotation( );
 		accelTranslation( );
 		break;
-	case STATE_ACCEL_ROTATION_RIGHT:
+	case MOVE_STATE_ROTATION_RIGHT:
 		brakeTranslation( );
 		accelRotation( DIR_RIGHT );
 		break;
-	case STATE_ACCEL_ROTATION_LEFT:
+	case MOVE_STATE_ROTATION_LEFT:
 		brakeTranslation( );
 		accelRotation( DIR_LEFT );
 		break;
@@ -165,20 +165,23 @@ void Roomba::changeState( CameraPtr camera ) {
 
 	MOVE_STATE state = _state;
 	_move_dir = Vector( );
-
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
-		state = STATE_ACCEL_ROTATION_RIGHT;
+		state = MOVE_STATE_ROTATION_RIGHT;
 	}
 	if ( right_stick.y < 0 && left_stick.y > 0 ) {
-		state = STATE_ACCEL_ROTATION_LEFT;
+		state = MOVE_STATE_ROTATION_LEFT;
 	}
 	if (  right_stick.y > 0 && left_stick.y > 0 ||
 		  right_stick.y < 0 && left_stick.y < 0 ||
 		  right_stick.x > 0 && left_stick.x > 0 ||
 		  right_stick.x < 0 && left_stick.x < 0 ){
-		state = ACCEL_STATE_TRANSLATION;
+		state = MOVE_STATE_TRANSLATION;
 		Matrix mat = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( getDir( ) ) * -1, Vector( 0, -1 ).angle( getDir( ) ) );
 		_move_dir = mat.multiply( right_stick + left_stick ).normalize( );
+	}
+	if ( _balls[ BALL_LEFT ]->isReflection( ) ||
+		 _balls[ BALL_RIGHT ]->isReflection( ) ) {
+		state = MOVE_STATE_NEUTRAL;
 	}
 	if ( right_stick == Vector( ) ||
 		 left_stick == Vector( ) ) {
@@ -302,6 +305,13 @@ void Roomba::setVecRot( Vector vec_left, Vector vec_right ) {
 void Roomba::updateBalls( StagePtr stage) {
 	for ( int i = 0; i < 2; i++ ) {
 		Vector vec = _vec_trans + _vec_rot[ i ];
+		if ( _balls[ i ]->isReflection( ) ) {
+			double speed = _balls[ i ]->getVec( ).getLength( ) - SPEED;
+			if ( speed < 0 ) {
+				speed = 0;
+			}
+			vec = _balls[ i ]->getVec( ).normalize( ) * speed;
+		}
 		_balls[ i ]->update( vec, stage );
 	}
 }

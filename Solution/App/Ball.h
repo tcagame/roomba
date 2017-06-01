@@ -14,8 +14,11 @@ public:
 	void draw( ) const;
 	void reset( const Vector& pos );
 	void setPos( Vector pos );
+	bool isReflection( ) const;
 	Vector getPos( ) const;
+	Vector getVec( ) const;
 private:
+	bool _reflection;
 	Vector _pos;
 	Vector _vec;
 };
