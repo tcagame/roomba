@@ -13,6 +13,7 @@ public:
 		MOVE_STATE_TRANSLATION,
 		MOVE_STATE_ROTATION_RIGHT,
 		MOVE_STATE_ROTATION_LEFT,
+		MOVE_STATE_REFLECTION,
 		MOVE_STATE_NEUTRAL,
 		MAX_STATE,
 	};
@@ -41,6 +42,7 @@ private:
 	void holdCrystal( StagePtr stage );
 	void moveTranslation( );
 	void moveRotation( );
+	void moveReflection( );
 	void acceleration( );
 	void accelTranslation( );
 	void accelRotation( DIR dir );
@@ -49,6 +51,7 @@ private:
 	void checkLeftRight( CameraPtr camera );
 	void setVecTrans( Vector vec );
 	void setVecRot( Vector vec_left, Vector vec_right );
+	void setVecScale( Vector vec_left, Vector vec_right );
 	void updateBalls( StagePtr stage );
 	void shiftPos( );
 private:
@@ -57,6 +60,7 @@ private:
 	Vector _move_dir;
 	Vector _vec_trans;
 	std::array< Vector, 2 > _vec_rot;
+	std::array< Vector, 2 > _vec_scale;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
 	CrystalPtr _crystal;
