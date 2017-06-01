@@ -4,7 +4,8 @@
 static const double BALL_RADIUS = WORLD_SCALE * ROOMBA_SCALE;
 
 Ball::Ball( const Vector& pos ) :
-_pos( pos ) {
+_pos( pos ),
+_reflection( false ) {
 }
 
 
@@ -17,7 +18,13 @@ void Ball::update( const Vector& vec, StagePtr stage ) {
 	AppStagePtr stage_ptr = std::dynamic_pointer_cast< AppStage >( stage );
 	Vector adjust_vec = stage_ptr->adjustCollisionToWall( _pos, _vec, BALL_RADIUS );
 	adjust_vec += stage_ptr->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS );
+	if ( _vec != adjust_vec ) {
+		_reflection = true;
+	}
 	_vec = adjust_vec;
+	if ( _vec == Vector( ) ) {
+		_reflection = false;
+	}
 	_vec.z = 0;
 	_pos += _vec;
 }
@@ -32,6 +39,10 @@ Vector Ball::getPos( ) const {
 	return _pos;
 }
 
+Vector Ball::getVec( ) const {
+	return _vec;
+}
+
 void Ball::reset( const Vector& pos ) {
 	_vec = Vector( );
 	_pos = pos;
@@ -39,4 +50,8 @@ void Ball::reset( const Vector& pos ) {
 
 void Ball::setPos( Vector pos ) {
 	_pos = pos;
+}
+
+bool Ball::isReflection( ) const {
+	return _reflection;
 }
