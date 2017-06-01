@@ -18,12 +18,14 @@ public:
 private:
 	void countdown( );
 	void updateGame( );
+	void updateTime( );
 	void drawCountdown( ) const;
 	void drawUI( ) const;
 	void drawMap( ) const;
 	Vector getAdjustPos( Vector pos, Vector base_pos ) const;
 private:
 	int _countdown;
+	int _link_time;
 	CameraPtr _camera;
 	StagePtr _stage;
 	RoombaPtr _roomba;

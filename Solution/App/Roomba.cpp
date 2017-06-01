@@ -21,7 +21,8 @@ Roomba::Roomba( ) :
 _state( MOVE_STATE_NEUTRAL ),
 _trans_speed( Vector( ) ),
 _vec_trans( Vector( ) ),
-_rot_speed( 0 ) {
+_rot_speed( 0 ),
+_scaling( false ) {
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ] = BallPtr( new Ball( START_POS[ i ] ) );
 		_vec_rot[ i ] = Vector( );
@@ -70,6 +71,7 @@ void Roomba::acceleration( ) {
 		accelRotation( DIR_LEFT );
 		break;
 	case MOVE_STATE_NEUTRAL:
+	case MOVE_STATE_REFLECTION:
 		brakeTranslation( );
 		brakeRotation( );
 	default:
@@ -165,8 +167,6 @@ void Roomba::changeState( CameraPtr camera ) {
 
 	MOVE_STATE state = _state;
 	_move_dir = Vector( );
-	_vec_reflection[ 0 ] = Vector( );
-	_vec_reflection[ 1 ] = Vector( );
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		state = MOVE_STATE_ROTATION_RIGHT;
 	}
@@ -181,6 +181,10 @@ void Roomba::changeState( CameraPtr camera ) {
 		Matrix mat = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( getDir( ) ) * -1, Vector( 0, -1 ).angle( getDir( ) ) );
 		_move_dir = mat.multiply( right_stick + left_stick ).normalize( );
 	}
+	if ( right_stick == Vector( ) ||
+		 left_stick == Vector( ) ) {
+		state = MOVE_STATE_NEUTRAL;
+	}
 	double scale = ( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).getLength( );
 	if ( scale > SCALE_SIZE ||
 		 _balls[ BALL_LEFT ]->isReflection( ) ||
@@ -188,10 +192,6 @@ void Roomba::changeState( CameraPtr camera ) {
 		_vec_reflection[ 0 ] = _balls[ 0 ]->getVec( );
 		_vec_reflection[ 1 ] = _balls[ 1 ]->getVec( );
 		state = MOVE_STATE_REFLECTION;
-	}
-	if ( right_stick == Vector( ) ||
-		 left_stick == Vector( ) ) {
-		state = MOVE_STATE_NEUTRAL;
 	}
 	if ( state != _state ) {			
 		_state = state;
@@ -207,8 +207,7 @@ void Roomba::holdCrystal( StagePtr stage ) {
 	if ( _crystal != CrystalPtr( ) ) {
 		if ( _crystal->isDropDown( ) ||
 			 _crystal->isFinished( ) ||
-			 _balls[ 0 ]->isReflection( ) ||
-			 _balls[ 1 ]->isReflection( ) ) {
+			 _state == MOVE_STATE_REFLECTION ) {
 			_crystal = CrystalPtr( );
 			return;
 		}
@@ -250,6 +249,7 @@ void Roomba::moveRotation( ) {
 
 void Roomba::moveReflection( ) {
 	if ( _state != MOVE_STATE_REFLECTION ) {
+		_scaling = false;
 		setVecScale( Vector( ), Vector( ) );
 		return;
 	}
@@ -265,9 +265,10 @@ void Roomba::moveReflection( ) {
 		}
 		setVecReflection( vec[ 0 ], vec[ 1 ] );
 	} else {
-		// ball_left‚ðŠî€‚É‚·‚é
+		// ball_left‚ðŠî€‚Ék¬‚·‚é
+		_scaling = true;
 		Vector dir = _balls[ BALL_RIGHT ]->getPos( ) - _balls[ BALL_LEFT ]->getPos( );
-		Vector vec = dir.normalize( ) * MAX_SPEED;
+		Vector vec = dir.normalize( ) * SPEED;
 		setVecScale( vec, vec * -1 );
 	}
 }
@@ -277,9 +278,7 @@ void Roomba::draw( ) const {
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ]->draw( );
 	}
-	if ( !_balls[ 0 ]->isReflection( ) &&
-		 !_balls[ 1 ]->isReflection( ) &&
-		 _state != MOVE_STATE_REFLECTION ) {
+	if ( _state != MOVE_STATE_REFLECTION ) {
 		drawLaser( );
 	}
 }
@@ -388,4 +387,8 @@ Vector Roomba::getDir( ) const {
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
 	Vector roomba_dir = mat.multiply( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) );
 	return roomba_dir.normalize( );
+}
+
+bool Roomba::isScaling( ) const {
+	return _scaling;
 }
