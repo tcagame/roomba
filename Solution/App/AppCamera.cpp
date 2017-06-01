@@ -23,36 +23,14 @@ AppCamera::~AppCamera( ) {
 void AppCamera::move( ) {
 	setTarget( _roomba->getCentralPos( ) );
 	//‰ñ“]
-	int axis = 0;
-	/*MousePtr mouse = Mouse::getTask( );
-	int mouse_x = (int)mouse->getPos( ).x;
-	if ( mouse->isHoldLeftButton( ) ) {
-		if ( mouse_x > _mouse_x ) {
-			axis = -1;
-		}
-		if ( mouse_x < _mouse_x ) {
-			axis = 1;
-		}
-	}
-	_mouse_x = mouse_x;
-
-	DevicePtr device = Device::getTask( );
-	if ( device->getButton( ) & BUTTON_F ) {
-		axis = -1;
-	}
-	if ( device->getButton( ) & BUTTON_E ) {
-		axis = 1;
-	}*/
-
-	Vector dir = getDir( );
-	Vector pos = getPos( );
-	Vector target = getTarget( );
-	if ( axis != 0 ) {
-		Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, axis ), ROTE_SPEED );
-		dir = mat.multiply( dir ).normalize( );
-		setDir( dir );
-	}
-	pos = target - dir.normalize( ) * CAMERA_LENGTH;
+	Vector dir = _roomba->getDir( );
+	dir.z = getDir( ).z;
+	//dir‚Éz‚ð‘«‚µ‚½‚Æ‚«‚É
+	double ratio = fabs( ( 1.0 / 3.0 * 2 ) / ( dir.x * dir.x + dir.y * dir.y ) );//x+y : z == 2 : 1
+	dir.x *= ratio;
+	dir.y *= ratio;
+	Vector pos = getTarget( ) - dir.normalize( ) * CAMERA_LENGTH;
+	setDir( dir );
 	setPos( pos );
 }
 

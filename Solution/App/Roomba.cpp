@@ -16,7 +16,7 @@ static const double MAX_SCALE = 25;
 static const double MIN_SCALE = 8;
 
 static const Vector START_POS[ 2 ] {
-	( Vector( 15, 15 ) + Vector( STAGE_WIDTH_NUM, STAGE_HEIGHT_NUM ) ) * WORLD_SCALE,
+	( Vector( 15, 20 ) + Vector( STAGE_WIDTH_NUM, STAGE_HEIGHT_NUM ) ) * WORLD_SCALE,
 	( Vector( 20, 20 ) + Vector( STAGE_WIDTH_NUM, STAGE_HEIGHT_NUM ) ) * WORLD_SCALE
 };
 
@@ -162,7 +162,7 @@ void Roomba::changeState( CameraPtr camera ) {
 	DevicePtr device = Device::getTask( );
 	Vector right_stick( device->getRightDirX( ), device->getRightDirY( ) );
 	Vector left_stick( device->getDirX( ), device->getDirY( ) );
-	
+
 	MOVE_STATE state = _state;
 	_move_dir = Vector( );
 
@@ -177,8 +177,8 @@ void Roomba::changeState( CameraPtr camera ) {
 		  right_stick.x > 0 && left_stick.x > 0 ||
 		  right_stick.x < 0 && left_stick.x < 0 ){
 		state = ACCEL_STATE_TRANSLATION;
-		Vector dir = ( ( right_stick + left_stick ) *= -1 ).normalize( );
-		_move_dir = dir;
+		Matrix mat = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( getDir( ) ) * -1, Vector( 0, -1 ).angle( getDir( ) ) );
+		_move_dir = mat.multiply( right_stick + left_stick ).normalize( );
 	}
 	if ( right_stick == Vector( ) ||
 		 left_stick == Vector( ) ) {
@@ -187,7 +187,7 @@ void Roomba::changeState( CameraPtr camera ) {
 
 	if ( state != _state ) {
 		_state = state;
-		checkLeftRight( camera );
+		//checkLeftRight( camera );
 	}
 }
 
@@ -323,4 +323,10 @@ void Roomba::shiftPos( ) {
 			_balls[ i ]->setPos( pos[ i ] );
 		}
 	}
+}
+
+Vector Roomba::getDir( ) const {
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
+	Vector roomba_dir = mat.multiply( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) );
+	return roomba_dir.normalize( );
 }

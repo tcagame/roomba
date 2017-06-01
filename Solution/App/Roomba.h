@@ -23,6 +23,7 @@ public:
 	void update( StagePtr stage, CameraPtr camera );
 	void draw( ) const;
 	void reset( );
+	Vector getDir( ) const;
 	Vector getCentralPos( ) const;
 	Vector getBallPos( int ball ) const;
 private:
