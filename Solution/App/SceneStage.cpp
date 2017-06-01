@@ -228,10 +228,6 @@ void SceneStage::drawMap( ) const {
 		int idx = x + y * STAGE_WIDTH_NUM;
 		int sx = UI_MAP_X + ( STAGE_WIDTH_NUM - ( i % STAGE_WIDTH_NUM ) - 1 ) * UI_MAP_SIZE;
 		int sy = map_sy - ( i / STAGE_WIDTH_NUM ) * UI_MAP_SIZE - UI_MAP_SIZE;
-		//壁表示
-		if ( data.wall[ idx ] == 1 ) {
-			drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 32, 0, 32, 32, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
-		}
 		//ステーション表示
 		if ( data.station[ phase ][ idx ] == app_stage->getStationCount( ) ) {
 			int tx = 32 * 2;
