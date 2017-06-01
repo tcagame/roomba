@@ -164,7 +164,7 @@ void EditorStage::edit( ) {
 		editCrystal( );
 		break;
 	case EDIT_MODE_STATION:
-		editStation( );
+		editDelivery( );
 		break;
 	}
 }
@@ -238,7 +238,7 @@ void EditorStage::editCrystal( ) {
 	}
 }
 
-void EditorStage::editStation( ) {
+void EditorStage::editDelivery( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->drawString( 0, 80, "MODE:ステーション配置" );
 	int phase = getPhase( );
@@ -246,8 +246,8 @@ void EditorStage::editStation( ) {
 	bool placed[ MAX_LINK ] = { };
 
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( data.station[ phase ][ i ] ) {
-			placed[ data.station[ phase ][ i ] - 1 ] = true;
+		if ( data.delivery[ phase ][ i ] ) {
+			placed[ data.delivery[ phase ][ i ] - 1 ] = true;
 		}
 	}
 	int number = 0;
@@ -265,8 +265,8 @@ void EditorStage::editStation( ) {
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
-		if ( data.station[ phase ][ idx ] == 0 ) {
-			data.station[ phase ][ idx ] = number;
+		if ( data.delivery[ phase ][ idx ] == 0 ) {
+			data.delivery[ phase ][ idx ] = number;
 			setData( data );
 		}
 	}
@@ -276,8 +276,8 @@ void EditorStage::editStation( ) {
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
-		if ( data.station[ phase ][ idx ] != 0 ) {
-			data.station[ phase ][ idx ] = 0;
+		if ( data.delivery[ phase ][ idx ] != 0 ) {
+			data.delivery[ phase ][ idx ] = 0;
 			setData( data );
 		}
 	}
@@ -312,15 +312,15 @@ void EditorStage::drawWall( ) const {
 	}
 }
 
-void EditorStage::drawStation( ) const {
+void EditorStage::drawDelivery( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	DATA data = getData( );
 	int phase = getPhase( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( data.station[ phase ][ i ] != 0 ) {
+		if ( data.delivery[ phase ][ i ] != 0 ) {
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			drawer->setModelMDL( Drawer::ModelMDL( Vector( x, y, STATION_POS_Z ), MDL_STATION ) );
+			drawer->setModelMDL( Drawer::ModelMDL( Vector( x, y, STATION_POS_Z ), MDL_DELIVERY ) );
 		}
 	}
 }

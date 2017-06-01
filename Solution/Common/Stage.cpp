@@ -18,7 +18,7 @@ Stage::~Stage( ) {
 
 void Stage::drawModel( ) const {
 	drawCrystal( );
-	drawStation( );
+	drawDelivery( );
 }
 
 void Stage::load( int stage_num ) {
@@ -150,7 +150,7 @@ void Stage::loadPhase( ) {
 	loadCrystal( );
 	_max_station = 0;
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( _data.station[ _phase ][ i ] != 0 ) {
+		if ( _data.delivery[ _phase ][ i ] != 0 ) {
 			_max_station++;
 		}
 	}

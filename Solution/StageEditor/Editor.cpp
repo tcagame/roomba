@@ -26,7 +26,7 @@ void Editor::initialize( ) {
 	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
 	drawer->loadGraph( GRAPH_SELECT_MENU, "UI/UI_retry_select.png" );
 	Matrix station_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE ) ); 
-	drawer->loadMDLModel( MDL_STATION, "Model/Station/station.mdl", "Model/Station/purple.jpg", station_size );
+	drawer->loadMDLModel( MDL_DELIVERY, "Model/Station/station.mdl", "Model/Station/purple.jpg", station_size );
 	//drawer->loadMDLModel( MDL_STATION_1, "Model/Station/station.mdl", "Model/Station/green.jpg", station_size );
 	//drawer->loadMDLModel( MDL_STATION_2, "Model/Station/station.mdl", "Model/Station/blue.jpg", station_size );
 	//drawer->loadMDLModel( MDL_STATION_3, "Model/Station/station.mdl", "Model/Station/red.jpg", station_size );

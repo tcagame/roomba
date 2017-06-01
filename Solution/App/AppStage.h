@@ -16,16 +16,16 @@ public:
 	Vector adjustCollisionToWall( Vector pos, Vector vec, const double radius );
 	Vector adjustCollisionToCrystal( Vector pos, Vector vec, const double radius );
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 ) const;
-	bool isOnStation( Vector pos );
-	int getStationNum( ) const;
-	int getStationCount( ) const;
+	bool isOnDelivery( Vector pos );
+	int getDeliveryNum( ) const;
+	int getDeliveryCount( ) const;
 	std::list< CrystalPtr > getCrystalList( ) const;
 private:
 	void updateCrystal( );
 	void drawEarth( ) const;
 	void drawWall( ) const;
 	void drawCrystal( ) const;
-	void drawStation( ) const;
+	void drawDelivery( ) const;
 	void drawCollisionLine( ) const;
 	void loadCrystal( );
 	void loadMapData( );
@@ -37,7 +37,7 @@ private:
 private:
 	std::list< CrystalPtr > _crystals;
 	std::array< char, STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 > _map_data;
-	int _station_count;
+	int _delivery_count;
 	ViewerPtr _viewer;
 
 };

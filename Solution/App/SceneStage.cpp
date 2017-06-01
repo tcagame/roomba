@@ -19,7 +19,7 @@ static const int UI_NUM_HEIGHT = 64;
 static const int UI_MAP_SIZE = 6;
 static const int UI_MAP_X = 100;
 static const int UI_MAP_FOOT_Y = 50;
-static const double UI_MAP_RANGE = 30;
+static const int UI_MAP_RANGE = 30;
 static const int START_COUNTDOWN_TIME = 3 * 60;
 
 SceneStage::SceneStage( int stage_num ) :
@@ -38,7 +38,7 @@ _countdown( START_COUNTDOWN_TIME ) {
 	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
 	Matrix size = Matrix::makeTransformScaling( Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE ) ); 
-	drawer->loadMDLModel( MDL_STATION, "Model/Station/station.mdl", "Model/Station/blue.jpg", size );
+	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", size );
 	//drawer->loadMDLModel( MDL_STATION_1, "Model/Station/station.mdl", "Model/Station/green.jpg", size );
 	//drawer->loadMDLModel( MDL_STATION_2, "Model/Station/station.mdl", "Model/Station/blue.jpg", size );
 	//drawer->loadMDLModel( MDL_STATION_3, "Model/Station/station.mdl", "Model/Station/red.jpg", size );
@@ -174,7 +174,7 @@ void SceneStage::drawUI( ) const {
 	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y ), GRAPH_PHASE ) );
 
 	//station
-	int station_num = app_stage->getStationNum( );
+	int station_num = app_stage->getDeliveryNum( );
 	x = scr_width - UI_STATION_FOOT_X;
 	y = UI_STATION_Y;
 	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, _stage->getMaxStationNum( ) * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT ), GRAPH_NUMBER ) );
@@ -220,13 +220,13 @@ void SceneStage::drawMap( ) const {
 	{//背景(地面)
 		int sx = map_central_sx - (int)( UI_MAP_SIZE * UI_MAP_RANGE / 1.5 );
 		int sy = map_central_sy - (int)( UI_MAP_SIZE * UI_MAP_RANGE / 1.5 );
-		int sx2 = sx + UI_MAP_SIZE * UI_MAP_RANGE * 1.5 + UI_MAP_SIZE;
-		int sy2 = sy + UI_MAP_SIZE * UI_MAP_RANGE * 1.5 + UI_MAP_SIZE;
+		int sx2 = sx + UI_MAP_SIZE * (int)( UI_MAP_RANGE * 1.5 + UI_MAP_SIZE );
+		int sy2 = sy + UI_MAP_SIZE *(int)( UI_MAP_RANGE * 1.5 + UI_MAP_SIZE );
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 64, 0, 64, 64, sx2, sy2 ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.5 ) );
 	}
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		//ステーション表示
-		if ( data.station[ phase ][ i ] == app_stage->getStationCount( ) ) {
+		if ( data.delivery[ phase ][ i ] == app_stage->getDeliveryCount( ) ) {
 			int x = i % STAGE_WIDTH_NUM;
 			int y = i / STAGE_WIDTH_NUM;
 			Vector station_pos( i % STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2, i / STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2 ); 
@@ -235,8 +235,8 @@ void SceneStage::drawMap( ) const {
 				break;
 			}
 			distance = mat.multiply( distance );
-			int sx = (int)( map_central_sx + distance.x ) - WORLD_SCALE / 4;
-			int sy = (int)( map_central_sy + distance.y ) - WORLD_SCALE / 4;
+			int sx = (int)( map_central_sx + distance.x - WORLD_SCALE / 4 );
+			int sy = (int)( map_central_sy + distance.y - WORLD_SCALE / 4 );
 			drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 32, 32, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
 			break;
 		}

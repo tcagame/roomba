@@ -28,7 +28,7 @@ void Crystal::draw( ViewerPtr viewer ) const {
 
 void Crystal::update( AppStagePtr stage ) {
 	_drop_down = false;
-	if ( stage->isOnStation( _pos ) ) {
+	if ( stage->isOnDelivery( _pos ) ) {
 		_finished = true;
 		return;
 	}
