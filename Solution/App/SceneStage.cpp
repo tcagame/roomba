@@ -31,6 +31,7 @@ _countdown( START_COUNTDOWN_TIME ) {
 	_timer = TimerPtr( new Timer );
 
 	DrawerPtr drawer = Drawer::getTask( );
+	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
 	drawer->loadGraph( GRAPH_STATION, "UI/station.png" );
 	drawer->loadGraph( GRAPH_PHASE, "UI/phase.png" );
@@ -192,6 +193,14 @@ void SceneStage::drawUI( ) const {
 		}
 	};
 	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x - 32, y ), GRAPH_STATION ) );
+
+	// linkgauge
+	{
+		const int TW = 400;
+		const int TH = 50;
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, 0, TW, TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
+	}
+	
 	drawMap( );
 }
 
