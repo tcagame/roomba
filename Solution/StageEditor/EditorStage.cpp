@@ -9,7 +9,7 @@
 static const int CURSOR_WAIT_TIME = 4;
 static const double EARTH_POS_Z = WORLD_SCALE;
 static const double STATION_POS_Z = EARTH_POS_Z + WORLD_SCALE;
-static const double CURSOR_MOVE_SPEED = 0.03;
+static const double CURSOR_MOVE_SPEED = 0.4;
 
 
 EditorStage::EditorStage( CameraPtr camera ) :
@@ -60,13 +60,27 @@ void EditorStage::loadFile( ) {
 
 void EditorStage::updateCursor( ) {
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	Vector mouse_pos = Mouse::getTask( )->getPos( );
-	mouse_pos.x *= -1;
-	Vector camera_dir = ( _camera->getTarget( ) - _camera->getPos( ) ).normalize( );
+	Vector camera_dir = _camera->getDir( ).normalize( );
+	camera_dir.z = 0;
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( camera_dir ) * -1, Vector( 0, -1 ).angle( camera_dir ) );
-	Vector mouse_vec = mat.multiply( mouse_pos - _before_mouse_pos );
+	Vector mouse_pos = Mouse::getTask( )->getPos( );
+	Vector mouse_vec = mouse_pos - _before_mouse_pos;
+	if ( keyboard->isPushKey( "Q" ) ) {
+		_cursor_pos = Vector( (int)_cursor_pos.x, (int)_cursor_pos.y );
+	}
+	if ( mouse_vec.getLength( ) < 0.01 ) {
+		return;
+	}
 	_before_mouse_pos = mouse_pos;
-	_cursor_pos += mouse_vec * CURSOR_MOVE_SPEED;
+	mouse_vec.x *= 1;
+	mouse_vec.y *= 1;
+	mouse_vec = mat.multiply( mouse_vec ).normalize( ) * CURSOR_MOVE_SPEED;
+	if ( keyboard->isHoldKey( "Q" ) ) {
+		double ratio = fabs( mouse_vec.x ) / fabs( mouse_vec.y );
+		mouse_vec.y *= ratio;
+		mouse_vec = mouse_vec.normalize( ) * CURSOR_MOVE_SPEED;
+	}
+	_cursor_pos += mouse_vec;
 
 	if ( _cursor_pos.x < 0 ) {
 		_cursor_pos.x = 0;
@@ -75,10 +89,10 @@ void EditorStage::updateCursor( ) {
 		_cursor_pos.y = 0;
 	}
 	if ( _cursor_pos.x > STAGE_WIDTH_NUM ) {
-		_cursor_pos.x = STAGE_WIDTH_NUM - 1;
+		_cursor_pos.x = STAGE_WIDTH_NUM - 0.1;
 	}
-	if ( _cursor_pos.y > STAGE_WIDTH_NUM  ) {
-		_cursor_pos.y = STAGE_WIDTH_NUM - 1;
+	if ( _cursor_pos.y > STAGE_HEIGHT_NUM  ) {
+		_cursor_pos.y = STAGE_HEIGHT_NUM - 0.1;
 	}
 }
 

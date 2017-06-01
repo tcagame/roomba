@@ -9,5 +9,6 @@ private:
 	void move( );
 private:
 	Vector _before_mouse_pos;
+	double _length;
 };
 
