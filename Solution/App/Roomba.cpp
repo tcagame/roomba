@@ -8,7 +8,7 @@
 #include <assert.h>
 
 //デバッグのためスピード遅め
-static const double SPEED = 0.001;
+static const double SPEED = 0.1;
 static const double MAX_SPEED = 0.2;
 static const double CENTRIPETAL_POWER = 0.03;
 static const double CENTRIPETAL_MIN = 7;

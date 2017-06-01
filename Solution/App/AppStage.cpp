@@ -182,26 +182,28 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 		switch ( _map_data[ idx ] ) {
 		case 1://ŽlŠp
 		{
-		Vector pos( fx, fy, fpos.z );
-			if ( isCollisionToSquare( pos, fpos, radius ) ) {
-				result = ( fpos - ( pos + Vector( WORLD_SCALE / 4, WORLD_SCALE / 4 ) ) ).normalize( ) * vec.getLength( );
+		Vector pos_f( fx, fy, fpos.z );
+			if ( isCollisionToSquare( pos_f, fpos, radius ) ) {
+				result = ( fpos - ( pos_f + Vector( WORLD_SCALE / 4, WORLD_SCALE / 4 ) ) ).normalize( ) * vec.getLength( );
 			}
 		}
 			break;
 		case 2://îŒ^
 		{
-			Vector pos( fx - ( fx % 2 ) + 1, fy - ( fy % 2 ) + 1, fpos.z );
-			if ( isCollisionToCircle( pos, fpos, radius ) ) {
-				result = ( fpos - pos ).normalize( ) * vec.getLength( );
+			Vector pos_inside( fx - ( fx % 2 ) + 1, fy - ( fy % 2 ) + 1, fpos.z );
+			if ( isCollisionToCircle( pos_inside, fpos, radius ) ) {
+				result = ( pos - fpos ).normalize( ) * vec.getLength( );
 			}
 		}
 			break;
 		case 3://LŽš
 		{
-			Vector pos( fx + ( fx % 2 ), fy + ( fy % 2 ), fpos.z );
-			if ( isCollisionToL( pos, fpos, radius ) ) {
-				result = ( Vector( fx - ( fx % 2 ) + 1, fy - ( fy % 2 ) + 1, fpos.z ) - pos ).normalize( ) * vec.getLength( );
-			}
+			Vector pos_outside( fx + ( fx % 2 ), fy + ( fy % 2 ), fpos.z );
+			Vector pos_inside( fx - ( fx % 2 ) + 1, fy - ( fy % 2 ) + 1, fpos.z );
+			if ( isCollisionToL( pos_outside, pos_inside, fpos, radius ) ) {
+				result = ( pos_inside - pos_outside ).normalize( ) * vec.getLength( );
+			} 
+			
 		}
 			break;
 		}
@@ -432,20 +434,38 @@ bool AppStage::isCollisionToCircle( Vector circle_pos, Vector pos, double radius
 	return ( circle_radius + radius > distance );
 }
 
-bool AppStage::isCollisionToL( Vector l_pos, Vector pos, double radius ) const {
-	if ( l_pos.x - pos.x > STAGE_WIDTH_NUM ) {
+bool AppStage::isCollisionToL( Vector pos_outside, Vector pos_inside, Vector pos, double radius ) const {
+	if ( pos_outside.x - pos.x > STAGE_WIDTH_NUM ) {
 		pos.x += STAGE_WIDTH_NUM * 2;
 	}
-	if ( pos.x - l_pos.x > STAGE_WIDTH_NUM ) {
-		l_pos.x += STAGE_WIDTH_NUM * 2;
+	if ( pos.x - pos_outside.x > STAGE_WIDTH_NUM ) {
+		pos_outside.x += STAGE_WIDTH_NUM * 2;
 	}
-	if ( l_pos.y - pos.y > STAGE_HEIGHT_NUM ) {
+	if ( pos_outside.y - pos.y > STAGE_HEIGHT_NUM ) {
 		pos.y += STAGE_HEIGHT_NUM * 2;
 	}
-	if ( pos.y - l_pos.y > STAGE_HEIGHT_NUM ) {
-		l_pos.y += STAGE_HEIGHT_NUM * 2;
+	if ( pos.y - pos_outside.y > STAGE_HEIGHT_NUM ) {
+		pos_outside.y += STAGE_HEIGHT_NUM * 2;
 	}
-	double distance = ( l_pos - pos ).getLength( );
+	if ( fabs( pos_outside.x - pos.x ) > radius * 2 ||
+		 fabs( pos_outside.y - pos.y ) > radius * 2 ) {
+		return false;
+	}
+
+	if ( pos_inside.x - pos.x > STAGE_WIDTH_NUM ) {
+		pos.x += STAGE_WIDTH_NUM * 2;
+	}
+	if ( pos.x - pos_inside.x > STAGE_WIDTH_NUM ) {
+		pos_inside.x += STAGE_WIDTH_NUM * 2;
+	}
+	if ( pos_inside.y - pos.y > STAGE_HEIGHT_NUM ) {
+		pos.y += STAGE_HEIGHT_NUM * 2;
+	}
+	if ( pos.y - pos_inside.y > STAGE_HEIGHT_NUM ) {
+		pos_inside.y += STAGE_HEIGHT_NUM * 2;
+	}
+
+	double distance = ( pos_inside - pos ).getLength( );
 	double size = WORLD_SCALE / 2;
-	return ( size - radius * 2 > distance );
+	return ( size - radius < distance );
 }

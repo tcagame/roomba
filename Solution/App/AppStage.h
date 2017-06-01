@@ -33,7 +33,7 @@ private:
 	void load( int stage_num );
 	bool isCollisionToSquare( Vector square_pos, Vector pos, double radius ) const;
 	bool isCollisionToCircle( Vector circle_pos, Vector pos, double radius ) const;
-	bool isCollisionToL( Vector l_pos, Vector pos, double radius ) const;
+	bool isCollisionToL( Vector pos_outside, Vector pos_inside, Vector pos, double radius ) const;
 private:
 	std::list< CrystalPtr > _crystals;
 	std::array< char, STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 > _map_data;
