@@ -16,5 +16,6 @@ private:
 	RoombaPtr _roomba;
 private:
 	int _mouse_x;
+	Vector _dir;
 };
 

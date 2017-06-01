@@ -4,13 +4,17 @@
 #include "Application.h"
 #include "Binary.h"
 #include "define.h"
+#include "Camera.h"
 
 static const int CURSOR_WAIT_TIME = 4;
+static const double EARTH_POS_Z = WORLD_SCALE;
+static const double STATION_POS_Z = EARTH_POS_Z + WORLD_SCALE;
+static const double CURSOR_MOVE_SPEED = 0.1;
 
-EditorStage::EditorStage( ) :
-_cursor_x( 0 ),
-_cursor_y( 0 ),
-_count( 0 ) {
+
+EditorStage::EditorStage( CameraPtr camera ) :
+_count( 0 ),
+_camera( camera ) {
 	reset( );
 	MousePtr mouse = Mouse::getTask( );
 	_before_mouse_pos = mouse->getPos( );
@@ -59,20 +63,11 @@ void EditorStage::updateCursor( ) {
 	int cursor_x = 0;
 	int cursor_y = 0;
 	Vector mouse_pos = Mouse::getTask( )->getPos( );
-	Vector mouse_vec = mouse_pos - _before_mouse_pos;
+	Vector camera_dir = ( _camera->getTarget( ) - _camera->getPos( ) ).normalize( );
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( camera_dir ), Vector( 0, -1 ).angle( camera_dir ) );
+	Vector mouse_vec = mat.multiply( mouse_pos - _before_mouse_pos );
 	_before_mouse_pos = mouse_pos;
-	if ( keyboard->isHoldKey( "ARROW_UP" ) ) {
-		cursor_y += 3;
-	}
-	if ( keyboard->isHoldKey( "ARROW_DOWN" ) ) {
-		cursor_y -= 3;
-	}
-	if ( keyboard->isHoldKey( "ARROW_LEFT" ) ) {
-		cursor_x += 3;
-	}
-	if ( keyboard->isHoldKey( "ARROW_RIGHT" ) ) {
-		cursor_x -= 3;
-	}
+
 	if ( mouse_vec.y < -0.1 ) {
 		cursor_y++;
 	}
@@ -85,27 +80,18 @@ void EditorStage::updateCursor( ) {
 	if ( mouse_vec.x > 0.1 ) {
 		cursor_x--;
 	}
-	if ( cursor_x != 0 || cursor_y != 0 ) {
-		_count++;
-		if ( _count % CURSOR_WAIT_TIME == 0 ) {
-			_cursor_x += cursor_x;
-			_cursor_y += cursor_y;
-		}
-	} else {
-		_count = 0;
-	}
 
-	if ( _cursor_x < 0 ) {
-		_cursor_x = 0;
+	if ( _cursor_pos.x < 0 ) {
+		_cursor_pos.x = 0;
 	}
-	if ( _cursor_y < 0 ) {
-		_cursor_y = 0;
+	if ( _cursor_pos.y < 0 ) {
+		_cursor_pos.y = 0;
 	}
-	if ( _cursor_x >= STAGE_WIDTH_NUM ) {
-		_cursor_x = STAGE_WIDTH_NUM - 1;
+	if ( _cursor_pos.x > STAGE_WIDTH_NUM ) {
+		_cursor_pos.x = STAGE_WIDTH_NUM - 1;
 	}
-	if ( _cursor_y >= STAGE_WIDTH_NUM  ) {
-		_cursor_y = STAGE_WIDTH_NUM - 1;
+	if ( _cursor_pos.y > STAGE_WIDTH_NUM  ) {
+		_cursor_pos.y = STAGE_WIDTH_NUM - 1;
 	}
 }
 
@@ -115,7 +101,7 @@ void EditorStage::draw( ) const {
 	drawEarth( );
 	drawWall( );
 	DrawerPtr drawer = Drawer::getTask( );
-	Vector cursor_pos( _cursor_x * WORLD_SCALE + WORLD_SCALE / 2, _cursor_y * WORLD_SCALE  + WORLD_SCALE / 4 );
+	Vector cursor_pos( (int)_cursor_pos.x * WORLD_SCALE + WORLD_SCALE / 2, (int)_cursor_pos.y * WORLD_SCALE  + WORLD_SCALE / 4 );
 	drawer->setModelMDL( Drawer::ModelMDL( cursor_pos, MDL_CURSOR ) );
 	drawer->drawString( 0, 60, "PHASE:%d", getPhase( ) );
 	drawer->drawString( 0, 0, "壁編集:Z　クリスタル編集:X　ステーション編集:C　ロード:F1　セーブ:F2　フェーズ変更:テンキー" );
@@ -189,7 +175,7 @@ void EditorStage::editWall( ) {
 	MousePtr mouse = Mouse::getTask( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
 	if ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) ) {
-		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
+		int idx = (int)_cursor_pos.y * STAGE_WIDTH_NUM + (int)_cursor_pos.x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
@@ -201,7 +187,7 @@ void EditorStage::editWall( ) {
 		}
 	}
 	if ( mouse->isHoldRightButton( ) || keyboard->isHoldKey( "BACK_SPACE" ) ) {
-		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
+		int idx = (int)_cursor_pos.y * STAGE_WIDTH_NUM + (int)_cursor_pos.x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
@@ -231,7 +217,7 @@ void EditorStage::editCrystal( ) {
 	MousePtr mouse = Mouse::getTask( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
 	if ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) && count < MAX_LINK ) {
-		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
+		int idx = (int)_cursor_pos.y * STAGE_WIDTH_NUM + (int)_cursor_pos.x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
@@ -241,7 +227,7 @@ void EditorStage::editCrystal( ) {
 		}
 	}
 	if ( mouse->isHoldRightButton( ) || keyboard->isHoldKey( "BACK_SPACE" ) ) {
-		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
+		int idx = (int)_cursor_pos.y * STAGE_WIDTH_NUM + (int)_cursor_pos.x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
@@ -275,7 +261,7 @@ void EditorStage::editStation( ) {
 	MousePtr mouse = Mouse::getTask( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
 	if ( ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) ) && number != 0 ) {
-		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
+		int idx = (int)_cursor_pos.y * STAGE_WIDTH_NUM + (int)_cursor_pos.x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
@@ -286,7 +272,7 @@ void EditorStage::editStation( ) {
 	}
 
 	if ( mouse->isHoldRightButton( ) || keyboard->isHoldKey( "BACK_SPACE" ) ) {
-		int idx = _cursor_y * STAGE_WIDTH_NUM + _cursor_x;
+		int idx = (int)_cursor_pos.y * STAGE_WIDTH_NUM + (int)_cursor_pos.x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
@@ -311,7 +297,7 @@ void EditorStage::updateMode( ) {
 }
 
 void EditorStage::drawEarth( ) const {
-	Vector adjust_pos = Vector( WORLD_SCALE * 2, WORLD_SCALE * 2 + WORLD_SCALE / 3, WORLD_SCALE / 6 );
+	Vector adjust_pos = Vector( WORLD_SCALE * 2, WORLD_SCALE * 2 + WORLD_SCALE / 3, EARTH_POS_Z );
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->setModelMDL( Drawer::ModelMDL( adjust_pos, MDL_EARTH ) );
 }
@@ -334,7 +320,7 @@ void EditorStage::drawStation( ) const {
 		if ( data.station[ phase ][ i ] != 0 ) {
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			drawer->setModelMDL( Drawer::ModelMDL( Vector( x, y, 0 ), MDL_STATION ) );
+			drawer->setModelMDL( Drawer::ModelMDL( Vector( x, y, STATION_POS_Z ), MDL_STATION ) );
 		}
 	}
 }

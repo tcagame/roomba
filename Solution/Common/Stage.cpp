@@ -7,6 +7,8 @@
 #include "Keyboard.h"
 #include "Viewer.h"
 
+static const double WALL_POS_Z = WORLD_SCALE;
+
 
 Stage::Stage( ) {
 }
@@ -85,8 +87,7 @@ void Stage::loadWall( ) {
 		//ï«ê∂ê¨
 		int x = i % STAGE_WIDTH_NUM;
 		int y = i / STAGE_WIDTH_NUM;
-		Vector pos( x * WORLD_SCALE + WORLD_SCALE / 2, y * WORLD_SCALE + WORLD_SCALE / 2, 0 );
-		Vector adjust_pos;
+		Vector pos( x * WORLD_SCALE + WORLD_SCALE / 2, y * WORLD_SCALE + WORLD_SCALE / 2, WALL_POS_Z );
 		int type = _data.wall[ i ];
 		if ( type != 0 && type != 1 ) {
 			continue;
@@ -118,12 +119,13 @@ void Stage::loadWall( ) {
 				}
 			}
 		}
+		Vector adjust_pos;
 		if ( type == 1 ) {
 			if ( flag == 1 ||
 				 flag == 3 ||
 				 flag == 5 ||
 				 flag == 15 ) {
-				adjust_pos = Vector( -WORLD_SCALE / 2, 0, 0 );
+				adjust_pos = Vector( -WORLD_SCALE / 2, 0 );
 			}
 		}
 		if ( type == 0 ) {
@@ -133,7 +135,6 @@ void Stage::loadWall( ) {
 		if ( type == 0 && flag == 0 ) {
 				continue;
 		}
-		adjust_pos.z -= WORLD_SCALE / 6;
 		MDL wall_type = (MDL)( MDL_WALL_0_0 + type * 16 + flag );
 		_walls.push_back( Drawer::ModelMDL( pos - adjust_pos, wall_type ) );
 	}

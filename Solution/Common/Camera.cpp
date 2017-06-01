@@ -5,7 +5,6 @@
 Camera::Camera( Vector pos, Vector target ) :
 _pos( pos ),
 _target( target ) {
-	_dir = ( target - pos ).normalize( );
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->setCameraUp( Vector( 0, 0, 1 ) );
 	drawer->setCamera( pos, target );
@@ -24,10 +23,6 @@ void Camera::update( ) {
 void Camera::move( ) {
 }
 
-Vector Camera::getDir( ) const {
-	return _dir;
-}
-
 void Camera::setPos( Vector pos ) {
 	_pos = pos;
 }
@@ -36,14 +31,14 @@ void Camera::setTarget( Vector target ) {
 	_target = target;
 }
 
-void Camera::setDir( Vector dir ) {
-	_dir = dir.normalize( );
-}
-
 Vector Camera::getPos( ) const {
 	return _pos;
 }
 
 Vector Camera::getTarget( ) const {
 	return _target;
+}
+
+Vector Camera::getDir( ) const {
+	return ( _target - _pos ).normalize( );
 }

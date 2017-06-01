@@ -4,7 +4,7 @@
 
 class EditorStage : public Stage {
 public:
-	EditorStage( );
+	EditorStage( CameraPtr camera );
 	virtual ~EditorStage( );
 public:
 	void update( );
@@ -31,10 +31,10 @@ private:
 	void drawWall( ) const;
 	void drawStation( ) const;
 private:
-	int _cursor_x;
-	int _cursor_y;
+	Vector _cursor_pos;
 	int _count;
 	Vector _before_mouse_pos;
 	EDIT_MODE _mode;
+	CameraPtr _camera;
 };
 

@@ -9,15 +9,13 @@ public:
 public:
 	void update( );
 	Vector getPos( ) const;
-	Vector getDir( ) const;
 	Vector getTarget( ) const;
+	Vector getDir( ) const;
 protected:
 	virtual void move( );
 	void setPos( Vector pos );
 	void setTarget( Vector target );
-	void setDir( Vector dir );
 private:
 	Vector _pos;
-	Vector _dir;
 	Vector _target;
 };

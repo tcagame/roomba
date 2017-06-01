@@ -81,7 +81,7 @@ void Editor::initialize( ) {
 
 
 	_camera = CameraPtr( new EditorCamera );
-	_stage = StagePtr( new EditorStage );
+	_stage = StagePtr( new EditorStage( _camera ) );
 }
 
 void Editor::update( ) {
