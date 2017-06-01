@@ -6,6 +6,8 @@
 #include "Viewer.h"
 #include "Keyboard.h"
 
+const int REFLECTION_POWER = 5;
+
 AppStage::AppStage( int stage_num, ViewerPtr viewer ) :
 _delivery_count( 1 ),
 _viewer( viewer ) {
@@ -186,6 +188,7 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 		Vector pos_f( fx, fy, fpos.z );
 			if ( isCollisionToSquare( pos_f, fpos, radius ) ) {
 				result = ( fpos - ( pos_f + Vector( WORLD_SCALE / 4, WORLD_SCALE / 4 ) ) ).normalize( ) * vec.getLength( );
+				result *= REFLECTION_POWER;
 			}
 		}
 			break;
@@ -194,6 +197,7 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 			Vector pos_inside( fx - ( fx % 2 ) + 1, fy - ( fy % 2 ) + 1, fpos.z );
 			if ( isCollisionToCircle( pos_inside, fpos, radius ) ) {
 				result = ( pos - fpos ).normalize( ) * vec.getLength( );
+				result *= REFLECTION_POWER;
 			}
 		}
 			break;
@@ -203,6 +207,7 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 			Vector pos_inside( fx - ( fx % 2 ) + 1, fy - ( fy % 2 ) + 1, fpos.z );
 			if ( isCollisionToL( pos_outside, pos_inside, fpos, radius ) ) {
 				result = ( pos_inside - pos_outside ).normalize( ) * vec.getLength( );
+				result *= REFLECTION_POWER;
 			} 
 			
 		}
@@ -223,7 +228,7 @@ Vector AppStage::adjustCollisionToCrystal( Vector pos, Vector vec, const double 
 			continue;
 		}
 		Vector adjust = crystal->adjustHitToRoomba( pos, vec, radius );
-		result += adjust;
+		result += adjust * REFLECTION_POWER;
 		ite++;
 	}
 	return result;
