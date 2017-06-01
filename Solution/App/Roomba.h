@@ -24,6 +24,7 @@ public:
 	void update( StagePtr stage, CameraPtr camera );
 	void draw( ) const;
 	void reset( );
+	bool isScaling( ) const;
 	Vector getDir( ) const;
 	Vector getCentralPos( ) const;
 	Vector getBallPos( int ball ) const;
@@ -57,6 +58,7 @@ private:
 	void shiftPos( );
 	void drawLaser( ) const;
 private:
+	bool _scaling;
 	double _rot_speed;
 	Vector _trans_speed;
 	Vector _move_dir;

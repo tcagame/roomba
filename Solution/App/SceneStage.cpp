@@ -23,7 +23,8 @@ static const int UI_MAP_RANGE = 30;
 static const int START_COUNTDOWN_TIME = 3 * 60;
 
 SceneStage::SceneStage( int stage_num ) :
-_countdown( START_COUNTDOWN_TIME ) {	
+_countdown( START_COUNTDOWN_TIME ),
+_link_time( 0 ) {	
 	_viewer = ViewerPtr( new Viewer );
 	_stage = StagePtr( new AppStage( stage_num, _viewer ) );//0-2:’Êí 3:test_stage
 	_roomba = RoombaPtr( new Roomba );
@@ -133,7 +134,19 @@ void SceneStage::updateGame( ) {
 	_roomba->update( _stage, _camera );
 	_stage->update( );
 	_viewer->update( _roomba->getCentralPos( ) );
-	_timer->update( );	
+	_timer->update( );
+	updateTime( );
+}
+
+void SceneStage::updateTime( ) {
+	if ( _roomba->isScaling( ) ) {		
+		_link_time++;
+	} else {
+		_link_time--;
+		if ( _link_time < 0 ) {
+			_link_time = 0;
+		}
+	}
 }
 
 void SceneStage::drawUI( ) const {
@@ -198,7 +211,8 @@ void SceneStage::drawUI( ) const {
 	{
 		const int TW = 400;
 		const int TH = 50;
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, 0, TW, TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, TH, TW, TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, 0, TW - _link_time, TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
 	}
 	
 	drawMap( );
