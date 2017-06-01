@@ -81,6 +81,7 @@ void AppStage::updateCrystal( ) {
 			continue;
 		}
 		if ( crystal->isFinished( ) ) {
+			//crystal->Delivery( );
 			crystal.~shared_ptr( );
 			ite = _crystals.erase( ite );
 			continue;

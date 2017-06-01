@@ -138,3 +138,8 @@ void Crystal::setVec( Vector vec ) {
 bool Crystal::isDropDown( ) const {
 	return _drop_down;
 }
+
+void Crystal::Delivery( ) {
+	Vector crystal_pos = getPos( );
+	crystal_pos.z += 1.5;
+}

@@ -18,6 +18,7 @@ public:
 	Vector getPos( ) const;
 	void setVec( Vector vec );
 	bool isDropDown( ) const;
+	void Delivery( );
 private:
 	Vector _pos;
 	Vector _vec;
