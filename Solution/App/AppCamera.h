@@ -10,9 +10,9 @@ public:
 	virtual ~AppCamera( );
 public:
 	void reset( );
-	void update( );
 private:
 	void move( );
+	Vector getCalcDir( Vector dir, double HEIGHT ) const;
 	RoombaPtr _roomba;
 private:
 	int _mouse_x;
