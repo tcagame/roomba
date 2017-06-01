@@ -1,6 +1,5 @@
 #include "SceneStage.h"
 #include "Device.h"
-#include "Drawer.h"
 #include "AppCamera.h"
 #include "Roomba.h"
 #include "AppStage.h"
@@ -20,6 +19,7 @@ static const int UI_NUM_HEIGHT = 64;
 static const int UI_MAP_SIZE = 6;
 static const int UI_MAP_X = 100;
 static const int UI_MAP_FOOT_Y = 50;
+static const double UI_MAP_RANGE = 30;
 static const int START_COUNTDOWN_TIME = 3 * 60;
 
 SceneStage::SceneStage( int stage_num ) :
@@ -206,43 +206,51 @@ void SceneStage::drawUI( ) const {
 
 void SceneStage::drawMap( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	ApplicationPtr app = Application::getInstance( );
 	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
 	Vector base_pos = _roomba->getCentralPos( );
-	double base_x = base_pos.x / WORLD_SCALE - STAGE_WIDTH_NUM / 2.0;
-	double base_y = base_pos.y / WORLD_SCALE - STAGE_HEIGHT_NUM / 2.0;
+	Vector dir = _roomba->getDir( );
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( dir ), Vector( 0, -1 ).angle( dir ) );
 
-
+	ApplicationPtr app = Application::getInstance( );
 	int scr_height = app->getWindowHeight( );
-	int map_width = UI_MAP_SIZE * STAGE_WIDTH_NUM;
-	int map_height = UI_MAP_SIZE * STAGE_HEIGHT_NUM;
-	int map_sx = UI_MAP_X;
-	int map_sy = scr_height - UI_MAP_FOOT_Y;
-	//背景(地面)
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( map_sx, map_sy, 0, 0, 32, 32, map_sx + map_width, map_sy - map_height ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.5 ) );
+	int map_central_sx = UI_MAP_X + UI_MAP_SIZE * UI_MAP_RANGE;
+	int map_central_sy = scr_height - UI_MAP_FOOT_Y - UI_MAP_SIZE * UI_MAP_RANGE;
 	Stage::DATA data = _stage->getData( );
 	int phase = _stage->getPhase( );
+	{//背景(地面)
+		int sx = map_central_sx - (int)( UI_MAP_SIZE * UI_MAP_RANGE / 1.5 );
+		int sy = map_central_sy - (int)( UI_MAP_SIZE * UI_MAP_RANGE / 1.5 );
+		int sx2 = sx + UI_MAP_SIZE * UI_MAP_RANGE * 1.5 + UI_MAP_SIZE;
+		int sy2 = sy + UI_MAP_SIZE * UI_MAP_RANGE * 1.5 + UI_MAP_SIZE;
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 64, 0, 64, 64, sx2, sy2 ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.5 ) );
+	}
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		int x = (int)( base_x + ( i % STAGE_WIDTH_NUM ) ) % STAGE_WIDTH_NUM;
-		int y = (int)( base_y + ( i / STAGE_WIDTH_NUM ) ) % STAGE_HEIGHT_NUM;
-		int idx = x + y * STAGE_WIDTH_NUM;
-		int sx = UI_MAP_X + ( STAGE_WIDTH_NUM - ( i % STAGE_WIDTH_NUM ) - 1 ) * UI_MAP_SIZE;
-		int sy = map_sy - ( i / STAGE_WIDTH_NUM ) * UI_MAP_SIZE - UI_MAP_SIZE;
 		//ステーション表示
-		if ( data.station[ phase ][ idx ] == app_stage->getStationCount( ) ) {
-			int tx = 32 * 2;
-			int ty = 32;
-			drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, tx, ty, 32, 32, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
+		if ( data.station[ phase ][ i ] == app_stage->getStationCount( ) ) {
+			int x = i % STAGE_WIDTH_NUM;
+			int y = i / STAGE_WIDTH_NUM;
+			Vector station_pos( i % STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2, i / STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2 ); 
+			Vector distance = ( getAdjustPos( station_pos, base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
+			if ( distance.getLength( ) > UI_MAP_RANGE * UI_MAP_SIZE ) {
+				break;
+			}
+			distance = mat.multiply( distance );
+			int sx = (int)( map_central_sx + distance.x ) - WORLD_SCALE / 4;
+			int sy = (int)( map_central_sy + distance.y ) - WORLD_SCALE / 4;
+			drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 32, 32, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
+			break;
 		}
 	}
 	//ルンバ表示
 	for ( int i = 0; i < 2; i++ ) {
-		Vector roomba_pos = _roomba->getBallPos( i );
-		int x = (int)( ( roomba_pos.x / WORLD_SCALE - base_x ) * UI_MAP_SIZE );
-		int y = (int)( ( roomba_pos.y / WORLD_SCALE - base_y ) * UI_MAP_SIZE );
-		x = UI_MAP_X + ( STAGE_WIDTH_NUM - 1 ) * UI_MAP_SIZE - x;
-		y = scr_height - UI_MAP_FOOT_Y - y - UI_MAP_SIZE;
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, 0, 16 * 5, 16, 16, x + UI_MAP_SIZE, y + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
+		Vector distance = ( getAdjustPos( _roomba->getBallPos( i ), base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
+		distance = mat.multiply( distance );
+		if ( distance.getLength( ) > UI_MAP_RANGE * UI_MAP_SIZE ) {
+			break;
+		}
+		int sx = (int)( map_central_sx + distance.x );
+		int sy = (int)( map_central_sy + distance.y );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 48, 16, 16, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
 	}
 	//クリスタル表示
 	std::list< CrystalPtr > crystals = app_stage->getCrystalList( );
@@ -253,24 +261,14 @@ void SceneStage::drawMap( ) const {
 			crystal_ite++;
 			continue;
 		}
-		Vector pos = crystal->getPos( ) * ( 1.0 / WORLD_SCALE );
-		int diff_map_x = (int)( ( base_x - pos.x ) / STAGE_WIDTH_NUM );
-		int diff_map_y = (int)( ( base_y - pos.y ) / STAGE_HEIGHT_NUM );
-		pos.x += diff_map_x * STAGE_WIDTH_NUM;
-		pos.y += diff_map_y * STAGE_HEIGHT_NUM;
-		int x = (int)( ( pos.x - base_x ) * UI_MAP_SIZE );
-		int y = (int)( ( pos.y - base_y ) * UI_MAP_SIZE );
-		if ( x < 0 ) {
-			x += STAGE_WIDTH_NUM * UI_MAP_SIZE;
+		Vector distance = ( getAdjustPos( crystal->getPos( ), base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
+		distance = mat.multiply( distance );
+		if ( distance.getLength( ) > UI_MAP_RANGE * UI_MAP_SIZE ) {
+			continue;
 		}
-		if ( y < 0 ) {
-			y += STAGE_HEIGHT_NUM * UI_MAP_SIZE;
-		}
-		int sx = UI_MAP_X + ( STAGE_WIDTH_NUM - 1 ) * UI_MAP_SIZE - x;
-		int sy = scr_height - UI_MAP_FOOT_Y - y - UI_MAP_SIZE;
-		int tx = 0;
-		int ty = 64;
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, tx, ty, 16, 16, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
+		int sx = (int)( map_central_sx + distance.x );
+		int sy = (int)( map_central_sy + distance.y );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 32, 16, 16, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
 		crystal_ite++;
 	}
 }
@@ -295,4 +293,20 @@ void SceneStage::drawCountdown( ) const {
 
 	Drawer::Sprite sprite( Drawer::Transform( sx, sy, u[ _countdown / FPS ] * TW, 0, TW, TH, sx2, sy2 ), GRAPH_TIMER_NUM );
 	drawer->setSprite( sprite );
+}
+
+Vector SceneStage::getAdjustPos( Vector pos, Vector base_pos ) const {
+	while ( pos.x - base_pos.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
+		pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
+	}
+	while ( pos.x - base_pos.x < -STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
+		pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
+	}
+	while ( pos.y - base_pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
+		pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
+	}
+	while ( pos.y - base_pos.y < -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
+		pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
+	}
+	return pos;
 }
