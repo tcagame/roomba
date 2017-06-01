@@ -9,7 +9,7 @@
 static const int CURSOR_WAIT_TIME = 4;
 static const double EARTH_POS_Z = WORLD_SCALE;
 static const double STATION_POS_Z = EARTH_POS_Z + WORLD_SCALE;
-static const double CURSOR_MOVE_SPEED = 0.1;
+static const double CURSOR_MOVE_SPEED = 0.03;
 
 
 EditorStage::EditorStage( CameraPtr camera ) :
@@ -60,26 +60,13 @@ void EditorStage::loadFile( ) {
 
 void EditorStage::updateCursor( ) {
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	int cursor_x = 0;
-	int cursor_y = 0;
 	Vector mouse_pos = Mouse::getTask( )->getPos( );
+	mouse_pos.x *= -1;
 	Vector camera_dir = ( _camera->getTarget( ) - _camera->getPos( ) ).normalize( );
-	Matrix mat = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( camera_dir ), Vector( 0, -1 ).angle( camera_dir ) );
+	Matrix mat = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( camera_dir ) * -1, Vector( 0, -1 ).angle( camera_dir ) );
 	Vector mouse_vec = mat.multiply( mouse_pos - _before_mouse_pos );
 	_before_mouse_pos = mouse_pos;
-
-	if ( mouse_vec.y < -0.1 ) {
-		cursor_y++;
-	}
-	if ( mouse_vec.y > 0.1 ) {
-		cursor_y--;
-	}
-	if ( mouse_vec.x < -0.1 ) {
-		cursor_x++;
-	}
-	if ( mouse_vec.x > 0.1 ) {
-		cursor_x--;
-	}
+	_cursor_pos += mouse_vec * CURSOR_MOVE_SPEED;
 
 	if ( _cursor_pos.x < 0 ) {
 		_cursor_pos.x = 0;

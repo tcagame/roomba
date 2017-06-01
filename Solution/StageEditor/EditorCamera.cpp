@@ -2,7 +2,7 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 
-const Vector START_CAMERA_POS = Vector( 15, -15, 3 );
+const Vector START_CAMERA_POS = Vector( 15, -15, 100 );
 const Vector START_TARGET_POS = Vector( 15, 15, 0 );
 const double MOVE_SPEED = 1.0;
 const double ZOOM_SPEED = 9.0;
