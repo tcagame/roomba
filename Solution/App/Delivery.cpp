@@ -22,8 +22,9 @@ Delivery::~Delivery( ) {
 }
 
 void Delivery::draw( ViewerPtr viewer ) const {
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->drawLine( _pos, _pos - Vector( 0, 0, 4 ) );
 	if ( _have_crystal ) {
-		DrawerPtr drawer = Drawer::getTask( );
 		drawer->setModelMDL( Drawer::ModelMDL( _pos, MDL_DELIVERY ) );
 		drawer->setModelMDL( _crystal );
 	} else {

@@ -8,8 +8,8 @@
 #include <assert.h>
 
 //デバッグのためスピード遅め
-static const double SPEED = 0.1;
-static const double MAX_SPEED = 0.2;
+static const double SPEED = 0.3;
+static const double MAX_SPEED = 0.5;
 static const double SCALE_SIZE = 10;
 
 static const Vector START_POS[ 2 ] {

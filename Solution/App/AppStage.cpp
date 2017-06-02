@@ -7,14 +7,14 @@
 #include "Keyboard.h"
 #include "Delivery.h"
 
-const int REFLECTION_POWER = 5;
+const int REFLECTION_POWER = 3;
 const double DELIVERY_POS_Z = EARTH_POS_Z + WORLD_SCALE;
 const double CRYSTAL_POS_Z = crystal_size.z * -1;
 
 AppStage::AppStage( int stage_num, ViewerPtr viewer ) :
 _delivery_count( 0 ),
 _viewer( viewer ) {
-	load( 3 );//0~2:í èÌ 3:test_stage
+	load( 0 );//0~2:í èÌ 3:test_stage
 	reset( );
 }
 
@@ -449,7 +449,18 @@ int AppStage::getDeliveryCount( ) const {
 
 void AppStage::loadPhase( ) {
 	_delivery_count = 0;
-	_deliverys.clear( );
+	std::list< DeliveryPtr >::iterator ite =  _deliverys.begin( );
+	while ( ite != _deliverys.end( ) ) {
+		if ( !(*ite) ) {
+			ite++;
+			continue;
+		}
+		if ( !(*ite)->isHaveCrystal( ) ) {
+			ite = _deliverys.erase( ite );
+			continue;
+		}
+		ite++;
+	}
 	Stage::loadPhase( );
 }
 
