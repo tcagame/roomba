@@ -264,6 +264,9 @@ void Roomba::moveReflection( ) {
 			vec[ i ] = _vec_reflection[ i ].normalize( ) * speed;
 		}
 		setVecReflection( vec[ 0 ], vec[ 1 ] );
+		if ( _scaling ) {
+		//	setVecScale( Vector( ), Vector( ) );
+		}
 	} else {
 		// ball_left‚ğŠî€‚Ék¬‚·‚é
 		_scaling = true;

@@ -50,6 +50,7 @@ void Crystal::update( AppStagePtr stage ) {
 		_drop_down = false;
 	}
 
+	// バウンド
 	if ( _pos.z > _start_pos.z ) {
 		_vec.z -= DECELERATION;
 		if ( _pos.z + _vec.z < _start_pos.z ) {
@@ -57,6 +58,7 @@ void Crystal::update( AppStagePtr stage ) {
 		}
 	}
 
+	// バウンド
 	if ( _drop_down &&
 		 _pos.z == _start_pos.z &&
 		 _vec.x != 0 && _vec.y != 0 ) {
@@ -135,10 +137,11 @@ Vector Crystal::adjustHitToRoomba( Vector pos, Vector vec, double radius ) {
 	if ( distance.getLength( ) < CRYSTAL_RADIUS + radius ) {
 		tmp_vec = distance * -1;
 		tmp_vec = tmp_vec.normalize( ) * vec.getLength( );
+		// クリスタルの反射
 		_vec = ( tmp_vec - vec ) * -REFLECTION_POWER;
+		_drop_down = true;
 	}
 	vec = tmp_vec - vec;
-	// クリスタルの反射
 	return vec;
 }
 
