@@ -4,6 +4,7 @@
 
 PTR( AppStage );
 PTR( Viewer );
+PTR( Crystal );
 
 class Crystal {
 public:
@@ -18,7 +19,6 @@ public:
 	Vector getPos( ) const;
 	void setVec( Vector vec );
 	bool isDropDown( ) const;
-	void Delivery( );
 private:
 	Vector _pos;
 	const Vector _start_pos;

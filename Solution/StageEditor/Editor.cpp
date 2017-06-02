@@ -78,6 +78,6 @@ void Editor::initialize( ) {
 
 void Editor::update( ) {
 	_camera->update( );
-	_stage->update( );
+	_stage->update( _camera );
 	_stage->draw( );
 }

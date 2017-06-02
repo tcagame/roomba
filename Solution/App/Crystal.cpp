@@ -31,6 +31,7 @@ void Crystal::draw( ViewerPtr viewer ) const {
 
 void Crystal::update( AppStagePtr stage ) {
 	if ( stage->isOnDelivery( _pos ) ) {
+		_drop_down = true;
 		_finished = true;
 		return;
 	}
@@ -153,15 +154,9 @@ Vector Crystal::getPos( ) const {
 }
 
 void Crystal::setVec( Vector vec ) {
-	vec.z = 0;
 	_vec = vec;
 }
 
 bool Crystal::isDropDown( ) const {
 	return _drop_down;
-}
-
-void Crystal::Delivery( ) {
-	Vector crystal_pos = getPos( );
-	crystal_pos.z += 1.5;
 }

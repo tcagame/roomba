@@ -49,6 +49,9 @@ void Stage::load( int stage_num ) {
 void Stage::drawCrystal( ) const {
 }
 
+void Stage::drawDelivery( ) const {
+}
+
 void Stage::loadWall( ) {
 	_walls.clear( );
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
@@ -148,6 +151,7 @@ void Stage::loadPhase( ) {
 		return;
 	}
 	loadCrystal( );
+	loadDelivery( );
 	_max_station = 0;
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( _data.delivery[ _phase ][ i ] != 0 ) {
@@ -157,6 +161,10 @@ void Stage::loadPhase( ) {
 }
 
 void Stage::loadCrystal( ) {
+
+}
+
+void Stage::loadDelivery( ) {
 
 }
 

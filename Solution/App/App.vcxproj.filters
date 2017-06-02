@@ -28,6 +28,7 @@
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Viewer.cpp" />
+    <ClCompile Include="Delivery.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -56,6 +57,7 @@
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Viewer.h" />
+    <ClInclude Include="Delivery.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scene">

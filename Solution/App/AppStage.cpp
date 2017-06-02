@@ -5,13 +5,14 @@
 #include "Crystal.h"
 #include "Viewer.h"
 #include "Keyboard.h"
+#include "Delivery.h"
 
 const int REFLECTION_POWER = 5;
 const double DELIVERY_POS_Z = EARTH_POS_Z + WORLD_SCALE;
 const double CRYSTAL_POS_Z = EARTH_POS_Z - WORLD_SCALE;
 
 AppStage::AppStage( int stage_num, ViewerPtr viewer ) :
-_delivery_count( 1 ),
+_delivery_count( 0 ),
 _viewer( viewer ) {
 	load( 3 );//0~2:í èÌ 3:test_stage
 	reset( );
@@ -26,8 +27,9 @@ void AppStage::reset( ) {
 	Stage::reset( );
 }
 
-void AppStage::update( ) {
+void AppStage::update( CameraPtr camera ) {
 	updateCrystal( );
+	updateDelivery( camera );
 	debug( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
 	for ( int i = 0; i < MAX_PHASE; i++ ) {
@@ -85,7 +87,6 @@ void AppStage::updateCrystal( ) {
 			continue;
 		}
 		if ( crystal->isFinished( ) ) {
-			//crystal->Delivery( );
 			crystal.~shared_ptr( );
 			ite = _crystals.erase( ite );
 			continue;
@@ -99,6 +100,33 @@ void AppStage::updateCrystal( ) {
 	}
 }
 
+void AppStage::updateDelivery( CameraPtr camera ) {
+	if ( _deliverys.size( ) == 0 ) {
+		loadPhase( );
+	}
+	ApplicationPtr app = Application::getInstance( );
+	int scr_width = app->getWindowWidth( );
+	DrawerPtr drawer = Drawer::getTask( );
+	std::list< DeliveryPtr >::iterator ite = _deliverys.begin( );
+	int num = 0;
+	while ( ite != _deliverys.end( ) ) {
+		DeliveryPtr delivery = (*ite);
+		if ( !delivery ) {
+			ite++;
+			continue;
+		}
+		if ( delivery->isFinished( ) ) {
+			delivery.~shared_ptr( );
+			ite = _deliverys.erase( ite );
+			continue;
+		}
+		delivery->update( camera );
+		Vector pos = delivery->getPos( );
+		drawer->drawString( scr_width - 280, num * 20, "[ÉNÉäÉXÉ^Éã%2d] x:%04.1f y:%04.1f", num, pos.x, pos.y );
+		num++;
+		ite++;
+	}
+}
 
 void AppStage::loadCrystal( ) {
 	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
@@ -123,6 +151,22 @@ void AppStage::loadCrystal( ) {
 	}
 }
 
+
+void AppStage::loadDelivery( ) {
+	_delivery_count++;
+
+	std::list< DeliveryPtr >::const_iterator ite = _deliverys.begin( );
+	DATA data = getData( );
+	int phase = getPhase( );
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		if (  data.delivery[ phase ][ i ] == _delivery_count ) {
+			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, DELIVERY_POS_Z );
+			pos += Vector( STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE );
+			_deliverys.push_back( DeliveryPtr( new Delivery( pos ) ) );
+		}
+	}
+}
+
 void AppStage::drawCrystal( ) const {
 	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
 	while ( ite != _crystals.end( ) ) {
@@ -134,6 +178,19 @@ void AppStage::drawCrystal( ) const {
 		ite++;
 	}
 }
+
+void AppStage::drawDelivery( ) const {
+	std::list< DeliveryPtr >::const_iterator ite = _deliverys.begin( );
+	while ( ite != _deliverys.end( ) ) {
+		if ( !(*ite) ) {
+			ite++;
+			continue;
+		}
+		(*ite)->draw( _viewer );
+		ite++;
+	}
+}
+
 
 CrystalPtr AppStage::getHittingCrystal( Vector pos0, Vector pos1 ) const {
 	CrystalPtr hitting = CrystalPtr( );
@@ -332,17 +389,29 @@ void AppStage::loadMapData( ) {
 
 bool AppStage::isOnDelivery( Vector pos ) {
 	bool result = false;
-	int x = ( int )( pos.x / WORLD_SCALE ) % STAGE_WIDTH_NUM;
-	int y = ( int )( pos.y / WORLD_SCALE ) % STAGE_HEIGHT_NUM;
-	int idx = x + y * STAGE_WIDTH_NUM;
-
-	DATA data = getData( );
-	int phase = getPhase( );
-	if ( data.delivery[ phase ][ idx ] == _delivery_count ) {
-		data.delivery[ phase ][ idx ] = 0;
-		_delivery_count++;
-		setData( data );
+	std::list< DeliveryPtr >::iterator ite = _deliverys.begin( );
+	while ( ite != _deliverys.end( ) ) {
+		if ( !(*ite) ) {
+			ite++;
+			continue;
+		}
+		DeliveryPtr delivery = (*ite);
+		if ( delivery->isHaveCrystal( ) ) {
+			ite++;
+			continue;
+		}
+		Vector delivery_pos = delivery->getPos( );
+		delivery_pos.z = pos.z;
+		delivery_pos = getAdjustPos( delivery_pos, pos );
+		Vector distance = delivery_pos - pos;
+		if ( distance.getLength( ) > 0.8 ) {
+			ite++;
+			continue;
+		}
+		delivery->setCrystal( pos );
+		loadDelivery( );
 		result = true;
+		break;
 	}
 	return result;
 }
@@ -378,41 +447,19 @@ void AppStage::drawWall( ) const {
 	}
 }
 
-void AppStage::drawDelivery( ) const {
-	DATA data = getData( );
-	int phase = getPhase( );
-	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( data.delivery[ phase ][ i ] == _delivery_count ) {
-			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
-			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			_viewer->drawModelMDL( Drawer::ModelMDL( Vector( x, y, DELIVERY_POS_Z ), MDL_DELIVERY ) );
-		}
-	}
-}
-
 int AppStage::getDeliveryCount( ) const {
 	return _delivery_count;
 }
 
 void AppStage::loadPhase( ) {
-	_delivery_count = 1;
+	_delivery_count = 0;
+	_deliverys.clear( );
 	Stage::loadPhase( );
 }
 
 bool AppStage::isCollisionToSquare( Vector square_pos, Vector pos, double radius ) const {
 	bool result = false;
-	if ( square_pos.x - pos.x > STAGE_WIDTH_NUM ) {
-		pos.x += STAGE_WIDTH_NUM * 2;
-	}
-	if ( pos.x - square_pos.x > STAGE_WIDTH_NUM ) {
-		square_pos.x += STAGE_WIDTH_NUM * 2;
-	}
-	if ( square_pos.y - pos.y > STAGE_HEIGHT_NUM ) {
-		pos.y += STAGE_HEIGHT_NUM * 2;
-	}
-	if ( pos.y - square_pos.y > STAGE_HEIGHT_NUM ) {
-		square_pos.y += STAGE_HEIGHT_NUM * 2;
-	}
+	pos = getAdjustPos( pos, square_pos );
 	square_pos -= Vector( radius, radius );
 	double size = WORLD_SCALE / 2 + radius * 2;
 	if ( ( square_pos.x < pos.x ) &&
@@ -425,55 +472,38 @@ bool AppStage::isCollisionToSquare( Vector square_pos, Vector pos, double radius
 }
 
 bool AppStage::isCollisionToCircle( Vector circle_pos, Vector pos, double radius ) const {
-	if ( circle_pos.x - pos.x > STAGE_WIDTH_NUM ) {
-		pos.x += STAGE_WIDTH_NUM * 2;
-	}
-	if ( pos.x - circle_pos.x > STAGE_WIDTH_NUM ) {
-		circle_pos.x += STAGE_WIDTH_NUM * 2;
-	}
-	if ( circle_pos.y - pos.y > STAGE_HEIGHT_NUM ) {
-		pos.y += STAGE_HEIGHT_NUM * 2;
-	}
-	if ( pos.y - circle_pos.y > STAGE_HEIGHT_NUM ) {
-		circle_pos.y += STAGE_HEIGHT_NUM * 2;
-	}
+	pos = getAdjustPos( pos, circle_pos );
 	double circle_radius = WORLD_SCALE / 2;
 	double distance = ( circle_pos - pos ).getLength( );
 	return ( circle_radius + radius > distance );
 }
 
 bool AppStage::isCollisionToL( Vector pos_outside, Vector pos_inside, Vector pos, double radius ) const {
-	if ( pos_outside.x - pos.x > STAGE_WIDTH_NUM ) {
-		pos.x += STAGE_WIDTH_NUM * 2;
-	}
-	if ( pos.x - pos_outside.x > STAGE_WIDTH_NUM ) {
-		pos_outside.x += STAGE_WIDTH_NUM * 2;
-	}
-	if ( pos_outside.y - pos.y > STAGE_HEIGHT_NUM ) {
-		pos.y += STAGE_HEIGHT_NUM * 2;
-	}
-	if ( pos.y - pos_outside.y > STAGE_HEIGHT_NUM ) {
-		pos_outside.y += STAGE_HEIGHT_NUM * 2;
-	}
+	pos = getAdjustPos( pos, pos_outside );
 	if ( fabs( pos_outside.x - pos.x ) > radius * 2 ||
 		 fabs( pos_outside.y - pos.y ) > radius * 2 ) {
 		return false;
 	}
 
-	if ( pos_inside.x - pos.x > STAGE_WIDTH_NUM ) {
-		pos.x += STAGE_WIDTH_NUM * 2;
-	}
-	if ( pos.x - pos_inside.x > STAGE_WIDTH_NUM ) {
-		pos_inside.x += STAGE_WIDTH_NUM * 2;
-	}
-	if ( pos_inside.y - pos.y > STAGE_HEIGHT_NUM ) {
-		pos.y += STAGE_HEIGHT_NUM * 2;
-	}
-	if ( pos.y - pos_inside.y > STAGE_HEIGHT_NUM ) {
-		pos_inside.y += STAGE_HEIGHT_NUM * 2;
-	}
+	pos = getAdjustPos( pos, pos_inside );
 
 	double distance = ( pos_inside - pos ).getLength( );
 	double size = WORLD_SCALE / 2;
 	return ( size - radius < distance );
+}
+
+Vector AppStage::getAdjustPos( Vector pos, Vector base_pos ) const {
+	while ( pos.x - base_pos.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
+		pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
+	}
+	while ( pos.x - base_pos.x < -STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
+		pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
+	}
+	while ( pos.y - base_pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
+		pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
+	}
+	while ( pos.y - base_pos.y < -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
+		pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
+	}
+	return pos;
 }
