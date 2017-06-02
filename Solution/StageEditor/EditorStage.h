@@ -7,7 +7,7 @@ public:
 	EditorStage( CameraPtr camera );
 	virtual ~EditorStage( );
 public:
-	void update( );
+	void update( CameraPtr camera );
 	void draw( ) const;
 private:
 	enum EDIT_MODE {

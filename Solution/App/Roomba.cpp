@@ -211,8 +211,9 @@ void Roomba::holdCrystal( StagePtr stage ) {
 			_crystal = CrystalPtr( );
 			return;
 		}
-		Vector central_pos = getCentralPos( );
 		Vector crystal_pos = _crystal->getPos( );
+		Vector central_pos = getCentralPos( );
+		central_pos.z = crystal_pos.z;
 		Vector distance = central_pos - crystal_pos;
 		if ( distance.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
 			central_pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
@@ -251,6 +252,7 @@ void Roomba::moveReflection( ) {
 	if ( _state != MOVE_STATE_REFLECTION ) {
 		_scaling = false;
 		setVecScale( Vector( ), Vector( ) );
+		setVecScale( Vector( ), Vector( ) );
 		return;
 	}
 	if ( _vec_reflection[ 0 ] != Vector( ) ||
@@ -264,9 +266,6 @@ void Roomba::moveReflection( ) {
 			vec[ i ] = _vec_reflection[ i ].normalize( ) * speed;
 		}
 		setVecReflection( vec[ 0 ], vec[ 1 ] );
-		if ( _scaling ) {
-		//	setVecScale( Vector( ), Vector( ) );
-		}
 	} else {
 		// ball_leftÇäÓèÄÇ…èkè¨Ç∑ÇÈ
 		_scaling = true;
