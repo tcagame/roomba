@@ -25,7 +25,6 @@ private:
 	Vector _vec;
 	bool _finished;
 	bool _drop_down;
-	int _rebound;
 	MDL _type;
 };
 

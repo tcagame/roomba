@@ -252,6 +252,7 @@ void Roomba::moveReflection( ) {
 	if ( _state != MOVE_STATE_REFLECTION ) {
 		_scaling = false;
 		setVecScale( Vector( ), Vector( ) );
+		setVecScale( Vector( ), Vector( ) );
 		return;
 	}
 	if ( _vec_reflection[ 0 ] != Vector( ) ||
@@ -265,9 +266,6 @@ void Roomba::moveReflection( ) {
 			vec[ i ] = _vec_reflection[ i ].normalize( ) * speed;
 		}
 		setVecReflection( vec[ 0 ], vec[ 1 ] );
-		if ( _scaling ) {
-		//	setVecScale( Vector( ), Vector( ) );
-		}
 	} else {
 		// ball_leftÇäÓèÄÇ…èkè¨Ç∑ÇÈ
 		_scaling = true;

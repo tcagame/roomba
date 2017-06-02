@@ -21,5 +21,6 @@ private:
 	bool _reflection;
 	Vector _pos;
 	Vector _vec;
+	Vector _before_vec;
 };
 

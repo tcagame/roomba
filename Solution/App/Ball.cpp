@@ -14,6 +14,7 @@ Ball::~Ball( ) {
 }
 
 void Ball::update( const Vector& vec, StagePtr stage ) {
+	_before_vec = _vec;
 	_vec = vec;
 
 	AppStagePtr stage_ptr = std::dynamic_pointer_cast< AppStage >( stage );
@@ -23,7 +24,7 @@ void Ball::update( const Vector& vec, StagePtr stage ) {
 		_reflection = true;
 	}
 	_vec = adjust_vec;
-	if ( _vec == Vector( ) ) {
+	if ( _vec.normalize( ) != _before_vec.normalize( ) ) {
 		_reflection = false;
 	}
 	_vec.z = 0;
