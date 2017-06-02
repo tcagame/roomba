@@ -1,12 +1,19 @@
 #pragma once
+#include "mathmatics.h"
 
-static const double WORLD_SCALE = 2;
-static const double ROOMBA_SCALE = 0.1;
-static const double STAGE_MODEL_SIZE = 4;
 static const int MAX_PHASE = 10;
 static const int STAGE_WIDTH_NUM = 40;
 static const int STAGE_HEIGHT_NUM = 35;
-const double EARTH_POS_Z = WORLD_SCALE;
+static const double WORLD_SCALE = 2;
+static const double ROOMBA_SCALE = 0.1;
+static const double STAGE_MODEL_SIZE = 4;
+static const double EARTH_POS_Z = WORLD_SCALE;
+static const Vector delivery_size = Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE / 4 ); 
+static const Vector crystal_size = Vector( WORLD_SCALE / 4, WORLD_SCALE / 4, WORLD_SCALE / 4 ); 
+static const Vector roomba_size = Vector( WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE );
+static const Vector earth_size = Vector( WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_WIDTH_NUM, WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_HEIGHT_NUM, WORLD_SCALE / STAGE_MODEL_SIZE );
+static const Vector stage_size = Vector( WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE );
+static const Vector station_size = Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE ); 
 
 enum MDL {
 	MDL_NONE,

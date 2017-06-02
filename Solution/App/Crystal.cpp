@@ -6,7 +6,7 @@
 #include "Viewer.h"
 
 static const double REFLECTION_POWER = 5.0;
-static const double CRYSTAL_RADIUS = 0.5;
+static const double CRYSTAL_RADIUS = crystal_size.x / 2;
 static const double MAX_SPEED = 0.9;
 static const double DECELERATION = 0.01;
 static const double BOUND_POW = 0.1;
