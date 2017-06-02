@@ -287,6 +287,9 @@ void Roomba::drawLaser( ) const {
 	// レーザー
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
+#if 1
+
+#else
 	const int ratio = 10; // effekseerのツールで作った際の大きさ
 	double size = ( ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).getLength( ) ) / ratio; // 大きさは左右どちらからでも変わらないため左を基準に取る
 	double angle_left = ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).angle( Vector( 1, 0 ) );
@@ -300,6 +303,7 @@ void Roomba::drawLaser( ) const {
 		angle_right = PI2 - angle_right;
 	}
 	drawer->setEffect( Drawer::Effect( EFFECT_LASER, _balls[ BALL_RIGHT ]->getPos( ), size, Vector( 0, 0, angle_right ) ) );
+#endif
 }
 
 Vector Roomba::getCentralPos( ) const {

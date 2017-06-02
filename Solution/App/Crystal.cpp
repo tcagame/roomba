@@ -5,9 +5,10 @@
 #include "Roomba.h"
 #include "Viewer.h"
 
+static const double REFLECTION_POWER = 5.0;
 static const double CRYSTAL_RADIUS = 0.5;
 static const double MAX_SPEED = 0.9;
-static const double DECELERATION = 0.2;
+static const double DECELERATION = 0.01;
 
 Crystal::Crystal( Vector pos, MDL type ) :
 _pos( pos ),
@@ -101,8 +102,6 @@ bool Crystal::isHitting( Vector pos0, Vector pos1 ) {
 }
 
 Vector Crystal::adjustHitToRoomba( Vector pos, Vector vec, double radius ) {
-	bool hitting = false;
-
 	int roomba_map_x = (int)( pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
 	int roomba_map_y = (int)( pos.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
 	int crystal_map_x = (int)( _pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
@@ -116,10 +115,13 @@ Vector Crystal::adjustHitToRoomba( Vector pos, Vector vec, double radius ) {
 	future_pos.z = _pos.z;
 	Vector distance = future_pos - tmp_pos;//ボール→クリスタル
 	if ( distance.getLength( ) < CRYSTAL_RADIUS + radius ) {
-		Vector tmp_vec = distance * -1;
-		vec = tmp_vec.normalize( ) * vec.getLength( );
+		tmp_vec = distance * -1;
+		tmp_vec = tmp_vec.normalize( ) * vec.getLength( );
+		_vec = ( tmp_vec - vec ) * -REFLECTION_POWER;
 	}
-	return tmp_vec - vec;
+	vec = tmp_vec - vec;
+	// クリスタルの反射
+	return vec;
 }
 
 bool Crystal::isFinished( ) const {
