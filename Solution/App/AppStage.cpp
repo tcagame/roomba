@@ -449,7 +449,18 @@ int AppStage::getDeliveryCount( ) const {
 
 void AppStage::loadPhase( ) {
 	_delivery_count = 0;
-	_deliverys.clear( );
+	std::list< DeliveryPtr >::iterator ite =  _deliverys.begin( );
+	while ( ite != _deliverys.end( ) ) {
+		if ( !(*ite) ) {
+			ite++;
+			continue;
+		}
+		if ( !(*ite)->isHaveCrystal( ) ) {
+			ite = _deliverys.erase( ite );
+			continue;
+		}
+		ite++;
+	}
 	Stage::loadPhase( );
 }
 
