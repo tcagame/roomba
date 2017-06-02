@@ -2,6 +2,7 @@
 #include "AppStage.h"
 
 static const double BALL_RADIUS = WORLD_SCALE * ROOMBA_SCALE;
+static const Vector adjust( -ROOMBA_SCALE, 1 - BALL_RADIUS );
 
 Ball::Ball( const Vector& pos ) :
 _pos( pos ),
@@ -31,7 +32,7 @@ void Ball::update( const Vector& vec, StagePtr stage ) {
 
 void Ball::draw( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::ModelMDL model( _pos + Vector( 0, BALL_RADIUS ), MDL_BALL );
+	Drawer::ModelMDL model( _pos + adjust, MDL_BALL );
 	drawer->setModelMDL( model );
 }
 
