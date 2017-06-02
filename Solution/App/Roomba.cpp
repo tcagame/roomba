@@ -11,6 +11,7 @@
 static const double SPEED = 0.3;
 static const double MAX_SPEED = 0.5;
 static const double SCALE_SIZE = 10;
+static const double MIN_SCALE = 5;
 
 static const Vector START_POS[ 2 ] {
 	( Vector( STAGE_WIDTH_NUM + 17, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, roomba_size.z ) ),
@@ -187,6 +188,7 @@ void Roomba::changeState( CameraPtr camera ) {
 	}
 	double scale = ( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).getLength( );
 	if ( scale > SCALE_SIZE ||
+		 scale < MIN_SCALE ||
 		 _balls[ BALL_LEFT ]->isReflection( ) ||
 		 _balls[ BALL_RIGHT ]->isReflection( ) ) {
 		_vec_reflection[ 0 ] = _balls[ 0 ]->getVec( );
@@ -271,7 +273,13 @@ void Roomba::moveReflection( ) {
 		_scaling = true;
 		Vector dir = _balls[ BALL_RIGHT ]->getPos( ) - _balls[ BALL_LEFT ]->getPos( );
 		Vector vec = dir.normalize( ) * SPEED;
-		setVecScale( vec, vec * -1 );
+		double scale = ( _balls[ BALL_RIGHT ]->getPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).getLength( );
+		if ( scale > SCALE_SIZE ) {
+			setVecScale( vec, vec * -1 );
+		}
+		if ( scale < MIN_SCALE ) {
+			setVecScale( vec * -1, vec );
+		}
 	}
 }
 
