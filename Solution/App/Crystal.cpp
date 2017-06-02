@@ -7,7 +7,7 @@
 
 static const double CRYSTAL_RADIUS = 0.5;
 static const double MAX_SPEED = 0.9;
-static const double DECELERATION = 0.2;
+static const double DECELERATION = 0.01;
 
 Crystal::Crystal( Vector pos, MDL type ) :
 _pos( pos ),
@@ -29,6 +29,7 @@ void Crystal::draw( ViewerPtr viewer ) const {
 void Crystal::update( AppStagePtr stage ) {
 	_drop_down = false;
 	if ( stage->isOnDelivery( _pos ) ) {
+		_drop_down = true;
 		_finished = true;
 		return;
 	}
@@ -131,15 +132,9 @@ Vector Crystal::getPos( ) const {
 }
 
 void Crystal::setVec( Vector vec ) {
-	vec.z = 0;
 	_vec = vec;
 }
 
 bool Crystal::isDropDown( ) const {
 	return _drop_down;
-}
-
-void Crystal::Delivery( ) {
-	Vector crystal_pos = getPos( );
-	crystal_pos.z += 1.5;
 }

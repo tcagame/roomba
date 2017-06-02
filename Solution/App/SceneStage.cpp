@@ -38,8 +38,8 @@ _link_time( 0 ) {
 	drawer->loadGraph( GRAPH_PHASE, "UI/phase.png" );
 	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
-	Matrix size = Matrix::makeTransformScaling( Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE ) ); 
-	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", size );
+	Matrix delivery_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE / 4 ) ); 
+	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", delivery_size );
 
 	Matrix crystal_size = Matrix::makeTransformScaling( Vector( WORLD_SCALE / 4, WORLD_SCALE / 4, WORLD_SCALE / 4 ) ); 
 	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/purple.jpg", crystal_size );
@@ -124,7 +124,7 @@ void SceneStage::countdown( ) {
 
 void SceneStage::updateGame( ) {
 	_roomba->update( _stage, _camera );
-	_stage->update( );
+	_stage->update( _camera );
 	_viewer->update( _roomba->getCentralPos( ) );
 	_timer->update( );
 	updateTime( );

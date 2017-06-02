@@ -162,6 +162,7 @@
     <ClCompile Include="AppStage.cpp" />
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Crystal.cpp" />
+    <ClCompile Include="Delivery.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Roomba.cpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="AppStage.h" />
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Crystal.h" />
+    <ClInclude Include="Delivery.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Roomba.h" />
     <ClInclude Include="Scene.h" />

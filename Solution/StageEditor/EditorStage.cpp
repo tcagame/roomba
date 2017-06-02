@@ -23,7 +23,7 @@ _camera( camera ) {
 EditorStage::~EditorStage( ) {
 }
 
-void EditorStage::update( ) {
+void EditorStage::update( CameraPtr camera ) {
 	updateCursor( );
 	updateMode( );
 	edit( );

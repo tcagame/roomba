@@ -5,6 +5,7 @@
 #include "define.h"
 
 PTR( Stage );
+PTR( Camera );
 
 class Stage {
 public:
@@ -17,7 +18,7 @@ public:
 	Stage( );
 	virtual ~Stage( );
 public:
-	virtual void update( ) = 0;
+	virtual void update( CameraPtr camera ) = 0;
 	virtual void draw( ) const = 0;
 	bool isFinished( ) const;
 	virtual void reset( );
@@ -34,14 +35,15 @@ protected:
 	void drawModel( ) const;
 	void load( int stage_num );
 	virtual void drawCrystal( ) const;
+	virtual void drawDelivery( ) const;
 	void loadWall( );
 	virtual void loadPhase( );
 	virtual void loadCrystal( );
+	virtual void loadDelivery( );
 	const std::vector< Drawer::ModelMDL >& getWalls( ) const;
 private:
 	virtual void drawEarth( ) const = 0;
 	virtual void drawWall( ) const = 0;
-	virtual void drawDelivery( ) const = 0;
 private:
 	std::vector< Drawer::ModelMDL > _walls;
 	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _earth;
