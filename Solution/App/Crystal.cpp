@@ -16,8 +16,7 @@ _pos( pos ),
 _start_pos( pos ),
 _finished( false ),
 _drop_down( false ),
-_type( type ),
-_rebound( 0 ) {
+_type( type ) {
 
 }
 
