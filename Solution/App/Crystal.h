@@ -21,9 +21,11 @@ public:
 	bool isDropDown( ) const;
 private:
 	Vector _pos;
+	const Vector _start_pos;
 	Vector _vec;
 	bool _finished;
 	bool _drop_down;
+	int _rebound;
 	MDL _type;
 };
 

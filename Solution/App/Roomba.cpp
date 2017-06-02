@@ -13,8 +13,8 @@ static const double MAX_SPEED = 0.2;
 static const double SCALE_SIZE = 10;
 
 static const Vector START_POS[ 2 ] {
-	( Vector( STAGE_WIDTH_NUM + 15, STAGE_HEIGHT_NUM + 20 ) * WORLD_SCALE + Vector( 0, 0, EARTH_POS_Z - WORLD_SCALE / 4 * 3 ) ),
-	( Vector( STAGE_WIDTH_NUM + 20, STAGE_HEIGHT_NUM + 20 ) * WORLD_SCALE + Vector( 0, 0, EARTH_POS_Z - WORLD_SCALE / 4 * 3 ) )
+	( Vector( STAGE_WIDTH_NUM + 17, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, EARTH_POS_Z - WORLD_SCALE / 4 * 3 ) ),
+	( Vector( STAGE_WIDTH_NUM + 20, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, EARTH_POS_Z - WORLD_SCALE / 4 * 3 ) )
 };
 
 Roomba::Roomba( ) :
@@ -265,6 +265,9 @@ void Roomba::moveReflection( ) {
 			vec[ i ] = _vec_reflection[ i ].normalize( ) * speed;
 		}
 		setVecReflection( vec[ 0 ], vec[ 1 ] );
+		if ( _scaling ) {
+		//	setVecScale( Vector( ), Vector( ) );
+		}
 	} else {
 		// ball_leftを基準に縮小する
 		_scaling = true;
@@ -288,6 +291,9 @@ void Roomba::drawLaser( ) const {
 	// レーザー
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
+#if 1
+
+#else
 	const int ratio = 10; // effekseerのツールで作った際の大きさ
 	double size = ( ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).getLength( ) ) / ratio; // 大きさは左右どちらからでも変わらないため左を基準に取る
 	double angle_left = ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).angle( Vector( 1, 0 ) );
@@ -301,6 +307,7 @@ void Roomba::drawLaser( ) const {
 		angle_right = PI2 - angle_right;
 	}
 	drawer->setEffect( Drawer::Effect( EFFECT_LASER, _balls[ BALL_RIGHT ]->getPos( ), size, Vector( 0, 0, angle_right ) ) );
+#endif
 }
 
 Vector Roomba::getCentralPos( ) const {

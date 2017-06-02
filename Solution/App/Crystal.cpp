@@ -5,15 +5,19 @@
 #include "Roomba.h"
 #include "Viewer.h"
 
+static const double REFLECTION_POWER = 5.0;
 static const double CRYSTAL_RADIUS = 0.5;
 static const double MAX_SPEED = 0.9;
 static const double DECELERATION = 0.01;
+static const double BOUND_POW = 0.1;
 
 Crystal::Crystal( Vector pos, MDL type ) :
 _pos( pos ),
+_start_pos( pos ),
 _finished( false ),
 _drop_down( false ),
-_type( type ) {
+_type( type ),
+_rebound( 0 ) {
 
 }
 
@@ -27,7 +31,6 @@ void Crystal::draw( ViewerPtr viewer ) const {
 }
 
 void Crystal::update( AppStagePtr stage ) {
-	_drop_down = false;
 	if ( stage->isOnDelivery( _pos ) ) {
 		_drop_down = true;
 		_finished = true;
@@ -45,12 +48,30 @@ void Crystal::update( AppStagePtr stage ) {
 		_vec -= _vec.normalize( ) * DECELERATION;
 	} else {
 		_vec = Vector( );
+		_drop_down = false;
+	}
+
+	// バウンド
+	if ( _pos.z > _start_pos.z ) {
+		_vec.z -= DECELERATION;
+		if ( _pos.z + _vec.z < _start_pos.z ) {
+			_vec.z = _start_pos.z - _pos.z;
+		}
+	}
+
+	// バウンド
+	if ( _drop_down &&
+		 _pos.z == _start_pos.z &&
+		 _vec.x != 0 && _vec.y != 0 ) {
+		_vec.z = BOUND_POW;
 	}
 
 	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
 	if ( ( adjust - _vec ).getLength( ) > 0.1 ) {
 		_vec = adjust;
 		_drop_down = true;
+		// バウンド
+		_vec.z = BOUND_POW;
 	}
 
 	_pos += _vec;
@@ -102,8 +123,6 @@ bool Crystal::isHitting( Vector pos0, Vector pos1 ) {
 }
 
 Vector Crystal::adjustHitToRoomba( Vector pos, Vector vec, double radius ) {
-	bool hitting = false;
-
 	int roomba_map_x = (int)( pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
 	int roomba_map_y = (int)( pos.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
 	int crystal_map_x = (int)( _pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
@@ -117,10 +136,14 @@ Vector Crystal::adjustHitToRoomba( Vector pos, Vector vec, double radius ) {
 	future_pos.z = _pos.z;
 	Vector distance = future_pos - tmp_pos;//ボール→クリスタル
 	if ( distance.getLength( ) < CRYSTAL_RADIUS + radius ) {
-		Vector tmp_vec = distance * -1;
-		vec = tmp_vec.normalize( ) * vec.getLength( );
+		tmp_vec = distance * -1;
+		tmp_vec = tmp_vec.normalize( ) * vec.getLength( );
+		// クリスタルの反射
+		_vec = ( tmp_vec - vec ) * -REFLECTION_POWER;
+		_drop_down = true;
 	}
-	return tmp_vec - vec;
+	vec = tmp_vec - vec;
+	return vec;
 }
 
 bool Crystal::isFinished( ) const {
