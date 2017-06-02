@@ -9,12 +9,15 @@ static const double REFLECTION_POWER = 5.0;
 static const double CRYSTAL_RADIUS = 0.5;
 static const double MAX_SPEED = 0.9;
 static const double DECELERATION = 0.01;
+static const double BOUND_POW = 0.1;
 
 Crystal::Crystal( Vector pos, MDL type ) :
 _pos( pos ),
+_start_pos( pos ),
 _finished( false ),
 _drop_down( false ),
-_type( type ) {
+_type( type ),
+_rebound( 0 ) {
 
 }
 
@@ -28,7 +31,6 @@ void Crystal::draw( ViewerPtr viewer ) const {
 }
 
 void Crystal::update( AppStagePtr stage ) {
-	_drop_down = false;
 	if ( stage->isOnDelivery( _pos ) ) {
 		_finished = true;
 		return;
@@ -45,12 +47,28 @@ void Crystal::update( AppStagePtr stage ) {
 		_vec -= _vec.normalize( ) * DECELERATION;
 	} else {
 		_vec = Vector( );
+		_drop_down = false;
+	}
+
+	if ( _pos.z > _start_pos.z ) {
+		_vec.z -= DECELERATION;
+		if ( _pos.z + _vec.z < _start_pos.z ) {
+			_vec.z = _start_pos.z - _pos.z;
+		}
+	}
+
+	if ( _drop_down &&
+		 _pos.z == _start_pos.z &&
+		 _vec.x != 0 && _vec.y != 0 ) {
+		_vec.z = BOUND_POW;
 	}
 
 	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
 	if ( ( adjust - _vec ).getLength( ) > 0.1 ) {
 		_vec = adjust;
 		_drop_down = true;
+		// ƒoƒEƒ“ƒh
+		_vec.z = BOUND_POW;
 	}
 
 	_pos += _vec;
