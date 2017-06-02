@@ -104,8 +104,6 @@ void AppStage::updateDelivery( CameraPtr camera ) {
 	if ( _deliverys.size( ) == 0 ) {
 		loadPhase( );
 	}
-	ApplicationPtr app = Application::getInstance( );
-	int scr_width = app->getWindowWidth( );
 	DrawerPtr drawer = Drawer::getTask( );
 	std::list< DeliveryPtr >::iterator ite = _deliverys.begin( );
 	int num = 0;
@@ -121,8 +119,6 @@ void AppStage::updateDelivery( CameraPtr camera ) {
 			continue;
 		}
 		delivery->update( camera );
-		Vector pos = delivery->getPos( );
-		drawer->drawString( scr_width - 280, num * 20, "[ƒNƒŠƒXƒ^ƒ‹%2d] x:%04.1f y:%04.1f", num, pos.x, pos.y );
 		num++;
 		ite++;
 	}

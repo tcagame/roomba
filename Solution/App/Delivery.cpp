@@ -3,10 +3,10 @@
 #include "Crystal.h"
 #include "Camera.h"
 
-static const double MOVE_SPEED = 0.4;
+static const double MOVE_SPEED = 0.1;
 static const double START_POS_Z = 20;
 static const double MIN_POS_Z = 2;
-static const double FOOT = 1;
+static const double FOOT = 3;
 Delivery::Delivery( Vector target ) :
 _target( target ),
 _finished( false ),
@@ -22,13 +22,12 @@ Delivery::~Delivery( ) {
 }
 
 void Delivery::draw( ViewerPtr viewer ) const {
-	DrawerPtr drawer = Drawer::getTask( );
-	drawer->drawLine( _pos, _pos - Vector( 0, 0, 10 ) );
-
-	//drawer->setModelMDL( Drawer::ModelMDL( _pos, MDL_DELIVERY ) );
-	viewer->drawModelMDL( Drawer::ModelMDL( _pos, MDL_DELIVERY ) );
 	if ( _have_crystal ) {
-		viewer->drawModelMDL( _crystal );
+		DrawerPtr drawer = Drawer::getTask( );
+		drawer->setModelMDL( Drawer::ModelMDL( _pos, MDL_DELIVERY ) );
+		drawer->setModelMDL( _crystal );
+	} else {
+		viewer->drawModelMDL( Drawer::ModelMDL( _pos, MDL_DELIVERY ) );
 	}
 }
 
