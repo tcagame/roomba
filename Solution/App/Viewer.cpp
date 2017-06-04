@@ -1,6 +1,5 @@
 #include "Viewer.h"
 
-static const int VIEW_RANGE = 15;
 static const Vector OFFSET[ 5 ] = {
 	Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
 	Vector( STAGE_WIDTH_NUM * WORLD_SCALE, 0, 0 ),
