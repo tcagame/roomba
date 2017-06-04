@@ -87,25 +87,23 @@ void Roomba::acceleration( ) {
 }
 
 void Roomba::accelTranslation( ) {
+	_trans_speed.x += _move_dir.x * ACCEL_SPEED;
+	_trans_speed.y += _move_dir.y * ACCEL_SPEED;
 	if ( _move_dir.x > 0 ) {
-		_trans_speed.x += ACCEL_SPEED;
 		if ( _trans_speed.x > MAX_TRANS_SPEED ) {
 			_trans_speed.x = MAX_TRANS_SPEED;
 		}
 	} else if ( _move_dir.x < 0 ) {
-		_trans_speed.x -= ACCEL_SPEED;
 		if ( _trans_speed.x < -MAX_TRANS_SPEED ) {
 			_trans_speed.x = -MAX_TRANS_SPEED;
 		}
 	}
 
 	if ( _move_dir.y > 0 ) {
-		_trans_speed.y += ACCEL_SPEED;
 		if ( _trans_speed.y > MAX_TRANS_SPEED ) {
 			_trans_speed.y = MAX_TRANS_SPEED;
 		}
 	} else if ( _move_dir.y < 0 ) {
-		_trans_speed.y -= ACCEL_SPEED;
 		if ( _trans_speed.y < -MAX_TRANS_SPEED ) {
 			_trans_speed.y = -MAX_TRANS_SPEED;
 		}
@@ -114,12 +112,12 @@ void Roomba::accelTranslation( ) {
 
 void Roomba::accelRotation( DIR dir ) {
 	if ( dir == DIR_LEFT ) {
-		_rot_speed += ACCEL_SPEED;
+		_rot_speed += _move_dir.y * ACCEL_SPEED;
 		if ( _rot_speed > MAX_ROT_SPEED ) {
 			_rot_speed = MAX_ROT_SPEED;
 		}
 	} else {
-		_rot_speed += -ACCEL_SPEED;
+		_rot_speed += _move_dir.y * ACCEL_SPEED;
 		if ( _rot_speed < -MAX_ROT_SPEED ) {
 			_rot_speed = -MAX_ROT_SPEED;
 		}
@@ -127,25 +125,33 @@ void Roomba::accelRotation( DIR dir ) {
 }
 
 void Roomba::brakeTranslation( ) {
+	double deceletion_trans_speed_x = DECELETION_TRANS_SPEED;
+	double deceletion_trans_speed_y = DECELETION_TRANS_SPEED;
+	if ( fabs( _move_dir.x ) < 0.1 && fabs( _move_dir.y ) > 0.1 ) {
+		deceletion_trans_speed_x = ACCEL_SPEED / 2;
+	}
+	if ( fabs( _move_dir.y ) < 0.1 && fabs( _move_dir.x ) > 0.1 ) {
+		deceletion_trans_speed_y = ACCEL_SPEED / 2;
+	}
 	if ( _trans_speed.x > 0 ) {
-		_trans_speed.x -= DECELETION_TRANS_SPEED;
+		_trans_speed.x -= deceletion_trans_speed_x;
 		if ( _trans_speed.x < 0 ) {
 			_trans_speed.x = 0;
 		}
 	} else {
-		_trans_speed.x += DECELETION_TRANS_SPEED;
+		_trans_speed.x += deceletion_trans_speed_x;
 		if ( _trans_speed.x > 0 ) {
 			_trans_speed.x = 0;
 		}
 	}
 
 	if ( _trans_speed.y > 0 ) {
-		_trans_speed.y -= DECELETION_TRANS_SPEED;
+		_trans_speed.y -= deceletion_trans_speed_y;
 		if ( _trans_speed.y < 0 ) {
 			_trans_speed.y = 0;
 		}
 	} else {
-		_trans_speed.y += DECELETION_TRANS_SPEED;
+		_trans_speed.y += deceletion_trans_speed_y;
 		if ( _trans_speed.y > 0 ) {
 			_trans_speed.y = 0;
 		}
@@ -168,16 +174,18 @@ void Roomba::brakeRotation( ) {
 
 void Roomba::changeState( CameraPtr camera ) {
 	DevicePtr device = Device::getTask( );
-	Vector right_stick( device->getRightDirX( ), device->getRightDirY( ) );
-	Vector left_stick( device->getDirX( ), device->getDirY( ) );
+	Vector right_stick = Vector( device->getRightDirX( ), device->getRightDirY( ) ) * 0.002;
+	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) ) * 0.002;
 
 	MOVE_STATE state = _state;
 	_move_dir = Vector( );
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		state = MOVE_STATE_ROTATION_RIGHT;
+		_move_dir = left_stick - right_stick;
 	}
 	if ( right_stick.y < 0 && left_stick.y > 0 ) {
 		state = MOVE_STATE_ROTATION_LEFT;
+		_move_dir = left_stick - right_stick;
 	}
 	if (  right_stick.y > 0 && left_stick.y > 0 ||
 		  right_stick.y < 0 && left_stick.y < 0 ||
@@ -187,7 +195,7 @@ void Roomba::changeState( CameraPtr camera ) {
 		Vector dir = camera->getDir( );
 		dir.z = 0;
 		Matrix mat = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( dir ) * -1, Vector( 0, -1 ).angle( dir ) );
-		_move_dir = mat.multiply( right_stick + left_stick ).normalize( );
+		_move_dir = mat.multiply( right_stick + left_stick );
 	}
 	if ( right_stick == Vector( ) ||
 		 left_stick == Vector( ) ) {
