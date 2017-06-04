@@ -157,8 +157,8 @@ void SceneStage::updatePlay( ) {
 }
 
 void SceneStage::updateLink( ) {
-	//if ( _roomba->isScaling( ) ) {
-	if ( 1 ) {	
+	if ( _roomba->isScaling( ) ) {
+	//if ( 1 ) {	
 		_link_time++;
 		if ( _link_time > MAX_LINK_TIME ) {
 			_link_time = MAX_LINK_TIME;
