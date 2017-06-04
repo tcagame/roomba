@@ -40,14 +40,17 @@ void Ball::update( const Vector& vec, StagePtr stage ) {
 
 void Ball::draw( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	Matrix pos = Matrix::makeTransformTranslation( _pos );
+	Drawer::ModelMV1 model( getMat( _pos ), 0, 0, 0 );
+	drawer->setModelMV1( model );
+}
+
+Matrix Ball::getMat( const Vector& pos ) const {
+	Matrix mat_pos = Matrix::makeTransformTranslation( pos );
 	Matrix scale = Matrix::makeTransformScaling( BALL_SIZE );
 	Matrix mat;
 	mat = _rot.multiply( scale );
-	mat = mat.multiply( pos );
-
-	Drawer::ModelMV1 model( mat, 0, 0, 0 );
-	drawer->setModelMV1( model );
+	mat = mat.multiply( mat_pos );
+	return mat;
 }
 
 Vector Ball::getPos( ) const {

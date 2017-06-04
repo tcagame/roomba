@@ -410,3 +410,11 @@ Vector Roomba::getDir( ) const {
 bool Roomba::isScaling( ) const {
 	return _scaling;
 }
+
+Matrix Roomba::getMat( const int ball_num, const Vector& pos ) const {
+	if ( ball_num != 0 &&
+		 ball_num != 1 ) {
+		return Matrix( );
+		}
+	return _balls[ ball_num ]->getMat( pos );
+}

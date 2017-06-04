@@ -29,6 +29,7 @@
     </ClCompile>
     <ClCompile Include="Viewer.cpp" />
     <ClCompile Include="Delivery.cpp" />
+    <ClCompile Include="RoombaDelivery.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -58,6 +59,7 @@
     </ClInclude>
     <ClInclude Include="Viewer.h" />
     <ClInclude Include="Delivery.h" />
+    <ClInclude Include="RoombaDelivery.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scene">
