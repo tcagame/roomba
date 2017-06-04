@@ -45,7 +45,8 @@ _link_time( 0 ) {
 	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/purple.jpg", crystal_scale );
 		
 	Matrix roomba_scale = Matrix::makeTransformScaling( roomba_size );
-	drawer->loadMDLModel( MDL_BALL, "Model/Roomba/roomba.mdl", "Model/Roomba/texture.jpg", roomba_scale );
+	//drawer->loadMDLModel( MDL_BALL, "Model/Roomba/roomba.mdl", "Model/Roomba/texture.jpg", roomba_scale );
+	drawer->loadMV1Model( 0, "Model/Roomba/roomba.mv1" );
 	
 	Matrix earth_scale = Matrix::makeTransformScaling( earth_size );
 	drawer->loadMDLModel( MDL_EARTH, "Model/Stage/earth.mdl", "Model/Stage/earth.jpg", earth_scale );
