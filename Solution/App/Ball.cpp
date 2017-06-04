@@ -31,20 +31,18 @@ void Ball::update( const Vector& vec, StagePtr stage ) {
 	}
 	_vec.z = 0;
 	_pos += _vec;
-}
-
-void Ball::draw( ) {
-	DrawerPtr drawer = Drawer::getTask( );
-	//Drawer::ModelMDL model( _pos + adjust, MDL_BALL );
-	//drawer->setModelMDL( model );
 	Matrix adjust_rot = Matrix::makeTransformRotation( Vector( 0, 0, -1 ), PI / 2 );
 	Vector axis = adjust_rot.multiply( _vec.normalize( ) );
 	axis = _rot.multiply( axis );
+	Matrix rot = Matrix::makeTransformRotation( axis, BALL_MODEL_ROT_SPEED * _vec.getLength( ) );
+	_rot = _rot.multiply( rot );
+}
+
+void Ball::draw( ) const {
+	DrawerPtr drawer = Drawer::getTask( );
 	Matrix pos = Matrix::makeTransformTranslation( _pos );
 	Matrix scale = Matrix::makeTransformScaling( BALL_SIZE );
-	Matrix rot = Matrix::makeTransformRotation( axis, BALL_MODEL_ROT_SPEED * _vec.getLength( ) );
 	Matrix mat;
-	_rot = _rot.multiply( rot );
 	mat = _rot.multiply( scale );
 	mat = mat.multiply( pos );
 

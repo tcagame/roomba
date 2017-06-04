@@ -11,7 +11,7 @@ public:
 	virtual ~Ball( );
 public:
 	void update( const Vector& vec, StagePtr stage );
-	void draw( );
+	void draw( ) const;
 	void reset( const Vector& pos );
 	void setPos( Vector pos );
 	bool isReflection( ) const;
@@ -24,4 +24,3 @@ private:
 	Vector _vec;
 	Vector _before_vec;
 };
-
