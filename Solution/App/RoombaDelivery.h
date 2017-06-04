@@ -4,13 +4,15 @@
 #include <array>
 
 PTR ( Viewer );
+PTR( Roomba );
+
 class RoombaDelivery {
 public:
 	RoombaDelivery( );
 	virtual ~RoombaDelivery( );
 public:
 	void update( );
-	void draw( ) const;
+	void draw( RoombaConstPtr roomba ) const;
 	void setPos( Vector ball_left, Vector ball_right );
 	bool isRestart( ) const;
 	bool isReady( ) const;

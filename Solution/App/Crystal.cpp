@@ -82,43 +82,65 @@ void Crystal::update( AppStagePtr stage ) {
 	}
 }
 
-bool Crystal::isHitting( Vector pos0, Vector pos1 ) {
+bool Crystal::isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) {
 	//pos0とpos1の間にクリスタルがあるかどうか
-	bool hitting = false;
-	pos0.z = _pos.z;
-	pos1.z = _pos.z;
-
-	double min_x = pos0.x;
-	double min_y = pos0.y;
-	if ( min_x > pos1.x ) {
-		min_x = pos1.x;
+	Vector crystal_pos = _pos;
+	while ( crystal_pos.x - pos0.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
+		crystal_pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
 	}
-	if ( min_y > pos1.y ) {
-		min_y = pos1.y;
+	while ( crystal_pos.x - pos0.x < -STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
+		crystal_pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
 	}
-	Vector pos = _pos;
-	while ( min_x > pos.x ) {
-		pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
+	while ( crystal_pos.y - pos0.y > STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
+		crystal_pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
-	while ( min_y > pos.y ) {
-		pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
+	while ( crystal_pos.y - pos0.y < -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
+		crystal_pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
 
-	Vector vec0 = pos - pos0;
-	Vector vec1 = pos1 - pos0;
-	double angle = vec0.angle( vec1 );
+	Vector distance0 = crystal_pos - pos0;
+	Vector distance1 = pos1 - pos0;
+	double angle = distance0.angle( distance1 );
 	if ( fabs( angle ) > PI / 2 ) {
 		return false;
 	}
-	if ( vec0.getLength( ) > vec1.getLength( ) ) {
+	if ( distance0.getLength( ) > distance1.getLength( ) ) {
 		return false;
 	}
-	double distance = vec0.getLength( ) * fabs( sin( angle ) );
+	double distance = distance0.getLength( ) * fabs( sin( angle ) );
 	if ( fabs( distance ) < CRYSTAL_RADIUS ) {
-		hitting = true;
-		_pos = pos;
+		return true;
+		_pos = crystal_pos;
 	}
-	return hitting;
+
+	//ballの速度が速い時の処理
+	Vector pos[ 4 ];
+	pos[ 0 ] = pos0;
+	pos[ 1 ] = pos0 + vec0;
+	pos[ 2 ] = pos1 + vec1;
+	pos[ 3 ] = pos1;
+
+	Vector vec_square[ 4 ];
+	vec_square[ 0 ] = vec0;
+	vec_square[ 1 ] = pos[ 2 ] - pos [ 1 ];
+	vec_square[ 2 ] = vec1 * -1;
+	vec_square[ 3 ] = pos[ 0 ] - pos[ 3 ];
+
+	Vector vec_to_crystal[ 4 ];
+	for ( int i = 0; i < 4; i++ ) {
+		vec_to_crystal[ i ] = crystal_pos - pos[ i ];
+	}
+
+	Vector cross[ 4 ];
+	for ( int i = 0; i < 4; i++ ) {
+		cross[ i ] = vec_square[ i ].cross( vec_to_crystal[ i ] );
+	}
+
+	if ( cross[ 0 ].z < 0 && cross[ 1 ].z < 0 && cross[ 2 ].z < 0 && cross[ 3 ].z < 0 ) {
+		_pos = crystal_pos;
+		return true;
+	}
+	return false;
 }
 
 Vector Crystal::adjustHitToRoomba( Vector pos, Vector vec, double radius ) {

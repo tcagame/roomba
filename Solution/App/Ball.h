@@ -17,10 +17,11 @@ public:
 	bool isReflection( ) const;
 	Vector getPos( ) const;
 	Vector getVec( ) const;
+	Matrix getMat( const Vector& pos ) const;
 private:
+	Matrix _rot;
 	bool _reflection;
 	Vector _pos;
 	Vector _vec;
 	Vector _before_vec;
 };
-

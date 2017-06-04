@@ -49,7 +49,8 @@ _link_break( false ) {
 	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/purple.jpg", crystal_scale );
 		
 	Matrix roomba_scale = Matrix::makeTransformScaling( roomba_size );
-	drawer->loadMDLModel( MDL_BALL, "Model/Roomba/roomba.mdl", "Model/Roomba/texture.jpg", roomba_scale );
+	//drawer->loadMDLModel( MDL_BALL, "Model/Roomba/roomba.mdl", "Model/Roomba/texture.jpg", roomba_scale );
+	drawer->loadMV1Model( 0, "Model/Roomba/roomba.mv1" );
 	
 	Matrix earth_scale = Matrix::makeTransformScaling( earth_size );
 	drawer->loadMDLModel( MDL_EARTH, "Model/Stage/earth.mdl", "Model/Stage/earth.jpg", earth_scale );
@@ -104,9 +105,9 @@ Scene::NEXT SceneStage::update( ) {
 		drawCountdown( );
 	}
 
-
-	// カメラだけは常に更新する
+	// カメラ&viwer常に更新する
 	_camera->update( );
+	_viewer->update( _roomba->getCentralPos( ) );
 
 	if ( _timer->isTimeOver( ) ) {
 		return NEXT_RETRY;
@@ -130,7 +131,7 @@ void SceneStage::countdown( ) {
 
 void SceneStage::updateRestart( ) {
 	_roomba_delivery->update( );
-	_roomba_delivery->draw( );
+	_roomba_delivery->draw( _roomba );
 
 	if ( _roomba_delivery->isRestart( ) ) {
 		_roomba->reset( );
@@ -152,12 +153,12 @@ void SceneStage::updatePlay( ) {
 	updateLink( );
 	}
 	_stage->update( _camera );
-	_viewer->update( _roomba->getCentralPos( ) );
 	_timer->update( );
 }
 
 void SceneStage::updateLink( ) {
-	if ( _roomba->isScaling( ) ) {	
+	//if ( _roomba->isScaling( ) ) {
+	if ( 1 ) {	
 		_link_time++;
 		if ( _link_time > MAX_LINK_TIME ) {
 			_link_time = MAX_LINK_TIME;

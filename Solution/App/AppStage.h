@@ -17,7 +17,7 @@ public:
 	void reset( );
 	Vector adjustCollisionToWall( Vector pos, Vector vec, const double radius );
 	Vector adjustCollisionToCrystal( Vector pos, Vector vec, const double radius );
-	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1 ) const;
+	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) const;
 	bool isOnDelivery( Vector pos );
 	int getDeliveryNum( ) const;
 	int getDeliveryCount( ) const;

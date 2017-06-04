@@ -1,6 +1,7 @@
 #include "RoombaDelivery.h"
 #include "define.h"
 #include "Viewer.h"
+#include "Roomba.h"
 
 static const double SPEED = 0.1;
 static const double MAX_SPEED = 0.2;
@@ -40,7 +41,7 @@ void RoombaDelivery::update( ) {
 	}
 }
 	
-void RoombaDelivery::draw( ) const {
+void RoombaDelivery::draw( RoombaConstPtr roomba ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	for ( int i = 0; i < 2; i++ ) {
 		Vector delivery_pos = _pos[ i ] - Vector( 0, 0, -station_size.z );
@@ -50,7 +51,8 @@ void RoombaDelivery::draw( ) const {
 			if ( roomba_pos.z < roomba_size.z ) {
 				roomba_pos.z = roomba_size.z;
 			}
-			drawer->setModelMDL( Drawer::ModelMDL( roomba_pos, MDL_BALL ) );
+			//drawer->setModelMDL( Drawer::ModelMDL( roomba_pos, MDL_BALL ) );
+			drawer->setModelMV1( Drawer::ModelMV1( roomba->getMat( i, roomba_pos ), 0, 0, 0 ) );
 		}
 	}
 }

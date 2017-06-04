@@ -188,7 +188,7 @@ void AppStage::drawDelivery( ) const {
 }
 
 
-CrystalPtr AppStage::getHittingCrystal( Vector pos0, Vector pos1 ) const {
+CrystalPtr AppStage::getHittingCrystal( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) const {
 	CrystalPtr hitting = CrystalPtr( );
 	//‚ ‚½‚Á‚Ä‚¢‚éƒNƒŠƒXƒ^ƒ‹‚ðhitting‚É‘ã“ü‚·‚é
 	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
@@ -198,7 +198,7 @@ CrystalPtr AppStage::getHittingCrystal( Vector pos0, Vector pos1 ) const {
 			ite++;
 			continue;
 		}
-		if ( crystal->isHitting( pos0, pos1 ) ) {
+		if ( crystal->isHitting( pos0, pos1, vec0, vec1 ) ) {
 			hitting = crystal;
 		}
 		ite++;

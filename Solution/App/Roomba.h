@@ -28,6 +28,7 @@ public:
 	Vector getDir( ) const;
 	Vector getCentralPos( ) const;
 	Vector getBallPos( int ball ) const;
+	Matrix getMat( const int ball_num, const Vector& pos ) const;
 private:
 	enum BALL {
 		BALL_LEFT,

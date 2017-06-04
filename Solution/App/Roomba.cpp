@@ -202,10 +202,6 @@ void Roomba::changeState( CameraPtr camera ) {
 }
 
 void Roomba::holdCrystal( StagePtr stage ) {
-	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( stage );
-	if ( !_crystal ) {
-		_crystal =  app_stage->getHittingCrystal( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
-	}
 	if ( _crystal != CrystalPtr( ) ) {
 		if ( _crystal->isDropDown( ) ||
 			 _crystal->isFinished( ) ||
@@ -367,15 +363,21 @@ void Roomba::setVecReflection( Vector vec_left, Vector vec_right ) {
 }
 
 void Roomba::updateBalls( StagePtr stage) {
+	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( stage );
+	Vector vec[ 2 ];
 	for ( int i = 0; i < 2; i++ ) {
-		Vector vec;
 		if ( _state == MOVE_STATE_REFLECTION ) {
-			vec = _vec_reflection[ i ] + _vec_scale[ i ];
+			vec[ i ] = _vec_reflection[ i ] + _vec_scale[ i ];
 		} else {
-			vec = _vec_trans + _vec_rot[ i ];
+			vec[ i ] = _vec_trans + _vec_rot[ i ];
 		}
-		_balls[ i ]->update( vec, stage );
 	}
+
+	if ( !_crystal ) {
+		_crystal =  app_stage->getHittingCrystal( _balls[ 0 ]->getPos( ), _balls[ 1 ]->getPos( ), vec[ 0 ], vec[ 1 ] );
+	}
+	_balls[ 0 ]->update( vec[ 0 ], stage );
+	_balls[ 1 ]->update( vec[ 1 ], stage );
 }
 
 void Roomba::shiftPos( ) {
@@ -405,4 +407,12 @@ Vector Roomba::getDir( ) const {
 
 bool Roomba::isScaling( ) const {
 	return _scaling;
+}
+
+Matrix Roomba::getMat( const int ball_num, const Vector& pos ) const {
+	if ( ball_num != 0 &&
+		 ball_num != 1 ) {
+		return Matrix( );
+		}
+	return _balls[ ball_num ]->getMat( pos );
 }
