@@ -13,7 +13,7 @@ public:
 public:
 	void update( AppStagePtr stage );
 	void draw( ViewerPtr viewer ) const;
-	bool isHitting( Vector pos0, Vector pos1 );
+	bool isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 );
 	Vector adjustHitToRoomba( Vector pos, Vector vec, double radius );
 	bool isFinished( ) const;
 	Vector getPos( ) const;

@@ -100,8 +100,9 @@ Scene::NEXT SceneStage::update( ) {
 		drawCountdown( );
 	}
 
-	// カメラだけは常に更新する
+	// カメラ&viwer常に更新する
 	_camera->update( );
+	_viewer->update( _roomba->getCentralPos( ) );
 
 	if ( _timer->isTimeOver( ) ) {
 		return NEXT_RETRY;
@@ -124,7 +125,6 @@ void SceneStage::countdown( ) {
 void SceneStage::updateGame( ) {
 	_roomba->update( _stage, _camera );
 	_stage->update( _camera );
-	_viewer->update( _roomba->getCentralPos( ) );
 	_timer->update( );
 	updateTime( );
 }
