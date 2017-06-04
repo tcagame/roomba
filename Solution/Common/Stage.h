@@ -22,7 +22,7 @@ public:
 	virtual void draw( ) const = 0;
 	bool isFinished( ) const;
 	virtual void reset( );
-	int getMaxStationNum( ) const;
+	int getMaxDeliveryNum( ) const;
 	int getPhase( ) const;
 	const DATA& getData( ) const;
 protected:
@@ -50,6 +50,6 @@ private:
 	DATA _data;
 	int _phase;
 	bool _finished;
-	int _max_station;
+	int _max_delivery;
 };
 

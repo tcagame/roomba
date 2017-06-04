@@ -136,7 +136,8 @@ bool Crystal::isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) {
 		cross[ i ] = vec_square[ i ].cross( vec_to_crystal[ i ] );
 	}
 
-	if ( cross[ 0 ].z < 0 && cross[ 1 ].z < 0 && cross[ 2 ].z < 0 && cross[ 3 ].z < 0 ) {
+	if ( ( cross[ 0 ].z < 0 && cross[ 1 ].z < 0 && cross[ 2 ].z < 0 && cross[ 3 ].z < 0 ) ||
+		 ( cross[ 0 ].z > 0 && cross[ 1 ].z > 0 && cross[ 2 ].z > 0 && cross[ 3 ].z > 0 ) ) {
 		_pos = crystal_pos;
 		return true;
 	}

@@ -412,18 +412,6 @@ bool AppStage::isOnDelivery( Vector pos ) {
 	return result;
 }
 
-int AppStage::getDeliveryNum( ) const {
-	int num = 0;
-	DATA data = getData( );
-	int phase = getPhase( );
-	for ( int i = 0; i < STAGE_HEIGHT_NUM * STAGE_WIDTH_NUM; i++ ) {
-		if ( data.delivery[ phase ][ i ] != 0 ) {
-			num++;
-		}
-	}
-	return num;
-}
-
 std::list< CrystalPtr > AppStage::getCrystalList( ) const {
 	return _crystals;
 }

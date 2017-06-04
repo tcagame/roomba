@@ -141,14 +141,53 @@ void SceneStage::updateTime( ) {
 	}
 }
 
-void SceneStage::drawUI( ) const {
+void SceneStage::drawUI( ) {
 	DrawerPtr drawer = Drawer::getTask( );
+	ApplicationPtr app = Application::getInstance( );
+	int scr_width = app->getWindowWidth( );
 	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
-	//phase
+	drawUIPhase( );
+
+	//station
+	int delivery_num = app_stage->getDeliveryCount( ) - 1;
+	int x = scr_width - UI_STATION_FOOT_X;
+	int y = UI_STATION_Y;
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, _stage->getMaxDeliveryNum( ) * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT ), GRAPH_NUMBER ) );
+	x -= UI_NUM_WIDTH;
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, 10 * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT ), GRAPH_NUMBER ) );
+	x -= UI_NUM_WIDTH;
+	while ( delivery_num >= 0 ) {
+		int num = delivery_num % 10;
+		Drawer::Sprite sprite( Drawer::Transform( x, y, num * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT ), GRAPH_NUMBER );
+		drawer->setSprite( sprite );
+		
+		x -= UI_NUM_WIDTH;
+		delivery_num /= 10;
+		if ( delivery_num == 0 ) {
+			break;
+		}
+	};
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x - 32, y ), GRAPH_STATION ) );
+
+	// linkgauge
+	{
+		const int TW = 400;
+		const int TH = 50;
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, TH, TW, TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, 0, TW - _link_time, TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
+	}
+	
+	drawUIMap( );
+}
+
+void SceneStage::drawUIPhase( ) {
+	DrawerPtr drawer = Drawer::getTask( );
 	ApplicationPtr app = Application::getInstance( );
 	int scr_width = app->getWindowWidth( );
 	int x = scr_width - UI_PHASE_FOOT_X;
 	int y = UI_PHASE_Y;
+	
+	//max
 	int max = MAX_PHASE -1;
 	while ( max >= 0 ) {
 		int num = max % 10;
@@ -163,54 +202,52 @@ void SceneStage::drawUI( ) const {
 	};
 	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, 10 * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT ), GRAPH_NUMBER ) );
 	x -= UI_NUM_WIDTH;
+
+	//now
 	int phase = _stage->getPhase( );
-	while ( phase >= 0 ) {
-		int num = phase % 10;
-		Drawer::Sprite sprite( Drawer::Transform( x, y, num * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT ), GRAPH_NUMBER );
-		drawer->setSprite( sprite );
-		
-		x -= UI_NUM_WIDTH;
-		phase /= 10;
-		if ( phase == 0 ) {
-			break;
+	if ( _phase_number[ 0 ].num != phase ) {
+		_phase_number[ 1 ] = _phase_number[ 0 ];
+		_phase_number[ 1 ].state = NUMBER_STATE_OUT;
+		_phase_number[ 1 ].speed_y = -16;
+		_phase_number[ 0 ].num = phase;
+		_phase_number[ 0 ].state = NUMBER_STATE_IN;
+		_phase_number[ 0 ].x = 0;
+		_phase_number[ 0 ].y = 0;
+		_phase_number[ 0 ].size = 0;
+		_phase_number[ 0 ].speed_y = 0;
+	}
+	for ( int i = 0; i < 2; i++ ) {
+		if ( _phase_number[ i ].state == NUMBER_STATE_OUT ) {
+			_phase_number[ i ].x += 2;
+			_phase_number[ i ].speed_y++;
+			_phase_number[ i ].y += _phase_number[ i ].speed_y;
+			if ( _phase_number[ i ].y >= 0 ) {
+				_phase_number[ i ].speed_y *= -1;
+			}
 		}
-	};
+		if ( _phase_number[ i ].state == NUMBER_STATE_IN ) {
+			_phase_number[ i ].size += 0.05;
+			if ( _phase_number[ i ].size > 1 ) {
+				_phase_number[ i ].size = 1;
+				_phase_number[ i ].state = NUMBER_STATE_WAIT;
+			}
+		}
+		int number = _phase_number[ i ].num;
+		int sx = x + _phase_number[ i ].x;
+		int sy = y + _phase_number[ i ].y;
+		int sx2 = sx + (int)( UI_NUM_WIDTH * _phase_number[ i ].size );
+		int sy2 = sy + (int)( UI_NUM_HEIGHT * _phase_number[ i ].size );
+		Drawer::Sprite sprite( Drawer::Transform( sx, sy, number * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT, sx2, sy2 ), GRAPH_NUMBER );
+		drawer->setSprite( sprite );
+	}
+	x -= UI_NUM_WIDTH;
 	x -= 130;
 	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y ), GRAPH_PHASE ) );
 
-	//station
-	int station_num = app_stage->getDeliveryNum( );
-	x = scr_width - UI_STATION_FOOT_X;
-	y = UI_STATION_Y;
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, _stage->getMaxStationNum( ) * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT ), GRAPH_NUMBER ) );
-	x -= UI_NUM_WIDTH;
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, 10 * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT ), GRAPH_NUMBER ) );
-	x -= UI_NUM_WIDTH;
-	while ( station_num >= 0 ) {
-		int num = station_num % 10;
-		Drawer::Sprite sprite( Drawer::Transform( x, y, num * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT ), GRAPH_NUMBER );
-		drawer->setSprite( sprite );
-		
-		x -= UI_NUM_WIDTH;
-		station_num /= 10;
-		if ( station_num == 0 ) {
-			break;
-		}
-	};
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x - 32, y ), GRAPH_STATION ) );
-
-	// linkgauge
-	{
-		const int TW = 400;
-		const int TH = 50;
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, TH, TW, TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, 0, TW - _link_time, TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
-	}
-	
-	drawMap( );
 }
 
-void SceneStage::drawMap( ) const {
+
+void SceneStage::drawUIMap( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
 	Vector base_pos = _roomba->getCentralPos( );

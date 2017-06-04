@@ -19,7 +19,6 @@ public:
 	Vector adjustCollisionToCrystal( Vector pos, Vector vec, const double radius );
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) const;
 	bool isOnDelivery( Vector pos );
-	int getDeliveryNum( ) const;
 	int getDeliveryCount( ) const;
 	std::list< CrystalPtr > getCrystalList( ) const;
 private:
