@@ -22,9 +22,10 @@ AppCamera::~AppCamera( ) {
 
 void AppCamera::move( ) {
 	setTarget( _roomba->getCentralPos( ) );
-	//回転
-	_dir = getCalcDir( _roomba->getDir( ), HEIGHT );
-	//dirにzを足したときに
+	//回転 カメラワーク変更中
+	//_dir = getCalcDir( _roomba->getDir( ), HEIGHT );
+
+	//座標計算
 	Vector pos = getTarget( ) - _dir.normalize( ) * CAMERA_LENGTH;
 	setPos( pos );
 }

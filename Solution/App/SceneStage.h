@@ -22,6 +22,7 @@ private:
 	void drawCountdown( ) const;
 	void drawUI( );
 	void drawUIPhase( );
+	void drawUIDelivery( );
 	void drawUIMap( ) const;
 	Vector getAdjustPos( Vector pos, Vector base_pos ) const;
 private:
@@ -42,6 +43,7 @@ private:
 	int _countdown;
 	int _link_time;
 	NUMBER _phase_number[ 2 ];
+	NUMBER _delivery_number[ 2 ];
 	CameraPtr _camera;
 	StagePtr _stage;
 	RoombaPtr _roomba;
