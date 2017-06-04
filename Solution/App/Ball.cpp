@@ -47,18 +47,6 @@ void Ball::draw( ) {
 	_rot = _rot.multiply( rot );
 	mat = _rot.multiply( scale );
 	mat = mat.multiply( pos );
-	//mat.data[3][0] = pos.data[3][0];
-	//mat.data[3][1] = pos.data[3][1];
-	//mat.data[3][2] = pos.data[3][2];
-	//mat.data[0][0] = _rot.data[0][0];
-	//mat.data[1][1] = _rot.data[1][1];
-	//mat.data[2][2] = _rot.data[2][2];
-	//mat.data[0][1] = _rot.data[0][1];
-	//mat.data[0][2] = _rot.data[0][2];
-	//mat.data[1][0] = _rot.data[1][0];
-	//mat.data[1][2] = _rot.data[1][2];
-	//mat.data[2][0] = _rot.data[2][0];
-	//mat.data[2][1] = _rot.data[2][1];
 
 	Drawer::ModelMV1 model( mat, 0, 0, 0 );
 	drawer->setModelMV1( model );
