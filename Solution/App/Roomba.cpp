@@ -15,7 +15,7 @@ static const double MAX_ROT_SPEED = 0.2;
 static const double MAX_TRANS_SPEED = 0.4;
 static const double DECELETION_ROT_SPEED = 0.03;
 static const double DECELETION_TRANS_SPEED = 0.0003;
-static const double SCALE_SIZE = 10;
+static const double SCALE_SIZE = 6;
 static const double MIN_SCALE = 5;
 
 static const Vector START_POS[ 2 ] {
