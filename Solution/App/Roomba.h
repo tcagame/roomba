@@ -4,6 +4,7 @@
 
 PTR( Stage );
 PTR( Camera );
+PTR( AppCamera );
 PTR( Ball );
 PTR( Crystal );
 
@@ -56,7 +57,7 @@ private:
 	void setVecScale( Vector vec_left, Vector vec_right );
 	void setVecReflection( Vector vec_left, Vector vec_right );
 	void updateBalls( StagePtr stage );
-	void shiftPos( );
+	void shiftPos( CameraPtr camera );
 	void drawLaser( ) const;
 private:
 	bool _scaling;

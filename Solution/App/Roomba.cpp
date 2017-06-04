@@ -51,7 +51,7 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 
 	holdCrystal( stage );
 
-	shiftPos( );
+	shiftPos( camera );
 
 }
 
@@ -403,22 +403,31 @@ void Roomba::updateBalls( StagePtr stage) {
 	_balls[ 1 ]->update( vec[ 1 ], stage );
 }
 
-void Roomba::shiftPos( ) {
+void Roomba::shiftPos( CameraPtr camera ) {
 	Vector pos[ 2 ];
 	pos[ 0 ] = _balls[ 0 ]->getPos( );
 	pos[ 1 ] = _balls[ 1 ]->getPos( );
 	Vector central_pos =  getCentralPos( );
+	bool shift = false;
 	if ( central_pos.x < STAGE_WIDTH_NUM * WORLD_SCALE - 1 ) {
+		shift = true;
+		central_pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
 		for ( int i = 0; i < 2; i++ ) {
 			pos[ i ].x += STAGE_WIDTH_NUM * WORLD_SCALE;
 			_balls[ i ]->setPos( pos[ i ] );
 		}
 	}
 	if ( central_pos.y < STAGE_HEIGHT_NUM * WORLD_SCALE - 1 ) {
+		shift = true;
+		central_pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
 		for ( int i = 0; i < 2; i++ ) {
 			pos[ i ].y += STAGE_HEIGHT_NUM * WORLD_SCALE;
 			_balls[ i ]->setPos( pos[ i ] );
 		}
+	}
+	AppCameraPtr app_camera = std::dynamic_pointer_cast< AppCamera >( camera );
+	if ( shift ) {
+		app_camera->shiftPos( central_pos );
 	}
 }
 
