@@ -9,9 +9,7 @@ static const Vector OFFSET[ 5 ] = {
 	Vector( )
 };
 
-Viewer::Viewer( ) :
-_map_num_x( 1 ),
-_map_num_y( 1 ) {
+Viewer::Viewer( ) {
 }
 
 
@@ -19,37 +17,20 @@ Viewer::~Viewer( ) {
 }
 
 void Viewer::update( Vector roomba_pos ) {
-	_map_num_x = (int)( roomba_pos.x / STAGE_WIDTH_NUM / WORLD_SCALE );
-	_map_num_y = (int)( roomba_pos.y / STAGE_HEIGHT_NUM / WORLD_SCALE );
+	_base_pos = roomba_pos;
 }
 
 void Viewer::drawModelMDL( Drawer::ModelMDL mdl ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	while ( mdl.pos.x > STAGE_WIDTH_NUM * WORLD_SCALE ) {
-		mdl.pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
-	}
-	while ( mdl.pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE ) {
-		mdl.pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
-	}
-	char flag = getInViewFlag( mdl.pos );
-	mdl.pos += Vector( _map_num_x * STAGE_WIDTH_NUM * WORLD_SCALE, _map_num_y * STAGE_HEIGHT_NUM * WORLD_SCALE );
+	mdl.pos = getViewPos( mdl.pos );
 	drawer->setModelMDL( mdl );
-	if ( flag != 0 ) {
-		char check = 1;
-		for ( int i = 0; i < 4; i++ ) {
-			if ( flag & check ) {
-				Drawer::ModelMDL model = mdl;
-				model.pos += OFFSET[ i ];	
-				drawer->setModelMDL( model );
-			}
-			check *= 2;
-		}
-	}
 }
 
 void Viewer::drawModelMDLTransfer( Drawer::ModelMDL mdl ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	mdl.pos += Vector( _map_num_x * STAGE_WIDTH_NUM * WORLD_SCALE, _map_num_y * STAGE_HEIGHT_NUM * WORLD_SCALE );
+	int map_x = (int)( _base_pos.x / STAGE_WIDTH_NUM / WORLD_SCALE );
+	int map_y = (int)( _base_pos.y / STAGE_HEIGHT_NUM / WORLD_SCALE );
+	mdl.pos += Vector( map_x * STAGE_WIDTH_NUM * WORLD_SCALE, map_y * STAGE_HEIGHT_NUM * WORLD_SCALE );
 	drawer->setModelMDL( mdl );
 	const int OFF_X[ 8 ] = { 4, 4, 0, 0, 0, 1, 1, 1 };
 	const int OFF_Y[ 8 ] = { 2, 3, 2, 4, 3, 2, 4, 3 };
@@ -60,19 +41,18 @@ void Viewer::drawModelMDLTransfer( Drawer::ModelMDL mdl ) const {
 	}
 }
 
-char Viewer::getInViewFlag( Vector pos ) const {
-	char flag = 0;
-	if ( pos.x > VIEW_RANGE * WORLD_SCALE ) {
-		flag |= 1;
+Vector Viewer::getViewPos( Vector pos ) const {
+	while ( pos.x - _base_pos.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
+		pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
 	}
-	if ( pos.x < ( STAGE_WIDTH_NUM - VIEW_RANGE ) * WORLD_SCALE ) {
-		flag |= 2;
+	while ( pos.x - _base_pos.x < -STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
+		pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
 	}
-	if ( pos.y > VIEW_RANGE * WORLD_SCALE ) {
-		flag |= 4;
+	while ( pos.y - _base_pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
+		pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
-	if ( pos.y < ( STAGE_HEIGHT_NUM - VIEW_RANGE ) * WORLD_SCALE ) {
-		flag |= 8;
+	while ( pos.y - _base_pos.y < -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
+		pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
-	return flag;
+	return pos;
 }

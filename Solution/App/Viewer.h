@@ -13,8 +13,8 @@ public:
 	void drawModelMDL( Drawer::ModelMDL mdl ) const;
 	void drawModelMDLTransfer( Drawer::ModelMDL mdl ) const;
 private:
-	char getInViewFlag( Vector pos ) const;
-	int _map_num_x;
-	int _map_num_y;
+	Vector getViewPos( Vector pos ) const;
+private:
+	Vector _base_pos;
 };
 
