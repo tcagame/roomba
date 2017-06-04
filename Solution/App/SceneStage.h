@@ -22,13 +22,29 @@ private:
 	void updatePlay( );
 	void updateLink( );
 	void drawCountdown( ) const;
-	void drawUI( ) const;
-	void drawMap( ) const;
+	void drawUI( );
+	void drawUIPhase( );
+	void drawUIMap( ) const;
 	Vector getAdjustPos( Vector pos, Vector base_pos ) const;
+private:
+	enum NUMBER_STATE {
+		NUMBER_STATE_IN,
+		NUMBER_STATE_WAIT,
+		NUMBER_STATE_OUT,
+	};
+	struct NUMBER {
+		int x;
+		int y;
+		int speed_y;
+		int num;
+		double size;
+		NUMBER_STATE state;
+	};
 private:
 	int _countdown;
 	int _link_time;
 	bool _link_break;
+	NUMBER _phase_number[ 2 ];
 	CameraPtr _camera;
 	StagePtr _stage;
 	RoombaPtr _roomba;
