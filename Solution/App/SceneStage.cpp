@@ -9,6 +9,7 @@
 #include "Application.h"
 #include "Game.h"
 #include "Viewer.h"
+#include "RoombaDelivery.h"
 
 static const int UI_PHASE_FOOT_X = 30;
 static const int UI_PHASE_Y = 100;
@@ -21,15 +22,18 @@ static const int UI_MAP_X = 30;
 static const int UI_MAP_FOOT_Y = 30;
 static const int UI_MAP_RANGE = 20;
 static const int START_COUNTDOWN_TIME = 3 * 60;
+static const int MAX_LINK_TIME = 400;
 
 SceneStage::SceneStage( int stage_num ) :
 _countdown( START_COUNTDOWN_TIME ),
-_link_time( 0 ) {	
+_link_time( 300 ),
+_link_break( false ) {	
 	_viewer = ViewerPtr( new Viewer );
 	_stage = StagePtr( new AppStage( stage_num, _viewer ) );//0-2:’Êí 3:test_stage
 	_roomba = RoombaPtr( new Roomba );
 	_camera = CameraPtr( new AppCamera( _roomba ) );
 	_timer = TimerPtr( new Timer );
+	_roomba_delivery = RoombaDeliveryPtr( new RoombaDelivery );
 
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
@@ -94,11 +98,12 @@ SceneStage::~SceneStage( ) {
 
 Scene::NEXT SceneStage::update( ) {
 	if ( _countdown / 60 < 1 ) {
-		updateGame( );
+		updatePlay( );
 	} else {
 		countdown( );
 		drawCountdown( );
 	}
+
 
 	// ƒJƒƒ‰‚¾‚¯‚Íí‚ÉXV‚·‚é
 	_camera->update( );
@@ -110,8 +115,10 @@ Scene::NEXT SceneStage::update( ) {
 		_timer->finalize( );
 		return NEXT_RESULT;
 	}
+	if ( _roomba_delivery->isDrawRoomba( ) ) {
+		_roomba->draw( );
+	}
 	_stage->draw( );
-	_roomba->draw( );
 	_timer->draw( );
 	drawUI( );
 	return Scene::NEXT_CONTINUE;
@@ -121,17 +128,42 @@ void SceneStage::countdown( ) {
 	_countdown--;
 }
 
-void SceneStage::updateGame( ) {
-	_roomba->update( _stage, _camera );
+void SceneStage::updateRestart( ) {
+	_roomba_delivery->update( );
+	_roomba_delivery->draw( );
+
+	if ( _roomba_delivery->isRestart( ) ) {
+		_roomba->reset( );
+		_roomba_delivery->setPos( _roomba->getBallPos( 0 ), _roomba->getBallPos( 1 ) );
+	}
+
+	if ( _roomba_delivery->isReady( ) ) {
+		_roomba_delivery->setPos( Vector( ), Vector( ) );
+		_link_break = false;
+		_link_time = 0;
+	}
+}
+
+void SceneStage::updatePlay( ) {
+	if ( _link_break ) {
+		updateRestart( );
+	} else {
+		_roomba->update( _stage, _camera );
+	updateLink( );
+	}
 	_stage->update( _camera );
 	_viewer->update( _roomba->getCentralPos( ) );
 	_timer->update( );
-	updateTime( );
 }
 
-void SceneStage::updateTime( ) {
-	if ( _roomba->isScaling( ) ) {		
+void SceneStage::updateLink( ) {
+	if ( _roomba->isScaling( ) ) {	
 		_link_time++;
+		if ( _link_time > MAX_LINK_TIME ) {
+			_link_time = MAX_LINK_TIME;
+			_roomba_delivery->setPos( _roomba->getBallPos( 0 ), _roomba->getBallPos( 1 ) );
+			_link_break = true;
+		}
 	} else {
 		_link_time--;
 		if ( _link_time < 0 ) {

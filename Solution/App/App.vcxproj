@@ -166,6 +166,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Roomba.cpp" />
+    <ClCompile Include="RoombaDelivery.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneResult.cpp" />
     <ClCompile Include="SceneRetry.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="Delivery.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Roomba.h" />
+    <ClInclude Include="RoombaDelivery.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneResult.h" />
     <ClInclude Include="SceneRetry.h" />
