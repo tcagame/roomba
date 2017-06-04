@@ -13,6 +13,7 @@ public:
 	void shiftPos( Vector pos );
 private:
 	void move( );
+	bool isHold( Vector dir ) const;
 	Vector getCalcDir( Vector dir ) const;
 	RoombaPtr _roomba;
 private:

@@ -27,12 +27,16 @@ void AppCamera::move( ) {
 	setTarget( target );
 	//回転カメラワーク
 	Vector roomba_pos = _roomba->getCentralPos( );
-	Vector dir = getCalcDir( roomba_pos - _before_roomba_pos );
+	Vector roomba_vec = roomba_pos - _before_roomba_pos;
+	Vector dir = getCalcDir( roomba_vec );
 	_before_roomba_pos = roomba_pos;
-	Vector pos_target = getTarget( ) - dir.normalize( ) * CAMERA_LENGTH;
+
 	Vector pos = getPos( );
-	pos += ( pos_target - pos ) * MOVE_RATIO;
-	_dir = getCalcDir( ( target - pos ) );
+	if ( !isHold( roomba_vec ) ) {
+		Vector pos_target = getTarget( ) - dir.normalize( ) * CAMERA_LENGTH;
+		pos += ( pos_target - pos ) * MOVE_RATIO;
+		_dir = getCalcDir( ( target - pos ) );
+	}
 	//座標計算
 	pos = target - _dir * CAMERA_LENGTH;
 	setPos( pos );
@@ -53,4 +57,15 @@ Vector AppCamera::getCalcDir( Vector dir ) const {
 	dir = dir.normalize( );
 	dir.z = -HEIGHT;
 	return dir.normalize( );
+}
+
+bool AppCamera::isHold( Vector dir ) const {
+	bool result = false;
+	dir.z = 0;
+	Vector check_dir = _dir;
+	check_dir.z = 0;
+	if ( dir.angle( check_dir ) > PI / 4 * 3 ) {
+		result = true;
+	}
+	return result;
 }
