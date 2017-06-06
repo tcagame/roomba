@@ -6,7 +6,7 @@
 #include "Viewer.h"
 
 static const double REFLECTION_POWER = 5.0;
-static const double CRYSTAL_RADIUS = crystal_size.x / 2;
+static const double CRYSTAL_RADIUS = crystal_size.x / 3;
 static const double MAX_SPEED = 0.9;
 static const double DECELERATION = 0.01;
 static const double BOUND_POW = 0.1;
@@ -40,18 +40,8 @@ void Crystal::update( AppStagePtr stage ) {
 		return;
 	}
 
-	if ( fabs( _pos.z + 2 ) > 0.2 ) {
-		int check = 0;
-	}
-
 	if ( _vec.getLength( ) > MAX_SPEED ) {
 		_vec = _vec.normalize( ) * MAX_SPEED;
-	}
-	if ( _vec.getLength( ) > DECELERATION ) {
-		_vec -= _vec.normalize( ) * DECELERATION;
-	} else {
-		_vec = Vector( );
-		_drop_down = false;
 	}
 
 	// バウンド
@@ -78,11 +68,11 @@ void Crystal::update( AppStagePtr stage ) {
 	}
 
 	_pos += _vec;
-	if ( _pos.x < STAGE_WIDTH_NUM * WORLD_SCALE - 1 ) {
-		_pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
-	}
-	if ( _pos.y < STAGE_HEIGHT_NUM * WORLD_SCALE - 1  ) {
-		_pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
+	if ( _vec.getLength( ) > DECELERATION ) {
+		_vec -= _vec.normalize( ) * DECELERATION;
+	} else {
+		_vec = Vector( );
+		_drop_down = false;
 	}
 
 	_effect_count++;
@@ -152,24 +142,17 @@ bool Crystal::isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) {
 }
 
 Vector Crystal::adjustHitToRoomba( Vector pos, Vector vec, double radius ) {
-	int roomba_map_x = (int)( pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
-	int roomba_map_y = (int)( pos.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
-	int crystal_map_x = (int)( _pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
-	int crystal_map_y = (int)( _pos.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
-	Vector tmp_pos = _pos;
-	tmp_pos.x += ( roomba_map_x - crystal_map_x ) * STAGE_WIDTH_NUM * WORLD_SCALE;
-	tmp_pos.y += ( roomba_map_y - crystal_map_y ) * STAGE_HEIGHT_NUM * WORLD_SCALE;
-
+	pos.z = _pos.z;
+	if ( !_drop_down ) {
+		return Vector( );
+	}
 	Vector tmp_vec = vec;
 	Vector future_pos = pos + vec;
-	future_pos.z = _pos.z;
-	Vector distance = future_pos - tmp_pos;//ボール→クリスタル
+	Vector distance = future_pos - _pos;//ボール→クリスタル
 	if ( distance.getLength( ) < CRYSTAL_RADIUS + radius ) {
-		tmp_vec = distance * -1;
-		tmp_vec = tmp_vec.normalize( ) * vec.getLength( );
+		tmp_vec = ( pos - _pos ).normalize( ) * vec.getLength( );
 		// クリスタルの反射
 		_vec = ( tmp_vec - vec ) * -REFLECTION_POWER;
-		_drop_down = true;
 	}
 	vec = tmp_vec - vec;
 	return vec;
@@ -189,4 +172,19 @@ void Crystal::setVec( Vector vec ) {
 
 bool Crystal::isDropDown( ) const {
 	return _drop_down;
+}
+
+void Crystal::shiftPos( Vector& base_pos ) {
+	while ( _pos.x - base_pos.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
+		_pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
+	}
+	while ( _pos.x - base_pos.x < -STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
+		_pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
+	}
+	while ( _pos.y - base_pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
+		_pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
+	}
+	while ( _pos.y - base_pos.y < -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
+		_pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
+	}
 }
