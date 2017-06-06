@@ -192,10 +192,12 @@ void Roomba::changeState( CameraPtr camera ) {
 		  right_stick.x > 0 && left_stick.x > 0 ||
 		  right_stick.x < 0 && left_stick.x < 0 ){
 		state = MOVE_STATE_TRANSLATION;
-		Vector dir = camera->getDir( );
-		dir.z = 0;
-		Matrix mat = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( dir ) * -1, Vector( 0, -1 ).angle( dir ) );
-		_move_dir = mat.multiply( right_stick + left_stick );
+		if ( _state != state ) {
+			Vector dir = camera->getDir( );
+			dir.z = 0;
+			_stick_rot = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( dir ) * -1, Vector( 0, -1 ).angle( dir ) );
+		}
+		_move_dir = _stick_rot.multiply( right_stick + left_stick );
 	}
 	if ( right_stick == Vector( ) ||
 		 left_stick == Vector( ) ) {

@@ -71,5 +71,6 @@ private:
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
 	CrystalPtr _crystal;
+	Matrix _stick_rot;
 };
 
