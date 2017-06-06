@@ -47,9 +47,9 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 
 	updateState( );
 
-	updateBalls( stage );
-
 	holdCrystal( stage );
+
+	updateBalls( stage );
 
 	shiftPos( camera );
 
@@ -229,22 +229,31 @@ void Roomba::holdCrystal( StagePtr stage ) {
 			return;
 		}
 		Vector crystal_pos = _crystal->getPos( );
-		Vector central_pos = getCentralPos( );
-		central_pos.z = crystal_pos.z;
-		Vector distance = central_pos - crystal_pos;
-		if ( distance.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
-			central_pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
+		Vector pos[ 2 ] = {
+			_balls[ 0 ]->getPos( ) + _balls[ 0 ]->getVec( ),
+			_balls[ 1 ]->getPos( ) + _balls[ 1 ]->getVec( )
+		};
+		crystal_pos.z = pos[ 0 ].z;
+		Vector line = pos[ 1 ] - pos[ 0 ];
+		pos[ 0 ] += line.normalize( ) * BALL_RADIUS * 3;
+		pos[ 1 ] -= line.normalize( ) * BALL_RADIUS * 3;
+		line = pos[ 1 ] - pos[ 0 ];
+		Vector to_crystal = pos[ 0 ] - crystal_pos;
+		double angle = line.angle( to_crystal );
+		double check = to_crystal.getLength( ) * cosl( angle );
+		if ( check > 0 ) {
+			_crystal->setVec( pos[ 0 ] - crystal_pos );
+			return;
 		}
-		if ( -distance.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
-			central_pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
+		if ( check < -line.getLength( ) ) {
+			_crystal->setVec( pos[ 1 ] - crystal_pos );
+			return;
 		}
-		if ( distance.y > STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
-			central_pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
-		}
-		if ( -distance.y > STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
-			central_pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
-		}
-		_crystal->setVec( central_pos - crystal_pos );
+		double distance = to_crystal.getLength( ) * fabs( sinl( angle ) );
+		Matrix rot = Matrix::makeTransformRotation( line.cross( to_crystal ) * -1, PI / 2 );
+		Vector vec = rot.multiply( line );
+		vec = vec.normalize( ) * distance;
+		_crystal->setVec( vec );
 	}
 }
 
@@ -429,6 +438,9 @@ void Roomba::shiftPos( CameraPtr camera ) {
 	}
 	AppCameraPtr app_camera = std::dynamic_pointer_cast< AppCamera >( camera );
 	if ( shift ) {
+		if ( _crystal ) {
+			_crystal->shiftPos( central_pos );
+		}
 		app_camera->shiftPos( central_pos );
 	}
 }

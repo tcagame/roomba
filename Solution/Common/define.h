@@ -8,6 +8,7 @@ static const double WORLD_SCALE = 2;
 static const double ROOMBA_SCALE = 0.1;
 static const double STAGE_MODEL_SIZE = 4;
 static const double EARTH_POS_Z = WORLD_SCALE;
+static const double BALL_RADIUS = WORLD_SCALE * ROOMBA_SCALE * 0.8;
 static const Vector delivery_size = Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE / 4 ); 
 static const Vector crystal_size = Vector( WORLD_SCALE / 6, WORLD_SCALE / 6, WORLD_SCALE / 6 ); 
 static const Vector roomba_size = Vector( WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE );

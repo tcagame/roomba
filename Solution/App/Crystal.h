@@ -19,6 +19,7 @@ public:
 	Vector getPos( ) const;
 	void setVec( Vector vec );
 	bool isDropDown( ) const;
+	void shiftPos( Vector& base_pos );
 private:
 	Vector _pos;
 	const Vector _start_pos;

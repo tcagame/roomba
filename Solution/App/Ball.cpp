@@ -1,7 +1,6 @@
 #include "Ball.h"
 #include "AppStage.h"
 
-static const double BALL_RADIUS = WORLD_SCALE * ROOMBA_SCALE;
 static const Vector BALL_SIZE( 0.1, 0.1, 0.1 );
 static const double BALL_MODEL_ROT_SPEED = PI / 3;
 static const Vector adjust( -ROOMBA_SCALE, 1 - BALL_RADIUS );

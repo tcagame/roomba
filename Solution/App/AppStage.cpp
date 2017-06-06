@@ -282,6 +282,7 @@ Vector AppStage::adjustCollisionToCrystal( Vector pos, Vector vec, const double 
 			ite++;
 			continue;
 		}
+		crystal->shiftPos( pos );
 		Vector adjust = crystal->adjustHitToRoomba( pos, vec, radius );
 		result += adjust * REFLECTION_POWER;
 		ite++;
