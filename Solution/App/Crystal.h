@@ -16,6 +16,7 @@ public:
 	bool isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 );
 	Vector adjustHitToRoomba( Vector pos, Vector vec, double radius );
 	bool isFinished( ) const;
+	void setDropDown( bool drop_down );
 	Vector getPos( ) const;
 	void setVec( Vector vec );
 	bool isDropDown( ) const;

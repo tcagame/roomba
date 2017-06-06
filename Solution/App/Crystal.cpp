@@ -174,6 +174,10 @@ bool Crystal::isDropDown( ) const {
 	return _drop_down;
 }
 
+void Crystal::setDropDown( bool drop_down ) {
+	_drop_down = drop_down;
+}
+
 void Crystal::shiftPos( Vector& base_pos ) {
 	while ( _pos.x - base_pos.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
 		_pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;

@@ -248,6 +248,7 @@ void Roomba::holdCrystal( StagePtr stage ) {
 		if ( _crystal->isDropDown( ) ||
 			 _crystal->isFinished( ) ||
 			 _state == MOVE_STATE_REFLECTION ) {
+			_crystal->setDropDown( false );
 			_crystal = CrystalPtr( );
 			return;
 		}
