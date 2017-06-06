@@ -21,6 +21,7 @@ public:
 	bool isDropDown( ) const;
 	void shiftPos( Vector& base_pos );
 private:
+	int _effect_count;
 	Vector _pos;
 	const Vector _start_pos;
 	Vector _vec;

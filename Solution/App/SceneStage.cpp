@@ -91,6 +91,9 @@ _link_break( false ) {
 	drawer->loadMDLModel( MDL_WALL_1_15, "Model/Stage/1_15.mdl", "Model/Stage/wall.jpg", stage_scale );
 
 	drawer->loadEffect( EFFECT_LASER, "Effect/laser.efk" );
+	drawer->loadEffect( EFFECT_CATCH_CRYSTAL, "Effect/catch_crystal.efk" );
+	drawer->loadEffect( EFFECT_COL_ROOMBA, "Effect/collision_roomba.efk" );
+	drawer->loadEffect( EFFECT_CRYSTAL_CIRCLE, "Effect/crystal_effect.efk" );
 }
 
 

@@ -78,6 +78,7 @@ void Delivery::updateCatch( ) {
 	if ( _vec.getLength( ) < 0.01 ) {
 		_target = _pos + Vector( 0, 0, 4 );
 		_state = STATE_LIFT;
+		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CATCH_CRYSTAL, _pos, 0.5, EFFECT_ROTATE ) );
 	}
 }
 
