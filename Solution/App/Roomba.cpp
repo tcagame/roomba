@@ -13,8 +13,10 @@ static const double ACCEL_SPEED = 0.03;
 static const double RESTORE_SPEED = 0.08;
 static const double MAX_ROT_SPEED = 0.2;
 static const double MAX_TRANS_SPEED = 0.4;
-static const double DECELETION_ROT_SPEED = 0.003;
-static const double DECELETION_TRANS_SPEED = 0.003;
+static const double DECELETION_ROT_SPEED = 0.002;
+static const double DECELETION_TRANS_SPEED = 0.001;
+static const double OTHER_TRANS_RATIO = 6;
+static const double OTHER_ROT_RATIO = 2;
 static const double EMERGENCY_DECELERATION_SPEED = 0.05;
 static const double SCALE_SIZE = 6;
 static const double MIN_SCALE = 5;
@@ -140,6 +142,10 @@ void Roomba::accelRotation( DIR dir ) {
 void Roomba::brakeTranslation( ) {
 	double deceletion_trans_speed_x = DECELETION_TRANS_SPEED;
 	double deceletion_trans_speed_y = DECELETION_TRANS_SPEED;
+	if ( _state != MOVE_STATE_TRANSLATION ) {
+		deceletion_trans_speed_x *= OTHER_TRANS_RATIO;
+		deceletion_trans_speed_y *= OTHER_TRANS_RATIO;
+	}
 	if ( fabs( _move_dir.x ) < 0.1 && fabs( _move_dir.y ) > 0.1 ) {
 		deceletion_trans_speed_x = ACCEL_SPEED / 2;
 	}
@@ -172,13 +178,18 @@ void Roomba::brakeTranslation( ) {
 }
 
 void Roomba::brakeRotation( ) {
+	double deceletion_speed = DECELETION_ROT_SPEED;
+	if ( _state != MOVE_STATE_ROTATION_LEFT &&
+		 _state != MOVE_STATE_ROTATION_RIGHT ) {
+		deceletion_speed *= OTHER_ROT_RATIO;
+	}
 	if ( _rot_speed < 0 ) {
-		_rot_speed += DECELETION_ROT_SPEED;
+		_rot_speed += deceletion_speed;
 		if ( _rot_speed > 0 ) {
 			_rot_speed = 0;
 		}
 	} else {
-		_rot_speed -= DECELETION_ROT_SPEED;
+		_rot_speed -= deceletion_speed;
 		if ( _rot_speed < 0 ) {
 			_rot_speed = 0;
 		}
