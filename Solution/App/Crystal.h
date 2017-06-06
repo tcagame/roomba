@@ -20,6 +20,7 @@ public:
 	void setVec( Vector vec );
 	bool isDropDown( ) const;
 private:
+	int _effect_count;
 	Vector _pos;
 	const Vector _start_pos;
 	Vector _vec;

@@ -310,7 +310,7 @@ void Roomba::drawLaser( ) const {
 	// レーザー
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
-#if 1
+#if 0
 
 #else
 	const int ratio = 10; // effekseerのツールで作った際の大きさ

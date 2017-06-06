@@ -16,7 +16,8 @@ _pos( pos ),
 _start_pos( pos ),
 _finished( false ),
 _drop_down( false ),
-_type( type ) {
+_type( type ),
+_effect_count( 50 ) {
 
 }
 
@@ -27,6 +28,9 @@ Crystal::~Crystal( ) {
 
 void Crystal::draw( ViewerPtr viewer ) const {
 	viewer->drawModelMDL( Drawer::ModelMDL( _pos, _type ) );
+	if ( !_effect_count ) {
+		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CRYSTAL_CIRCLE, _pos + Vector( 0, 0, 1 ), 1.0, EFFECT_ROTATE ) );
+	}
 }
 
 void Crystal::update( AppStagePtr stage ) {
@@ -80,6 +84,9 @@ void Crystal::update( AppStagePtr stage ) {
 	if ( _pos.y < STAGE_HEIGHT_NUM * WORLD_SCALE - 1  ) {
 		_pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
+
+	_effect_count++;
+	_effect_count %= 60;
 }
 
 bool Crystal::isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) {
