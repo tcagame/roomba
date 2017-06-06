@@ -28,6 +28,10 @@ SceneStage::SceneStage( int stage_num ) :
 _countdown( START_COUNTDOWN_TIME ),
 _link_time( 300 ),
 _link_break( false ) {	
+	_delivery_number[ 0 ].state = NUMBER_STATE_IN;
+	_delivery_number[ 1 ].state = NUMBER_STATE_NONE;
+	_phase_number[ 0 ].state = NUMBER_STATE_IN;
+	_phase_number[ 1 ].state = NUMBER_STATE_NONE;
 	_viewer = ViewerPtr( new Viewer );
 	_stage = StagePtr( new AppStage( stage_num, _viewer ) );//0-2:í èÌ 3:test_stage
 	_roomba = RoombaPtr( new Roomba );
@@ -228,6 +232,9 @@ void SceneStage::drawUIPhase( ) {
 		_phase_number[ 0 ].speed_y = 0;
 	}
 	for ( int i = 0; i < 2; i++ ) {
+		if ( _phase_number[ i ].state == NUMBER_STATE_NONE ) {
+			continue;
+		}
 		if ( _phase_number[ i ].state == NUMBER_STATE_OUT ) {
 			_phase_number[ i ].x += 2;
 			_phase_number[ i ].speed_y++;
@@ -283,6 +290,9 @@ void SceneStage::drawUIDelivery( ) {
 		_delivery_number[ 0 ].speed_y = 0;
 	}
 	for ( int i = 0; i < 2; i++ ) {
+		if ( _delivery_number[ i ].state == NUMBER_STATE_NONE ) {
+			continue;
+		}
 		if ( _delivery_number[ i ].state == NUMBER_STATE_OUT ) {
 			_delivery_number[ i ].x += 2;
 			_delivery_number[ i ].speed_y++;
@@ -306,8 +316,8 @@ void SceneStage::drawUIDelivery( ) {
 		Drawer::Sprite sprite( Drawer::Transform( sx, sy, number * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT, sx2, sy2 ), GRAPH_NUMBER );
 		drawer->setSprite( sprite );
 	}
-	x -= UI_NUM_WIDTH;
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x - 32, y ), GRAPH_DELIVERY ) );
+	x -= 64;
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y ), GRAPH_DELIVERY ) );
 }
 
 

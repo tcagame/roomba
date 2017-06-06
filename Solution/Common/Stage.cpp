@@ -151,13 +151,13 @@ void Stage::loadPhase( ) {
 		return;
 	}
 	loadCrystal( );
-	loadDelivery( );
 	_max_delivery = 0;
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		if ( _data.delivery[ _phase ][ i ] != 0 ) {
 			_max_delivery++;
 		}
 	}
+	loadDelivery( );
 }
 
 void Stage::loadCrystal( ) {
