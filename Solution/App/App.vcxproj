@@ -164,6 +164,7 @@
     <ClCompile Include="Crystal.cpp" />
     <ClCompile Include="Delivery.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Laser.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Roomba.cpp" />
     <ClCompile Include="RoombaDelivery.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="Crystal.h" />
     <ClInclude Include="Delivery.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Laser.h" />
     <ClInclude Include="Roomba.h" />
     <ClInclude Include="RoombaDelivery.h" />
     <ClInclude Include="Scene.h" />

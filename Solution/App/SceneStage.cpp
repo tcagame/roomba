@@ -153,7 +153,7 @@ void SceneStage::updatePlay( ) {
 		updateRestart( );
 	} else {
 		_roomba->update( _stage, _camera );
-	updateLink( );
+		updateLink( );
 	}
 	_stage->update( _camera );
 	_timer->update( );

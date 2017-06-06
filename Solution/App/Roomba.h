@@ -7,6 +7,7 @@ PTR( Camera );
 PTR( AppCamera );
 PTR( Ball );
 PTR( Crystal );
+PTR( Laser );
 
 class Roomba {
 public:
@@ -44,6 +45,7 @@ private:
 private:
 	void updateState( );
 	void changeState( CameraPtr camera );
+	void updateLaser( );
 	void holdCrystal( StagePtr stage );
 	void moveTranslation( );
 	void moveRotation( );
@@ -61,7 +63,6 @@ private:
 	void setVecReflection( Vector vec_left, Vector vec_right );
 	void updateBalls( StagePtr stage );
 	void shiftPos( CameraPtr camera );
-	void drawLaser( ) const;
 private:
 	bool _scaling;
 	bool _rot_stop;
@@ -74,6 +75,7 @@ private:
 	std::array< Vector, 2 > _vec_reflection;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
+	LaserPtr _laser;
 	CrystalPtr _crystal;
 	Matrix _stick_rot;
 };

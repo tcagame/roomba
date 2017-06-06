@@ -5,6 +5,7 @@
 #include "AppStage.h"
 #include "Crystal.h"
 #include "Device.h"
+#include "laser.h"
 #include <assert.h>
 
 //デバッグのためスピード遅め
@@ -39,6 +40,7 @@ _rot_stop( false ) {
 		_vec_scale[ i ] = Vector( );
 		_vec_reflection[ i ] = Vector( );
 	}
+	_laser = LaserPtr( new Laser );
 }
 
 
@@ -46,17 +48,12 @@ Roomba::~Roomba( ) {
 }
 
 void Roomba::update( StagePtr stage, CameraPtr camera ) {
-	
 	changeState( camera );
-
 	updateState( );
-
+	updateLaser( );
 	holdCrystal( stage );
-
 	updateBalls( stage );
-
 	shiftPos( camera );
-
 }
 
 void Roomba::updateState( ) {
@@ -363,16 +360,21 @@ void Roomba::moveRestore( ) {
 }
 
 void Roomba::draw( ) const {
-	DrawerPtr drawer = Drawer::getTask( );
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ]->draw( );
 	}
+	_laser->draw( );
+	/*
+	リンクが切れている状態
+	MOVE_STATE_RESTORE 
+	MOVE_STATE_REFLECTION
 	if ( _state != MOVE_STATE_RESTORE &&
 		 _state != MOVE_STATE_REFLECTION ) {
 		drawLaser( );
 	}
+	*/
 }
-
+/*
 void Roomba::drawLaser( ) const {
 	// レーザー
 	DrawerPtr drawer = Drawer::getTask( );
@@ -395,6 +397,7 @@ void Roomba::drawLaser( ) const {
 	drawer->setEffect( Drawer::Effect( EFFECT_LASER, _balls[ BALL_RIGHT ]->getPos( ), size, Vector( 0, 0, angle_right ) ) );
 #endif
 }
+*/
 
 Vector Roomba::getCentralPos( ) const {
 	Vector pos[ 2 ];
@@ -524,4 +527,11 @@ Matrix Roomba::getMat( const int ball_num, const Vector& pos ) const {
 		return Matrix( );
 		}
 	return _balls[ ball_num ]->getMat( pos );
+}
+
+void Roomba::updateLaser( ) {
+	/*
+	roombaの状態をlaserに知らせる
+	*/
+	_laser->update( getCentralPos( ) );
 }
