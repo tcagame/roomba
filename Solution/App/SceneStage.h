@@ -29,6 +29,7 @@ private:
 	Vector getAdjustPos( Vector pos, Vector base_pos ) const;
 private:
 	enum NUMBER_STATE {
+		NUMBER_STATE_NONE,
 		NUMBER_STATE_IN,
 		NUMBER_STATE_WAIT,
 		NUMBER_STATE_OUT,

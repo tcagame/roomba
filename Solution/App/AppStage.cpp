@@ -30,6 +30,10 @@ void AppStage::reset( ) {
 void AppStage::update( CameraPtr camera ) {
 	updateCrystal( );
 	updateDelivery( camera );
+	if ( _delivery_count > getMaxDeliveryNum( ) ) {
+		loadPhase( );
+		return;
+	}
 	debug( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
 	for ( int i = 0; i < MAX_PHASE; i++ ) {
@@ -72,14 +76,10 @@ void AppStage::load( int stage_num ) {
 }
 
 void AppStage::updateCrystal( ) {
-	if ( _crystals.size( ) == 0 ) {
-		loadPhase( );
-	}
 	ApplicationPtr app = Application::getInstance( );
 	int scr_width = app->getWindowWidth( );
 	DrawerPtr drawer = Drawer::getTask( );
 	std::list< CrystalPtr >::iterator ite = _crystals.begin( );
-	int num = 0;
 	while ( ite != _crystals.end( ) ) {
 		CrystalPtr crystal = (*ite);
 		if ( !crystal ) {
@@ -93,20 +93,13 @@ void AppStage::updateCrystal( ) {
 		}
 		AppStagePtr stage = std::dynamic_pointer_cast< AppStage >( shared_from_this( ) );
 		crystal->update( stage );
-		//Vector pos = crystal->getPos( );
-		//drawer->drawString( scr_width - 280, num * 20, "[ƒNƒŠƒXƒ^ƒ‹%2d] x:%04.1f y:%04.1f", num, pos.x, pos.y );
-		num++;
 		ite++;
 	}
 }
 
 void AppStage::updateDelivery( CameraPtr camera ) {
-	if ( _deliverys.size( ) == 0 ) {
-		loadPhase( );
-	}
 	DrawerPtr drawer = Drawer::getTask( );
 	std::list< DeliveryPtr >::iterator ite = _deliverys.begin( );
-	int num = 0;
 	while ( ite != _deliverys.end( ) ) {
 		DeliveryPtr delivery = (*ite);
 		if ( !delivery ) {
@@ -119,7 +112,6 @@ void AppStage::updateDelivery( CameraPtr camera ) {
 			continue;
 		}
 		delivery->update( camera );
-		num++;
 		ite++;
 	}
 }
@@ -133,9 +125,9 @@ void AppStage::loadCrystal( ) {
 			continue;
 		}
 		crystal.~shared_ptr( );
-		ite++;
+		ite = _crystals.erase( ite );
 	}
-	_crystals.clear( );
+	//_crystals.clear( );
 	DATA data = getData( );
 	int phase = getPhase( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
@@ -150,7 +142,6 @@ void AppStage::loadCrystal( ) {
 
 void AppStage::loadDelivery( ) {
 	_delivery_count++;
-
 	std::list< DeliveryPtr >::const_iterator ite = _deliverys.begin( );
 	DATA data = getData( );
 	int phase = getPhase( );
