@@ -13,8 +13,8 @@ static const double ACCEL_SPEED = 0.03;
 static const double RESTORE_SPEED = 0.08;
 static const double MAX_ROT_SPEED = 0.2;
 static const double MAX_TRANS_SPEED = 0.4;
-static const double DECELETION_ROT_SPEED = 0.03;
-static const double DECELETION_TRANS_SPEED = 0.0003;
+static const double DECELETION_ROT_SPEED = 0.003;
+static const double DECELETION_TRANS_SPEED = 0.003;
 static const double EMERGENCY_DECELERATION_SPEED = 0.05;
 static const double SCALE_SIZE = 6;
 static const double MIN_SCALE = 5;
@@ -29,7 +29,8 @@ _state( MOVE_STATE_NEUTRAL ),
 _trans_speed( Vector( ) ),
 _vec_trans( Vector( ) ),
 _rot_speed( 0 ),
-_scaling( false ) {
+_scaling( false ),
+_rot_stop( false ) {
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ] = BallPtr( new Ball( START_POS[ i ] ) );
 		_vec_rot[ i ] = Vector( );
@@ -82,6 +83,9 @@ void Roomba::acceleration( ) {
 	case MOVE_STATE_RESTORE:
 		brakeTranslation( );
 		brakeRotation( );
+		break;
+	case MOVE_STATE_REFLECTION:
+		break;
 	default:
 		assert( -1 );
 		break;
@@ -113,17 +117,24 @@ void Roomba::accelTranslation( ) {
 }
 
 void Roomba::accelRotation( DIR dir ) {
-	if ( dir == DIR_LEFT ) {
-		_rot_speed += _move_dir.y * ACCEL_SPEED;
-		if ( _rot_speed > MAX_ROT_SPEED ) {
-			_rot_speed = MAX_ROT_SPEED;
-		}
-	} else {
-		_rot_speed += _move_dir.y * ACCEL_SPEED;
-		if ( _rot_speed < -MAX_ROT_SPEED ) {
-			_rot_speed = -MAX_ROT_SPEED;
+	_rot_speed += _move_dir.y * ACCEL_SPEED;
+	if ( _rot_speed > MAX_ROT_SPEED ) {
+		_rot_speed = MAX_ROT_SPEED;
+	}
+	if ( _rot_speed < -MAX_ROT_SPEED ) {
+		_rot_speed = -MAX_ROT_SPEED;
+	}
+	if ( _rot_speed > 0 ) {
+		if ( _move_dir.y < 0 ) {
+			_rot_stop = true;
 		}
 	}
+	if ( _rot_speed < 0 ) {
+		if ( _move_dir.y > 0 ) {
+			_rot_stop = true;
+		}
+	}
+	
 }
 
 void Roomba::brakeTranslation( ) {
@@ -219,11 +230,22 @@ void Roomba::changeState( CameraPtr camera ) {
 			state = MOVE_STATE_NEUTRAL;
 		}
 	}
-	if ( state != _state ) {			
+	if ( state != _state ) {
+		//ステート変更がある場合の処理
 		if ( state == MOVE_STATE_TRANSLATION ) {
 			Vector dir = camera->getDir( );
 			dir.z = 0;
 			_stick_rot = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( dir ) * -1, Vector( 0, -1 ).angle( dir ) );
+			_move_dir = _stick_rot.multiply( right_stick + left_stick );
+			if ( _rot_stop ) {
+				_trans_speed = _move_dir.normalize( ) * fabs( _rot_speed );
+				_rot_speed *= 0.1;
+				_rot_stop = false;
+			}			
+		}
+		if ( state != MOVE_STATE_TRANSLATION &&
+			 state != MOVE_STATE_NEUTRAL ) {
+			_rot_stop = false;
 		}
 		if ( state == MOVE_STATE_REFLECTION ) {
 			setVecScale( Vector( ), Vector( ) );
@@ -232,6 +254,8 @@ void Roomba::changeState( CameraPtr camera ) {
 			_vec_reflection[ 0 ] = _balls[ 0 ]->getVec( );
 			_vec_reflection[ 1 ] = _balls[ 1 ]->getVec( );
 		}
+
+
 		if ( _state == MOVE_STATE_REFLECTION ) {
 			_balls[ 0 ]->setReflection( false );
 			_balls[ 1 ]->setReflection( false );

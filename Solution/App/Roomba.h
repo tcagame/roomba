@@ -64,6 +64,7 @@ private:
 	void drawLaser( ) const;
 private:
 	bool _scaling;
+	bool _rot_stop;
 	double _rot_speed;
 	Vector _trans_speed;
 	Vector _move_dir;
