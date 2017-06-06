@@ -16,7 +16,9 @@ private:
 	Vector getCalcDir( Vector dir ) const;
 private:
 	int _mouse_x;
+	double _height;
 	Vector _dir;
+	Vector _before_target;
 	RoombaPtr _roomba;
 };
 
