@@ -15,6 +15,7 @@ public:
 		MOVE_STATE_ROTATION_RIGHT,
 		MOVE_STATE_ROTATION_LEFT,
 		MOVE_STATE_REFLECTION,
+		MOVE_STATE_RESTORE,
 		MOVE_STATE_NEUTRAL,
 		MAX_STATE,
 	};
@@ -46,6 +47,7 @@ private:
 	void moveTranslation( );
 	void moveRotation( );
 	void moveReflection( );
+	void moveRestore( );
 	void acceleration( );
 	void accelTranslation( );
 	void accelRotation( DIR dir );

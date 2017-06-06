@@ -15,13 +15,13 @@ public:
 	void reset( const Vector& pos );
 	void setPos( Vector pos );
 	bool isReflection( ) const;
+	void setReflection( bool ref );
 	Vector getPos( ) const;
 	Vector getVec( ) const;
 	Matrix getMat( const Vector& pos ) const;
 private:
-	Matrix _rot;
 	bool _reflection;
+	Matrix _rot;
 	Vector _pos;
 	Vector _vec;
-	Vector _before_vec;
 };

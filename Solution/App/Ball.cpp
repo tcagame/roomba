@@ -15,26 +15,24 @@ Ball::~Ball( ) {
 }
 
 void Ball::update( const Vector& vec, StagePtr stage ) {
-	_before_vec = _vec;
 	_vec = vec;
 
 	AppStagePtr stage_ptr = std::dynamic_pointer_cast< AppStage >( stage );
 	Vector adjust_vec = stage_ptr->adjustCollisionToWall( _pos, _vec, BALL_RADIUS );
 	adjust_vec += stage_ptr->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS );
-	if ( _vec != adjust_vec ) {
+	if ( ( _vec - adjust_vec ).getLength( ) > 0.001 ) {
 		_reflection = true;
 	}
 	_vec = adjust_vec;
-	if ( _vec.normalize( ) != _before_vec.normalize( ) ) {
-		_reflection = false;
-	}
 	_vec.z = 0;
 	_pos += _vec;
-	Matrix adjust_rot = Matrix::makeTransformRotation( Vector( 0, 0, -1 ), PI / 2 );
-	Vector axis = adjust_rot.multiply( _vec.normalize( ) );
-	axis = _rot.multiply( axis );
-	Matrix rot = Matrix::makeTransformRotation( axis, BALL_MODEL_ROT_SPEED * _vec.getLength( ) );
-	_rot = _rot.multiply( rot );
+	if ( !_reflection ) {
+		Matrix adjust_rot = Matrix::makeTransformRotation( Vector( 0, 0, -1 ), PI / 2 );
+		Vector axis = adjust_rot.multiply( _vec.normalize( ) );
+		axis = _rot.multiply( axis );
+		Matrix rot = Matrix::makeTransformRotation( axis, BALL_MODEL_ROT_SPEED * _vec.getLength( ) );
+		_rot = _rot.multiply( rot );
+	}
 }
 
 void Ball::draw( ) const {
@@ -71,4 +69,8 @@ void Ball::setPos( Vector pos ) {
 
 bool Ball::isReflection( ) const {
 	return _reflection;
+}
+
+void Ball::setReflection( bool ref ) {
+	_reflection = ref;
 }

@@ -7,7 +7,7 @@
 const double HEIGHT = 0.4;//0.4
 const double ROTE_SPEED = PI / 40;
 const int CAMERA_LENGTH = (int)( 40 * WORLD_SCALE );
-const double MOVE_RATIO = 0.00001;
+const double MOVE_RATIO = 0.001;
 
 AppCamera::AppCamera( RoombaPtr roomba ) :
 _roomba( roomba ),
