@@ -7,7 +7,6 @@
 const double HEIGHT = 0.4;//0.4
 const double ROTE_SPEED = PI / 40;
 const int CAMERA_LENGTH = (int)( 40 * WORLD_SCALE );
-const double MOVE_RATIO = 0.001;
 
 AppCamera::AppCamera( RoombaPtr roomba ) :
 _roomba( roomba ),
@@ -26,19 +25,9 @@ void AppCamera::move( ) {
 	Vector target = _roomba->getCentralPos( );
 	setTarget( target );
 	//回転カメラワーク
-	Vector roomba_pos = _roomba->getCentralPos( );
-	Vector roomba_vec = roomba_pos - _before_roomba_pos;
-	Vector dir = getCalcDir( roomba_vec );
-	_before_roomba_pos = roomba_pos;
-
-	Vector pos = getPos( );
-	if ( !isHold( roomba_vec ) ) {
-		Vector pos_target = getTarget( ) - dir.normalize( ) * CAMERA_LENGTH;
-		pos += ( pos_target - pos ) * MOVE_RATIO;
-		_dir = getCalcDir( ( target - pos ) );
-	}
+	_dir = getCalcDir( target - getPos( ) );
 	//座標計算
-	pos = target - _dir * CAMERA_LENGTH;
+	Vector pos = target - _dir * CAMERA_LENGTH;
 	setPos( pos );
 }
 
