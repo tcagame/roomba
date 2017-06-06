@@ -5,7 +5,7 @@
 #include "Roomba.h"
 
 const double HEIGHT = 0.4;//0.4
-const double ROTE_SPEED = PI / 40;
+const double ROTE_SPEED = 0.05;
 const int CAMERA_LENGTH = (int)( 40 * WORLD_SCALE );
 
 AppCamera::AppCamera( RoombaPtr roomba ) :
@@ -13,7 +13,6 @@ _roomba( roomba ),
 _mouse_x( 0 ),
 Camera( roomba->getCentralPos( ) -  getCalcDir( roomba->getDir( ) ) * CAMERA_LENGTH, roomba->getCentralPos( ) ) {
 	_dir = getCalcDir( roomba->getDir( ) );
-	_before_roomba_pos = roomba->getCentralPos( );
 }
 
 
@@ -25,8 +24,12 @@ void AppCamera::move( ) {
 	Vector target = _roomba->getCentralPos( );
 	setTarget( target );
 	//回転カメラワーク
-	_dir = getCalcDir( target - getPos( ) );
+	Vector dir = target - getPos( );
+	dir.z = 0;
+	Matrix rot = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), _roomba->getRotSpeed( ) * ROTE_SPEED );
+	dir = rot.multiply( dir );
 	//座標計算
+	_dir = getCalcDir( dir );
 	Vector pos = target - _dir * CAMERA_LENGTH;
 	setPos( pos );
 }
@@ -46,15 +49,4 @@ Vector AppCamera::getCalcDir( Vector dir ) const {
 	dir = dir.normalize( );
 	dir.z = -HEIGHT;
 	return dir.normalize( );
-}
-
-bool AppCamera::isHold( Vector dir ) const {
-	bool result = false;
-	dir.z = 0;
-	Vector check_dir = _dir;
-	check_dir.z = 0;
-	if ( dir.angle( check_dir ) > PI / 4 * 3 ) {
-		result = true;
-	}
-	return result;
 }

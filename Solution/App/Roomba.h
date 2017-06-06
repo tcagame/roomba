@@ -27,6 +27,7 @@ public:
 	void draw( ) const;
 	void reset( );
 	bool isScaling( ) const;
+	double getRotSpeed( ) const;
 	Vector getDir( ) const;
 	Vector getCentralPos( ) const;
 	Vector getBallPos( int ball ) const;

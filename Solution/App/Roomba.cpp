@@ -232,7 +232,7 @@ void Roomba::changeState( CameraPtr camera ) {
 			_vec_reflection[ 0 ] = _balls[ 0 ]->getVec( );
 			_vec_reflection[ 1 ] = _balls[ 1 ]->getVec( );
 		}
-		if ( state == MOVE_STATE_RESTORE ) {
+		if ( _state == MOVE_STATE_REFLECTION ) {
 			_balls[ 0 ]->setReflection( false );
 			_balls[ 1 ]->setReflection( false );
 		}
@@ -477,6 +477,10 @@ Vector Roomba::getDir( ) const {
 
 bool Roomba::isScaling( ) const {
 	return _scaling;
+}
+
+double Roomba::getRotSpeed( ) const {
+	return _rot_speed;
 }
 
 Matrix Roomba::getMat( const int ball_num, const Vector& pos ) const {

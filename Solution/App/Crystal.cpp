@@ -27,7 +27,7 @@ Crystal::~Crystal( ) {
 }
 
 void Crystal::draw( ViewerPtr viewer ) const {
-	viewer->drawModelMDL( Drawer::ModelMDL( _pos, _type ) );
+	viewer->drawModelMDL( Drawer::ModelMDL( _pos + Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 8 ), _type ) );
 	if ( !_effect_count ) {
 		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CRYSTAL_CIRCLE, _pos + Vector( 0, 0, 1 ), 1.0, EFFECT_ROTATE ) );
 	}
