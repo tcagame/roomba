@@ -125,8 +125,8 @@ void Roomba::updateLaser( CameraConstPtr camera ) {
 }
 
 void Roomba::updateLink( ) {
-	if ( _state == MOVE_STATE_REFLECTION ||
-		 _state == MOVE_STATE_RESTORE ) {
+	if ( _state != MOVE_STATE_REFLECTION &&
+		 _state != MOVE_STATE_RESTORE ) {
 		_link_gauge += LINK_RECOVERS_SPEED;
 		if ( _link_gauge > MAX_LINK_GAUGE ) {
 			_link_gauge = MAX_LINK_GAUGE;
