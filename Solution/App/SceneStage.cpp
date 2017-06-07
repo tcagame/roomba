@@ -146,7 +146,7 @@ void SceneStage::drawUI( ) {
 		const int TW = 400;
 		const int TH = 50;
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, TH, TW, TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, 0, _roomba->getLink( ), TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, 0, (int)_roomba->getLink( ), TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
 	}
 	
 	drawUIMap( );

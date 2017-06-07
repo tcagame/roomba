@@ -30,7 +30,7 @@ public:
 	void draw( ) const;
 	void reset( );
 	double getRotSpeed( ) const;
-	int getLink( ) const;
+	double getLink( ) const;
 	Vector getDir( ) const;
 	Vector getCentralPos( ) const;
 	Vector getBallPos( int ball ) const;
@@ -69,7 +69,6 @@ private:
 	void setVecReflection( Vector vec_left, Vector vec_right );
 	void shiftPos( CameraPtr camera );
 private:
-	bool _scaling;
 	bool _rot_stop;
 	double _rot_speed;
 	double _link_gauge;

@@ -37,7 +37,6 @@ _state( MOVE_STATE_NEUTRAL ),
 _trans_speed( Vector( ) ),
 _vec_trans( Vector( ) ),
 _rot_speed( 0 ),
-_scaling( false ),
 _rot_stop( false ),
 _link_break( false ),
 _link_gauge( MAX_LINK_GAUGE / 2 ) {
@@ -126,7 +125,8 @@ void Roomba::updateLaser( CameraConstPtr camera ) {
 }
 
 void Roomba::updateLink( ) {
-	if ( !_scaling ) {
+	if ( _state == MOVE_STATE_REFLECTION ||
+		 _state == MOVE_STATE_RESTORE ) {
 		_link_gauge += LINK_RECOVERS_SPEED;
 		if ( _link_gauge > MAX_LINK_GAUGE ) {
 			_link_gauge = MAX_LINK_GAUGE;
@@ -446,13 +446,11 @@ void Roomba::moveReflection( ) {
 
 void Roomba::moveRestore( ) {
 	if ( _state != MOVE_STATE_RESTORE ) {
-		_scaling = false;
 		setVecScale( Vector( ), Vector( ) );
 		return;
 	}
 	
 	// ball_left‚ðŠî€‚Ék¬‚·‚é
-	_scaling = true;
 	Vector dir = _balls[ 1 ]->getPos( ) - _balls[ 0 ]->getPos( );
 	Vector vec = dir.normalize( ) * RESTORE_SPEED;
 	double scale = ( _balls[ 1 ]->getPos( ) - _balls[ 0 ]->getPos( ) ).getLength( );
@@ -577,7 +575,7 @@ double Roomba::getRotSpeed( ) const {
 	return _rot_speed;
 }
 
-int Roomba::getLink( ) const {
+double Roomba::getLink( ) const {
 	return _link_gauge;
 }
 
