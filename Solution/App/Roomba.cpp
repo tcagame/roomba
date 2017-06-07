@@ -470,12 +470,7 @@ void Roomba::updateBalls( StagePtr stage) {
 	}
 
 	if ( !_crystal ) {
-		if ( _state == MOVE_STATE_ROTATION_LEFT ||
-			 _state == MOVE_STATE_ROTATION_RIGHT ) {
-			_crystal =  app_stage->getHittingCrystal( _balls[ 0 ]->getPos( ), _balls[ 1 ]->getPos( ) + vec[ 1 ], vec[ 0 ], vec[ 1 ] * -1 );
-		} else {
-			_crystal =  app_stage->getHittingCrystal( _balls[ 0 ]->getPos( ), _balls[ 1 ]->getPos( ), vec[ 0 ], vec[ 1 ] );
-		}
+		_crystal =  app_stage->getHittingCrystal( _balls[ 0 ]->getPos( ), _balls[ 1 ]->getPos( ), vec[ 0 ], vec[ 1 ] );
 	}
 	_balls[ 0 ]->update( vec[ 0 ], stage );
 	_balls[ 1 ]->update( vec[ 1 ], stage );
