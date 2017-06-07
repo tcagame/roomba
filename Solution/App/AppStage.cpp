@@ -7,7 +7,7 @@
 #include "Keyboard.h"
 #include "Delivery.h"
 
-const int REFLECTION_POWER = 3;
+const double REFLECTION_POWER = 0.8;
 const double DELIVERY_POS_Z = EARTH_POS_Z + WORLD_SCALE;
 const double CRYSTAL_POS_Z = crystal_size.z * -2;
 
@@ -127,7 +127,7 @@ void AppStage::loadCrystal( ) {
 		crystal.~shared_ptr( );
 		ite = _crystals.erase( ite );
 	}
-	//_crystals.clear( );
+	_crystals.clear( );
 	DATA data = getData( );
 	int phase = getPhase( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
@@ -200,6 +200,7 @@ CrystalPtr AppStage::getHittingCrystal( Vector pos0, Vector pos1, Vector vec0, V
 Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double radius ) {
 	// ƒ{[ƒ‹‚Æ•Ç‚Ì“–‚½‚è”»’è
 	Vector result = vec;
+	bool collision = false;
 	const int OFFSET_X[ 9 ] = { -1, 1, -1, 1, 0, 0, -1, 1, 0 };
 	const int OFFSET_Y[ 9 ] = { -1, -1, 1, 1, -1, 1, 0, 0, 0 };
 	while ( pos.x > STAGE_WIDTH_NUM * WORLD_SCALE ) {
@@ -234,7 +235,7 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 		Vector pos_f( fx, fy, fpos.z );
 			if ( isCollisionToSquare( pos_f, fpos, radius ) ) {
 				result = ( fpos - ( pos_f + Vector( WORLD_SCALE / 4, WORLD_SCALE / 4 ) ) ).normalize( ) * vec.getLength( );
-				result *= REFLECTION_POWER;
+				collision = true;
 			}
 		}
 			break;
@@ -243,7 +244,7 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 			Vector pos_inside( fx - ( fx % 2 ) + 1, fy - ( fy % 2 ) + 1, fpos.z );
 			if ( isCollisionToCircle( pos_inside, fpos, radius ) ) {
 				result = ( pos - fpos ).normalize( ) * vec.getLength( );
-				result *= REFLECTION_POWER;
+				collision = true;
 			}
 		}
 			break;
@@ -253,14 +254,16 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 			Vector pos_inside( fx - ( fx % 2 ) + 1, fy - ( fy % 2 ) + 1, fpos.z );
 			if ( isCollisionToL( pos_outside, pos_inside, fpos, radius ) ) {
 				result = ( pos_inside - pos_outside ).normalize( ) * vec.getLength( );
-				result *= REFLECTION_POWER;
+				collision = true;
 			} 
 			
 		}
 			break;
 		}
 	}
-	
+	if ( collision ) {
+		result = result.normalize( ) * REFLECTION_POWER;
+	}
 	return result;
 }
 
@@ -275,7 +278,7 @@ Vector AppStage::adjustCollisionToCrystal( Vector pos, Vector vec, const double 
 		}
 		crystal->shiftPos( pos );
 		Vector adjust = crystal->adjustHitToRoomba( pos, vec, radius );
-		result += adjust * REFLECTION_POWER;
+		result += adjust.normalize( ) * REFLECTION_POWER;
 		ite++;
 	}
 	return result;

@@ -5,17 +5,18 @@
 #include "Roomba.h"
 #include "Viewer.h"
 
-static const double REFLECTION_POWER = 5.0;
+static const double REFLECTION_POWER = 0.3;
 static const double CRYSTAL_RADIUS = crystal_size.x / 3;
 static const double MAX_SPEED = 0.9;
-static const double DECELERATION = 0.01;
+static const double DECELERATION = 0.03;
+static const double DECELERATION_DROP_DOWN_RATIO = 2;
 static const double BOUND_POW = 0.1;
 
 Crystal::Crystal( Vector pos, MDL type ) :
 _pos( pos ),
 _start_pos( pos ),
 _finished( false ),
-_drop_down( false ),
+_drop_down( true ),
 _type( type ),
 _effect_count( 50 ) {
 
@@ -51,7 +52,6 @@ void Crystal::update( AppStagePtr stage ) {
 			_vec.z = _start_pos.z - _pos.z;
 		}
 	}
-
 	// バウンド
 	if ( _drop_down &&
 		 _pos.z == _start_pos.z &&
@@ -68,11 +68,19 @@ void Crystal::update( AppStagePtr stage ) {
 	}
 
 	_pos += _vec;
+	if ( _pos.z < _start_pos.z ) {
+		_pos.z = _start_pos.z;
+	}
+
+
+	double deceleration = DECELERATION;
+	if ( _drop_down ) {
+		deceleration *= DECELERATION_DROP_DOWN_RATIO;
+	}
 	if ( _vec.getLength( ) > DECELERATION ) {
-		_vec -= _vec.normalize( ) * DECELERATION;
+		_vec -= _vec.normalize( ) * deceleration;
 	} else {
 		_vec = Vector( );
-		_drop_down = false;
 	}
 
 	_effect_count++;
@@ -82,18 +90,11 @@ void Crystal::update( AppStagePtr stage ) {
 bool Crystal::isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) {
 	//pos0とpos1の間にクリスタルがあるかどうか
 	Vector crystal_pos = _pos;
-	while ( crystal_pos.x - pos0.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
-		crystal_pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
-	}
-	while ( crystal_pos.x - pos0.x < -STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
-		crystal_pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
-	}
-	while ( crystal_pos.y - pos0.y > STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
-		crystal_pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
-	}
-	while ( crystal_pos.y - pos0.y < -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
-		crystal_pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
-	}
+	crystal_pos.z = pos0.z;
+	if ( vec0.angle( vec1 ) > PI / 2 ) {
+		pos1 += vec1;
+		vec1 *= -1;
+	};
 
 	Vector distance0 = crystal_pos - pos0;
 	Vector distance1 = pos1 - pos0;
@@ -106,8 +107,8 @@ bool Crystal::isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) {
 	}
 	double distance = distance0.getLength( ) * fabs( sin( angle ) );
 	if ( fabs( distance ) < CRYSTAL_RADIUS ) {
+		_drop_down = false;
 		return true;
-		_pos = crystal_pos;
 	}
 
 	//ballの速度が速い時の処理
@@ -136,6 +137,7 @@ bool Crystal::isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) {
 	if ( ( cross[ 0 ].z < 0 && cross[ 1 ].z < 0 && cross[ 2 ].z < 0 && cross[ 3 ].z < 0 ) ||
 		 ( cross[ 0 ].z > 0 && cross[ 1 ].z > 0 && cross[ 2 ].z > 0 && cross[ 3 ].z > 0 ) ) {
 		_pos = crystal_pos;
+		_drop_down = false;
 		return true;
 	}
 	return false;
@@ -152,7 +154,7 @@ Vector Crystal::adjustHitToRoomba( Vector pos, Vector vec, double radius ) {
 	if ( distance.getLength( ) < CRYSTAL_RADIUS + radius ) {
 		tmp_vec = ( pos - _pos ).normalize( ) * vec.getLength( );
 		// クリスタルの反射
-		_vec = ( tmp_vec - vec ) * -REFLECTION_POWER;
+		_vec = ( tmp_vec - vec ).normalize( ) * -REFLECTION_POWER;
 	}
 	vec = tmp_vec - vec;
 	return vec;

@@ -13,7 +13,7 @@ static const Vector delivery_size = Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCAL
 static const Vector crystal_size = Vector( WORLD_SCALE / 8, WORLD_SCALE / 8, WORLD_SCALE / 6 );
 static const Vector roomba_size = Vector( WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE );
 static const Vector earth_size = Vector( WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_WIDTH_NUM, WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_HEIGHT_NUM, WORLD_SCALE / STAGE_MODEL_SIZE );
-static const Vector stage_size = Vector( WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE );
+static const Vector wall_size = Vector( WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE * 5 );
 static const Vector station_size = Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE );
 static const Vector EFFECT_ROTATE = Vector( PI / 2, 0, 0 );
 
