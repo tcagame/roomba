@@ -8,6 +8,8 @@ const double MOVE_SPEED = 1.0;
 const double ZOOM_SPEED = 9.0;
 const int MAX_LENGTH = 150;
 const int MIN_LENGTH = 30;
+const double MIN_HEIGHT = 0.01;
+const double MAX_HEIGHT = 0.9;
 const double ROT_SPEED = PI / 60;
 
 EditorCamera::EditorCamera( ) :
@@ -37,17 +39,17 @@ void EditorCamera::move( ) {
 		move.x += MOVE_SPEED;
 	}
 	int axis_x = 0;//c•ûŒü‰ñ“]
-	if ( keyboard->isHoldKey( "U" ) ) {
+	if ( keyboard->isHoldKey( "NUM8" ) ) {
 		axis_x = -1;
 	}
-	if ( keyboard->isHoldKey( "J" ) ) {
+	if ( keyboard->isHoldKey( "NUM2" ) ) {
 		axis_x = 1;
 	}
 	int axis_z = 0;//‰¡•ûŒü‰ñ“]
-	if ( keyboard->isHoldKey( "H" ) ) {
+	if ( keyboard->isHoldKey( "NUM4" ) ) {
 		axis_z = -1;
 	}
-	if ( keyboard->isHoldKey( "K" ) ) {
+	if ( keyboard->isHoldKey( "NUM6" ) ) {
 		axis_z = 1;
 	}
 
@@ -57,11 +59,11 @@ void EditorCamera::move( ) {
 		Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, axis_z ), ROT_SPEED );
 		dir = mat.multiply( dir ).normalize( );
 		dir.z += axis_x * ROT_SPEED * 2;
-		if ( dir.z < -0.5 ) {
-			dir.z = -0.5;
+		if ( dir.z < -MAX_HEIGHT ) {
+			dir.z = -MAX_HEIGHT;
 		}
-		if ( dir.z > -0.1 ) {
-			dir.z = -0.1;
+		if ( dir.z > -MIN_HEIGHT ) {
+			dir.z = -MIN_HEIGHT;
 		}
 	}
 

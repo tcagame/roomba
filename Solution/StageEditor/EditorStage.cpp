@@ -31,29 +31,15 @@ void EditorStage::update( CameraPtr camera ) {
 }
 
 void EditorStage::saveFile( ) const {
-	DATA data = getData( );
-	BinaryPtr binary = BinaryPtr( new Binary );
-	binary->ensure( sizeof( data ) );
-	binary->write( (void*)&data, sizeof( data ) );
 	ApplicationPtr app = Application::getInstance( );
 	std::string filename = "../Resource/Map/" + app->inputString( 0, 40 );
-	if ( filename.find( ".stage" ) == std::string::npos ) {
-		filename += ".stage";
-	}
-	app->saveBinary( filename, binary );
+	saveData( filename );
 }
 
 void EditorStage::loadFile( ) {
 	ApplicationPtr app = Application::getInstance( );
 	std::string filename = "../Resource/Map/" + app->inputString( 0, 40 );
-	BinaryPtr binary( new Binary );
-	if ( filename.find( ".stage" ) == std::string::npos ) {
-		filename += ".stage";
-	}
-	if ( !app->loadBinary( filename, binary ) ) {
-		return;
-	}
-	setData( *(DATA*)binary->getPtr( ) );
+	loadData( filename );
 }
 
 void EditorStage::updateCursor( ) {
@@ -115,8 +101,7 @@ void EditorStage::draw( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	Vector cursor_pos( (int)_cursor_pos.x * WORLD_SCALE + WORLD_SCALE / 2, (int)_cursor_pos.y * WORLD_SCALE  + WORLD_SCALE / 4 );
 	drawer->setModelMDL( Drawer::ModelMDL( cursor_pos, MDL_CURSOR ) );
-	drawer->drawString( 0, 60, "PHASE:%d", getPhase( ) );
-	drawer->drawString( 0, 0, "壁編集:Z　クリスタル編集:X　ステーション編集:C　ロード:F1　セーブ:F2　フェーズ変更:テンキー" );
+	drawer->drawString( 0, 0, "壁編集:Z　クリスタル編集:X　ステーション編集:C　ロード:F1　セーブ:F2　カメラ移動:テンキー" );
 
 
 	for ( int i = 0; i <= STAGE_WIDTH_NUM; i++ ) {
@@ -135,11 +120,9 @@ void EditorStage::draw( ) const {
 }
 
 void EditorStage::drawCrystal( ) const {
-	DATA data = getData( );
-	int phase = getPhase( );
 	DrawerPtr drawer = Drawer::getTask( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( data.crystal[ phase ][ i ] != 0 ) {
+		if ( getData( i ).crystal != 0 ) {
 			MDL mdl = (MDL)( MDL_CRYSTAL );
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
@@ -160,12 +143,6 @@ void EditorStage::edit( ) {
 	if ( keyboard->isPushKey( "F2" ) ) {
 		drawer->drawString( 0, 20, "セーブ" );
 		saveFile( );
-	}
-	for ( int i = 0; i < 10; i++ ) {
-		std::string key = "NUM" + std::to_string( i );
-		if ( keyboard->isPushKey( key ) ) {
-			setPhase( i );
-		}
 	}
 
 	switch ( _mode ) {
@@ -191,10 +168,11 @@ void EditorStage::editWall( ) {
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
-		DATA data = getData( );
-		if ( data.wall[ idx ] == 0 ) {
-			data.wall[ idx ] = 1;
-			setData( data );
+		DATA data = getData( idx );
+		if ( data.wall == 0 ) {
+			DATA data = DATA( );
+			data.wall = 1;
+			setData( data, idx );
 			loadWall( );
 		}
 	}
@@ -203,10 +181,10 @@ void EditorStage::editWall( ) {
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
-		DATA data = getData( );
-		if ( data.wall[ idx ] == 1 ) {
-			data.wall[ idx ] = 0;
-			setData( data );
+		DATA data = getData( idx );
+		if ( data.wall == 1 ) {
+			data.wall = 0;
+			setData( data, idx );
 			loadWall( );
 		}
 	}
@@ -216,12 +194,9 @@ void EditorStage::editCrystal( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->drawString( 0, 80, "MODE:クリスタル配置" );
 	
-	int phase = getPhase( );
-	DATA data = getData( );
 	int count = 0;
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( data.crystal[ phase ][ i ] > 0 ) {
-			data.crystal[ phase ][ i ] = 1;//修正用
+		if ( getData( i ).crystal > 0 ) {
 			count++;
 		}
 	}
@@ -233,9 +208,10 @@ void EditorStage::editCrystal( ) {
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
-		if ( data.crystal[ phase ][ idx ] == 0 ) {
-			data.crystal[ phase ][ idx ] = 1;
-			setData( data );
+		DATA data = getData( idx );
+		if ( data.crystal == 0 ) {
+			data.crystal = 1;
+			setData( data, idx );
 		}
 	}
 	if ( mouse->isHoldRightButton( ) || keyboard->isHoldKey( "BACK_SPACE" ) ) {
@@ -243,9 +219,10 @@ void EditorStage::editCrystal( ) {
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
-		if ( data.crystal[ phase ][ idx ] != 0 ) {
-			data.crystal[ phase ][ idx ] = 0;
-			setData( data );
+		DATA data = getData( idx );
+		if ( data.crystal != 0 ) {
+			data.crystal = 0;
+			setData( data, idx );
 		}
 	}
 }
@@ -253,13 +230,12 @@ void EditorStage::editCrystal( ) {
 void EditorStage::editDelivery( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->drawString( 0, 80, "MODE:ステーション配置" );
-	int phase = getPhase( );
-	DATA data = getData( );
 	bool placed[ MAX_LINK ] = { };
 
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( data.delivery[ phase ][ i ] ) {
-			placed[ data.delivery[ phase ][ i ] - 1 ] = true;
+		DATA data = getData( i );
+		if ( data.delivery ) {
+			placed[ data.delivery - 1 ] = true;
 		}
 	}
 	int number = 0;
@@ -277,9 +253,10 @@ void EditorStage::editDelivery( ) {
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
-		if ( data.delivery[ phase ][ idx ] == 0 ) {
-			data.delivery[ phase ][ idx ] = number;
-			setData( data );
+		DATA data = getData( idx );
+		if ( data.delivery == 0 ) {
+			data.delivery = number;
+			setData( data, idx );
 		}
 	}
 
@@ -288,9 +265,10 @@ void EditorStage::editDelivery( ) {
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
-		if ( data.delivery[ phase ][ idx ] != 0 ) {
-			data.delivery[ phase ][ idx ] = 0;
-			setData( data );
+		DATA data = getData( idx );
+		if ( data.delivery != 0 ) {
+			data.delivery = 0;
+			setData( data, idx );
 		}
 	}
 }
@@ -326,10 +304,8 @@ void EditorStage::drawWall( ) const {
 
 void EditorStage::drawDelivery( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	DATA data = getData( );
-	int phase = getPhase( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( data.delivery[ phase ][ i ] != 0 ) {
+		if ( getData( i ).delivery != 0 ) {
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
 			drawer->setModelMDL( Drawer::ModelMDL( Vector( x, y, DELIVERY_POS_Z ), MDL_DELIVERY ) );

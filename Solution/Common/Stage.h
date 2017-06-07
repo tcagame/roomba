@@ -10,9 +10,9 @@ PTR( Camera );
 class Stage {
 public:
 	struct DATA {
-		std::array< char, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > wall;
-		std::array< std::array< char, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_PHASE > crystal;
-		std::array< std::array< char, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >, MAX_PHASE > delivery;
+		char wall;
+		char crystal;
+		char delivery;
 	};
 public:
 	Stage( );
@@ -20,24 +20,24 @@ public:
 public:
 	virtual void update( CameraPtr camera ) = 0;
 	virtual void draw( ) const = 0;
-	bool isFinished( ) const;
 	virtual void reset( );
 	int getMaxDeliveryNum( ) const;
-	int getPhase( ) const;
-	const DATA& getData( ) const;
+	const DATA& getData( int idx ) const;
+	const std::array< DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >& getData( ) const;
 protected:
 	static const int MAX_STAGE = 4;
 	static const int MAX_LINK = 5;
 protected:
 	void debug( );
-	void setData( DATA& data );
-	void setPhase( int phase );
+	void setData( DATA& data, int idx );
+	void setData( std::array< DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >& data );
 	void drawModel( ) const;
 	void load( int stage_num );
+	void loadData( std::string filename );
+	void saveData( std::string filename ) const;
 	virtual void drawCrystal( ) const;
 	virtual void drawDelivery( ) const;
 	void loadWall( );
-	virtual void loadPhase( );
 	virtual void loadCrystal( );
 	virtual void loadDelivery( );
 	const std::vector< Drawer::ModelMDL >& getWalls( ) const;
@@ -45,11 +45,9 @@ private:
 	virtual void drawEarth( ) const = 0;
 	virtual void drawWall( ) const = 0;
 private:
+	std::array< DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _data;
 	std::vector< Drawer::ModelMDL > _walls;
 	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _earth;
-	DATA _data;
-	int _phase;
-	bool _finished;
 	int _max_delivery;
 };
 

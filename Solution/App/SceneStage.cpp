@@ -11,8 +11,6 @@
 #include "Viewer.h"
 #include "RoombaDelivery.h"
 
-static const int UI_PHASE_FOOT_X = 30;
-static const int UI_PHASE_Y = 100;
 static const int UI_STATION_FOOT_X = 60;
 static const int UI_STATION_Y = 200;
 static const int UI_NUM_WIDTH = 32;
@@ -28,6 +26,7 @@ SceneStage::SceneStage( int stage_num ) :
 _countdown( START_COUNTDOWN_TIME ),
 _link_time( 300 ),
 _link_break( false ) {	
+
 	_viewer = ViewerPtr( new Viewer );
 	_stage = StagePtr( new AppStage( stage_num, _viewer ) );//0-2:通常 3:test_stage
 	_roomba = RoombaPtr( new Roomba );
@@ -45,7 +44,6 @@ _link_break( false ) {
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
 	drawer->loadGraph( GRAPH_DELIVERY, "UI/station.png" );
-	drawer->loadGraph( GRAPH_PHASE, "UI/phase.png" );
 	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
 	Matrix delivery_scale = Matrix::makeTransformScaling( delivery_size );
@@ -121,7 +119,7 @@ Scene::NEXT SceneStage::update( ) {
 	if ( _timer->isTimeOver( ) ) {
 		return NEXT_RETRY;
 	}
-	if ( _stage->isFinished( ) ) {
+	if ( std::dynamic_pointer_cast<AppStage>(_stage)->isFinished( ) ) {
 		_timer->finalize( );
 		return NEXT_RESULT;
 	}
@@ -183,7 +181,6 @@ void SceneStage::updateLink( ) {
 }
 
 void SceneStage::drawUI( ) {
-	drawUIPhase( );
 	drawUIDelivery( );
 	// linkgauge
 	DrawerPtr drawer = Drawer::getTask( );
@@ -195,75 +192,6 @@ void SceneStage::drawUI( ) {
 	}
 	
 	drawUIMap( );
-}
-
-void SceneStage::drawUIPhase( ) {
-	DrawerPtr drawer = Drawer::getTask( );
-	ApplicationPtr app = Application::getInstance( );
-	int scr_width = app->getWindowWidth( );
-	int x = scr_width - UI_PHASE_FOOT_X;
-	int y = UI_PHASE_Y;
-	
-	//max
-	int max = MAX_PHASE -1;
-	while ( max >= 0 ) {
-		int num = max % 10;
-		Drawer::Sprite sprite( Drawer::Transform( x, y, num * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT ), GRAPH_NUMBER );
-		drawer->setSprite( sprite );
-		
-		x -= UI_NUM_WIDTH;
-		max /= 10;
-		if ( max == 0 ) {
-			break;
-		}
-	};
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, 10 * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT ), GRAPH_NUMBER ) );
-	x -= UI_NUM_WIDTH;
-
-	//now
-	int phase = _stage->getPhase( );
-	if ( _phase_number[ 0 ].num != phase ) {
-		_phase_number[ 1 ] = _phase_number[ 0 ];
-		_phase_number[ 1 ].state = NUMBER_STATE_OUT;
-		_phase_number[ 1 ].speed_y = -16;
-		_phase_number[ 0 ].num = phase;
-		_phase_number[ 0 ].state = NUMBER_STATE_IN;
-		_phase_number[ 0 ].x = 0;
-		_phase_number[ 0 ].y = 0;
-		_phase_number[ 0 ].size = 0;
-		_phase_number[ 0 ].speed_y = 0;
-	}
-	for ( int i = 0; i < 2; i++ ) {
-		if ( _phase_number[ i ].state == NUMBER_STATE_NONE ) {
-			continue;
-		}
-		if ( _phase_number[ i ].state == NUMBER_STATE_OUT ) {
-			_phase_number[ i ].x += 2;
-			_phase_number[ i ].speed_y++;
-			_phase_number[ i ].y += _phase_number[ i ].speed_y;
-			if ( _phase_number[ i ].y >= 0 ) {
-				_phase_number[ i ].speed_y *= -1;
-			}
-		}
-		if ( _phase_number[ i ].state == NUMBER_STATE_IN ) {
-			_phase_number[ i ].size += 0.05;
-			if ( _phase_number[ i ].size > 1 ) {
-				_phase_number[ i ].size = 1;
-				_phase_number[ i ].state = NUMBER_STATE_WAIT;
-			}
-		}
-		int number = _phase_number[ i ].num;
-		int sx = x + _phase_number[ i ].x;
-		int sy = y + _phase_number[ i ].y;
-		int sx2 = sx + (int)( UI_NUM_WIDTH * _phase_number[ i ].size );
-		int sy2 = sy + (int)( UI_NUM_HEIGHT * _phase_number[ i ].size );
-		Drawer::Sprite sprite( Drawer::Transform( sx, sy, number * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT, sx2, sy2 ), GRAPH_NUMBER );
-		drawer->setSprite( sprite );
-	}
-	x -= UI_NUM_WIDTH;
-	x -= 130;
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y ), GRAPH_PHASE ) );
-
 }
 
 void SceneStage::drawUIDelivery( ) {
@@ -332,8 +260,6 @@ void SceneStage::drawUIMap( ) const {
 	int map_central_sx = UI_MAP_X + UI_MAP_SIZE * UI_MAP_RANGE;
 	int map_central_sy = app->getWindowHeight( ) - UI_MAP_FOOT_Y - UI_MAP_SIZE * UI_MAP_RANGE;
 	const int RANGE = UI_MAP_RANGE * UI_MAP_SIZE / 4 * 3;
-	Stage::DATA data = _stage->getData( );
-	int phase = _stage->getPhase( );
 	{//背景(地面)
 		int sx = map_central_sx - UI_MAP_SIZE * UI_MAP_RANGE;
 		int sy = map_central_sy - UI_MAP_SIZE * UI_MAP_RANGE;
@@ -344,7 +270,7 @@ void SceneStage::drawUIMap( ) const {
 	}
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		//デリバー表示
-		if ( data.delivery[ phase ][ i ] == app_stage->getDeliveryCount( ) ) {
+		if ( _stage->getData( i ).delivery == app_stage->getDeliveryCount( ) ) {
 			int x = i % STAGE_WIDTH_NUM;
 			int y = i / STAGE_WIDTH_NUM;
 			Vector station_pos( i % STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2, i / STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2 ); 

@@ -13,9 +13,9 @@ const double CRYSTAL_POS_Z = crystal_size.z * -2;
 
 AppStage::AppStage( int stage_num, ViewerPtr viewer ) :
 _delivery_count( 0 ),
-_viewer( viewer ) {
+_viewer( viewer ),
+_finished( false ) {
 	load( 0 );//0~2:’Êí 3:test_stage
-	reset( );
 }
 
 
@@ -27,52 +27,20 @@ void AppStage::reset( ) {
 	Stage::reset( );
 }
 
+bool AppStage::isFinished( ) const {
+	return _finished;
+}
+
 void AppStage::update( CameraPtr camera ) {
 	updateCrystal( );
 	updateDelivery( camera );
-	if ( _delivery_count > getMaxDeliveryNum( ) ) {
-		loadPhase( );
-		return;
-	}
 	debug( );
-	KeyboardPtr keyboard = Keyboard::getTask( );
-	for ( int i = 0; i < MAX_PHASE; i++ ) {
-		std::string num = std::to_string( i );
-		if ( keyboard->isPushKey( num ) && keyboard->isHoldKey( "SPACE" ) ) {
-			setPhase( i );
-		}
-	}
 }
 
 void AppStage::draw( ) const {
 	drawModel( );
 	drawEarth( );
 	drawWall( );
-}
-
-void AppStage::load( int stage_num ) {
-	std::string filename = "../Resource/Map/";
-	switch ( stage_num ) {
-	case 0:
-		filename += "00.stage";
-		break;
-	case 1:
-		filename += "01.stage";
-		break;
-	case 2:
-		filename += "02.stage";
-		break;
-	case 3:
-		filename += "test.stage";
-		break;
-	}
-
-	ApplicationPtr app = Application::getInstance( );
-	BinaryPtr binary = BinaryPtr( new Binary );
-	if ( !app->loadBinary( filename, binary ) ) {
-		return;
-	}
-	setData( *(DATA*)binary->getPtr( ) );
 }
 
 void AppStage::updateCrystal( ) {
@@ -128,10 +96,8 @@ void AppStage::loadCrystal( ) {
 		ite = _crystals.erase( ite );
 	}
 	_crystals.clear( );
-	DATA data = getData( );
-	int phase = getPhase( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if (  data.crystal[ phase ][ i ] != 0 ) {
+		if (  getData( i ).crystal != 0 ) {
 			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, CRYSTAL_POS_Z );
 			pos += Vector( STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE );
 			_crystals.push_back( CrystalPtr( new Crystal( pos, MDL_CRYSTAL ) ) );
@@ -142,11 +108,12 @@ void AppStage::loadCrystal( ) {
 
 void AppStage::loadDelivery( ) {
 	_delivery_count++;
+	if ( _delivery_count > getMaxDeliveryNum( ) ) {
+		_finished = true;
+	}
 	std::list< DeliveryPtr >::const_iterator ite = _deliverys.begin( );
-	DATA data = getData( );
-	int phase = getPhase( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if (  data.delivery[ phase ][ i ] == _delivery_count ) {
+		if (  getData( i ).delivery == _delivery_count ) {
 			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, DELIVERY_POS_Z );
 			pos += Vector( STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE );
 			_deliverys.push_back( DeliveryPtr( new Delivery( pos ) ) );
@@ -335,11 +302,11 @@ void AppStage::loadMapData( ) {
 	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
 	_map_data = { };
 
-	DATA data = getData( );
+	std::array< Stage::DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > data = getData( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		int x = i % STAGE_WIDTH_NUM;
 		int y = i / STAGE_WIDTH_NUM;
-		int type = data.wall[ i ];
+		int type = data[ i ].wall;
 		if ( type != 0 && type != 1 ) {
 			continue;
 		}
@@ -365,12 +332,12 @@ void AppStage::loadMapData( ) {
 
 			if ( type == 1 ) {
 				_map_data[ map_idx ] = 1;
-				if ( data.wall[ idx0 ] == 0 && data.wall[ idx1 ] == 0 ) {
+				if ( data[ idx0 ].wall == 0 && data[ idx1 ].wall == 0 ) {
 					_map_data[ map_idx ] = 2;
 				}
 			}
 			if ( type == 0 ) {
-				if ( data.wall[ idx0 ] == 1 && data.wall[ idx1 ] == 1 ) {
+				if ( data[ idx0 ].wall == 1 && data[ idx1 ].wall == 1 ) {
 					_map_data[ map_idx ] = 3;
 				}
 			}
@@ -428,23 +395,6 @@ void AppStage::drawWall( ) const {
 
 int AppStage::getDeliveryCount( ) const {
 	return _delivery_count;
-}
-
-void AppStage::loadPhase( ) {
-	_delivery_count = 0;
-	std::list< DeliveryPtr >::iterator ite =  _deliverys.begin( );
-	while ( ite != _deliverys.end( ) ) {
-		if ( !(*ite) ) {
-			ite++;
-			continue;
-		}
-		if ( !(*ite)->isHaveCrystal( ) ) {
-			ite = _deliverys.erase( ite );
-			continue;
-		}
-		ite++;
-	}
-	Stage::loadPhase( );
 }
 
 bool AppStage::isCollisionToSquare( Vector square_pos, Vector pos, double radius ) const {
