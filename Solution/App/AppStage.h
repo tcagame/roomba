@@ -15,6 +15,7 @@ public:
 	void update( CameraPtr camera );
 	void draw( ) const;
 	void reset( );
+	bool isFinished( ) const;
 	Vector adjustCollisionToWall( Vector pos, Vector vec, const double radius );
 	Vector adjustCollisionToCrystal( Vector pos, Vector vec, const double radius );
 	CrystalPtr getHittingCrystal( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) const;
@@ -32,8 +33,6 @@ private:
 	void loadCrystal( );
 	void loadDelivery( );
 	void loadMapData( );
-	void loadPhase( );
-	void load( int stage_num );
 	Vector getAdjustPos( Vector pos, Vector base_pos ) const;
 	bool isCollisionToSquare( Vector square_pos, Vector pos, double radius ) const;
 	bool isCollisionToCircle( Vector circle_pos, Vector pos, double radius ) const;
@@ -43,6 +42,7 @@ private:
 	std::list< DeliveryPtr > _deliverys;
 	std::array< char, STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 > _map_data;
 	int _delivery_count;
+	bool _finished;
 	ViewerPtr _viewer;
 
 };
