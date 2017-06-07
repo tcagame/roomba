@@ -5,10 +5,11 @@
 #include "Roomba.h"
 #include "Viewer.h"
 
-static const double REFLECTION_POWER = 5.0;
+static const double REFLECTION_POWER = 0.3;
 static const double CRYSTAL_RADIUS = crystal_size.x / 3;
 static const double MAX_SPEED = 0.9;
-static const double DECELERATION = 0.01;
+static const double DECELERATION = 0.03;
+static const double DECELERATION_DROP_DOWN_RATIO = 2;
 static const double BOUND_POW = 0.1;
 
 Crystal::Crystal( Vector pos, MDL type ) :
@@ -68,8 +69,13 @@ void Crystal::update( AppStagePtr stage ) {
 	}
 
 	_pos += _vec;
+
+	double deceleration = DECELERATION;
+	if ( _drop_down ) {
+		deceleration *= DECELERATION_DROP_DOWN_RATIO;
+	}
 	if ( _vec.getLength( ) > DECELERATION ) {
-		_vec -= _vec.normalize( ) * DECELERATION;
+		_vec -= _vec.normalize( ) * deceleration;
 	} else {
 		_vec = Vector( );
 		_drop_down = false;
@@ -152,7 +158,7 @@ Vector Crystal::adjustHitToRoomba( Vector pos, Vector vec, double radius ) {
 	if ( distance.getLength( ) < CRYSTAL_RADIUS + radius ) {
 		tmp_vec = ( pos - _pos ).normalize( ) * vec.getLength( );
 		// ƒNƒŠƒXƒ^ƒ‹‚Ì”½ŽË
-		_vec = ( tmp_vec - vec ) * -REFLECTION_POWER;
+		_vec = ( tmp_vec - vec ).normalize( ) * -REFLECTION_POWER;
 	}
 	vec = tmp_vec - vec;
 	return vec;
