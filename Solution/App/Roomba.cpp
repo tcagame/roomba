@@ -246,6 +246,9 @@ void Roomba::changeState( CameraPtr camera ) {
 		if ( state == MOVE_STATE_LIFT_UP ) {
 			_delivery[ 0 ].pos = _balls[ 0 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
 			_delivery[ 1 ].pos = _balls[ 1 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
+			_balls[ 0 ]->setReflection( false );
+			_balls[ 1 ]->setReflection( false );
+			_crystal = CrystalPtr( );
 		}
 
 		if ( _state == MOVE_STATE_REFLECTION ) {
@@ -611,12 +614,4 @@ double Roomba::getRotSpeed( ) const {
 
 double Roomba::getLink( ) const {
 	return _link_gauge;
-}
-
-Matrix Roomba::getMat( const int ball_num, const Vector& pos ) const {
-	if ( ball_num != 0 &&
-		 ball_num != 1 ) {
-		return Matrix( );
-		}
-	return _balls[ ball_num ]->getMat( pos );
 }

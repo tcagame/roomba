@@ -13,11 +13,12 @@ public:
 	void update( const Vector& vec, StagePtr stage );
 	void draw( ) const;
 	void reset( const Vector& pos );
-	void setPos( Vector pos );
+	void setPos( Vector& pos );
 	bool isReflection( ) const;
 	void setReflection( bool ref );
 	Vector getPos( ) const;
 	Vector getVec( ) const;
+private:
 	Matrix getMat( const Vector& pos ) const;
 private:
 	bool _reflection;

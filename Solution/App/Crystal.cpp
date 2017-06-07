@@ -7,10 +7,11 @@
 
 static const double REFLECTION_POWER = 0.3;
 static const double CRYSTAL_RADIUS = crystal_size.x / 3;
-static const double MAX_SPEED = 0.9;
+static const double MAX_SPEED = 0.7;
 static const double DECELERATION = 0.03;
 static const double DECELERATION_DROP_DOWN_RATIO = 2;
-static const double BOUND_POW = 0.1;
+static const double BOUND_POW = 0.7;
+static const double GRAVITY = 0.1;
 
 Crystal::Crystal( Vector pos, MDL type ) :
 _pos( pos ),
@@ -47,9 +48,13 @@ void Crystal::update( AppStagePtr stage ) {
 
 	// バウンド
 	if ( _pos.z > _start_pos.z ) {
-		_vec.z -= DECELERATION;
+		_vec.z -= GRAVITY;
 		if ( _pos.z + _vec.z < _start_pos.z ) {
-			_vec.z = _start_pos.z - _pos.z;
+			if ( fabs( _vec.z ) > GRAVITY * 2 ) {
+				_vec.z *= -0.6;
+			} else {
+				_vec.z = _start_pos.z - _pos.z;
+			}
 		}
 	}
 	// バウンド
