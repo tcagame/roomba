@@ -1,7 +1,6 @@
 #pragma once
 #include "mathmatics.h"
 
-static const int MAX_PHASE = 10;
 static const int STAGE_WIDTH_NUM = 40;
 static const int STAGE_HEIGHT_NUM = 35;
 static const double WORLD_SCALE = 2;
@@ -74,7 +73,6 @@ enum GRAPH {
 	GRAPH_GAMEOVER,
 	GRAPH_TITLE,
 	GRAPH_RESULT,
-	GRAPH_PHASE,
 	GRAPH_MAP,
 	GRAPH_STAGE_SELECT_ROGO,
 	GRAPH_STAGE_SELECT_1,

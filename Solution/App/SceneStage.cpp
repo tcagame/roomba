@@ -11,8 +11,6 @@
 #include "Viewer.h"
 #include "RoombaDelivery.h"
 
-static const int UI_PHASE_FOOT_X = 30;
-static const int UI_PHASE_Y = 100;
 static const int UI_STATION_FOOT_X = 60;
 static const int UI_STATION_Y = 200;
 static const int UI_NUM_WIDTH = 32;
@@ -30,8 +28,6 @@ _link_time( 300 ),
 _link_break( false ) {	
 	_delivery_number[ 0 ].state = NUMBER_STATE_IN;
 	_delivery_number[ 1 ].state = NUMBER_STATE_NONE;
-	_phase_number[ 0 ].state = NUMBER_STATE_IN;
-	_phase_number[ 1 ].state = NUMBER_STATE_NONE;
 	_viewer = ViewerPtr( new Viewer );
 	_stage = StagePtr( new AppStage( stage_num, _viewer ) );//0-2:’Êí 3:test_stage
 	_roomba = RoombaPtr( new Roomba );
@@ -43,7 +39,6 @@ _link_break( false ) {
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
 	drawer->loadGraph( GRAPH_DELIVERY, "UI/station.png" );
-	drawer->loadGraph( GRAPH_PHASE, "UI/phase.png" );
 	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
 	Matrix delivery_scale = Matrix::makeTransformScaling( delivery_size );
