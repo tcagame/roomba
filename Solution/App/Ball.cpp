@@ -25,7 +25,6 @@ void Ball::update( const Vector& vec, StagePtr stage ) {
 		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COL_ROOMBA, _pos, COL_EFFECT_SIZE, EFFECT_ROTATE ) );
 	}
 	_vec = adjust_vec;
-	_vec.z = 0;
 	_pos += _vec;
 	if ( !_reflection ) {
 		Matrix adjust_rot = Matrix::makeTransformRotation( Vector( 0, 0, -1 ), PI / 2 );
