@@ -45,7 +45,7 @@ private:
 private:
 	void updateState( );
 	void changeState( CameraPtr camera );
-	void updateLaser( );
+	void updateLaser( CameraConstPtr camera );
 	void holdCrystal( StagePtr stage );
 	void moveTranslation( );
 	void moveRotation( );
