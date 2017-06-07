@@ -29,7 +29,6 @@
     </ClCompile>
     <ClCompile Include="Viewer.cpp" />
     <ClCompile Include="Delivery.cpp" />
-    <ClCompile Include="RoombaDelivery.cpp" />
     <ClCompile Include="Laser.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -60,7 +59,6 @@
     </ClInclude>
     <ClInclude Include="Viewer.h" />
     <ClInclude Include="Delivery.h" />
-    <ClInclude Include="RoombaDelivery.h" />
     <ClInclude Include="Laser.h" />
   </ItemGroup>
   <ItemGroup>

@@ -29,7 +29,6 @@ private:
 	void drawWall( ) const;
 	void drawCrystal( ) const;
 	void drawDelivery( ) const;
-	void drawCollisionLine( ) const;
 	void loadCrystal( );
 	void loadDelivery( );
 	void loadMapData( );

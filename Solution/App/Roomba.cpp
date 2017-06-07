@@ -21,6 +21,11 @@ static const double OTHER_ROT_RATIO = 2;
 static const double EMERGENCY_DECELERATION_SPEED = 0.05;
 static const double SCALE_SIZE = 6;
 static const double MIN_SCALE = 5;
+static const double LIFT_Z = 10;
+static const double DELIVERY_FOOT = 2;
+static const int MAX_LINK_GAUGE = 400;
+static const double LINK_REDUCED_SPEED = 2.5;
+static const double LINK_RECOVERS_SPEED = 0.5;
 
 static const Vector START_POS[ 2 ] {
 	( Vector( STAGE_WIDTH_NUM + 17, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, roomba_size.z ) ),
@@ -33,12 +38,15 @@ _trans_speed( Vector( ) ),
 _vec_trans( Vector( ) ),
 _rot_speed( 0 ),
 _scaling( false ),
-_rot_stop( false ) {
+_rot_stop( false ),
+_link_break( false ),
+_link_gauge( MAX_LINK_GAUGE / 2 ) {
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ] = BallPtr( new Ball( START_POS[ i ] ) );
 		_vec_rot[ i ] = Vector( );
 		_vec_scale[ i ] = Vector( );
 		_vec_reflection[ i ] = Vector( );
+		_delivery[ i ].type = MDL_DELIVERY;
 	}
 	_laser = LaserPtr( new Laser );
 }
@@ -54,7 +62,51 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	updateBalls( stage );
 	shiftPos( camera );
 	updateLaser( camera );
+	updateLink( );
 }
+
+void Roomba::draw( ) const {
+	DrawerPtr drawer = Drawer::getTask( );
+	_laser->draw( );
+	for ( int i = 0; i < 2; i++ ) {
+		_balls[ i ]->draw( );
+		if ( _state == MOVE_STATE_LIFT_UP ||
+			 _state == MOVE_STATE_LIFT_DOWN ) {
+			drawer->setModelMDL( _delivery[ i ] );
+		}
+	}
+	/*
+	リンクが切れている状態
+	if ( _state != MOVE_STATE_RESTORE &&
+		 _state != MOVE_STATE_REFLECTION ) {
+		drawLaser( );
+	}
+	*/
+}
+/*
+void Roomba::drawLaser( ) const {
+	// レーザー
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
+#if 0
+
+#else
+	const int ratio = 10; // effekseerのツールで作った際の大きさ
+	double size = ( ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).getLength( ) ) / ratio; // 大きさは左右どちらからでも変わらないため左を基準に取る
+	double angle_left = ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).angle( Vector( 1, 0 ) );
+	if ( ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).cross( Vector( 1, 0 ) ).z == 1 ) {
+		angle_left = PI2 - angle_left;
+	}
+	drawer->setEffect( Drawer::Effect( EFFECT_LASER, _balls[ BALL_LEFT ]->getPos( ), size, Vector( 0, 0, angle_left ) ) );
+	
+	double angle_right = ( getCentralPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).angle( Vector( 1, 0 ) );
+	if ( ( getCentralPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).cross( Vector( 1, 0 ) ).z == 1 ) {
+		angle_right = PI2 - angle_right;
+	}
+	drawer->setEffect( Drawer::Effect( EFFECT_LASER, _balls[ BALL_RIGHT ]->getPos( ), size, Vector( 0, 0, angle_right ) ) );
+#endif
+}
+*/
 
 void Roomba::updateState( ) {
 	acceleration( );
@@ -62,6 +114,141 @@ void Roomba::updateState( ) {
 	moveRotation( );
 	moveReflection( );
 	moveRestore( );
+	moveLiftUp( );
+	moveLiftDown( );
+}
+
+void Roomba::updateLaser( CameraConstPtr camera ) {
+	/*
+	roombaの状態をlaserに知らせる
+	*/
+	_laser->update( getCentralPos( ), camera, _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ), _crystal );
+}
+
+void Roomba::updateLink( ) {
+	if ( !_scaling ) {
+		_link_gauge += LINK_RECOVERS_SPEED;
+		if ( _link_gauge > MAX_LINK_GAUGE ) {
+			_link_gauge = MAX_LINK_GAUGE;
+		}
+	} else {
+		_link_gauge -= LINK_REDUCED_SPEED;
+		if ( _link_gauge <= 0 ) {
+			_link_gauge = 0;
+			_link_break = true;
+		}
+	}
+}
+
+void Roomba::updateBalls( StagePtr stage) {
+	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( stage );
+	Vector vec[ 2 ];
+	for ( int i = 0; i < 2; i++ ) {
+		if ( _state == MOVE_STATE_RESTORE ||
+			 _state == MOVE_STATE_REFLECTION ) {
+			vec[ i ] = _vec_reflection[ i ] + _vec_scale[ i ];
+		} else {
+			vec[ i ] = _vec_trans + _vec_rot[ i ];
+		}
+	}
+
+	if ( !_crystal ) {
+		_crystal =  app_stage->getHittingCrystal( _balls[ 0 ]->getPos( ), _balls[ 1 ]->getPos( ), vec[ 0 ], vec[ 1 ] );
+	}
+	_balls[ 0 ]->update( vec[ 0 ], stage );
+	_balls[ 1 ]->update( vec[ 1 ], stage );
+}
+
+void Roomba::changeState( CameraPtr camera ) {
+	DevicePtr device = Device::getTask( );
+	Vector right_stick = Vector( device->getRightDirX( ), device->getRightDirY( ) ) * 0.002;
+	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) ) * 0.002;
+
+	MOVE_STATE state = _state;
+	_move_dir = Vector( );
+	if ( right_stick.y > 0 && left_stick.y < 0 ) {
+		state = MOVE_STATE_ROTATION_RIGHT;
+		_move_dir = left_stick - right_stick;
+	}
+	if ( right_stick.y < 0 && left_stick.y > 0 ) {
+		state = MOVE_STATE_ROTATION_LEFT;
+		_move_dir = left_stick - right_stick;
+	}
+	if (  right_stick.y > 0 && left_stick.y > 0 ||
+		  right_stick.y < 0 && left_stick.y < 0 ||
+		  right_stick.x > 0 && left_stick.x > 0 ||
+		  right_stick.x < 0 && left_stick.x < 0 ){
+		state = MOVE_STATE_TRANSLATION;
+		_move_dir = _stick_rot.multiply( right_stick + left_stick );
+	}
+	if ( right_stick == Vector( ) ||
+		 left_stick == Vector( ) ) {
+		state = MOVE_STATE_NEUTRAL;
+	}
+	if ( _balls[ 0 ]->isReflection( ) ||
+		 _balls[ 1 ]->isReflection( ) ) {
+		state = MOVE_STATE_REFLECTION;
+	}
+	if ( _state == MOVE_STATE_REFLECTION ) {
+		if ( ( _balls[ 0 ]->getVec( ) == Vector( ) )  &&
+			 ( _balls[ 1 ]->getVec( ) == Vector( ) ) ) {
+			state = MOVE_STATE_RESTORE;
+		}
+	}
+	if ( _state == MOVE_STATE_RESTORE ) {
+		state = MOVE_STATE_RESTORE;
+	}
+	double scale = ( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).getLength( );
+	if ( state == MOVE_STATE_RESTORE ) {
+		if ( scale > MIN_SCALE && scale < SCALE_SIZE ) {
+			state = MOVE_STATE_NEUTRAL;
+		}
+	}
+	if ( _link_break ) {
+		if ( _balls[ 0 ]->getPos( ).z < LIFT_Z ) {
+			state = MOVE_STATE_LIFT_UP;
+		} else {
+			state = MOVE_STATE_LIFT_DOWN;
+		}
+	}
+	if ( state != _state ) {
+		//ステート変更がある場合の処理
+		if ( state == MOVE_STATE_TRANSLATION ) {
+			Vector dir = camera->getDir( );
+			dir.z = 0;
+			_stick_rot = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( dir ) * -1, Vector( 0, -1 ).angle( dir ) );
+			_move_dir = _stick_rot.multiply( right_stick + left_stick );
+			if ( _rot_stop ) {
+				_trans_speed = _move_dir.normalize( ) * fabs( _rot_speed );
+				_rot_speed *= 0.1;
+				_rot_stop = false;
+			}			
+		}
+		if ( state != MOVE_STATE_TRANSLATION &&
+			 state != MOVE_STATE_NEUTRAL ) {
+			_rot_stop = false;
+		}
+		if ( state == MOVE_STATE_REFLECTION ) {
+			setVecScale( Vector( ), Vector( ) );
+			_trans_speed = Vector( );
+			_rot_speed = 0;
+			_vec_reflection[ 0 ] = _balls[ 0 ]->getVec( );
+			_vec_reflection[ 1 ] = _balls[ 1 ]->getVec( );
+		}
+		if ( state == MOVE_STATE_LIFT_UP ) {
+			_delivery[ 0 ].pos = _balls[ 0 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
+			_delivery[ 1 ].pos = _balls[ 1 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
+		}
+
+		if ( _state == MOVE_STATE_REFLECTION ) {
+			_balls[ 0 ]->setReflection( false );
+			_balls[ 1 ]->setReflection( false );
+		}
+		if ( _state == MOVE_STATE_RESTORE ) {
+			setVecScale( Vector( ), Vector( ) );
+		}
+		_state = state;
+	}
 }
 
 void Roomba::acceleration( ) {
@@ -193,88 +380,6 @@ void Roomba::brakeRotation( ) {
 	}
 }
 
-void Roomba::changeState( CameraPtr camera ) {
-	DevicePtr device = Device::getTask( );
-	Vector right_stick = Vector( device->getRightDirX( ), device->getRightDirY( ) ) * 0.002;
-	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) ) * 0.002;
-
-	MOVE_STATE state = _state;
-	_move_dir = Vector( );
-	if ( right_stick.y > 0 && left_stick.y < 0 ) {
-		state = MOVE_STATE_ROTATION_RIGHT;
-		_move_dir = left_stick - right_stick;
-	}
-	if ( right_stick.y < 0 && left_stick.y > 0 ) {
-		state = MOVE_STATE_ROTATION_LEFT;
-		_move_dir = left_stick - right_stick;
-	}
-	if (  right_stick.y > 0 && left_stick.y > 0 ||
-		  right_stick.y < 0 && left_stick.y < 0 ||
-		  right_stick.x > 0 && left_stick.x > 0 ||
-		  right_stick.x < 0 && left_stick.x < 0 ){
-		state = MOVE_STATE_TRANSLATION;
-		_move_dir = _stick_rot.multiply( right_stick + left_stick );
-	}
-	if ( right_stick == Vector( ) ||
-		 left_stick == Vector( ) ) {
-		state = MOVE_STATE_NEUTRAL;
-	}
-	if ( _balls[ 0 ]->isReflection( ) ||
-		 _balls[ 1 ]->isReflection( ) ) {
-		state = MOVE_STATE_REFLECTION;
-	}
-	if ( _state == MOVE_STATE_REFLECTION ) {
-		if ( ( _balls[ 0 ]->getVec( ) == Vector( ) )  &&
-			 ( _balls[ 1 ]->getVec( ) == Vector( ) ) ) {
-			state = MOVE_STATE_RESTORE;
-		}
-	}
-	if ( _state == MOVE_STATE_RESTORE ) {
-		state = MOVE_STATE_RESTORE;
-	}
-	double scale = ( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).getLength( );
-	if ( state == MOVE_STATE_RESTORE ) {
-		if ( scale > MIN_SCALE && scale < SCALE_SIZE ) {
-			state = MOVE_STATE_NEUTRAL;
-		}
-	}
-	if ( state != _state ) {
-		//ステート変更がある場合の処理
-		if ( state == MOVE_STATE_TRANSLATION ) {
-			Vector dir = camera->getDir( );
-			dir.z = 0;
-			_stick_rot = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( dir ) * -1, Vector( 0, -1 ).angle( dir ) );
-			_move_dir = _stick_rot.multiply( right_stick + left_stick );
-			if ( _rot_stop ) {
-				_trans_speed = _move_dir.normalize( ) * fabs( _rot_speed );
-				_rot_speed *= 0.1;
-				_rot_stop = false;
-			}			
-		}
-		if ( state != MOVE_STATE_TRANSLATION &&
-			 state != MOVE_STATE_NEUTRAL ) {
-			_rot_stop = false;
-		}
-		if ( state == MOVE_STATE_REFLECTION ) {
-			setVecScale( Vector( ), Vector( ) );
-			_trans_speed = Vector( );
-			_rot_speed = 0;
-			_vec_reflection[ 0 ] = _balls[ 0 ]->getVec( );
-			_vec_reflection[ 1 ] = _balls[ 1 ]->getVec( );
-		}
-
-
-		if ( _state == MOVE_STATE_REFLECTION ) {
-			_balls[ 0 ]->setReflection( false );
-			_balls[ 1 ]->setReflection( false );
-		}
-		if ( _state == MOVE_STATE_RESTORE ) {
-			setVecScale( Vector( ), Vector( ) );
-		}
-		_state = state;
-	}
-}
-
 void Roomba::holdCrystal( StagePtr stage ) {
 	if ( _crystal != CrystalPtr( ) ) {
 		if ( _crystal->isDropDown( ) ||
@@ -338,6 +443,7 @@ void Roomba::moveReflection( ) {
 		}
 	}
 }
+
 void Roomba::moveRestore( ) {
 	if ( _state != MOVE_STATE_RESTORE ) {
 		_scaling = false;
@@ -356,48 +462,21 @@ void Roomba::moveRestore( ) {
 	if ( scale < MIN_SCALE ) {
 		setVecScale( vec * -1, vec );
 	}
-	
 }
 
-void Roomba::draw( ) const {
-	for ( int i = 0; i < 2; i++ ) {
-		_balls[ i ]->draw( );
+void Roomba::moveLiftUp( ) {
+	for ( int i = 0; i > 0; i++ ) {
+		Vector ball = _balls[ 0 ]->getPos( ) + Vector( 0, 0, DELIVERY_FOOT );
+		Vector distance = _delivery[ 0 ].pos - ball;
+		if ( distance.z > -0.0001 ) {
+			_delivery[ i ].pos += distance.normalize( ) * 0.1;
+		}
 	}
-	_laser->draw( );
-	/*
-	リンクが切れている状態
-	MOVE_STATE_RESTORE 
-	MOVE_STATE_REFLECTION
-	if ( _state != MOVE_STATE_RESTORE &&
-		 _state != MOVE_STATE_REFLECTION ) {
-		drawLaser( );
-	}
-	*/
 }
-/*
-void Roomba::drawLaser( ) const {
-	// レーザー
-	DrawerPtr drawer = Drawer::getTask( );
-	drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
-#if 0
 
-#else
-	const int ratio = 10; // effekseerのツールで作った際の大きさ
-	double size = ( ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).getLength( ) ) / ratio; // 大きさは左右どちらからでも変わらないため左を基準に取る
-	double angle_left = ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).angle( Vector( 1, 0 ) );
-	if ( ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).cross( Vector( 1, 0 ) ).z == 1 ) {
-		angle_left = PI2 - angle_left;
-	}
-	drawer->setEffect( Drawer::Effect( EFFECT_LASER, _balls[ BALL_LEFT ]->getPos( ), size, Vector( 0, 0, angle_left ) ) );
-	
-	double angle_right = ( getCentralPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).angle( Vector( 1, 0 ) );
-	if ( ( getCentralPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).cross( Vector( 1, 0 ) ).z == 1 ) {
-		angle_right = PI2 - angle_right;
-	}
-	drawer->setEffect( Drawer::Effect( EFFECT_LASER, _balls[ BALL_RIGHT ]->getPos( ), size, Vector( 0, 0, angle_right ) ) );
-#endif
+void Roomba::moveLiftDown( ) {
+
 }
-*/
 
 Vector Roomba::getCentralPos( ) const {
 	Vector pos[ 2 ];
@@ -457,25 +536,6 @@ void Roomba::setVecReflection( Vector vec_left, Vector vec_right ) {
 	_vec_reflection[ 1 ] = vec_right;
 }
 
-void Roomba::updateBalls( StagePtr stage) {
-	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( stage );
-	Vector vec[ 2 ];
-	for ( int i = 0; i < 2; i++ ) {
-		if ( _state == MOVE_STATE_RESTORE ||
-			 _state == MOVE_STATE_REFLECTION ) {
-			vec[ i ] = _vec_reflection[ i ] + _vec_scale[ i ];
-		} else {
-			vec[ i ] = _vec_trans + _vec_rot[ i ];
-		}
-	}
-
-	if ( !_crystal ) {
-		_crystal =  app_stage->getHittingCrystal( _balls[ 0 ]->getPos( ), _balls[ 1 ]->getPos( ), vec[ 0 ], vec[ 1 ] );
-	}
-	_balls[ 0 ]->update( vec[ 0 ], stage );
-	_balls[ 1 ]->update( vec[ 1 ], stage );
-}
-
 void Roomba::shiftPos( CameraPtr camera ) {
 	Vector pos[ 2 ];
 	pos[ 0 ] = _balls[ 0 ]->getPos( );
@@ -513,12 +573,12 @@ Vector Roomba::getDir( ) const {
 	return roomba_dir.normalize( );
 }
 
-bool Roomba::isScaling( ) const {
-	return _scaling;
-}
-
 double Roomba::getRotSpeed( ) const {
 	return _rot_speed;
+}
+
+int Roomba::getLink( ) const {
+	return _link_gauge;
 }
 
 Matrix Roomba::getMat( const int ball_num, const Vector& pos ) const {
@@ -527,11 +587,4 @@ Matrix Roomba::getMat( const int ball_num, const Vector& pos ) const {
 		return Matrix( );
 		}
 	return _balls[ ball_num ]->getMat( pos );
-}
-
-void Roomba::updateLaser( CameraConstPtr camera ) {
-	/*
-	roombaの状態をlaserに知らせる
-	*/
-	_laser->update( getCentralPos( ), camera, _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ), _crystal );
 }

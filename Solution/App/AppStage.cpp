@@ -16,6 +16,7 @@ _delivery_count( 0 ),
 _viewer( viewer ),
 _finished( false ) {
 	load( 0 );//0~2:’Êí 3:test_stage
+	loadMapData( );
 }
 
 

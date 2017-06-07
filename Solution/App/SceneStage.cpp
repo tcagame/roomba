@@ -9,7 +9,6 @@
 #include "Application.h"
 #include "Game.h"
 #include "Viewer.h"
-#include "RoombaDelivery.h"
 
 static const int UI_STATION_FOOT_X = 60;
 static const int UI_STATION_Y = 200;
@@ -20,19 +19,15 @@ static const int UI_MAP_X = 30;
 static const int UI_MAP_FOOT_Y = 30;
 static const int UI_MAP_RANGE = 20;
 static const int START_COUNTDOWN_TIME = 3 * 60;
-static const int MAX_LINK_TIME = 400;
 
 SceneStage::SceneStage( int stage_num ) :
-_countdown( START_COUNTDOWN_TIME ),
-_link_time( 300 ),
-_link_break( false ) {	
+_countdown( START_COUNTDOWN_TIME ) {	
 
 	_viewer = ViewerPtr( new Viewer );
 	_stage = StagePtr( new AppStage( stage_num, _viewer ) );//0-2:’Êí 3:test_stage
 	_roomba = RoombaPtr( new Roomba );
 	_camera = CameraPtr( new AppCamera( _roomba ) );
 	_timer = TimerPtr( new Timer );
-	_roomba_delivery = RoombaDeliveryPtr( new RoombaDelivery );
 
 	_delivery_number[ 0 ].state = NUMBER_STATE_IN;
 	_delivery_number[ 1 ].state = NUMBER_STATE_NONE;
@@ -123,9 +118,7 @@ Scene::NEXT SceneStage::update( ) {
 		_timer->finalize( );
 		return NEXT_RESULT;
 	}
-	if ( _roomba_delivery->isDrawRoomba( ) ) {
-		_roomba->draw( );
-	}
+	_roomba->draw( );
 	_stage->draw( );
 	_timer->draw( );
 	drawUI( );
@@ -137,47 +130,12 @@ void SceneStage::countdown( ) {
 }
 
 void SceneStage::updateRestart( ) {
-	_roomba_delivery->update( );
-	_roomba_delivery->draw( _roomba );
-
-	if ( _roomba_delivery->isRestart( ) ) {
-		_roomba->reset( );
-		_roomba_delivery->setPos( _roomba->getBallPos( 0 ), _roomba->getBallPos( 1 ) );
-	}
-
-	if ( _roomba_delivery->isReady( ) ) {
-		_roomba_delivery->setPos( Vector( ), Vector( ) );
-		_link_break = false;
-		_link_time = 0;
-	}
 }
 
 void SceneStage::updatePlay( ) {
-	if ( _link_break ) {
-		updateRestart( );
-	} else {
-		_roomba->update( _stage, _camera );
-		updateLink( );
-	}
+	_roomba->update( _stage, _camera );
 	_stage->update( _camera );
 	_timer->update( );
-}
-
-void SceneStage::updateLink( ) {
-	if ( _roomba->isScaling( ) ) {
-	//if ( 1 ) {	
-		_link_time++;
-		if ( _link_time > MAX_LINK_TIME ) {
-			_link_time = MAX_LINK_TIME;
-			_roomba_delivery->setPos( _roomba->getBallPos( 0 ), _roomba->getBallPos( 1 ) );
-			_link_break = true;
-		}
-	} else {
-		_link_time--;
-		if ( _link_time < 0 ) {
-			_link_time = 0;
-		}
-	}
 }
 
 void SceneStage::drawUI( ) {
@@ -188,7 +146,7 @@ void SceneStage::drawUI( ) {
 		const int TW = 400;
 		const int TH = 50;
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, TH, TW, TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, 0, TW - _link_time, TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, 0, _roomba->getLink( ), TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
 	}
 	
 	drawUIMap( );
