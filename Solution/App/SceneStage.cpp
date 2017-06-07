@@ -28,16 +28,18 @@ SceneStage::SceneStage( int stage_num ) :
 _countdown( START_COUNTDOWN_TIME ),
 _link_time( 300 ),
 _link_break( false ) {	
-	_delivery_number[ 0 ].state = NUMBER_STATE_IN;
-	_delivery_number[ 1 ].state = NUMBER_STATE_NONE;
-	_phase_number[ 0 ].state = NUMBER_STATE_IN;
-	_phase_number[ 1 ].state = NUMBER_STATE_NONE;
 	_viewer = ViewerPtr( new Viewer );
 	_stage = StagePtr( new AppStage( stage_num, _viewer ) );//0-2:’Êí 3:test_stage
 	_roomba = RoombaPtr( new Roomba );
 	_camera = CameraPtr( new AppCamera( _roomba ) );
 	_timer = TimerPtr( new Timer );
 	_roomba_delivery = RoombaDeliveryPtr( new RoombaDelivery );
+
+	_delivery_number[ 0 ].state = NUMBER_STATE_IN;
+	_delivery_number[ 1 ].state = NUMBER_STATE_NONE;
+	_delivery_number[ 0 ].num = _stage->getMaxDeliveryNum( ) - std::dynamic_pointer_cast<AppStage>( _stage )->getDeliveryCount( ) -1;
+	_phase_number[ 0 ].state = NUMBER_STATE_IN;
+	_phase_number[ 1 ].state = NUMBER_STATE_NONE;
 
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
@@ -270,14 +272,11 @@ void SceneStage::drawUIDelivery( ) {
 	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
 	int scr_width = app->getWindowWidth( );
 
-	int delivery_num = app_stage->getDeliveryCount( ) - 1;
+	int delivery_num = _stage->getMaxDeliveryNum( ) - app_stage->getDeliveryCount( ) -1;
+	
 	int x = scr_width - UI_STATION_FOOT_X;
 	int y = UI_STATION_Y;
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, _stage->getMaxDeliveryNum( ) * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT ), GRAPH_NUMBER ) );
-	x -= UI_NUM_WIDTH;
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y, 10 * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT ), GRAPH_NUMBER ) );
-	x -= UI_NUM_WIDTH;
-
+	
 	if ( _delivery_number[ 0 ].num != delivery_num ) {
 		_delivery_number[ 1 ] = _delivery_number[ 0 ];
 		_delivery_number[ 1 ].state = NUMBER_STATE_OUT;
