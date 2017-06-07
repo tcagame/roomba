@@ -50,10 +50,10 @@ Roomba::~Roomba( ) {
 void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	changeState( camera );
 	updateState( );
-	updateLaser( );
 	holdCrystal( stage );
 	updateBalls( stage );
 	shiftPos( camera );
+	updateLaser( camera );
 }
 
 void Roomba::updateState( ) {
@@ -529,9 +529,9 @@ Matrix Roomba::getMat( const int ball_num, const Vector& pos ) const {
 	return _balls[ ball_num ]->getMat( pos );
 }
 
-void Roomba::updateLaser( ) {
+void Roomba::updateLaser( CameraConstPtr camera ) {
 	/*
 	roomba‚Ìó‘Ô‚ðlaser‚É’m‚ç‚¹‚é
 	*/
-	_laser->update( getCentralPos( ) );
+	_laser->update( getCentralPos( ), camera, _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ), _crystal );
 }
