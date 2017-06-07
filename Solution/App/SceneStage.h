@@ -23,7 +23,6 @@ private:
 	void updateLink( );
 	void drawCountdown( ) const;
 	void drawUI( );
-	void drawUIPhase( );
 	void drawUIDelivery( );
 	void drawUIMap( ) const;
 	Vector getAdjustPos( Vector pos, Vector base_pos ) const;

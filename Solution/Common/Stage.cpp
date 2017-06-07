@@ -37,13 +37,40 @@ void Stage::load( int stage_num ) {
 		filename += "test.stage";
 		break;
 	}
+	loadData( filename );
+	_max_delivery = 0;
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		if ( _data[ i ].delivery > 0 ) {
+			_max_delivery++;
+		}
+	}
 
+	loadCrystal( );
+	loadWall( );
+	loadDelivery( );
+}
+
+void Stage::loadData( std::string filename ) {
 	ApplicationPtr app = Application::getInstance( );
-	BinaryPtr binary = BinaryPtr( new Binary );
+	BinaryPtr binary( new Binary );
+	if ( filename.find( ".stage" ) == std::string::npos ) {
+		filename += ".stage";
+	}
 	if ( !app->loadBinary( filename, binary ) ) {
 		return;
 	}
-	_data = *(DATA*)binary->getPtr( );
+	_data = *(std::array< DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >(*))binary->getPtr( );
+}
+
+void Stage::saveData( std::string filename ) const {
+	BinaryPtr binary = BinaryPtr( new Binary );
+	binary->ensure( sizeof( _data ) );
+	binary->write( (void*)&_data, sizeof( _data ) );
+	ApplicationPtr app = Application::getInstance( );
+	if ( filename.find( ".stage" ) == std::string::npos ) {
+		filename += ".stage";
+	}
+	app->saveBinary( filename, binary );
 }
 
 void Stage::drawCrystal( ) const {
@@ -91,7 +118,7 @@ void Stage::loadWall( ) {
 		int x = i % STAGE_WIDTH_NUM;
 		int y = i / STAGE_WIDTH_NUM;
 		Vector pos( x * WORLD_SCALE + WORLD_SCALE / 2, y * WORLD_SCALE + WORLD_SCALE / 2, WALL_POS_Z );
-		int type = _data.wall[ i ];
+		int type = _data[ i ].wall;
 		if ( type != 0 && type != 1 ) {
 			continue;
 		}
@@ -112,12 +139,12 @@ void Stage::loadWall( ) {
 				idx1 -= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM;
 			}
 			if ( type == 1 ) {
-				if ( _data.wall[ idx0 ] == 0 && _data.wall[ idx1 ] == 0 ) {
+				if ( _data[ idx0 ].wall == 0 && _data[ idx1 ].wall == 0 ) {
 					flag |= 1 << j;
 				}
 			}
 			if ( type == 0 ) {
-				if ( _data.wall[ idx0 ] == 1 && _data.wall[ idx1 ] == 1 ) {
+				if ( _data[ idx0 ].wall == 1 && _data[ idx1 ].wall == 1 ) {
 					flag |= 1 << j;
 				}
 			}
@@ -143,23 +170,6 @@ void Stage::loadWall( ) {
 	}
 }
 
-void Stage::loadPhase( ) {
-	_phase++;
-	if ( _phase >= MAX_PHASE ) {
-		_phase = MAX_PHASE - 1;
-		_finished = true;
-		return;
-	}
-	loadCrystal( );
-	_max_delivery = 0;
-	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( _data.delivery[ _phase ][ i ] != 0 ) {
-			_max_delivery++;
-		}
-	}
-	loadDelivery( );
-}
-
 void Stage::loadCrystal( ) {
 
 }
@@ -168,35 +178,24 @@ void Stage::loadDelivery( ) {
 
 }
 
-int Stage::getPhase( ) const {
-	return _phase;
-}
-
-bool Stage::isFinished( ) const {
-	return _finished;
-}
-
 void Stage::reset( ) {
-	_phase = -1;
-	_finished = false;
 	loadWall( );
-	loadPhase( );
 }
 
-void Stage::setPhase( int phase ) {
-	if ( phase < 0 || phase >= MAX_PHASE ) {
-		return;
-	}
-	_phase = phase;
-	loadCrystal( );
+const Stage::DATA& Stage::getData( int idx ) const {
+	return _data[ idx ];
 }
 
-void Stage::setData( DATA& data ) {
-	_data = data;
-}
-
-const Stage::DATA& Stage::getData( ) const {
+const std::array< Stage::DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >& Stage::getData( ) const {
 	return _data;
+}
+
+void Stage::setData( DATA& data, int idx ) {
+	_data[ idx ] = data;
+}
+
+void Stage::setData( std::array< DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >& data ) {
+	_data = data;
 }
 
 void Stage::debug( ) {

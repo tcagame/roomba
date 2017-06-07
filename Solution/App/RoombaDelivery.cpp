@@ -44,7 +44,7 @@ void RoombaDelivery::update( ) {
 void RoombaDelivery::draw( RoombaConstPtr roomba ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	for ( int i = 0; i < 2; i++ ) {
-		Vector delivery_pos = _pos[ i ] - Vector( 0, 0, -station_size.z );
+		Vector delivery_pos = _pos[ i ] - Vector( 0, 0, -delivery_size.z );
 		drawer->setModelMDL( Drawer::ModelMDL( delivery_pos, MDL_DELIVERY ) );
 		if ( ( _pickup_count % 4 ) == 1 || ( _pickup_count % 4 ) == 2 ) {			
 			Vector roomba_pos = _pos[ i ];
