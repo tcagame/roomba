@@ -158,7 +158,7 @@ void SceneStage::drawUIDelivery( ) {
 	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
 	int scr_width = app->getWindowWidth( );
 
-	int delivery_num = _stage->getMaxDeliveryNum( ) - app_stage->getDeliveryCount( ) -1;
+	int delivery_num = _stage->getMaxDeliveryNum( ) - app_stage->getDeliveryCount( ) + 1;
 	
 	int x = scr_width - UI_STATION_FOOT_X;
 	int y = UI_STATION_Y;
