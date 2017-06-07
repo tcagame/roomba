@@ -6,7 +6,7 @@
 
 const double HEIGHT_RATIO = 0.7;
 const double HEIGHT_SPEED = 0.004;
-const double MAX_HEIGHT = 0.8;//’x‚¢‚Æ‚«‚Ì‚‚³
+const double MAX_HEIGHT = 0.9;//’x‚¢‚Æ‚«‚Ì‚‚³
 const double MIN_HEIGHT = 0.3;//‘‚¢‚Æ‚«‚Ì‚‚³
 const double ROTE_SPEED = 0.05;
 const int CAMERA_LENGTH = (int)( 40 * WORLD_SCALE );

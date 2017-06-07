@@ -127,7 +127,7 @@ void AppStage::loadCrystal( ) {
 		crystal.~shared_ptr( );
 		ite = _crystals.erase( ite );
 	}
-	//_crystals.clear( );
+	_crystals.clear( );
 	DATA data = getData( );
 	int phase = getPhase( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
