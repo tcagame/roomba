@@ -5,6 +5,7 @@
 #include "Roomba.h"
 #include "Viewer.h"
 
+static const int MAX_EFFECT_COUNT = 30;
 static const double REFLECTION_POWER = 0.3;
 static const double CRYSTAL_RADIUS = crystal_size.x / 3;
 static const double MAX_SPEED = 0.7;
@@ -18,7 +19,7 @@ _start_pos( pos ),
 _finished( false ),
 _drop_down( true ),
 _type( type ),
-_effect_count( 50 ) {
+_effect_count( MAX_EFFECT_COUNT - 1 ) {
 
 }
 
@@ -29,7 +30,7 @@ Crystal::~Crystal( ) {
 
 void Crystal::draw( ViewerPtr viewer ) const {
 	viewer->drawModelMDL( Drawer::ModelMDL( _pos + Vector( -crystal_size.x, -crystal_size.y ), _type ) );
-	if ( !_effect_count ) {
+	if ( !_effect_count && !_vec.z ) {
 		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CRYSTAL_CIRCLE, _pos + Vector( 0, 0, 1 ), 1.0, EFFECT_ROTATE ) );
 	}
 }
@@ -60,6 +61,7 @@ void Crystal::update( AppStagePtr stage ) {
 	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
 	if ( ( adjust - _vec ).getLength( ) > 0.1 ) {
 		_vec = adjust;
+		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_CRYSTAL, _pos, 0.5, EFFECT_ROTATE ) );
 		toBound( );
 	}
 
@@ -80,7 +82,7 @@ void Crystal::update( AppStagePtr stage ) {
 	}
 
 	_effect_count++;
-	_effect_count %= 60;
+	_effect_count %= MAX_EFFECT_COUNT;
 }
 
 bool Crystal::isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) {
