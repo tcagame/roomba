@@ -22,7 +22,11 @@ void Ball::update( const Vector& vec, StagePtr stage ) {
 	adjust_vec += stage_ptr->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS );
 	if ( ( _vec - adjust_vec ).getLength( ) > 0.001 ) {
 		_reflection = true;
-		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COL_ROOMBA, _pos, COL_EFFECT_SIZE, EFFECT_ROTATE ) );
+		if ( stage_ptr->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS ) != Vector( ) ) {
+			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_CRYSTAL, _pos, 0.5, EFFECT_ROTATE ) );
+		} else {
+			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COL_ROOMBA, _pos, COL_EFFECT_SIZE, EFFECT_ROTATE ) );
+		}
 	}
 	_vec = adjust_vec;
 	_pos += _vec;
