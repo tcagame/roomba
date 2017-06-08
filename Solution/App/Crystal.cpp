@@ -6,7 +6,7 @@
 #include "Viewer.h"
 
 static const double REFLECTION_POWER = 0.3;
-static const double CRYSTAL_RADIUS = crystal_size.x / 3;
+static const double CRYSTAL_RADIUS = CRYSTAL_SIZE.x / 3;
 static const double MAX_SPEED = 0.7;
 static const double DECELERATION = 0.03;
 static const double DECELERATION_DROP_DOWN_RATIO = 2;
@@ -28,7 +28,7 @@ Crystal::~Crystal( ) {
 }
 
 void Crystal::draw( ViewerPtr viewer ) const {
-	viewer->drawModelMDL( Drawer::ModelMDL( _pos + Vector( -crystal_size.x, -crystal_size.y ), _type ) );
+	viewer->drawModelMDL( Drawer::ModelMDL( _pos + Vector( -CRYSTAL_SIZE.x, -CRYSTAL_SIZE.y ), _type ) );
 	if ( !_effect_count ) {
 		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CRYSTAL_CIRCLE, _pos + Vector( 0, 0, 1 ), 1.0, EFFECT_ROTATE ) );
 	}

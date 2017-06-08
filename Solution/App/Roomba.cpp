@@ -29,8 +29,8 @@ const double LINK_RECOVERS_SPEED = 0.5;
 const double BOUND_POW = 0.6;
 
 static const Vector START_POS[ 2 ] {
-	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, roomba_size.z ) ),
-	( Vector( STAGE_WIDTH_NUM + 22, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, roomba_size.z ) )
+	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, ROOMBA_SIZE.z ) ),
+	( Vector( STAGE_WIDTH_NUM + 22, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, ROOMBA_SIZE.z ) )
 };
 
 Roomba::Roomba( ) :
@@ -485,6 +485,10 @@ void Roomba::moveRestore( ) {
 	}
 	if ( scale < MIN_SCALE ) {
 		setVecScale( vec * -1, vec );
+	}
+	for ( int i = 0; i < 2; i++ ) {
+		Vector pos = _balls[ i ]->getPos( );
+		_vec_reflection[ i ].z = START_POS[ i ].z - pos.z;
 	}
 }
 

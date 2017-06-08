@@ -7,7 +7,7 @@
 #include "Keyboard.h"
 #include "Viewer.h"
 
-static const double WALL_POS_Z = wall_size.z * 3;
+static const double WALL_POS_Z = WALL_SIZE.z * 3;
 
 
 Stage::Stage( ) {

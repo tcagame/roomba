@@ -9,11 +9,11 @@ static const double STAGE_MODEL_SIZE = 4;
 static const double EARTH_POS_Z = WORLD_SCALE;
 static const double BALL_RADIUS = WORLD_SCALE * ROOMBA_SCALE * 0.8;
 static const double GRAVITY = 0.1;
-static const Vector delivery_size = Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE / 4 ); 
-static const Vector crystal_size = Vector( WORLD_SCALE / 8, WORLD_SCALE / 8, WORLD_SCALE / 6 );
-static const Vector roomba_size = Vector( WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE );
-static const Vector earth_size = Vector( WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_WIDTH_NUM, WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_HEIGHT_NUM, WORLD_SCALE / STAGE_MODEL_SIZE );
-static const Vector wall_size = Vector( WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE * 5 );
+static const Vector DELIVERY_SIZE = Vector( WORLD_SCALE, WORLD_SCALE, WORLD_SCALE / 4 ); 
+static const Vector CRYSTAL_SIZE = Vector( WORLD_SCALE / 8, WORLD_SCALE / 8, WORLD_SCALE / 6 );
+static const Vector ROOMBA_SIZE = Vector( WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE, WORLD_SCALE * ROOMBA_SCALE );
+static const Vector EARTH_SIZE = Vector( WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_WIDTH_NUM, WORLD_SCALE / STAGE_MODEL_SIZE * STAGE_HEIGHT_NUM, WORLD_SCALE / STAGE_MODEL_SIZE );
+static const Vector WALL_SIZE = Vector( WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE, WORLD_SCALE / STAGE_MODEL_SIZE * 5 );
 static const Vector EFFECT_ROTATE = Vector( PI / 2, 0, 0 );
 
 enum MDL {
