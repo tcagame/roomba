@@ -24,10 +24,11 @@ SceneStage::SceneStage( int stage_num ) :
 _countdown( START_COUNTDOWN_TIME ) {	
 
 	_viewer = ViewerPtr( new Viewer );
-	_stage = StagePtr( new AppStage( stage_num, _viewer ) );//0-2:í èÌ 3:test_stage
+	_timer = TimerPtr( new Timer );
+	_stage = StagePtr( new AppStage( stage_num, _viewer, _timer ) );//0-2:í èÌ 3:test_stage
 	_roomba = RoombaPtr( new Roomba );
 	_camera = CameraPtr( new AppCamera( _roomba ) );
-	_timer = TimerPtr( new Timer );
+	
 
 	_delivery_number[ 0 ].state = NUMBER_STATE_IN;
 	_delivery_number[ 1 ].state = NUMBER_STATE_NONE;

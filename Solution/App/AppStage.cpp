@@ -6,15 +6,17 @@
 #include "Viewer.h"
 #include "Keyboard.h"
 #include "Delivery.h"
+#include "Timer.h"
 
 const double REFLECTION_POWER = 0.8;
 const double DELIVERY_POS_Z = EARTH_POS_Z + WORLD_SCALE;
 const double CRYSTAL_POS_Z = crystal_size.z * -2;
 
-AppStage::AppStage( int stage_num, ViewerPtr viewer ) :
+AppStage::AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer ) :
 _delivery_count( 0 ),
 _viewer( viewer ),
-_finished( false ) {
+_finished( false ),
+_timer( timer ) {
 	load( 0 );//0~2:’Êí 3:test_stage
 	loadMapData( );
 }
@@ -33,7 +35,7 @@ bool AppStage::isFinished( ) const {
 }
 
 void AppStage::update( CameraPtr camera ) {
-	updateCrystal( );
+	updateCrystal( _timer );
 	updateDelivery( camera );
 	debug( );
 }
@@ -44,7 +46,7 @@ void AppStage::draw( ) const {
 	drawWall( );
 }
 
-void AppStage::updateCrystal( ) {
+void AppStage::updateCrystal( TimerPtr timer ) {
 	ApplicationPtr app = Application::getInstance( );
 	int scr_width = app->getWindowWidth( );
 	DrawerPtr drawer = Drawer::getTask( );
@@ -58,6 +60,7 @@ void AppStage::updateCrystal( ) {
 		if ( crystal->isFinished( ) ) {
 			crystal.~shared_ptr( );
 			ite = _crystals.erase( ite );
+			timer->addTime( );
 			continue;
 		}
 		AppStagePtr stage = std::dynamic_pointer_cast< AppStage >( shared_from_this( ) );
