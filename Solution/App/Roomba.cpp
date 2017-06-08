@@ -260,6 +260,7 @@ void Roomba::changeState( CameraPtr camera ) {
 				_delivery[ i ].pos = ball + Vector( 0, 0, DELIVERY_FOOT );
 			}
 		}
+		drawEffect( state );
 		_state = state;
 	}
 }
@@ -581,6 +582,24 @@ void Roomba::shiftPos( CameraPtr camera ) {
 			_crystal->shiftPos( central_pos );
 		}
 		app_camera->shiftPos( central_pos );
+	}
+}
+
+void Roomba::drawEffect( MOVE_STATE state ) {
+	if ( state == MOVE_STATE_REFLECTION ||
+		 state == MOVE_STATE_RESTORE ||
+		 state == MOVE_STATE_NEUTRAL ||
+		 state == MOVE_STATE_LIFT_UP ||
+		 state == MOVE_STATE_LIFT_DOWN ) {
+		return;
+	}
+	if ( ( _state == MOVE_STATE_ROTATION_RIGHT || _state == MOVE_STATE_ROTATION_LEFT ) &&
+		 ( state == MOVE_STATE_ROTATION_RIGHT || state == MOVE_STATE_ROTATION_LEFT ) ) {
+		return;
+	}
+
+	for ( int i = 0; i < 2; i++ ) {
+		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CHANGE_ROOMBA_STATE, _balls[ i ]->getPos( ), 0.2, EFFECT_ROTATE ) );
 	}
 }
 

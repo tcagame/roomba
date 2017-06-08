@@ -61,6 +61,7 @@ void Crystal::update( AppStagePtr stage ) {
 	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
 	if ( ( adjust - _vec ).getLength( ) > 0.1 ) {
 		_vec = adjust;
+		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_CRYSTAL, _pos, 0.5, EFFECT_ROTATE ) );
 		toBound( );
 	}
 
