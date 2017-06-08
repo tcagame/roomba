@@ -68,7 +68,6 @@ private:
 	void setVecReflection( Vector vec_left, Vector vec_right );
 	void shiftPos( CameraPtr camera );
 private:
-	bool _rot_stop;
 	double _rot_speed;
 	double _link_gauge;
 	bool _link_break;
