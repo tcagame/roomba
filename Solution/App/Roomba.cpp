@@ -400,18 +400,18 @@ void Roomba::holdCrystal( StagePtr stage ) {
 		line = pos[ 1 ] - pos[ 0 ];
 		Vector to_crystal = crystal_pos - pos[ 0 ];
 		double angle = line.angle( to_crystal );
-		double check = to_crystal.getLength( ) * cosl( angle );
+		double cos_length = to_crystal.getLength( ) * cos( angle );
 		Vector vec;
-		if ( check < 0 ) {							//線より外側
+		if ( cos_length < 0 ) {							//線より外側
 			vec = pos[ 0 ] - crystal_pos;
-		} else if ( check > line.getLength( ) ) {	//線より外側
+		} else if ( cos_length > line.getLength( ) ) {	//線より外側
 			vec = pos[ 1 ] - crystal_pos;
 		} else {									//線に垂直
-			double distance = to_crystal.getLength( ) * fabs( sin( angle ) );
+			double sin_length = to_crystal.getLength( ) * fabs( sin( angle ) );
 			Matrix rot = Matrix::makeTransformRotation( line.cross( to_crystal ), PI / 2 );
-			vec = rot.multiply( line ).normalize( ) * distance;
+			vec = rot.multiply( line ).normalize( ) * sin_length;
 		}
-		Vector to_central = line.normalize( ) * ( line.getLength( ) / 2 - check ) * 0.1;
+		Vector to_central = line.normalize( ) * ( line.getLength( ) / 2 - cos_length ) * 0.1;
 		vec += to_central;
 		_crystal->setVec( vec );
 	}
