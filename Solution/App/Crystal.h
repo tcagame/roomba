@@ -14,14 +14,14 @@ public:
 	void update( AppStagePtr stage );
 	void draw( ViewerPtr viewer ) const;
 	bool isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 );
-	Vector adjustHitToRoomba( Vector pos, Vector vec, double radius );
+	Vector adjustHitToCircle( Vector pos, Vector vec, double radius = -1 );
 	bool isFinished( ) const;
 	void setDropDown( bool drop_down );
-	Vector getPos( ) const;
+	const Vector& getPos( ) const;
+	const Vector& getVec( ) const;
 	void setVec( Vector& vec );
 	bool isDropDown( ) const;
 	void shiftPos( Vector& base_pos );
-private:
 	void toBound( );
 private:
 	int _effect_count;

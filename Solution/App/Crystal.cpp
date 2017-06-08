@@ -92,6 +92,9 @@ void Crystal::update( AppStagePtr stage ) {
 }
 
 bool Crystal::isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) {
+	if ( _pos.z > _start_pos.z ) {
+		return false;
+	}
 	//pos0とpos1の間にクリスタルがあるかどうか
 	Vector crystal_pos = _pos;
 	crystal_pos.z = pos0.z;
@@ -145,11 +148,14 @@ bool Crystal::isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) {
 	return false;
 }
 
-Vector Crystal::adjustHitToRoomba( Vector pos, Vector vec, double radius ) {
-	pos.z = _pos.z;
-	if ( !_drop_down ) {
+Vector Crystal::adjustHitToCircle( Vector pos, Vector vec, double radius ) {
+	if ( !_drop_down && radius > 0 ) {
 		return Vector( );
 	}
+	if ( radius < 0 ) {
+		radius = CRYSTAL_RADIUS;
+	}
+	pos.z = _pos.z;
 	Vector tmp_vec = vec;
 	Vector future_pos = pos + vec;
 	Vector distance = future_pos - _pos;//ボール→クリスタル
@@ -157,6 +163,9 @@ Vector Crystal::adjustHitToRoomba( Vector pos, Vector vec, double radius ) {
 		tmp_vec = ( pos - _pos ).normalize( ) * vec.getLength( );
 		// クリスタルの反射
 		_vec = ( tmp_vec - vec ).normalize( ) * -REFLECTION_POWER;
+		if ( !_drop_down ) {
+			toBound( );
+		}
 	}
 	vec = tmp_vec - vec;
 	return vec;
@@ -166,8 +175,12 @@ bool Crystal::isFinished( ) const {
 	return _finished;
 }
 
-Vector Crystal::getPos( ) const {
+const Vector& Crystal::getPos( ) const {
 	return _pos;
+}
+
+const Vector& Crystal::getVec( ) const {
+	return _vec;
 }
 
 void Crystal::setVec( Vector& vec ) {

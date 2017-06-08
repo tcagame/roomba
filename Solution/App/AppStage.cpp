@@ -64,7 +64,30 @@ void AppStage::updateCrystal( TimerPtr timer ) {
 			continue;
 		}
 		AppStagePtr stage = std::dynamic_pointer_cast< AppStage >( shared_from_this( ) );
+		collideCrystal( crystal );
 		crystal->update( stage );
+		ite++;
+	}
+}
+
+void AppStage::collideCrystal( CrystalPtr crystal ) {
+	std::list< CrystalPtr >::iterator ite = _crystals.begin( );
+	while ( ite != _crystals.end( ) ) {
+		CrystalPtr other = (*ite);
+		if ( !other ) {
+			ite++;
+			continue;
+		}
+		if ( crystal != other ) {
+			Vector other_vec = other->getVec( );
+			Vector vec = crystal->adjustHitToCircle( other->getPos( ), other_vec );
+			if ( vec.getLength( ) > 0.001 ) {
+				other->setVec( vec.normalize( ) * REFLECTION_POWER );
+				if ( !other->isDropDown( ) ) {
+					other->toBound( );
+				}
+			}
+		}
 		ite++;
 	}
 }
@@ -248,7 +271,7 @@ Vector AppStage::adjustCollisionToCrystal( Vector pos, Vector& vec, const double
 			continue;
 		}
 		crystal->shiftPos( pos );
-		Vector adjust = crystal->adjustHitToRoomba( pos, vec, radius );
+		Vector adjust = crystal->adjustHitToCircle( pos, vec, radius );
 		result += adjust.normalize( ) * REFLECTION_POWER;
 		ite++;
 	}
