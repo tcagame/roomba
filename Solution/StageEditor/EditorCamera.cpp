@@ -6,10 +6,10 @@ const Vector START_CAMERA_POS = Vector( 15, -15, 15 );
 const Vector START_TARGET_POS = Vector( 15, 15, 0 );
 const double MOVE_SPEED = 1.0;
 const double ZOOM_SPEED = 9.0;
-const int MAX_LENGTH = 150;
+const int MAX_LENGTH = 400;
 const int MIN_LENGTH = 30;
 const double MIN_HEIGHT = 0.01;
-const double MAX_HEIGHT = 0.9;
+const double MAX_HEIGHT = 1.0;
 const double ROT_SPEED = PI / 60;
 
 EditorCamera::EditorCamera( ) :

@@ -29,8 +29,8 @@ const double LINK_RECOVERS_SPEED = 0.5;
 const double BOUND_POW = 0.6;
 
 static const Vector START_POS[ 2 ] {
-	( Vector( STAGE_WIDTH_NUM + 17, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, roomba_size.z ) ),
-	( Vector( STAGE_WIDTH_NUM + 20, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, roomba_size.z ) )
+	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, roomba_size.z ) ),
+	( Vector( STAGE_WIDTH_NUM + 22, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, roomba_size.z ) )
 };
 
 Roomba::Roomba( ) :

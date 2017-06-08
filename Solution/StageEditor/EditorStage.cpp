@@ -6,8 +6,7 @@
 #include "define.h"
 #include "Camera.h"
 
-static const int CURSOR_WAIT_TIME = 4;
-static const double CURSOR_MOVE_SPEED = 0.4;
+static const double CURSOR_MOVE_SPEED = 0.5;
 static const double DELIVERY_POS_Z = EARTH_POS_Z + WORLD_SCALE;
 
 
@@ -101,7 +100,7 @@ void EditorStage::draw( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	Vector cursor_pos( (int)_cursor_pos.x * WORLD_SCALE + WORLD_SCALE / 2, (int)_cursor_pos.y * WORLD_SCALE  + WORLD_SCALE / 4 );
 	drawer->setModelMDL( Drawer::ModelMDL( cursor_pos, MDL_CURSOR ) );
-	drawer->drawString( 0, 0, "壁編集:Z　クリスタル編集:X　ステーション編集:C　ロード:F1　セーブ:F2　カメラ移動:テンキー" );
+	drawer->drawString( 0, 0, "壁編集:Z　クリスタル編集:X　デリバー編集:C　ロード:F1　セーブ:F2　カメラ移動:テンキー" );
 
 
 	for ( int i = 0; i <= STAGE_WIDTH_NUM; i++ ) {
@@ -229,7 +228,7 @@ void EditorStage::editCrystal( ) {
 
 void EditorStage::editDelivery( ) {
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->drawString( 0, 80, "MODE:ステーション配置" );
+	drawer->drawString( 0, 80, "MODE:デリバー配置" );
 	bool placed[ MAX_LINK ] = { };
 
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
