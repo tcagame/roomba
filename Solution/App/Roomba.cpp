@@ -37,7 +37,6 @@ _state( MOVE_STATE_NEUTRAL ),
 _trans_speed( Vector( ) ),
 _vec_trans( Vector( ) ),
 _rot_speed( 0 ),
-_rot_stop( false ),
 _link_break( false ),
 _link_gauge( MAX_LINK_GAUGE / 2 ) {
 	for ( int i = 0; i < 2; i++ ) {
@@ -229,15 +228,6 @@ void Roomba::changeState( CameraPtr camera ) {
 			dir.z = 0;
 			_stick_rot = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( dir ) * -1, Vector( 0, -1 ).angle( dir ) );
 			_move_dir = _stick_rot.multiply( right_stick + left_stick );
-			if ( _rot_stop ) {
-				_trans_speed = _move_dir.normalize( ) * fabs( _rot_speed );
-				_rot_speed *= 0.1;
-				_rot_stop = false;
-			}			
-		}
-		if ( state != MOVE_STATE_TRANSLATION &&
-			 state != MOVE_STATE_NEUTRAL ) {
-			_rot_stop = false;
 		}
 		if ( state == MOVE_STATE_REFLECTION ) {
 			setVecScale( Vector( ), Vector( ) );
@@ -332,18 +322,7 @@ void Roomba::accelRotation( DIR dir ) {
 	}
 	if ( _rot_speed < -MAX_ROT_SPEED ) {
 		_rot_speed = -MAX_ROT_SPEED;
-	}
-	if ( _rot_speed > 0 ) {
-		if ( _move_dir.y < 0 ) {
-			_rot_stop = true;
-		}
-	}
-	if ( _rot_speed < 0 ) {
-		if ( _move_dir.y > 0 ) {
-			_rot_stop = true;
-		}
-	}
-	
+	}	
 }
 
 void Roomba::brakeTranslation( ) {
@@ -422,16 +401,16 @@ void Roomba::holdCrystal( StagePtr stage ) {
 		pos[ 0 ] += line.normalize( ) * BALL_RADIUS * 3;
 		pos[ 1 ] -= line.normalize( ) * BALL_RADIUS * 3;
 		line = pos[ 1 ] - pos[ 0 ];
-		Vector to_crystal = pos[ 0 ] - crystal_pos;
+		Vector to_crystal = crystal_pos - pos[ 0 ];
 		double angle = line.angle( to_crystal );
 		double check = to_crystal.getLength( ) * cosl( angle );
-		if ( check > 0 ) {							//線より外側
+		if ( check < 0 ) {							//線より外側
 			_crystal->setVec( pos[ 0 ] - crystal_pos );
-		} else if ( check < -line.getLength( ) ) {	//線より外側
+		} else if ( check > line.getLength( ) ) {	//線より外側
 			_crystal->setVec( pos[ 1 ] - crystal_pos );
 		} else {									//線に垂直
-			double distance = to_crystal.getLength( ) * fabs( sinl( angle ) );
-			Matrix rot = Matrix::makeTransformRotation( line.cross( to_crystal ) * -1, PI / 2 );
+			double distance = to_crystal.getLength( ) * fabs( sin( angle ) );
+			Matrix rot = Matrix::makeTransformRotation( line.cross( to_crystal ), PI / 2 );
 			Vector vec = rot.multiply( line );
 			vec = vec.normalize( ) * distance;
 			_crystal->setVec( vec );

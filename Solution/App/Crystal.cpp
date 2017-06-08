@@ -58,13 +58,6 @@ void Crystal::update( AppStagePtr stage ) {
 		}
 	}
 
-
-	if ( _drop_down &&
-		 _pos.z == _start_pos.z &&
-		 _vec.x != 0 && _vec.y != 0 ) {
-		toBound( );
-	}
-
 	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
 	if ( ( adjust - _vec ).getLength( ) > 0.1 ) {
 		_vec = adjust;
@@ -163,9 +156,7 @@ Vector Crystal::adjustHitToCircle( Vector pos, Vector vec, double radius ) {
 		tmp_vec = ( pos - _pos ).normalize( ) * vec.getLength( );
 		// ƒNƒŠƒXƒ^ƒ‹‚Ì”½ŽË
 		_vec = ( tmp_vec - vec ).normalize( ) * -REFLECTION_POWER;
-		if ( !_drop_down ) {
-			toBound( );
-		}
+		toBound( );
 	}
 	vec = tmp_vec - vec;
 	return vec;
@@ -211,6 +202,8 @@ void Crystal::shiftPos( Vector& base_pos ) {
 }
 
 void Crystal::toBound( ) {
-	_vec.z = BOUND_POW;
-	_drop_down = true;
+	if ( !( _pos.z > _start_pos.z ) ) {
+		_vec.z = BOUND_POW;
+		_drop_down = true;
+	}
 }

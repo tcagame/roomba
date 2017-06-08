@@ -83,9 +83,7 @@ void AppStage::collideCrystal( CrystalPtr crystal ) {
 			Vector vec = crystal->adjustHitToCircle( other->getPos( ), other_vec );
 			if ( vec.getLength( ) > 0.001 ) {
 				other->setVec( vec.normalize( ) * REFLECTION_POWER );
-				if ( !other->isDropDown( ) ) {
-					other->toBound( );
-				}
+				other->toBound( );
 			}
 		}
 		ite++;
