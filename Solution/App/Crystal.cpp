@@ -11,7 +11,6 @@ static const double MAX_SPEED = 0.7;
 static const double DECELERATION = 0.03;
 static const double DECELERATION_DROP_DOWN_RATIO = 2;
 static const double BOUND_POW = 0.7;
-static const double GRAVITY = 0.1;
 
 Crystal::Crystal( Vector& pos, MDL type ) :
 _pos( pos ),
