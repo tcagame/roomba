@@ -6,10 +6,11 @@ PTR( Camera );
 PTR( Delivery );
 PTR( Crystal );
 PTR( Viewer );
+PTR( Timer );
 
 class AppStage : public Stage, public std::enable_shared_from_this< Stage > {
 public:
-	AppStage( int stage_num, ViewerPtr viewer );
+	AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer );
 	virtual ~AppStage( );
 public:
 	void update( CameraPtr camera );
@@ -23,7 +24,7 @@ public:
 	int getDeliveryCount( ) const;
 	std::list< CrystalPtr > getCrystalList( ) const;
 private:
-	void updateCrystal( );
+	void updateCrystal( TimerPtr timer );
 	void updateDelivery( CameraPtr camera );
 	void drawEarth( ) const;
 	void drawWall( ) const;
@@ -43,6 +44,6 @@ private:
 	int _delivery_count;
 	bool _finished;
 	ViewerPtr _viewer;
-
+	TimerPtr _timer;
 };
 

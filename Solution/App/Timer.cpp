@@ -5,8 +5,8 @@
 #include "Application.h"
 
 static const int FPS = 60;
-static const int START_TIME = 99 * FPS;
-static const int ADD_TIME = 1;
+static const int START_TIME = 120 * FPS;
+static const int ADD_TIME = 5;
 
 Timer::Timer( ) :
 _timer( START_TIME ) {
