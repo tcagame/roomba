@@ -10,26 +10,27 @@
 
 //デバッグのためスピード遅め
 //static const double SPEED = 0.1;
-static const double ACCEL_SPEED = 0.03;
-static const double RESTORE_SPEED = 0.08;
-static const double MAX_ROT_SPEED = 0.2;
-static const double MAX_TRANS_SPEED = 0.4;
-static const double DECELETION_ROT_SPEED = 0.002;
-static const double DECELETION_TRANS_SPEED = 0.001;
-static const double OTHER_TRANS_RATIO = 6;
-static const double OTHER_ROT_RATIO = 2;
-static const double EMERGENCY_DECELERATION_SPEED = 0.05;
-static const double SCALE_SIZE = 6;
-static const double MIN_SCALE = 5;
-static const double LIFT_Z = 10;
-static const double DELIVERY_FOOT = 2.5;
-static const int MAX_LINK_GAUGE = 400;
-static const double LINK_REDUCED_SPEED = 1.5;
-static const double LINK_RECOVERS_SPEED = 0.5;
+const double ACCEL_SPEED = 0.03;
+const double RESTORE_SPEED = 0.08;
+const double MAX_ROT_SPEED = 0.2;
+const double MAX_TRANS_SPEED = 0.4;
+const double DECELETION_ROT_SPEED = 0.002;
+const double DECELETION_TRANS_SPEED = 0.001;
+const double OTHER_TRANS_RATIO = 6;
+const double OTHER_ROT_RATIO = 2;
+const double EMERGENCY_DECELERATION_SPEED = 0.05;
+const double SCALE_SIZE = 6;
+const double MIN_SCALE = 5;
+const double LIFT_Z = 10;
+const double DELIVERY_FOOT = 2.5;
+const int MAX_LINK_GAUGE = 400;
+const double LINK_REDUCED_SPEED = 1.5;
+const double LINK_RECOVERS_SPEED = 0.5;
+const double BOUND_POW = 0.6;
 
 static const Vector START_POS[ 2 ] {
-	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, roomba_size.z ) ),
-	( Vector( STAGE_WIDTH_NUM + 22, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, roomba_size.z ) )
+	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, ROOMBA_SIZE.z ) ),
+	( Vector( STAGE_WIDTH_NUM + 22, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, ROOMBA_SIZE.z ) )
 };
 
 Roomba::Roomba( ) :
@@ -185,6 +186,7 @@ void Roomba::changeState( CameraPtr camera ) {
 	if ( scale < MIN_SCALE || scale > SCALE_SIZE ) {
 			state = MOVE_STATE_RESTORE;
 	}
+
 	if ( _balls[ 0 ]->isReflection( ) ||
 		 _balls[ 1 ]->isReflection( ) ) {
 		state = MOVE_STATE_REFLECTION;
@@ -223,8 +225,12 @@ void Roomba::changeState( CameraPtr camera ) {
 			setVecScale( Vector( ), Vector( ) );
 			_trans_speed = Vector( );
 			_rot_speed = 0;
-			_vec_reflection[ 0 ] = _balls[ 0 ]->getVec( );
-			_vec_reflection[ 1 ] = _balls[ 1 ]->getVec( );
+			for ( int i = 0; i < 2; i++ ) {
+				_vec_reflection[ i ] = _balls[ i ]->getVec( );
+				if ( _balls[ i ]->isReflection( ) ) {
+					_vec_reflection[ i ].z = BOUND_POW;
+				}
+			}
 		}
 		if ( state == MOVE_STATE_LIFT_UP ) {
 			_delivery[ 0 ].pos = _balls[ 0 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
@@ -250,6 +256,7 @@ void Roomba::changeState( CameraPtr camera ) {
 				_delivery[ i ].pos = ball + Vector( 0, 0, DELIVERY_FOOT );
 			}
 		}
+		drawEffect( state );
 		_state = state;
 	}
 }
@@ -428,10 +435,28 @@ void Roomba::moveReflection( ) {
 		return;
 	}
 	for ( int i = 0; i < 2; i++ ) {
+		Vector pos = _balls[ i ]->getPos( );
+		double vec_z = _vec_reflection[ i ].z;
 		if ( _vec_reflection[ i ].getLength( ) > EMERGENCY_DECELERATION_SPEED ) {
 			_vec_reflection[ i ] -= _vec_reflection[ i ].normalize( ) * EMERGENCY_DECELERATION_SPEED;
+			_vec_reflection[ i ].z = vec_z;
 		} else {
 			_vec_reflection[ i ] = Vector( );
+		}
+		if ( pos.z > START_POS[ i ].z ) {
+			_vec_reflection[ i ].z -= GRAVITY;
+			if ( pos.z + _vec_reflection[ i ].z < START_POS[ i ].z ) {
+				if ( fabs( _vec_reflection[ i ].z ) > GRAVITY * 2 ) {
+					_vec_reflection[ i ].z *= -0.5;
+				} else {
+					_vec_reflection[ i ].z = START_POS[ i ].z - pos.z;
+				}
+			}
+		}
+		if ( pos.z == START_POS[ i ].z ) {
+			if ( _vec_reflection[ i ].z < 0 ) {
+				_vec_reflection[ i ].z = 0;
+			}
 		}
 	}
 }
@@ -451,6 +476,10 @@ void Roomba::moveRestore( ) {
 	}
 	if ( scale < MIN_SCALE ) {
 		setVecScale( vec * -1, vec );
+	}
+	for ( int i = 0; i < 2; i++ ) {
+		Vector pos = _balls[ i ]->getPos( );
+		_vec_reflection[ i ].z = START_POS[ i ].z - pos.z;
 	}
 }
 
@@ -571,6 +600,24 @@ void Roomba::shiftPos( CameraPtr camera ) {
 			_crystal->shiftPos( central_pos );
 		}
 		app_camera->shiftPos( central_pos );
+	}
+}
+
+void Roomba::drawEffect( MOVE_STATE state ) {
+	if ( state == MOVE_STATE_REFLECTION ||
+		 state == MOVE_STATE_RESTORE ||
+		 state == MOVE_STATE_NEUTRAL ||
+		 state == MOVE_STATE_LIFT_UP ||
+		 state == MOVE_STATE_LIFT_DOWN ) {
+		return;
+	}
+	if ( ( _state == MOVE_STATE_ROTATION_RIGHT || _state == MOVE_STATE_ROTATION_LEFT ) &&
+		 ( state == MOVE_STATE_ROTATION_RIGHT || state == MOVE_STATE_ROTATION_LEFT ) ) {
+		return;
+	}
+
+	for ( int i = 0; i < 2; i++ ) {
+		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CHANGE_ROOMBA_STATE, _balls[ i ]->getPos( ), 0.2, EFFECT_ROTATE ) );
 	}
 }
 

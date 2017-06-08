@@ -7,11 +7,14 @@ static const double MOVE_SPEED = 0.1;
 static const double START_POS_Z = 20;
 static const double MIN_POS_Z = 2;
 static const double FOOT = 3;
+static const int MAX_EFFECT_COUNT = 30;
+
 Delivery::Delivery( Vector target ) :
 _target( target ),
 _finished( false ),
 _have_crystal( false ),
-_state( STATE_WAIT ){
+_state( STATE_WAIT ),
+_effect_count( MAX_EFFECT_COUNT - 1 ) {
 	_pos = target;
 	_pos.z = START_POS_Z;
 }
@@ -29,6 +32,10 @@ void Delivery::draw( ViewerPtr viewer ) const {
 		drawer->setModelMDL( _crystal );
 	} else {
 		viewer->drawModelMDL( Drawer::ModelMDL( _pos, MDL_DELIVERY ) );
+	}
+	
+	if ( _state == STATE_WAIT && !_effect_count ) {
+		drawer->setEffect( Drawer::Effect( EFFECT_DELIVERY_POINT, Vector( _pos.x, _pos.y, 0 ), 0.5, EFFECT_ROTATE ) );
 	}
 }
 
@@ -52,6 +59,8 @@ void Delivery::update( CameraPtr camera ) {
 
 
 void Delivery::updateWait( ) {
+	_effect_count++;
+	_effect_count %= MAX_EFFECT_COUNT;
 	Vector vec = _target - _pos;
 	if ( vec.getLength( ) > MOVE_SPEED ) {
 		_vec = ( _target - _pos ).normalize( ) * MOVE_SPEED;

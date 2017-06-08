@@ -30,6 +30,7 @@ private:
 	void updateLift( CameraPtr camera );
 	void updateCarry( );
 private:
+	int _effect_count;
 	STATE _state;
 	Vector _pos;
 	Vector _target;

@@ -28,19 +28,19 @@ void Editor::initialize( ) {
 	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
 	drawer->loadGraph( GRAPH_SELECT_MENU, "UI/UI_retry_select.png" );
 	
-	Matrix delivery_scale = Matrix::makeTransformScaling( delivery_size );
+	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", delivery_scale );
 
-	Matrix crystal_scale = Matrix::makeTransformScaling( crystal_size );
+	Matrix crystal_scale = Matrix::makeTransformScaling( CRYSTAL_SIZE );
 	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/purple.jpg", crystal_scale );
 	
-	Matrix earth_scale = Matrix::makeTransformScaling( earth_size );
+	Matrix earth_scale = Matrix::makeTransformScaling( EARTH_SIZE );
 	drawer->loadMDLModel( MDL_EARTH, "Model/Stage/earth.mdl", "Model/Stage/earth.jpg", earth_scale );
 	
 	Matrix cursor_scale = Matrix::makeTransformScaling( cursor_size );
 	drawer->loadMDLModel( MDL_CURSOR, "Model/Editor/cursor.mdl", "Model/Editor/red.jpg", cursor_scale );
 
-	Matrix wall_scale = Matrix::makeTransformScaling( wall_size );
+	Matrix wall_scale = Matrix::makeTransformScaling( WALL_SIZE );
 	drawer->loadMDLModel( MDL_WALL_0_0 , "Model/Stage/0_0.mdl" , "Model/Stage/wall.jpg", wall_scale );
 	drawer->loadMDLModel( MDL_WALL_0_1 , "Model/Stage/0_1.mdl" , "Model/Stage/wall.jpg", wall_scale );
 	drawer->loadMDLModel( MDL_WALL_0_2 , "Model/Stage/0_2.mdl" , "Model/Stage/wall.jpg", wall_scale );

@@ -10,7 +10,7 @@
 
 const double REFLECTION_POWER = 0.8;
 const double DELIVERY_POS_Z = EARTH_POS_Z + WORLD_SCALE;
-const double CRYSTAL_POS_Z = crystal_size.z * -2;
+const double CRYSTAL_POS_Z = CRYSTAL_SIZE.z * -2;
 
 AppStage::AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer ) :
 _delivery_count( 0 ),
@@ -221,35 +221,27 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector& vec, const double ra
 			fy += STAGE_HEIGHT_NUM * 2;
 		}
 		int idx = fx + fy * STAGE_WIDTH_NUM * 2;
+		Vector pos_outside( fx + ( fx % 2 )	   , fy + ( fy % 2 )    , fpos.z );
+		Vector pos_inside ( fx - ( fx % 2 ) + 1, fy - ( fy % 2 ) + 1, fpos.z );
+		Vector f_idx_pos( fx, fy, fpos.z );
 		switch ( _map_data[ idx ] ) {
 		case 1://ŽlŠp
-		{
-		Vector pos_f( fx, fy, fpos.z );
-			if ( isCollisionToSquare( pos_f, fpos, radius ) ) {
-				result = ( fpos - ( pos_f + Vector( WORLD_SCALE / 4, WORLD_SCALE / 4 ) ) ).normalize( ) * vec.getLength( );
+			if ( isCollisionToSquare( f_idx_pos, fpos, radius ) ) {
+				result = ( fpos - ( f_idx_pos + Vector( WORLD_SCALE / 4, WORLD_SCALE / 4 ) ) );
 				collision = true;
 			}
-		}
 			break;
 		case 2://îŒ^
-		{
-			Vector pos_inside( fx - ( fx % 2 ) + 1, fy - ( fy % 2 ) + 1, fpos.z );
 			if ( isCollisionToCircle( pos_inside, fpos, radius ) ) {
-				result = ( pos - fpos ).normalize( ) * vec.getLength( );
+				result = ( pos - fpos ).normalize( );
 				collision = true;
 			}
-		}
 			break;
 		case 3://LŽš
-		{
-			Vector pos_outside( fx + ( fx % 2 ), fy + ( fy % 2 ), fpos.z );
-			Vector pos_inside( fx - ( fx % 2 ) + 1, fy - ( fy % 2 ) + 1, fpos.z );
 			if ( isCollisionToL( pos_outside, pos_inside, fpos, radius ) ) {
-				result = ( pos_inside - pos_outside ).normalize( ) * vec.getLength( );
+				result = ( pos_outside - pos_inside );
 				collision = true;
 			} 
-			
-		}
 			break;
 		}
 	}
@@ -445,16 +437,17 @@ bool AppStage::isCollisionToCircle( Vector circle_pos, Vector pos, double radius
 
 bool AppStage::isCollisionToL( Vector pos_outside, Vector pos_inside, Vector pos, double radius ) const {
 	adjustPos( pos, pos_outside );
-	if ( fabs( pos_outside.x - pos.x ) > radius * 2 ||
-		 fabs( pos_outside.y - pos.y ) > radius * 2 ) {
+	if ( fabs( pos_outside.x - pos.x ) > WALL_SIZE.x ||
+		 fabs( pos_outside.y - pos.y ) > WALL_SIZE.y ) {
 		return false;
 	}
 
 	adjustPos( pos, pos_inside );
 
+	//‹t‘¤‚©‚ç‚Ì‹——£‚Å’²‚×‚é
 	double distance = ( pos_inside - pos ).getLength( );
-	double size = WORLD_SCALE / 2;
-	return ( size - radius < distance );
+	double max_distance = WALL_SIZE.x / 2 - radius;
+	return ( max_distance < distance );
 }
 
 void AppStage::adjustPos( Vector& pos, Vector& base_pos ) const {

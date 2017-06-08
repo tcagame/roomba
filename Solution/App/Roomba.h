@@ -67,6 +67,7 @@ private:
 	void setVecScale( Vector vec_left, Vector vec_right );
 	void setVecReflection( Vector vec_left, Vector vec_right );
 	void shiftPos( CameraPtr camera );
+	void drawEffect( MOVE_STATE state );
 private:
 	double _rot_speed;
 	double _link_gauge;

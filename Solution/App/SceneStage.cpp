@@ -42,20 +42,20 @@ _countdown( START_COUNTDOWN_TIME ) {
 	drawer->loadGraph( GRAPH_DELIVERY, "UI/station.png" );
 	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
-	Matrix delivery_scale = Matrix::makeTransformScaling( delivery_size );
+	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", delivery_scale );
 
-	Matrix crystal_scale = Matrix::makeTransformScaling( crystal_size );
+	Matrix crystal_scale = Matrix::makeTransformScaling( CRYSTAL_SIZE );
 	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/purple.jpg", crystal_scale );
 		
-	Matrix roomba_scale = Matrix::makeTransformScaling( roomba_size );
+	Matrix roomba_scale = Matrix::makeTransformScaling( ROOMBA_SIZE );
 	//drawer->loadMDLModel( MDL_BALL, "Model/Roomba/roomba.mdl", "Model/Roomba/texture.jpg", roomba_scale );
 	drawer->loadMV1Model( 0, "Model/Roomba/roomba.mv1" );
 	
-	Matrix earth_scale = Matrix::makeTransformScaling( earth_size );
+	Matrix earth_scale = Matrix::makeTransformScaling( EARTH_SIZE );
 	drawer->loadMDLModel( MDL_EARTH, "Model/Stage/earth.mdl", "Model/Stage/earth.jpg", earth_scale );
 
-	Matrix wall_scale = Matrix::makeTransformScaling( wall_size );
+	Matrix wall_scale = Matrix::makeTransformScaling( WALL_SIZE );
 	drawer->loadMDLModel( MDL_WALL_0_0 , "Model/Stage/0_0.mdl" , "Model/Stage/wall.jpg", wall_scale );
 	drawer->loadMDLModel( MDL_WALL_0_1 , "Model/Stage/0_1.mdl" , "Model/Stage/wall.jpg", wall_scale );
 	drawer->loadMDLModel( MDL_WALL_0_2 , "Model/Stage/0_2.mdl" , "Model/Stage/wall.jpg", wall_scale );
@@ -93,7 +93,10 @@ _countdown( START_COUNTDOWN_TIME ) {
 	drawer->loadEffect( EFFECT_LASER, "Effect/laser.efk" );
 	drawer->loadEffect( EFFECT_CATCH_CRYSTAL, "Effect/catch_crystal.efk" );
 	drawer->loadEffect( EFFECT_COL_ROOMBA, "Effect/collision_roomba.efk" );
+	drawer->loadEffect( EFFECT_COLLISION_TO_CRYSTAL, "Effect/collision_crystal.efk" );
 	drawer->loadEffect( EFFECT_CRYSTAL_CIRCLE, "Effect/crystal_effect.efk" );
+	drawer->loadEffect( EFFECT_CHANGE_ROOMBA_STATE, "Effect/move_roomba.efk" );
+	drawer->loadEffect( EFFECT_DELIVERY_POINT, "Effect/point.efk" );
 }
 
 
