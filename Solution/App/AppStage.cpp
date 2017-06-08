@@ -233,15 +233,15 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector& vec, const double ra
 			break;
 		case 2://îŒ^
 			if ( isCollisionToCircle( pos_inside, fpos, radius ) ) {
-				result = ( pos - fpos ).normalize( );
+				result = ( pos - fpos );
 				collision = true;
 			}
 			break;
 		case 3://LŽš
 			if ( isCollisionToL( pos_outside, pos_inside, fpos, radius ) ) {
-				result = ( pos_outside - pos_inside );
+				result = ( pos - pos_outside );
 				collision = true;
-			} 
+			}
 			break;
 		}
 	}
@@ -437,8 +437,8 @@ bool AppStage::isCollisionToCircle( Vector circle_pos, Vector pos, double radius
 
 bool AppStage::isCollisionToL( Vector pos_outside, Vector pos_inside, Vector pos, double radius ) const {
 	adjustPos( pos, pos_outside );
-	if ( fabs( pos_outside.x - pos.x ) > WALL_SIZE.x ||
-		 fabs( pos_outside.y - pos.y ) > WALL_SIZE.y ) {
+	if ( fabs( pos_outside.x - pos.x ) > WALL_SIZE.x * 2 ||
+		 fabs( pos_outside.y - pos.y ) > WALL_SIZE.y * 2 ) {
 		return false;
 	}
 
@@ -446,7 +446,7 @@ bool AppStage::isCollisionToL( Vector pos_outside, Vector pos_inside, Vector pos
 
 	//‹t‘¤‚©‚ç‚Ì‹——£‚Å’²‚×‚é
 	double distance = ( pos_inside - pos ).getLength( );
-	double max_distance = WALL_SIZE.x / 2 - radius;
+	double max_distance = WALL_SIZE.x * 2 - radius;
 	return ( max_distance < distance );
 }
 
