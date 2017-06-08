@@ -147,7 +147,7 @@ void AppStage::drawDelivery( ) const {
 }
 
 
-CrystalPtr AppStage::getHittingCrystal( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) const {
+CrystalPtr AppStage::getHittingCrystal( Vector& pos0, Vector& pos1, Vector& vec0, Vector& vec1 ) const {
 	CrystalPtr hitting = CrystalPtr( );
 	//あたっているクリスタルをhittingに代入する
 	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
@@ -165,7 +165,7 @@ CrystalPtr AppStage::getHittingCrystal( Vector pos0, Vector pos1, Vector vec0, V
 	return hitting;
 }
 
-Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double radius ) {
+Vector AppStage::adjustCollisionToWall( Vector pos, Vector& vec, const double radius ) {
 	// ボールと壁の当たり判定
 	Vector result = vec;
 	bool collision = false;
@@ -235,7 +235,7 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 	return result;
 }
 
-Vector AppStage::adjustCollisionToCrystal( Vector pos, Vector vec, const double radius ) {
+Vector AppStage::adjustCollisionToCrystal( Vector pos, Vector& vec, const double radius ) {
 	Vector result;
 	std::list< CrystalPtr >::const_iterator ite = _crystals.begin( );
 	while ( ite != _crystals.end( ) ) {
@@ -346,7 +346,7 @@ void AppStage::loadMapData( ) {
 	}
 }
 
-bool AppStage::isOnDelivery( Vector pos ) {
+bool AppStage::isOnDelivery( Vector& pos ) {
 	bool result = false;
 	std::list< DeliveryPtr >::iterator ite = _deliverys.begin( );
 	while ( ite != _deliverys.end( ) ) {
@@ -361,7 +361,7 @@ bool AppStage::isOnDelivery( Vector pos ) {
 		}
 		Vector delivery_pos = delivery->getPos( );
 		delivery_pos.z = pos.z;
-		delivery_pos = getAdjustPos( delivery_pos, pos );
+		adjustPos( delivery_pos, pos );
 		Vector distance = delivery_pos - pos;
 		if ( distance.getLength( ) > 0.8 ) {
 			ite++;
@@ -400,7 +400,7 @@ int AppStage::getDeliveryCount( ) const {
 
 bool AppStage::isCollisionToSquare( Vector square_pos, Vector pos, double radius ) const {
 	bool result = false;
-	pos = getAdjustPos( pos, square_pos );
+	adjustPos( pos, square_pos );
 	square_pos -= Vector( radius, radius );
 	double size = WORLD_SCALE / 2 + radius * 2;
 	if ( ( square_pos.x < pos.x ) &&
@@ -413,27 +413,27 @@ bool AppStage::isCollisionToSquare( Vector square_pos, Vector pos, double radius
 }
 
 bool AppStage::isCollisionToCircle( Vector circle_pos, Vector pos, double radius ) const {
-	pos = getAdjustPos( pos, circle_pos );
+	adjustPos( pos, circle_pos );
 	double circle_radius = WORLD_SCALE / 2;
 	double distance = ( circle_pos - pos ).getLength( );
 	return ( circle_radius + radius > distance );
 }
 
 bool AppStage::isCollisionToL( Vector pos_outside, Vector pos_inside, Vector pos, double radius ) const {
-	pos = getAdjustPos( pos, pos_outside );
+	adjustPos( pos, pos_outside );
 	if ( fabs( pos_outside.x - pos.x ) > radius * 2 ||
 		 fabs( pos_outside.y - pos.y ) > radius * 2 ) {
 		return false;
 	}
 
-	pos = getAdjustPos( pos, pos_inside );
+	adjustPos( pos, pos_inside );
 
 	double distance = ( pos_inside - pos ).getLength( );
 	double size = WORLD_SCALE / 2;
 	return ( size - radius < distance );
 }
 
-Vector AppStage::getAdjustPos( Vector pos, Vector base_pos ) const {
+void AppStage::adjustPos( Vector& pos, Vector& base_pos ) const {
 	while ( pos.x - base_pos.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
 		pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
 	}
@@ -446,5 +446,4 @@ Vector AppStage::getAdjustPos( Vector pos, Vector base_pos ) const {
 	while ( pos.y - base_pos.y < -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
 		pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
-	return pos;
 }

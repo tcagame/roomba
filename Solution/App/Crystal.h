@@ -8,7 +8,7 @@ PTR( Crystal );
 
 class Crystal {
 public:
-	Crystal( Vector pos, MDL type );
+	Crystal( Vector& pos, MDL type );
 	virtual ~Crystal( );
 public:
 	void update( AppStagePtr stage );
@@ -18,9 +18,11 @@ public:
 	bool isFinished( ) const;
 	void setDropDown( bool drop_down );
 	Vector getPos( ) const;
-	void setVec( Vector vec );
+	void setVec( Vector& vec );
 	bool isDropDown( ) const;
 	void shiftPos( Vector& base_pos );
+private:
+	void toBound( );
 private:
 	int _effect_count;
 	Vector _pos;

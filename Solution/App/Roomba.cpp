@@ -158,6 +158,9 @@ void Roomba::updateBalls( StagePtr stage) {
 
 	if ( !_crystal ) {
 		_crystal =  app_stage->getHittingCrystal( _balls[ 0 ]->getPos( ), _balls[ 1 ]->getPos( ), vec[ 0 ], vec[ 1 ] );
+		if ( _crystal ) {
+			_crystal->setDropDown( false );
+		}
 	}
 	_balls[ 0 ]->update( vec[ 0 ], stage );
 	_balls[ 1 ]->update( vec[ 1 ], stage );
@@ -189,6 +192,10 @@ void Roomba::changeState( CameraPtr camera ) {
 		 left_stick == Vector( ) ) {
 		state = MOVE_STATE_NEUTRAL;
 	}
+	double scale = ( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).getLength( );
+	if ( scale < MIN_SCALE || scale > SCALE_SIZE ) {
+			state = MOVE_STATE_RESTORE;
+	}
 	if ( _balls[ 0 ]->isReflection( ) ||
 		 _balls[ 1 ]->isReflection( ) ) {
 		state = MOVE_STATE_REFLECTION;
@@ -200,10 +207,6 @@ void Roomba::changeState( CameraPtr camera ) {
 		}
 	}
 	if ( _state == MOVE_STATE_RESTORE ) {
-		state = MOVE_STATE_RESTORE;
-	}
-	double scale = ( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).getLength( );
-	if ( state == MOVE_STATE_RESTORE ) {
 		if ( scale > MIN_SCALE && scale < SCALE_SIZE ) {
 			state = MOVE_STATE_NEUTRAL;
 		}
@@ -405,7 +408,7 @@ void Roomba::holdCrystal( StagePtr stage ) {
 		if ( _crystal->isDropDown( ) ||
 			 _crystal->isFinished( ) ||
 			 _state == MOVE_STATE_REFLECTION ) {
-			_crystal->setDropDown( false );
+			_crystal->setDropDown( true );
 			_crystal = CrystalPtr( );
 			return;
 		}

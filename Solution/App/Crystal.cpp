@@ -13,7 +13,7 @@ static const double DECELERATION_DROP_DOWN_RATIO = 2;
 static const double BOUND_POW = 0.7;
 static const double GRAVITY = 0.1;
 
-Crystal::Crystal( Vector pos, MDL type ) :
+Crystal::Crystal( Vector& pos, MDL type ) :
 _pos( pos ),
 _start_pos( pos ),
 _finished( false ),
@@ -57,19 +57,18 @@ void Crystal::update( AppStagePtr stage ) {
 			}
 		}
 	}
-	// バウンド
+
+
 	if ( _drop_down &&
 		 _pos.z == _start_pos.z &&
 		 _vec.x != 0 && _vec.y != 0 ) {
-		_vec.z = BOUND_POW;
+		toBound( );
 	}
 
 	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
 	if ( ( adjust - _vec ).getLength( ) > 0.1 ) {
 		_vec = adjust;
-		_drop_down = true;
-		// バウンド
-		_vec.z = BOUND_POW;
+		toBound( );
 	}
 
 	_pos += _vec;
@@ -112,7 +111,6 @@ bool Crystal::isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) {
 	}
 	double distance = distance0.getLength( ) * fabs( sin( angle ) );
 	if ( fabs( distance ) < CRYSTAL_RADIUS ) {
-		_drop_down = false;
 		return true;
 	}
 
@@ -142,7 +140,6 @@ bool Crystal::isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) {
 	if ( ( cross[ 0 ].z < 0 && cross[ 1 ].z < 0 && cross[ 2 ].z < 0 && cross[ 3 ].z < 0 ) ||
 		 ( cross[ 0 ].z > 0 && cross[ 1 ].z > 0 && cross[ 2 ].z > 0 && cross[ 3 ].z > 0 ) ) {
 		_pos = crystal_pos;
-		_drop_down = false;
 		return true;
 	}
 	return false;
@@ -173,7 +170,7 @@ Vector Crystal::getPos( ) const {
 	return _pos;
 }
 
-void Crystal::setVec( Vector vec ) {
+void Crystal::setVec( Vector& vec ) {
 	_vec = vec;
 }
 
@@ -198,4 +195,9 @@ void Crystal::shiftPos( Vector& base_pos ) {
 	while ( _pos.y - base_pos.y < -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
 		_pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
+}
+
+void Crystal::toBound( ) {
+	_vec.z = BOUND_POW;
+	_drop_down = true;
 }
