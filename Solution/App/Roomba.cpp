@@ -401,17 +401,19 @@ void Roomba::holdCrystal( StagePtr stage ) {
 		Vector to_crystal = crystal_pos - pos[ 0 ];
 		double angle = line.angle( to_crystal );
 		double check = to_crystal.getLength( ) * cosl( angle );
+		Vector vec;
 		if ( check < 0 ) {							//ü‚æ‚èŠO‘¤
-			_crystal->setVec( pos[ 0 ] - crystal_pos );
+			vec = pos[ 0 ] - crystal_pos;
 		} else if ( check > line.getLength( ) ) {	//ü‚æ‚èŠO‘¤
-			_crystal->setVec( pos[ 1 ] - crystal_pos );
+			vec = pos[ 1 ] - crystal_pos;
 		} else {									//ü‚É‚’¼
 			double distance = to_crystal.getLength( ) * fabs( sin( angle ) );
 			Matrix rot = Matrix::makeTransformRotation( line.cross( to_crystal ), PI / 2 );
-			Vector vec = rot.multiply( line );
-			vec = vec.normalize( ) * distance;
-			_crystal->setVec( vec );
+			vec = rot.multiply( line ).normalize( ) * distance;
 		}
+		Vector to_central = line.normalize( ) * ( line.getLength( ) / 2 - check ) * 0.1;
+		vec += to_central;
+		_crystal->setVec( vec );
 	}
 }
 
