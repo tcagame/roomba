@@ -10,8 +10,8 @@
 #include "Game.h"
 #include "Viewer.h"
 
-static const int UI_STATION_FOOT_X = 60;
-static const int UI_STATION_Y = 200;
+static const int UI_DELIVERY_FOOT_X = 70;
+static const int UI_DELIVERY_Y = 15;
 static const int UI_NUM_WIDTH = 32;
 static const int UI_NUM_HEIGHT = 64;
 static const int UI_MAP_SIZE = 6;
@@ -160,8 +160,8 @@ void SceneStage::drawUIDelivery( ) {
 
 	int delivery_num = _stage->getMaxDeliveryNum( ) - app_stage->getDeliveryCount( ) + 1;
 	
-	int x = scr_width - UI_STATION_FOOT_X;
-	int y = UI_STATION_Y;
+	int x = scr_width - UI_DELIVERY_FOOT_X;
+	int y = UI_DELIVERY_Y;
 	
 	if ( _delivery_number[ 0 ].num != delivery_num ) {
 		_delivery_number[ 1 ] = _delivery_number[ 0 ];
