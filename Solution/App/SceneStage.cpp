@@ -136,6 +136,7 @@ void SceneStage::updateRestart( ) {
 void SceneStage::updatePlay( ) {
 	_roomba->update( _stage, _camera );
 	_stage->update( _camera );
+	_roomba->updateLaser( _camera );
 	_timer->update( );
 }
 

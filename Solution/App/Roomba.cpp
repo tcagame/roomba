@@ -59,7 +59,6 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	holdCrystal( stage );
 	updateBalls( stage );
 	shiftPos( camera );
-	updateLaser( camera );
 	updateLink( );
 }
 
@@ -73,13 +72,6 @@ void Roomba::draw( ) const {
 			drawer->setModelMDL( _delivery[ i ] );
 		}
 	}
-	/*
-	ƒŠƒ“ƒN‚ªØ‚ê‚Ä‚¢‚éó‘Ô
-	if ( _state != MOVE_STATE_RESTORE &&
-		 _state != MOVE_STATE_REFLECTION ) {
-		drawLaser( );
-	}
-	*/
 }
 /*
 void Roomba::drawLaser( ) const {
@@ -117,9 +109,7 @@ void Roomba::updateState( ) {
 }
 
 void Roomba::updateLaser( CameraConstPtr camera ) {
-	/*
-	roomba‚Ìó‘Ô‚ðlaser‚É’m‚ç‚¹‚é
-	*/
+	_laser->show( _state != MOVE_STATE_RESTORE && _state != MOVE_STATE_REFLECTION );
 	_laser->update( getCentralPos( ), camera, _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ), _crystal );
 }
 
@@ -383,7 +373,7 @@ void Roomba::brakeRotation( ) {
 }
 
 void Roomba::holdCrystal( StagePtr stage ) {
-	if ( _crystal != CrystalPtr( ) ) {
+	if ( _crystal ) {
 		if ( _crystal->isDropDown( ) ||
 			 _crystal->isFinished( ) ||
 			 _state == MOVE_STATE_REFLECTION ) {

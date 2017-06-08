@@ -27,6 +27,7 @@ public:
 	virtual ~Roomba( );
 public:
 	void update( StagePtr stage, CameraPtr camera );
+	void updateLaser( CameraConstPtr camera );
 	void draw( ) const;
 	void reset( );
 	double getRotSpeed( ) const;
@@ -45,7 +46,6 @@ private:
 	};
 private:
 	void updateState( );
-	void updateLaser( CameraConstPtr camera );
 	void updateBalls( StagePtr stage );
 	void updateLink( );
 	void changeState( CameraPtr camera );
