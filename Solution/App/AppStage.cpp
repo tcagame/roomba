@@ -189,7 +189,7 @@ CrystalPtr AppStage::getHittingCrystal( Vector& pos0, Vector& pos1, Vector& vec0
 	return hitting;
 }
 
-Vector AppStage::adjustCollisionToWall( Vector pos, Vector& vec, const double radius ) {
+Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double radius ) {
 	// É{Å[ÉãÇ∆ï«ÇÃìñÇΩÇËîªíË
 	Vector result = vec;
 	bool collision = false;
