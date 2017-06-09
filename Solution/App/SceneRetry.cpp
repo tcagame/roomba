@@ -4,6 +4,7 @@
 #include "Drawer.h"
 #include "Device.h"
 #include "Game.h"
+#include "Sound.h"
 
 SceneRetry::SceneRetry( int stage_num ) :
 _stage( stage_num ),
@@ -11,6 +12,8 @@ _select( false ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_SELECT_MENU, "UI/UI_retry_select.png" );
 	drawer->loadGraph( GRAPH_GAMEOVER, "UI/game_over.png" );
+	SoundPtr sound = Sound::getTask( );
+	sound->playBGM( "bgm_maoudamashii_cyber29.wav" );
 }
 
 

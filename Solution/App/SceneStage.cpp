@@ -9,9 +9,10 @@
 #include "Application.h"
 #include "Game.h"
 #include "Viewer.h"
+#include "Sound.h"
 
-static const int UI_DELIVERY_FOOT_X = 70;
-static const int UI_DELIVERY_Y = 15;
+static const int UI_DELIVERY_FOOT_X = 80;
+static const int UI_DELIVERY_Y = 20;
 static const int UI_NUM_WIDTH = 32;
 static const int UI_NUM_HEIGHT = 64;
 static const int UI_MAP_SIZE = 6;
@@ -32,7 +33,7 @@ _countdown( START_COUNTDOWN_TIME ) {
 
 	_delivery_number[ 0 ].state = NUMBER_STATE_IN;
 	_delivery_number[ 1 ].state = NUMBER_STATE_NONE;
-	_delivery_number[ 0 ].num = _stage->getMaxDeliveryNum( ) - std::dynamic_pointer_cast<AppStage>( _stage )->getDeliveryCount( ) -1;
+	_delivery_number[ 0 ].num = _stage->getMaxDeliveryNum( ) - std::dynamic_pointer_cast<AppStage>( _stage )->getDeliveryCount( ) + 1;
 	_phase_number[ 0 ].state = NUMBER_STATE_IN;
 	_phase_number[ 1 ].state = NUMBER_STATE_NONE;
 
@@ -97,6 +98,9 @@ _countdown( START_COUNTDOWN_TIME ) {
 	drawer->loadEffect( EFFECT_CRYSTAL_CIRCLE, "Effect/crystal_effect.efk" );
 	drawer->loadEffect( EFFECT_CHANGE_ROOMBA_STATE, "Effect/move_roomba.efk" );
 	drawer->loadEffect( EFFECT_DELIVERY_POINT, "Effect/point.efk" );
+
+	SoundPtr sound = Sound::getTask( );
+	sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
 }
 
 
@@ -171,7 +175,7 @@ void SceneStage::drawUIDelivery( ) {
 	if ( _delivery_number[ 0 ].num != delivery_num ) {
 		_delivery_number[ 1 ] = _delivery_number[ 0 ];
 		_delivery_number[ 1 ].state = NUMBER_STATE_OUT;
-		_delivery_number[ 1 ].speed_y = -16;
+		_delivery_number[ 1 ].speed_y = -10;
 		_delivery_number[ 0 ].num = delivery_num;
 		_delivery_number[ 0 ].state = NUMBER_STATE_IN;
 		_delivery_number[ 0 ].x = 0;

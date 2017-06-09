@@ -4,6 +4,7 @@
 #include "define.h"
 #include "Application.h"
 #include "Binary.h"
+#include "Sound.h"
 
 static const int RESULT_WIDTH  = 512;
 static const int RESULT_HEIGHT = 256;
@@ -17,6 +18,8 @@ SceneResult::SceneResult( int time ) {
 	_this_time = time;
 	_best_time = 0;
 	loadBestTime( );
+	SoundPtr sound = Sound::getTask( );
+	sound->playBGM( "bgm_maoudamashii_cyber13.wav" );
 }
 
 
