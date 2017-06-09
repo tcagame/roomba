@@ -9,6 +9,7 @@
 #include "Application.h"
 #include "Game.h"
 #include "Viewer.h"
+#include "Sound.h"
 
 static const int UI_DELIVERY_FOOT_X = 80;
 static const int UI_DELIVERY_Y = 20;
@@ -97,6 +98,9 @@ _countdown( START_COUNTDOWN_TIME ) {
 	drawer->loadEffect( EFFECT_CRYSTAL_CIRCLE, "Effect/crystal_effect.efk" );
 	drawer->loadEffect( EFFECT_CHANGE_ROOMBA_STATE, "Effect/move_roomba.efk" );
 	drawer->loadEffect( EFFECT_DELIVERY_POINT, "Effect/point.efk" );
+
+	SoundPtr sound = Sound::getTask( );
+	sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
 }
 
 
