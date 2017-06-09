@@ -233,7 +233,7 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 			break;
 		case 2://êÓå^
 			if ( isCollisionToCircle( pos_inside, fpos, radius ) ) {
-				result = ( pos - fpos );
+				result = ( pos - pos_inside );
 				collision = true;
 			}
 			break;
@@ -246,6 +246,7 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 		}
 	}
 	if ( collision ) {
+		result.z = 0;
 		result = result.normalize( ) * REFLECTION_POWER;
 	}
 	return result;
