@@ -410,6 +410,9 @@ void Roomba::holdCrystal( StagePtr stage ) {
 			double sin_length = to_crystal.getLength( ) * fabs( sin( angle ) );
 			Matrix rot = Matrix::makeTransformRotation( line.cross( to_crystal ), PI / 2 );
 			vec = rot.multiply( line ).normalize( ) * sin_length;
+			if ( vec.getLength( ) < 0.1 ) {
+				vec = vec * ( vec.getLength( ) * 10 );
+			}
 		}
 		Vector to_central = line.normalize( ) * ( line.getLength( ) / 2 - cos_length ) * 0.1;
 		vec += to_central;

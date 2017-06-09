@@ -42,9 +42,6 @@ void Crystal::update( AppStagePtr stage ) {
 		return;
 	}
 
-	if ( _vec.getLength( ) > MAX_SPEED ) {
-		_vec = _vec.normalize( ) * MAX_SPEED;
-	}
 
 	// ƒoƒEƒ“ƒh
 	if ( _pos.z > _start_pos.z ) {
@@ -65,6 +62,10 @@ void Crystal::update( AppStagePtr stage ) {
 		toBound( );
 	}
 
+
+	if ( _vec.getLength( ) > MAX_SPEED ) {
+		_vec = _vec.normalize( ) * MAX_SPEED;
+	}
 	_pos += _vec;
 	if ( _pos.z < _start_pos.z ) {
 		_pos.z = _start_pos.z;

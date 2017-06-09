@@ -48,9 +48,6 @@ void EditorStage::updateCursor( ) {
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( camera_dir ) * -1, Vector( 0, -1 ).angle( camera_dir ) );
 	Vector mouse_pos = Mouse::getTask( )->getPos( );
 	Vector mouse_vec = mouse_pos - _before_mouse_pos;
-	if ( keyboard->isPushKey( "Q" ) ) {
-		_cursor_pos = Vector( (int)_cursor_pos.x, (int)_cursor_pos.y );
-	}
 	_before_mouse_pos = mouse_pos;
 	mouse_vec.x *= 1;
 	mouse_vec.y *= 1;
@@ -70,10 +67,13 @@ void EditorStage::updateCursor( ) {
 		return;
 	}
 	mouse_vec = mat.multiply( mouse_vec ).normalize( ) * CURSOR_MOVE_SPEED;
+	if ( keyboard->isPushKey( "Q" ) ) {
+		_cursor_pos.x = (int)_cursor_pos.x;
+		_cursor_pos.y = (int)_cursor_pos.y;
+	}
 	if ( keyboard->isHoldKey( "Q" ) ) {
-		double ratio = fabs( mouse_vec.x ) / fabs( mouse_vec.y );
-		mouse_vec.y *= ratio;
-		mouse_vec = mouse_vec.normalize( ) * CURSOR_MOVE_SPEED;
+		mouse_vec.x = ( fabs( mouse_vec.x ) > 0.001 ) * ( 1 - ( mouse_vec.x < 0 ) * 2 ) * CURSOR_MOVE_SPEED;
+		mouse_vec.y = ( fabs( mouse_vec.y ) > 0.001 ) * ( 1 - ( mouse_vec.y < 0 ) * 2 ) * CURSOR_MOVE_SPEED;
 	}
 	_cursor_pos += mouse_vec;
 
