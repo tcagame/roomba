@@ -6,9 +6,9 @@
       <Node>
         <CommonValues>
           <Life>
-            <Center>10</Center>
-            <Max>10</Max>
-            <Min>10</Min>
+            <Center>5</Center>
+            <Max>5</Max>
+            <Min>5</Min>
           </Life>
         </CommonValues>
         <ScalingValues>
@@ -82,9 +82,9 @@
       <Node>
         <CommonValues>
           <Life>
-            <Center>10</Center>
-            <Max>10</Max>
-            <Min>10</Min>
+            <Center>5</Center>
+            <Max>5</Max>
+            <Min>5</Min>
           </Life>
         </CommonValues>
         <ScalingValues>
@@ -134,29 +134,46 @@
       <Node>
         <CommonValues>
           <Life>
-            <Center>2</Center>
-            <Max>2</Max>
-            <Min>2</Min>
+            <Center>3</Center>
+            <Max>3</Max>
+            <Min>3</Min>
           </Life>
         </CommonValues>
         <ScalingValues>
           <Type>1</Type>
           <PVA>
-            <Velocity>
+            <Scale>
               <X>
-                <Center>2</Center>
-                <Max>2</Max>
-                <Min>2</Min>
+                <Center>0.5</Center>
+                <Max>0.5</Max>
+                <Min>0.5</Min>
               </X>
               <Y>
-                <Center>2</Center>
-                <Max>2</Max>
-                <Min>2</Min>
+                <Center>0.5</Center>
+                <Max>0.5</Max>
+                <Min>0.5</Min>
               </Y>
               <Z>
-                <Center>2</Center>
-                <Max>2</Max>
-                <Min>2</Min>
+                <Center>0.5</Center>
+                <Max>0.5</Max>
+                <Min>0.5</Min>
+              </Z>
+            </Scale>
+            <Velocity>
+              <X>
+                <Center>0.5</Center>
+                <Max>0.5</Max>
+                <Min>0.5</Min>
+              </X>
+              <Y>
+                <Center>0.5</Center>
+                <Max>0.5</Max>
+                <Min>0.5</Min>
+              </Y>
+              <Z>
+                <Center>0.5</Center>
+                <Max>0.5</Max>
+                <Min>0.5</Min>
               </Z>
             </Velocity>
           </PVA>
@@ -180,12 +197,12 @@
       <Node>
         <CommonValues>
           <MaxGeneration>
-            <Value>100</Value>
+            <Value>50</Value>
           </MaxGeneration>
           <Life>
-            <Center>30</Center>
-            <Max>30</Max>
-            <Min>30</Min>
+            <Center>15</Center>
+            <Max>15</Max>
+            <Min>15</Min>
           </Life>
           <GenerationTime>
             <Center>0.01</Center>
@@ -198,17 +215,17 @@
           <PVA>
             <Velocity>
               <X>
-                <Max>0.4</Max>
-                <Min>-0.4</Min>
+                <Max>0.25</Max>
+                <Min>-0.25</Min>
               </X>
               <Y>
                 <Center>0.2</Center>
-                <Max>0.6</Max>
-                <Min>-0.2</Min>
+                <Max>0.45</Max>
+                <Min>-0.05</Min>
               </Y>
               <Z>
-                <Max>0.4</Max>
-                <Min>-0.4</Min>
+                <Max>0.25</Max>
+                <Min>-0.25</Min>
               </Z>
             </Velocity>
           </PVA>
@@ -273,6 +290,6 @@
   <ToolVersion>1.10</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
-  <EndFrame>30</EndFrame>
+  <EndFrame>15</EndFrame>
   <IsLoop>True</IsLoop>
 </EffekseerProject>

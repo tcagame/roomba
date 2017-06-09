@@ -611,8 +611,11 @@ void Roomba::shiftPos( CameraPtr camera ) {
 }
 
 void Roomba::drawEffect( MOVE_STATE state ) {
-	if ( state == MOVE_STATE_REFLECTION ||
-		 state == MOVE_STATE_REFLECTION_RESTORE ||
+	if ( _state == MOVE_STATE_REFLECTION ) {
+		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_REPLAY, getCentralPos( ), 0.8, EFFECT_ROTATE ) );
+		return;
+	}
+	if ( state == MOVE_STATE_REFLECTION_RESTORE ||
 		 state == MOVE_STATE_NEUTRAL ||
 		 state == MOVE_STATE_LIFT_UP ||
 		 state == MOVE_STATE_LIFT_DOWN ) {
