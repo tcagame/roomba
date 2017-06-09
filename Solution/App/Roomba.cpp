@@ -25,7 +25,7 @@ const double LIFT_Z = 10;
 const double DELIVERY_FOOT = 2.5;
 const int MAX_LINK_GAUGE = 400;
 const double LINK_REDUCED_SPEED = 1.5;
-const double LINK_RECOVERS_SPEED = 0.5;
+const double LINK_RECOVERS_SPEED = 4.0;
 const double BOUND_POW = 0.6;
 
 static const Vector START_POS[ 2 ] {
