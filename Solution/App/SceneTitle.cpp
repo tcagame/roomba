@@ -3,6 +3,7 @@
 #include "define.h"
 #include "Drawer.h"
 #include "Application.h"
+#include "Sound.h"
 
 static const int TITLE_WIDTH  = 1024;
 static const int TITLE_HEIGHT = 256;
@@ -13,6 +14,8 @@ _count( 0 ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_TITLE, "title/roomb_title.png" );
 	drawer->loadGraph( GRAPH_PLEASE_PUSH_BUTTON, "title/pleasepushbutton.png" );
+	SoundPtr sound = Sound::getTask( );
+	sound->playBGM( "bgm_maoudamashii_cyber31.wav" );
 }
 
 
