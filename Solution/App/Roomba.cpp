@@ -225,7 +225,9 @@ void Roomba::changeState( CameraPtr camera ) {
 			for ( int i = 0; i < 2; i++ ) {
 				_vec_reflection[ i ] = _balls[ i ]->getVec( );
 				if ( _balls[ i ]->isReflection( ) ) {
-					_vec_reflection[ i ].z = BOUND_POW;
+					if ( !( _balls[ i ]->getPos( ).z > START_POS[ i ].z ) ) {
+						_vec_reflection[ i ].z = BOUND_POW;
+					}
 				}
 			}
 		}
