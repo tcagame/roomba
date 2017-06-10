@@ -313,8 +313,6 @@ void SceneStage::drawCountdown( ) const {
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
-	const int WIDTH_NUM = 30;
-	const int HEIGHT_NUM = 31;
 	const int IMG_HEIGHT = 992;
 	int width = WIDTH / 2;
 	int height = HEIGHT / 2;
@@ -331,6 +329,8 @@ void SceneStage::drawCountdown( ) const {
 		int random_y = rand( ) % 300 - 150;
 		Drawer::Transform trans( 0, 0, 0, ( line * 32 ), 960, 540, WIDTH, HEIGHT );
 		drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
+		trans = Drawer::Transform( 0, 0, 0, 976, 960, 16, WIDTH, 16 * WIDTH / 960 );
+		drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
 		Drawer::Transform cover( -width / 2 - random_x, -height / 2 - random_y, 0, 0, 1280, 720, width / 2 - random_x, height / 2 - random_y );
 		drawer->setSprite( Drawer::Sprite( cover, GRAPH_MATRIX_ERASE ) );
 		cover = Drawer::Transform( WIDTH - width / 2 + random_x, -height / 2 - random_y, 0, 0, 1280, 720, WIDTH + width / 2 + random_x, height / 2 - random_y );
@@ -340,8 +340,14 @@ void SceneStage::drawCountdown( ) const {
 		cover = Drawer::Transform( WIDTH -width / 2 + random_x, HEIGHT - height / 2 + random_y, 0, 0, 1280, 720, WIDTH + width / 2 + random_x, HEIGHT + height / 2 + random_y );
 		drawer->setSprite( Drawer::Sprite( cover, GRAPH_MATRIX_ERASE ) );
 	} else {
+		int th = ( START_COUNTDOWN_TIME - _countdown ) * 16;
+		if ( th > 540 ) {
+			th = 540;
+		}
 		line = ( START_COUNTDOWN_TIME - _countdown ) % ( ( IMG_HEIGHT - 540 ) / 32 );
-		Drawer::Transform trans( 0, 0, 0, ( line * 32 ), 960, 540, WIDTH, HEIGHT );
+		Drawer::Transform trans( 0, 0, 0, ( line * 32 ), 960, th, WIDTH, th * HEIGHT / 540 );
+		drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
+		trans = Drawer::Transform( 0, 0, 0, 976, 960, 16, WIDTH, 16 * WIDTH / 960 );
 		drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
 	}
 	//Drawer::Transform trans( width / 2, height / 2, 0, ( line * 32 ), 960, 540, WIDTH - width / 2, HEIGHT - height / 2 );
