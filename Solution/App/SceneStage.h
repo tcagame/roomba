@@ -22,6 +22,7 @@ private:
 	void drawCountdown( ) const;
 	void drawUI( );
 	void drawUIDelivery( );
+	void drawUILinKGauge( );
 	void drawUIMap( ) const;
 	Vector getAdjustPos( Vector pos, Vector base_pos ) const;
 private:
