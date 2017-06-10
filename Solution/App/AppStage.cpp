@@ -438,8 +438,8 @@ bool AppStage::isCollisionToCircle( Vector circle_pos, Vector pos, double radius
 
 bool AppStage::isCollisionToL( Vector pos_outside, Vector pos_inside, Vector pos, double radius ) const {
 	adjustPos( pos, pos_outside );
-	if ( fabs( pos_outside.x - pos.x ) > WALL_SIZE.x * 2 ||
-		 fabs( pos_outside.y - pos.y ) > WALL_SIZE.y * 2 ) {
+	if ( fabs( pos_outside.x - pos.x ) > WALL_SIZE.x ||
+		 fabs( pos_outside.y - pos.y ) > WALL_SIZE.y ) {
 		return false;
 	}
 
