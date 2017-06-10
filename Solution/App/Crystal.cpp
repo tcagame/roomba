@@ -5,7 +5,7 @@
 #include "Roomba.h"
 #include "Viewer.h"
 
-static const int MAX_EFFECT_COUNT = 30;
+static const int MAX_EFFECT_COUNT = 50;
 static const double REFLECTION_POWER = 0.3;
 static const double CRYSTAL_RADIUS = CRYSTAL_SIZE.x / 3;
 static const double MAX_SPEED = 0.7;
@@ -30,8 +30,8 @@ Crystal::~Crystal( ) {
 
 void Crystal::draw( ViewerPtr viewer ) const {
 	viewer->drawModelMDL( Drawer::ModelMDL( _pos + Vector( -CRYSTAL_SIZE.x, -CRYSTAL_SIZE.y ), _type ) );
-	if ( !_effect_count && !_vec.z ) {
-		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CRYSTAL_CIRCLE, _pos + Vector( 0, 0, 1 ), 1.0, EFFECT_ROTATE ) );
+	if ( !_effect_count && _vec == Vector( ) ) {
+		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CRYSTAL_CIRCLE, _pos + Vector( 0, 0, 1 ), 0.5, EFFECT_ROTATE ) );
 	}
 }
 
