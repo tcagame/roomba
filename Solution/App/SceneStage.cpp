@@ -19,7 +19,8 @@ static const int UI_MAP_SIZE = 6;
 static const int UI_MAP_X = 30;
 static const int UI_MAP_FOOT_Y = 30;
 static const int UI_MAP_RANGE = 20;
-static const int START_COUNTDOWN_TIME = 3 * 60;
+static const int START_COUNTDOWN_TIME = 120;
+static const int ERASE_COUNTDOWN_TIME = 15;
 
 SceneStage::SceneStage( int stage_num ) :
 _countdown( START_COUNTDOWN_TIME ) {	
@@ -43,6 +44,8 @@ _countdown( START_COUNTDOWN_TIME ) {
 	drawer->loadGraph( GRAPH_DELIVERY, "UI/station.png" );
 	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
+	drawer->loadGraph( GRAPH_MATRIX, "UI/matrix.png" );
+	drawer->loadGraph( GRAPH_MATRIX_ERASE, "UI/matrix_erase.png" );
 	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", delivery_scale );
 
@@ -109,13 +112,6 @@ SceneStage::~SceneStage( ) {
 }
 
 Scene::NEXT SceneStage::update( ) {
-	if ( _countdown / 60 < 1 ) {
-		updatePlay( );
-	} else {
-		countdown( );
-		drawCountdown( );
-	}
-
 	// ƒJƒƒ‰&viwerí‚ÉXV‚·‚é
 	_camera->update( );
 	_viewer->update( _roomba->getCentralPos( ) );
@@ -127,10 +123,18 @@ Scene::NEXT SceneStage::update( ) {
 		_timer->finalize( );
 		return NEXT_RESULT;
 	}
-	_roomba->draw( );
-	_stage->draw( );
-	_timer->draw( );
-	drawUI( );
+	if ( _countdown < 0 ) {
+		updatePlay( );
+		_roomba->draw( );
+		_stage->draw( );
+		_timer->draw( );
+		drawUI( );
+	} else {
+		//countdown( );
+		_countdown--;
+		drawCountdown( );
+	}
+
 	return Scene::NEXT_CONTINUE;
 }
 
@@ -150,16 +154,16 @@ void SceneStage::updatePlay( ) {
 
 void SceneStage::drawUI( ) {
 	drawUIDelivery( );
-	// linkgauge
-	DrawerPtr drawer = Drawer::getTask( );
-	{
-		const int TW = 400;
-		const int TH = 50;
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, TH, TW, TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, 0, (int)_roomba->getLink( ), TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
-	}
-	
+	drawUILinKGauge( );
 	drawUIMap( );
+}
+
+void SceneStage::drawUILinKGauge( ) {
+	DrawerPtr drawer = Drawer::getTask( );
+	const int TW = 400;
+	const int TH = 50;
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, TH, TW, TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, 10, 0, 0, (int)_roomba->getLink( ), TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
 }
 
 void SceneStage::drawUIDelivery( ) {
@@ -288,13 +292,10 @@ void SceneStage::drawUIMap( ) const {
 }
 
 void SceneStage::drawCountdown( ) const {
-	if ( _countdown / 60 < 1 ) {
+	if ( _countdown < 0 ) {
 		return;
 	}
-	
-	ApplicationPtr app = Application::getInstance( );
-	const int WIDTH = app->getWindowWidth( );
-	const int HEIGHT = app->getWindowHeight( );
+	/*
 	DrawerPtr drawer = Drawer::getTask( );
 	const int FPS = 60;
 	const int sx = WIDTH / 2 - 100;
@@ -307,6 +308,50 @@ void SceneStage::drawCountdown( ) const {
 
 	Drawer::Sprite sprite( Drawer::Transform( sx, sy, u[ _countdown / FPS ] * TW, 0, TW, TH, sx2, sy2 ), GRAPH_TIMER_NUM );
 	drawer->setSprite( sprite );
+	*/
+	DrawerPtr drawer = Drawer::getTask( );
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+	const int IMG_HEIGHT = 992;
+	int width = WIDTH / 2;
+	int height = HEIGHT / 2;
+	int line = 0;
+	if ( _countdown < ERASE_COUNTDOWN_TIME ) {
+		line = ( START_COUNTDOWN_TIME - ERASE_COUNTDOWN_TIME ) % ( ( IMG_HEIGHT - 540 ) / 32 );
+		width = ( ERASE_COUNTDOWN_TIME - _countdown % ERASE_COUNTDOWN_TIME ) * ( WIDTH / ERASE_COUNTDOWN_TIME ) * 5;
+		height = ( ERASE_COUNTDOWN_TIME - _countdown % ERASE_COUNTDOWN_TIME ) * ( HEIGHT / ERASE_COUNTDOWN_TIME ) * 5;
+		int sx1 = WIDTH / 2 - width;
+		int sx2 = WIDTH / 2 + width;
+		int sy1 = HEIGHT / 2 - height;
+		int sy2 = HEIGHT / 2 + height;
+		int random_x = rand( ) % 300 - 150;
+		int random_y = rand( ) % 300 - 150;
+		Drawer::Transform trans( 0, 0, 0, ( line * 32 ), 960, 540, WIDTH, HEIGHT );
+		drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
+		trans = Drawer::Transform( 0, 0, 0, 976, 960, 16, WIDTH, 16 * WIDTH / 960 );
+		drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
+		Drawer::Transform cover( -width / 2 - random_x, -height / 2 - random_y, 0, 0, 1280, 720, width / 2 - random_x, height / 2 - random_y );
+		drawer->setSprite( Drawer::Sprite( cover, GRAPH_MATRIX_ERASE ) );
+		cover = Drawer::Transform( WIDTH - width / 2 + random_x, -height / 2 - random_y, 0, 0, 1280, 720, WIDTH + width / 2 + random_x, height / 2 - random_y );
+		drawer->setSprite( Drawer::Sprite( cover, GRAPH_MATRIX_ERASE ) );
+		cover = Drawer::Transform( -width / 2 - random_x, HEIGHT - height / 2 + random_y, 0, 0, 1280, 720, width / 2 - random_x, HEIGHT + height / 2 + random_y );
+		drawer->setSprite( Drawer::Sprite( cover, GRAPH_MATRIX_ERASE ) );
+		cover = Drawer::Transform( WIDTH -width / 2 + random_x, HEIGHT - height / 2 + random_y, 0, 0, 1280, 720, WIDTH + width / 2 + random_x, HEIGHT + height / 2 + random_y );
+		drawer->setSprite( Drawer::Sprite( cover, GRAPH_MATRIX_ERASE ) );
+	} else {
+		int th = ( START_COUNTDOWN_TIME - _countdown ) * 16;
+		if ( th > 540 ) {
+			th = 540;
+		}
+		line = ( START_COUNTDOWN_TIME - _countdown ) % ( ( IMG_HEIGHT - 540 ) / 32 );
+		Drawer::Transform trans( 0, 0, 0, ( line * 32 ), 960, th, WIDTH, th * HEIGHT / 540 );
+		drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
+		trans = Drawer::Transform( 0, 0, 0, 976, 960, 16, WIDTH, 16 * WIDTH / 960 );
+		drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
+	}
+	//Drawer::Transform trans( width / 2, height / 2, 0, ( line * 32 ), 960, 540, WIDTH - width / 2, HEIGHT - height / 2 );
+	//drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
 }
 
 Vector SceneStage::getAdjustPos( Vector pos, Vector base_pos ) const {
