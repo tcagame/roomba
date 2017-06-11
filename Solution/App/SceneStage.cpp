@@ -294,20 +294,6 @@ void SceneStage::drawCountdown( ) const {
 	if ( _countdown < 0 ) {
 		return;
 	}
-	/*
-	DrawerPtr drawer = Drawer::getTask( );
-	const int FPS = 60;
-	const int sx = WIDTH / 2 - 100;
-	const int sy = HEIGHT / 2 - 200;
-	const int sx2 = sx + 200;
-	const int sy2 = sy + 400;
-	const int TW = 32;
-	const int TH = 64;
-	const int u[ ] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-
-	Drawer::Sprite sprite( Drawer::Transform( sx, sy, u[ _countdown / FPS ] * TW, 0, TW, TH, sx2, sy2 ), GRAPH_TIMER_NUM );
-	drawer->setSprite( sprite );
-	*/
 	DrawerPtr drawer = Drawer::getTask( );
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
@@ -348,6 +334,13 @@ void SceneStage::drawCountdown( ) const {
 		drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
 		trans = Drawer::Transform( 0, 0, 0, 976, 960, 16, WIDTH, 16 * WIDTH / 960 );
 		drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
+		// ドット点滅
+		static int count = 0;
+		count++;
+		if ( ( count % 20 ) < 10 ) {
+			trans = Drawer::Transform( ( 16 * 9 ) * WIDTH / 960, 0, 16 * 11, 976, 16, 16, ( 16 * 10 ) * WIDTH / 960, 16 * WIDTH / 960 ); 
+			drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
+		}
 	}
 	//Drawer::Transform trans( width / 2, height / 2, 0, ( line * 32 ), 960, 540, WIDTH - width / 2, HEIGHT - height / 2 );
 	//drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
