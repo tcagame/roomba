@@ -3,13 +3,16 @@
 #include "define.h"
 #include "Game.h"
 #include "Application.h"
+#include "Sound.h"
 
 static const int FPS = 60;
-static const int START_TIME = 120 * FPS;
+static const int START_TIME = 20 * FPS;
 static const int ADD_TIME = 5;
 
 Timer::Timer( ) :
 _timer( START_TIME ) {
+	SoundPtr sound = Sound::getTask( );
+	sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
 }
 
 
@@ -18,13 +21,17 @@ Timer::~Timer( ) {
 
 void Timer::update( ) {
 	_timer--;
+	
+	if ( _timer == 3 * FPS ) {
+		SoundPtr sound = Sound::getTask( );
+	    sound->playBGM( "meka_ge_keihou.wav" );
+	}
 }
 
 void Timer::draw( ) const {
 	if ( _timer < 0 ) {
 		return;
 	}
-
 	ApplicationPtr app = Application::getInstance( );
 	DrawerPtr drawer = Drawer::getTask( );
 	int x = app->getWindowWidth( ) / 2;
@@ -67,7 +74,12 @@ void Timer::draw( ) const {
 }
 
 void Timer::addTime( ) {
+	if ( _timer < 3 * FPS ) {
+		SoundPtr sound = Sound::getTask( );
+		sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
+	}
 	_timer += ADD_TIME * FPS;
+	
 }
 
 void Timer::reset( ) {

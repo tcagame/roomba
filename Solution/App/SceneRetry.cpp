@@ -21,8 +21,10 @@ SceneRetry::~SceneRetry( ) {
 }
 
 Scene::NEXT SceneRetry::update( ) {
+	SoundPtr sound = Sound::getTask( );
 	DevicePtr device = Device::getTask( );
 	if ( device->getPush( ) && BUTTON_D ) {
+		sound->playSE( "se_maoudamashii_system49.wav" );
 		if ( !_select ) {
 			GamePtr game = Game::getTask( );
 			game->setStage( _stage );
@@ -32,14 +34,17 @@ Scene::NEXT SceneRetry::update( ) {
 		}
 	}
 	if ( device->getDirY( ) > 0 && !_ispush ) {
+		sound->playSE( "se_maoudamashii_system43.wav" );
 		_select = true;
 		_ispush = true;
 	}
 	if ( device->getDirY( ) < 0 && !_ispush ) {
+		sound->playSE( "se_maoudamashii_system43.wav" );
 		_select = false;
 		_ispush = true;
 	}
 	if ( device->getDirY( ) == 0 && _ispush ) {
+		sound->playSE( "se_maoudamashii_system43.wav" );
 		_ispush = false;
 	}
 
