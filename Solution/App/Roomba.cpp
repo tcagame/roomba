@@ -207,6 +207,13 @@ void Roomba::changeState( CameraPtr camera ) {
 		state = MOVE_STATE_REFLECTION;
 	}
 
+	
+	for ( int i = 0; i < 2; i++ ) {
+		if ( _balls[ i ]->isReflection( ) ) {
+			state = MOVE_STATE_REFLECTION;
+		}
+	}
+
 	if ( _link_break ) {
 		if ( _balls[ 0 ]->getPos( ).z < LIFT_Z ) {
 			state = MOVE_STATE_LIFT_UP;
@@ -217,6 +224,17 @@ void Roomba::changeState( CameraPtr camera ) {
 			state = MOVE_STATE_LIFT_DOWN;
 			SoundPtr sound = Sound::getTask( );
 			//sound->playSE( "se_maoudamashii_effect14.wav" );
+		}
+	}
+
+	for ( int i = 0; i < 2; i++ ) {
+		if ( _balls[ i ]->isReflection( ) ) {
+			_vec_reflection[ i ] = _balls[ i ]->getVec( );
+			_vec_scale[ i ] = Vector( );
+			_balls[ i ]->setReflection( false );
+			if ( !( _vec_reflection[ i ].z > 0 ) ) {
+				_vec_reflection[ i ].z = BOUND_POW;
+			}
 		}
 	}
 
@@ -233,6 +251,16 @@ void Roomba::changeState( CameraPtr camera ) {
 			sound->playSE( "knocking_a_wall.mp3" );
 			_trans_speed = Vector( );
 			_rot_speed = 0;
+			for ( int i = 0; i < 2; i++ ) {
+				if ( _balls[ i ]->isReflection( ) ) {
+					_vec_reflection[ i ] = _balls[ i ]->getVec( );
+					_vec_scale[ i ] = Vector( );
+					_balls[ i ]->setReflection( false );
+					if ( !( _vec_reflection[ i ].z > 0 ) ) {
+						_vec_reflection[ i ].z = BOUND_POW;
+					}
+				}
+			}
 		}
 		if ( state == MOVE_STATE_LIFT_UP ) {
 			_delivery[ 0 ].pos = _balls[ 0 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
@@ -436,16 +464,6 @@ void Roomba::moveRotation( ) {
 }
 
 void Roomba::moveReflection( ) {
-	for ( int i = 0; i < 2; i++ ) {
-		if ( _balls[ i ]->isReflection( ) ) {
-			_vec_reflection[ i ] = _balls[ i ]->getVec( );
-			_vec_scale[ i ] = Vector( );
-			_balls[ i ]->setReflection( false );
-			if ( !( _vec_reflection[ i ].z > 0 ) ) {
-				_vec_reflection[ i ].z = BOUND_POW;
-			}
-		}
-	}
 	if ( _state != MOVE_STATE_REFLECTION &&
 		 _state != MOVE_STATE_REFLECTION_RESTORE ) {
 		setVecScale( Vector( ), Vector( ) );
