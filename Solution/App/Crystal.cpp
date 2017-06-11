@@ -12,6 +12,8 @@ static const double MAX_SPEED = 0.7;
 static const double DECELERATION = 0.03;
 static const double DECELERATION_DROP_DOWN_RATIO = 2;
 static const double BOUND_POW = 0.7;
+static const double EFFECT_AURA_SIZE = 0.5;
+static const double EFFECT_COLLISION_WALL_SIZE = 0.75;
 
 Crystal::Crystal( Vector& pos, MDL type ) :
 _pos( pos ),
@@ -31,7 +33,7 @@ Crystal::~Crystal( ) {
 void Crystal::draw( ViewerPtr viewer ) const {
 	viewer->drawModelMDL( Drawer::ModelMDL( _pos + Vector( -CRYSTAL_SIZE.x, -CRYSTAL_SIZE.y ), _type ) );
 	if ( !_effect_count && _vec == Vector( ) ) {
-		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CRYSTAL_CIRCLE, _pos + Vector( 0, 0, 1 ), 0.5, EFFECT_ROTATE ) );
+		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CRYSTAL_AURA, _pos + Vector( 0, 0, 1 ), EFFECT_AURA_SIZE, EFFECT_ROTATE ) );
 	}
 }
 
@@ -58,7 +60,7 @@ void Crystal::update( AppStagePtr stage ) {
 	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
 	if ( ( adjust - _vec ).getLength( ) > 0.1 ) {
 		_vec = adjust;
-		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_CRYSTAL, _pos, 0.5, EFFECT_ROTATE ) );
+		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_WALL, _pos, EFFECT_COLLISION_WALL_SIZE, EFFECT_ROTATE ) );
 		toBound( );
 	}
 
