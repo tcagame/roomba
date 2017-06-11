@@ -184,10 +184,7 @@ void Roomba::changeState( CameraPtr camera ) {
 	}
 	double scale = ( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).getLength( );
 
-	if ( _balls[ 0 ]->isReflection( ) ||
-		 _balls[ 1 ]->isReflection( ) ) {
-		state = MOVE_STATE_REFLECTION;
-	}
+	
 	if ( _state == MOVE_STATE_REFLECTION ) {
 		if ( ( _vec_reflection[ 0 ] == Vector( ) )  &&
 			 ( _vec_reflection[ 1 ] == Vector( ) ) ) {
@@ -199,6 +196,10 @@ void Roomba::changeState( CameraPtr camera ) {
 		if ( scale > MIN_SCALE && scale < SCALE_SIZE ) {
 			state = MOVE_STATE_NEUTRAL;
 		}
+	}
+	if ( ( _vec_reflection[ 0 ] != Vector( ) )  ||
+		 ( _vec_reflection[ 1 ] != Vector( ) ) ) {
+		state = MOVE_STATE_REFLECTION;
 	}
 
 	if ( _link_break ) {
@@ -227,26 +228,16 @@ void Roomba::changeState( CameraPtr camera ) {
 			sound->playSE( "knocking_a_wall.mp3" );
 			_trans_speed = Vector( );
 			_rot_speed = 0;
-			for ( int i = 0; i < 2; i++ ) {
-				_vec_reflection[ i ] = _balls[ i ]->getVec( );
-				if ( _balls[ i ]->isReflection( ) ) {
-					if ( !( _vec_reflection[ i ].z > 0 ) ) {
-						_vec_reflection[ i ].z = BOUND_POW;
-					}
-				}
-			}
 		}
 		if ( state == MOVE_STATE_LIFT_UP ) {
 			_delivery[ 0 ].pos = _balls[ 0 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
 			_delivery[ 1 ].pos = _balls[ 1 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
-			_balls[ 0 ]->setReflection( false );
-			_balls[ 1 ]->setReflection( false );
+			setVecReflection( Vector( ), Vector( ) );
+			setVecScale( Vector( ), Vector( ) );
 			_crystal = CrystalPtr( );
 		}
 
 		if ( _state == MOVE_STATE_REFLECTION ) {
-			_balls[ 0 ]->setReflection( false );
-			_balls[ 1 ]->setReflection( false );
 		}
 		if ( _state == MOVE_STATE_LIFT_UP ) {
 			_vec_lift[ 0 ] = Vector( );
@@ -440,6 +431,16 @@ void Roomba::moveRotation( ) {
 }
 
 void Roomba::moveReflection( ) {
+	for ( int i = 0; i < 2; i++ ) {
+		if ( _balls[ i ]->isReflection( ) ) {
+			_vec_reflection[ i ] = _balls[ i ]->getVec( );
+			_vec_scale[ i ] = Vector( );
+			_balls[ i ]->setReflection( false );
+			if ( !( _vec_reflection[ i ].z > 0 ) ) {
+				_vec_reflection[ i ].z = BOUND_POW;
+			}
+		}
+	}
 	if ( _state != MOVE_STATE_REFLECTION &&
 		 _state != MOVE_STATE_REFLECTION_RESTORE ) {
 		setVecScale( Vector( ), Vector( ) );
