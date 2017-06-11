@@ -7,6 +7,7 @@
 #include "Device.h"
 #include "laser.h"
 #include <assert.h>
+#include  "Sound.h"
 
 //デバッグのためスピード遅め
 //static const double SPEED = 0.1;
@@ -208,6 +209,8 @@ void Roomba::changeState( CameraPtr camera ) {
 		}
 		if ( _state == MOVE_STATE_LIFT_DOWN ) {
 			state = MOVE_STATE_LIFT_DOWN;
+			SoundPtr sound = Sound::getTask( );
+			//sound->playSE( "se_maoudamashii_effect14.wav" );
 		}
 	}
 
@@ -220,6 +223,8 @@ void Roomba::changeState( CameraPtr camera ) {
 			_move_dir = _stick_rot.multiply( right_stick + left_stick );
 		}
 		if ( state == MOVE_STATE_REFLECTION ) {
+			SoundPtr sound = Sound::getTask( );
+			sound->playSE( "knocking_a_wall.mp3" );
 			_trans_speed = Vector( );
 			_rot_speed = 0;
 			for ( int i = 0; i < 2; i++ ) {

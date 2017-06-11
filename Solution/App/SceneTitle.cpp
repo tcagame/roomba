@@ -27,6 +27,8 @@ Scene::NEXT SceneTitle::update( ) {
 	draw( );
 	DevicePtr device = Device::getTask( );
 	if ( device->getPush( ) && BUTTON_D ) {
+		SoundPtr sound = Sound::getTask( );
+		sound->playSE( "se_maoudamashii_system49.wav" );
 		return NEXT_STAGE_SELECT;
 	}
 	return NEXT_CONTINUE;
