@@ -330,13 +330,11 @@ void SceneStage::drawCountdown( ) const {
 		line = ( START_COUNTDOWN_TIME - _countdown ) % ( ( IMG_HEIGHT - 540 ) / 32 );
 		Drawer::Transform trans( 0, 0, 0, ( line * 32 ), 960, th, WIDTH, th * HEIGHT / 540 );
 		drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
-		trans = Drawer::Transform( 0, 0, 0, 976, 960, 16, WIDTH, 16 * WIDTH / 960 );
+		trans = Drawer::Transform( 0, 0, 0, 976, 960, 16, WIDTH, 16 * HEIGHT / 540 );
 		drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
 		// ドット点滅
-		static int count = 0;
-		count++;
-		if ( ( count % 20 ) < 10 ) {
-			trans = Drawer::Transform( ( 16 * 9 ) * WIDTH / 960, 0, 16 * 11, 976, 16, 16, ( 16 * 10 ) * WIDTH / 960, 16 * WIDTH / 960 ); 
+		if ( ( _countdown % 20 ) < 10 ) {
+			trans = Drawer::Transform( ( 16 * 9 ) * WIDTH / 960, 0, 16 * 11, 976, 16, 16, ( 16 * 10 ) * WIDTH / 960, 16 * HEIGHT / 540 ); 
 			drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
 		}
 	}
