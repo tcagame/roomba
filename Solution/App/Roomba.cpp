@@ -456,7 +456,7 @@ void Roomba::moveReflection( ) {
 			_vec_scale[ i ] = Vector( );
 		}
 		if ( _state == MOVE_STATE_REFLECTION_RESTORE ) {
-			_vec_reflection[ i ].z = _balls[ i ]->getPos( ).z - START_POS[ i ].z;
+			_vec_reflection[ i ].z = START_POS[ i ].z - _balls[ i ]->getPos( ).z;
 		}
 	}
 
