@@ -94,17 +94,14 @@ _countdown( START_COUNTDOWN_TIME ) {
 	drawer->loadMDLModel( MDL_WALL_1_14, "Model/Stage/1_14.mdl", "Model/Stage/wall.jpg", wall_scale );
 	drawer->loadMDLModel( MDL_WALL_1_15, "Model/Stage/1_15.mdl", "Model/Stage/wall.jpg", wall_scale );
 
-	drawer->loadEffect( EFFECT_LASER, "Effect/laser.efk" );
 	drawer->loadEffect( EFFECT_CATCH_CRYSTAL, "Effect/catch_crystal.efk" );
-	drawer->loadEffect( EFFECT_COL_ROOMBA, "Effect/collision_roomba.efk" );
+	drawer->loadEffect( EFFECT_COLLISION_TO_WALL, "Effect/collision_wall.efk" );
 	drawer->loadEffect( EFFECT_COLLISION_TO_CRYSTAL, "Effect/collision_crystal.efk" );
-	drawer->loadEffect( EFFECT_CRYSTAL_CIRCLE, "Effect/crystal_effect.efk" );
+	drawer->loadEffect( EFFECT_CRYSTAL_AURA, "Effect/crystal_aura.efk" );
 	drawer->loadEffect( EFFECT_CHANGE_ROOMBA_STATE, "Effect/move_roomba.efk" );
 	drawer->loadEffect( EFFECT_DELIVERY_POINT, "Effect/point.efk" );
-	drawer->loadEffect( EFFECT_REPLAY, "Effect/replay.efk" );
+	drawer->loadEffect( EFFECT_REBOOT, "Effect/reboot.efk" );
 
-	SoundPtr sound = Sound::getTask( );
-	sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
 }
 
 
@@ -295,20 +292,6 @@ void SceneStage::drawCountdown( ) const {
 	if ( _countdown < 0 ) {
 		return;
 	}
-	/*
-	DrawerPtr drawer = Drawer::getTask( );
-	const int FPS = 60;
-	const int sx = WIDTH / 2 - 100;
-	const int sy = HEIGHT / 2 - 200;
-	const int sx2 = sx + 200;
-	const int sy2 = sy + 400;
-	const int TW = 32;
-	const int TH = 64;
-	const int u[ ] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-
-	Drawer::Sprite sprite( Drawer::Transform( sx, sy, u[ _countdown / FPS ] * TW, 0, TW, TH, sx2, sy2 ), GRAPH_TIMER_NUM );
-	drawer->setSprite( sprite );
-	*/
 	DrawerPtr drawer = Drawer::getTask( );
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
@@ -349,6 +332,13 @@ void SceneStage::drawCountdown( ) const {
 		drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
 		trans = Drawer::Transform( 0, 0, 0, 976, 960, 16, WIDTH, 16 * WIDTH / 960 );
 		drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
+		// ドット点滅
+		static int count = 0;
+		count++;
+		if ( ( count % 20 ) < 10 ) {
+			trans = Drawer::Transform( ( 16 * 9 ) * WIDTH / 960, 0, 16 * 11, 976, 16, 16, ( 16 * 10 ) * WIDTH / 960, 16 * WIDTH / 960 ); 
+			drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
+		}
 	}
 	//Drawer::Transform trans( width / 2, height / 2, 0, ( line * 32 ), 960, 540, WIDTH - width / 2, HEIGHT - height / 2 );
 	//drawer->setSprite( Drawer::Sprite( trans, GRAPH_MATRIX ) );
