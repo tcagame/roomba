@@ -8,7 +8,7 @@
 #include "Delivery.h"
 #include "Timer.h"
 
-const double REFLECTION_POWER = 0.8;
+const double REFLECTION_POWER = 1.8;
 const double DELIVERY_POS_Z = EARTH_POS_Z + WORLD_SCALE;
 const double CRYSTAL_POS_Z = CRYSTAL_SIZE.z * -2;
 
