@@ -34,7 +34,7 @@ private:
 	void loadDelivery( );
 	void loadMapData( );
 	void adjustPos( Vector& pos, Vector& base_pos ) const;
-	bool isCollisionToSquare( Vector square_pos, Vector pos, double radius ) const;
+	bool isCollisionToSquare( Vector& square_pos, Vector pos, double radius ) const;
 	bool isCollisionToCircle( Vector circle_pos, Vector pos, double radius ) const;
 	bool isCollisionToL( Vector pos_outside, Vector pos_inside, Vector pos, double radius ) const;
 	void collideCrystal( CrystalPtr crystal );

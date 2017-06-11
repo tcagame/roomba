@@ -227,7 +227,15 @@ Vector AppStage::adjustCollisionToWall( Vector pos, Vector vec, const double rad
 		switch ( _map_data[ idx ] ) {
 		case 1://éläp
 			if ( isCollisionToSquare( f_idx_pos, fpos, radius ) ) {
-				result = ( fpos - ( f_idx_pos + Vector( WORLD_SCALE / 4, WORLD_SCALE / 4 ) ) );
+				if ( pos.x < f_idx_pos.x ||
+					 pos.x > ( f_idx_pos.x + WORLD_SCALE / 2 ) ) {
+					result.x = vec.x * -1;
+				} else 	if ( pos.y < f_idx_pos.y ||
+					 pos.y > ( f_idx_pos.y + WORLD_SCALE / 2 ) ) {
+					result.y = vec.y * -1;
+				} else {
+					result = vec * -1;
+				}
 				collision = true;
 			}
 			break;
@@ -415,9 +423,9 @@ int AppStage::getDeliveryCount( ) const {
 	return _delivery_count;
 }
 
-bool AppStage::isCollisionToSquare( Vector square_pos, Vector pos, double radius ) const {
+bool AppStage::isCollisionToSquare( Vector& square_pos, Vector pos, double radius ) const {
 	bool result = false;
-	adjustPos( pos, square_pos );
+	adjustPos( square_pos, pos );
 	square_pos -= Vector( radius, radius );
 	double size = WORLD_SCALE / 2 + radius * 2;
 	if ( ( square_pos.x < pos.x ) &&
