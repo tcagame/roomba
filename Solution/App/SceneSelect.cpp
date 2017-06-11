@@ -4,6 +4,7 @@
 #include "Drawer.h"
 #include "Game.h"
 #include "Application.h"
+#include "Sound.h"
 
 static const int SELECT_WIDTH  = 1024;
 static const int SELECT_HEIGHT = 256;
@@ -27,22 +28,27 @@ SceneSelect::~SceneSelect( ) {
 }
 
 Scene::NEXT SceneSelect::update( ) {
+	SoundPtr sound = Sound::getTask( );
 	draw( );
 	DevicePtr device = Device::getTask( );
 	if ( device->getPush( ) && BUTTON_D ) {
+		sound->playSE( "se_maoudamashii_system49.wav" );
 		GamePtr game = Game::getTask( );
 		game->setStage( _select );
 		return NEXT_STAGE;
 	}
 	if ( device->getDirY( ) > 0 && !_ispush ) {
+		sound->playSE( "se_maoudamashii_system43.wav" );
 		_select++;
 		_ispush = true;
 	}
 	if ( device->getDirY( ) < 0 && !_ispush ) {
+		sound->playSE( "se_maoudamashii_system43.wav" );
 		_select--;
 		_ispush = true;
 	}
 	if ( device->getDirY( ) == 0 && _ispush ) {
+		sound->playSE( "se_maoudamashii_system43.wav" );
 		_ispush = false;
 	}
 	_select = abs( _select ) % 3;
