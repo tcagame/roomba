@@ -28,6 +28,8 @@ const int MAX_LINK_GAUGE = 400;
 const double LINK_REDUCED_SPEED = 1.5;
 const double LINK_RECOVERS_SPEED = 4.0;
 const double BOUND_POW = 0.6;
+const double EFFECT_REBOOT_SIZE = 0.7;
+const double EFFECT_CHANGE_STATE_SIZE = 0.2;
 
 static const Vector START_POS[ 2 ] {
 	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, ROOMBA_SIZE.z ) ),
@@ -75,30 +77,6 @@ void Roomba::draw( ) const {
 		}
 	}
 }
-/*
-void Roomba::drawLaser( ) const {
-	// レーザー
-	DrawerPtr drawer = Drawer::getTask( );
-	drawer->drawLine( _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ) );
-#if 0
-
-#else
-	const int ratio = 10; // effekseerのツールで作った際の大きさ
-	double size = ( ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).getLength( ) ) / ratio; // 大きさは左右どちらからでも変わらないため左を基準に取る
-	double angle_left = ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).angle( Vector( 1, 0 ) );
-	if ( ( getCentralPos( ) - _balls[ BALL_LEFT ]->getPos( ) ).cross( Vector( 1, 0 ) ).z == 1 ) {
-		angle_left = PI2 - angle_left;
-	}
-	drawer->setEffect( Drawer::Effect( EFFECT_LASER, _balls[ BALL_LEFT ]->getPos( ), size, Vector( 0, 0, angle_left ) ) );
-	
-	double angle_right = ( getCentralPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).angle( Vector( 1, 0 ) );
-	if ( ( getCentralPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).cross( Vector( 1, 0 ) ).z == 1 ) {
-		angle_right = PI2 - angle_right;
-	}
-	drawer->setEffect( Drawer::Effect( EFFECT_LASER, _balls[ BALL_RIGHT ]->getPos( ), size, Vector( 0, 0, angle_right ) ) );
-#endif
-}
-*/
 
 void Roomba::updateState( ) {
 	acceleration( );
@@ -617,7 +595,7 @@ void Roomba::shiftPos( CameraPtr camera ) {
 
 void Roomba::drawEffect( MOVE_STATE state ) {
 	if ( _state == MOVE_STATE_REFLECTION ) {
-		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_REPLAY, getCentralPos( ), 0.8, EFFECT_ROTATE ) );
+		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_REBOOT, getCentralPos( ), EFFECT_REBOOT_SIZE, EFFECT_ROTATE ) );
 		return;
 	}
 	if ( state == MOVE_STATE_REFLECTION_RESTORE ||
@@ -632,7 +610,7 @@ void Roomba::drawEffect( MOVE_STATE state ) {
 	}
 
 	for ( int i = 0; i < 2; i++ ) {
-		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CHANGE_ROOMBA_STATE, _balls[ i ]->getPos( ), 0.2, EFFECT_ROTATE ) );
+		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CHANGE_ROOMBA_STATE, _balls[ i ]->getPos( ), EFFECT_CHANGE_STATE_SIZE, EFFECT_ROTATE ) );
 	}
 }
 

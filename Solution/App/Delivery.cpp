@@ -7,6 +7,8 @@ static const double MOVE_SPEED = 0.1;
 static const double START_POS_Z = 20;
 static const double MIN_POS_Z = 2;
 static const double FOOT = 3;
+static const double EFFECT_POINT_SIZE = 0.5;
+static const double EFFECT_CATCH_SIZE = 0.5;
 static const int MAX_EFFECT_COUNT = 30;
 
 Delivery::Delivery( Vector target ) :
@@ -35,7 +37,7 @@ void Delivery::draw( ViewerPtr viewer ) const {
 	}
 	
 	if ( _state == STATE_WAIT && !_effect_count ) {
-		drawer->setEffect( Drawer::Effect( EFFECT_DELIVERY_POINT, Vector( _pos.x, _pos.y, 0 ), 0.5, EFFECT_ROTATE ) );
+		drawer->setEffect( Drawer::Effect( EFFECT_DELIVERY_POINT, Vector( _pos.x, _pos.y, 0 ), EFFECT_POINT_SIZE, EFFECT_ROTATE ) );
 	}
 }
 
@@ -87,7 +89,7 @@ void Delivery::updateCatch( ) {
 	if ( _vec.getLength( ) < 0.01 ) {
 		_target = _pos + Vector( 0, 0, 4 );
 		_state = STATE_LIFT;
-		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CATCH_CRYSTAL, _pos, 0.5, EFFECT_ROTATE ) );
+		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CATCH_CRYSTAL, _pos, EFFECT_CATCH_SIZE, EFFECT_ROTATE ) );
 	}
 }
 

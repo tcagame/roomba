@@ -94,14 +94,13 @@ _countdown( START_COUNTDOWN_TIME ) {
 	drawer->loadMDLModel( MDL_WALL_1_14, "Model/Stage/1_14.mdl", "Model/Stage/wall.jpg", wall_scale );
 	drawer->loadMDLModel( MDL_WALL_1_15, "Model/Stage/1_15.mdl", "Model/Stage/wall.jpg", wall_scale );
 
-	drawer->loadEffect( EFFECT_LASER, "Effect/laser.efk" );
 	drawer->loadEffect( EFFECT_CATCH_CRYSTAL, "Effect/catch_crystal.efk" );
-	drawer->loadEffect( EFFECT_COL_ROOMBA, "Effect/collision_roomba.efk" );
+	drawer->loadEffect( EFFECT_COLLISION_TO_WALL, "Effect/collision_wall.efk" );
 	drawer->loadEffect( EFFECT_COLLISION_TO_CRYSTAL, "Effect/collision_crystal.efk" );
-	drawer->loadEffect( EFFECT_CRYSTAL_CIRCLE, "Effect/crystal_effect.efk" );
+	drawer->loadEffect( EFFECT_CRYSTAL_AURA, "Effect/crystal_aura.efk" );
 	drawer->loadEffect( EFFECT_CHANGE_ROOMBA_STATE, "Effect/move_roomba.efk" );
 	drawer->loadEffect( EFFECT_DELIVERY_POINT, "Effect/point.efk" );
-	drawer->loadEffect( EFFECT_REPLAY, "Effect/replay.efk" );
+	drawer->loadEffect( EFFECT_REBOOT, "Effect/reboot.efk" );
 
 	SoundPtr sound = Sound::getTask( );
 	sound->playBGM( "bgm_maoudamashii_cyber06.wav" );

@@ -1,7 +1,8 @@
 #include "Ball.h"
 #include "AppStage.h"
 
-static const double COL_EFFECT_SIZE = 0.75;
+static const double EFFECT_COLLISION_CRYSTAL_SIZE = 0.25;
+static const double EFFECT_COLLISION_WALL_SIZE = 0.75;
 static const Vector BALL_SIZE( 0.1, 0.1, 0.1 );
 static const double BALL_MODEL_ROT_SPEED = PI / 3;
 
@@ -23,9 +24,9 @@ void Ball::update( const Vector& vec, StagePtr stage ) {
 	if ( ( _vec - adjust_vec ).getLength( ) > 0.001 ) {
 		_reflection = true;
 		if ( stage_ptr->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS ) != Vector( ) ) {
-			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_CRYSTAL, _pos, 0.5, EFFECT_ROTATE ) );
+			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_CRYSTAL, _pos, EFFECT_COLLISION_CRYSTAL_SIZE, EFFECT_ROTATE ) );
 		} else {
-			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COL_ROOMBA, _pos, COL_EFFECT_SIZE, EFFECT_ROTATE ) );
+			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_WALL, _pos, EFFECT_COLLISION_WALL_SIZE, EFFECT_ROTATE ) );
 		}
 	}
 	_vec = adjust_vec;
