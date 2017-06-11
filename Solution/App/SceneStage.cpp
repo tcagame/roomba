@@ -103,8 +103,6 @@ _countdown( START_COUNTDOWN_TIME ) {
 	drawer->loadEffect( EFFECT_DELIVERY_POINT, "Effect/point.efk" );
 	drawer->loadEffect( EFFECT_REPLAY, "Effect/replay.efk" );
 
-	SoundPtr sound = Sound::getTask( );
-	sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
 }
 
 
