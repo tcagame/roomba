@@ -110,7 +110,12 @@ void Roomba::updateState( ) {
 }
 
 void Roomba::updateLaser( CameraConstPtr camera ) {
-	_laser->show( _state != MOVE_STATE_REFLECTION && _state != MOVE_STATE_REFLECTION_RESTORE );
+	bool show_laser = (
+		_state != MOVE_STATE_REFLECTION &&
+		_state != MOVE_STATE_REFLECTION_RESTORE &&
+		_state != MOVE_STATE_LIFT_DOWN &&
+		_state != MOVE_STATE_LIFT_UP );
+	_laser->show( show_laser );
 	_laser->update( getCentralPos( ), camera, _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ), _crystal );
 }
 
