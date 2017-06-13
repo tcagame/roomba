@@ -116,7 +116,7 @@ Scene::NEXT SceneStage::update( ) {
 	if ( _timer->isTimeOver( ) ) {
 		return NEXT_RETRY;
 	}
-	if ( std::dynamic_pointer_cast<AppStage>(_stage)->isFinished( ) ) {
+	if ( _roomba->isFinished( ) ) {
 		_timer->finalize( );
 		return NEXT_RESULT;
 	}

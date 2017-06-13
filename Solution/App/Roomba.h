@@ -38,6 +38,7 @@ public:
 	Vector getBallPos( int ball ) const;
 	MOVE_STATE getMoveState( ) const;
 	bool isWait( ) const;
+	bool isFinished( ) const;
 private:
 	enum BALL {
 		BALL_LEFT,
@@ -50,7 +51,7 @@ private:
 private:
 	void updateState( );
 	void updateBalls( StagePtr stage );
-	void changeState( CameraPtr camera );
+	void changeState( StagePtr stage, CameraPtr camera );
 	void moveTranslation( );
 	void moveRotation( );
 	void moveReflection( );
@@ -75,6 +76,7 @@ private:
 	int _wait_count;
 	double _rot_speed;
 	bool _link_break;
+	bool _finished;
 	Vector _trans_speed;
 	Vector _move_dir;
 	Vector _vec_trans;

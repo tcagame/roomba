@@ -42,6 +42,7 @@ _trans_speed( Vector( ) ),
 _vec_trans( Vector( ) ),
 _rot_speed( 0 ),
 _link_break( true ),
+_finished( false ),
 _wait_count( WAIT_TIME ) {
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ] = BallPtr( new Ball( START_POS[ i ] + Vector( 0, 0, 5 ) ) );
@@ -58,7 +59,7 @@ Roomba::~Roomba( ) {
 }
 
 void Roomba::update( StagePtr stage, CameraPtr camera ) {
-	changeState( camera );
+	changeState( stage, camera );
 	updateState( );
 	holdCrystal( stage );
 	updateBalls( stage );
@@ -139,7 +140,7 @@ void Roomba::updateBalls( StagePtr stage ) {
 	_balls[ 1 ]->update( vec[ 1 ], stage );
 }
 
-void Roomba::changeState( CameraPtr camera ) {
+void Roomba::changeState( StagePtr stage, CameraPtr camera ) {
 	DevicePtr device = Device::getTask( );
 	Vector right_stick = Vector( device->getRightDirX( ), device->getRightDirY( ) ) * 0.002;
 	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) ) * 0.002;
@@ -251,6 +252,9 @@ void Roomba::changeState( CameraPtr camera ) {
 				Vector ball = START_POS[ i ] + Vector( 0, 0, LIFT_Z );
 				_balls[ i ]->setPos( ball );
 				_delivery[ i ].pos = ball + Vector( 0, 0, DELIVERY_FOOT );
+			}
+			if ( std::dynamic_pointer_cast< AppStage >( stage )->isFinished( ) ) {
+				_finished = true;
 			}
 		}
 		announceChangeState( state );
@@ -538,6 +542,11 @@ Roomba::MOVE_STATE Roomba::getMoveState( ) const {
 bool Roomba::isWait( ) const {
 	return ( _wait_count > 0 );
 }
+
+bool Roomba::isFinished( ) const {
+	return _finished;
+}
+
 
 void Roomba::setVecTrans( Vector vec ) {
 	_vec_trans = vec;
