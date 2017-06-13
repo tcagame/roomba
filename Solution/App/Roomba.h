@@ -53,6 +53,7 @@ private:
 	void moveTranslation( );
 	void moveRotation( );
 	void moveReflection( );
+	void moveRestore( );
 	void moveLiftUp( );
 	void moveLiftDown( );
 	void moveBound( );

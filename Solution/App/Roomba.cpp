@@ -13,20 +13,20 @@
 //デバッグのためスピード遅め
 //static const double SPEED = 0.1;
 const double ACCEL_SPEED = 0.03;
-const double RESTORE_SPEED = 0.08;
+const double RESTORE_SPEED = 0.06;
 const double MAX_ROT_SPEED = 0.2;
 const double MAX_TRANS_SPEED = 0.4;
 const double DECELETION_ROT_SPEED = 0.002;
 const double DECELETION_TRANS_SPEED = 0.001;
+const double EMERGENCY_DECELERATION_SPEED = 1;
 const double OTHER_TRANS_RATIO = 6;
 const double OTHER_ROT_RATIO = 2;
-const double EMERGENCY_DECELERATION_SPEED = 0.1;
 const double SCALE_SIZE = 6;
 const double MIN_SCALE = 5;
 const double LIFT_Z = 10;
 const double DELIVERY_FOOT = 2.5;
 const int MAX_LINK_GAUGE = 400;
-const double BOUND_POW = 0.6;
+const double BOUND_POW = 0.7;
 const double EFFECT_REBOOT_SIZE = 0.7;
 const double EFFECT_CHANGE_STATE_SIZE = 0.2;
 const int WAIT_TIME = 200;
@@ -96,6 +96,7 @@ void Roomba::updateState( ) {
 	moveTranslation( );
 	moveRotation( );
 	moveReflection( );
+	moveRestore( );
 	moveLiftUp( );
 	moveLiftDown( );
 	moveBound( );
@@ -178,13 +179,21 @@ void Roomba::changeState( CameraPtr camera ) {
 		 ( _vec_reflection[ 1 ] != Vector( ) ) ) {
 		state = MOVE_STATE_REFLECTION;
 	}
-
+	
 	
 	for ( int i = 0; i < 2; i++ ) {
 		if ( _balls[ i ]->isReflection( ) ) {
 			state = MOVE_STATE_REFLECTION;
+			_vec_reflection[ i ] = _balls[ i ]->getVec( );
+			_vec_scale[ i ] = Vector( );
+			_balls[ i ]->setReflection( false );
+			if ( !( _vec_z[ i ] > 0 ) ) {
+				_vec_z[ i ] = BOUND_POW;
+			}
 		}
 	}
+	
+	
 
 	if ( (  _state == MOVE_STATE_LIFT_DOWN && state != MOVE_STATE_LIFT_DOWN ) ||
 			_state == MOVE_STATE_WAIT ) {
@@ -218,16 +227,6 @@ void Roomba::changeState( CameraPtr camera ) {
 			sound->playSE( "knocking_a_wall.mp3" );
 			_trans_speed = Vector( );
 			_rot_speed = 0;
-			for ( int i = 0; i < 2; i++ ) {
-				if ( _balls[ i ]->isReflection( ) ) {
-					_vec_reflection[ i ] = _balls[ i ]->getVec( );
-					_vec_scale[ i ] = Vector( );
-					_balls[ i ]->setReflection( false );
-					if ( !( _vec_z[ i ] > 0 ) ) {
-						_vec_z[ i ] = BOUND_POW;
-					}
-				}
-			}
 		}
 		if ( state == MOVE_STATE_LIFT_UP ) {
 			_delivery[ 0 ].pos = _balls[ 0 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
@@ -387,11 +386,25 @@ void Roomba::moveRotation( ) {
 }
 
 void Roomba::moveReflection( ) {
-	if ( _state != MOVE_STATE_REFLECTION &&
-		 _state != MOVE_STATE_REFLECTION_RESTORE ) {
-		setVecScale( Vector( ), Vector( ) );
-		double scale = ( _balls[ 1 ]->getPos( ) - _balls[ 0 ]->getPos( ) ).getLength( );
+	if ( _state != MOVE_STATE_REFLECTION ) {
+		return;
+	}
+	for ( int i = 0; i < 2; i++ ) {
+		Vector pos = _balls[ i ]->getPos( );
+		if ( pos.z + _vec_z[ i ] > START_POS[ i ].z ) {
+			continue;
+		}
+		if ( _vec_reflection[ i ].getLength( ) > EMERGENCY_DECELERATION_SPEED ) {
+			_vec_reflection[ i ] -= _vec_reflection[ i ].normalize( ) * EMERGENCY_DECELERATION_SPEED;
+		} else {
+			_vec_reflection[ i ] = Vector( );
+		}
+	}
+}
 
+void Roomba::moveRestore( ) {
+	if ( _state != MOVE_STATE_REFLECTION_RESTORE ) {
+		setVecScale( Vector( ), Vector( ) );
 		return;
 	}
 
@@ -399,26 +412,19 @@ void Roomba::moveReflection( ) {
 	laser.z = 0;
 	double scale = ( _balls[ 1 ]->getPos( ) - _balls[ 0 ]->getPos( ) ).getLength( );
 	for ( int i = 0; i < 2; i++ ) {
+		Vector pos = _balls[ i ]->getPos( );
+		if ( pos.z + _vec_z[ i ] > START_POS[ i ].z ) {
+			continue;
+		}
 		if ( scale > SCALE_SIZE ) {
-				_vec_scale[ i ] = laser.normalize( ) * ( scale - SCALE_SIZE + 0.1 ) * ( 1 - ( i != 0 ) * 2 ) * RESTORE_SPEED;
+				_vec_scale[ i ] = ( laser * ( scale - SCALE_SIZE ) * ( 1 - ( i != 0 ) * 2 ) ).normalize( ) * RESTORE_SPEED;
 		} else  if ( scale < MIN_SCALE ) {
-				_vec_scale[ i ] = laser.normalize( ) * ( MIN_SCALE - scale + 0.1 ) * ( 1 - ( i != 0 ) * 2 ) * -RESTORE_SPEED;
+				_vec_scale[ i ] = ( laser * ( MIN_SCALE - scale ) * ( 1 - ( i != 0 ) * 2 ) ).normalize( ) * -RESTORE_SPEED;
 		} else {
 			_vec_scale[ i ] = Vector( );
 		}
 	}
 
-	if ( _state != MOVE_STATE_REFLECTION ) {
-		return;
-	}
-	for ( int i = 0; i < 2; i++ ) {
-		Vector pos = _balls[ i ]->getPos( );
-		if ( _vec_reflection[ i ].getLength( ) > EMERGENCY_DECELERATION_SPEED ) {
-			_vec_reflection[ i ] -= _vec_reflection[ i ].normalize( ) * EMERGENCY_DECELERATION_SPEED;
-		} else {
-			_vec_reflection[ i ] = Vector( );
-		}
-	}
 }
 
 void Roomba::moveLiftUp( ) {
