@@ -36,6 +36,7 @@ public:
 	Vector getDir( ) const;
 	Vector getCentralPos( ) const;
 	Vector getBallPos( int ball ) const;
+	MOVE_STATE getMoveState( ) const;
 	bool isWait( ) const;
 private:
 	enum BALL {

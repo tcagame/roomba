@@ -10,7 +10,8 @@ static const int ADD_TIME = 5 * FPS;
 static const int RECOVERY_SPEED = 15;
 
 Timer::Timer( ) :
-_timer( START_TIME ) {
+_timer( START_TIME ),
+_add_time( 0 ) {
 	SoundPtr sound = Sound::getTask( );
 	sound->playBGM( "bgm_maoudamashii_cyber06.wav");
 }
@@ -29,20 +30,12 @@ void Timer::update( ) {
 }
 
 void Timer::updateRecovery( ) {
-	std::list< int >::iterator ite = _add_times.begin( );
-	while ( ite != _add_times.end( ) ) {
-		if( (*ite) < RECOVERY_SPEED ) {
-			_timer += (*ite);
-			(*ite) = 0;
-		} else {
-			_timer += RECOVERY_SPEED;
-			(*ite) -= RECOVERY_SPEED;
-		}
-		if( (*ite) <= 0 ) {
-			ite = _add_times.erase( ite );
-		}
-		break;
-		ite++;
+	if( _add_time < RECOVERY_SPEED ) {
+		_timer += _add_time;
+		_add_time = 0;
+	} else {
+		_timer += RECOVERY_SPEED;
+		_add_time -= RECOVERY_SPEED;
 	}
 }
 
@@ -62,7 +55,7 @@ void Timer::addTime( ) {
 		SoundPtr sound = Sound::getTask( );
 		sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
 	}
-	_add_times.push_back( ADD_TIME );
+	_add_time += ADD_TIME;
 	
 }
 

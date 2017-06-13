@@ -17,6 +17,6 @@ private:
 	void updateRecovery( );
 private:
 	int _timer;
-	std::list< int > _add_times;
+	int _add_time;
 };
 

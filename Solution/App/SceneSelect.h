@@ -1,5 +1,7 @@
 #pragma once
 #include "Scene.h"
+#include "Drawer.h"
+#include <array>
 
 class SceneSelect : public Scene {//ステージ選択
 public:
@@ -10,7 +12,11 @@ private:
 	void draw( );
 	void drawRogo( );
 	void drawSelect( );
+	void moveSelect( );
+	void freazeSelect( );
 private:
+	std::array< Vector, 3 > _pos;
+	int _count;
 	int _select;
 	bool _ispush;
 };

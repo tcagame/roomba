@@ -127,7 +127,9 @@ Scene::NEXT SceneStage::update( ) {
 	if ( !_roomba->isWait( ) ) {
 		_timer->update( );
 	}
-
+	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_LIFT_DOWN ) {
+		_timer->reset( );
+	}
 	_roomba->draw( );
 	_stage->draw( );
 	drawUI( );

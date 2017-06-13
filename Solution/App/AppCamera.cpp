@@ -14,9 +14,10 @@ AppCamera::AppCamera( RoombaPtr roomba ) :
 _roomba( roomba ),
 _mouse_x( 0 ),
 _height( MAX_HEIGHT ),
-Camera( roomba->getCentralPos( ) -  getCalcDir( roomba->getDir( ) ) * CAMERA_LENGTH, roomba->getCentralPos( ) ) {
+Camera( Vector( roomba->getCentralPos( ).x, roomba->getCentralPos( ).y ) -  getCalcDir( roomba->getDir( ) ) * CAMERA_LENGTH, Vector( roomba->getCentralPos( ).x, roomba->getCentralPos( ).y )  ) {
 	_dir = getCalcDir( roomba->getDir( ) );
 	_before_target = roomba->getCentralPos( );
+	_before_target.z = 0;
 }
 
 
@@ -40,10 +41,17 @@ void AppCamera::move( ) {
 		rot_speed = _roomba->getRotSpeed( ) * ROTE_SPEED;
 	}
 	Vector target = _roomba->getCentralPos( );
+	target.z = 0;
+	Vector dir = target - getPos( );
 	setTarget( target );
 	//‚‚³ŒvŽZ
 	Vector vec = target - _before_target;
-	double height = MAX_HEIGHT - vec.getLength( ) * HEIGHT_RATIO;
+	double angle = Vector( 0, 0, dir.z ).angle( Vector( vec.x, vec.y ) );
+	double length = vec.getLength( ) * HEIGHT_RATIO;
+	if ( angle > PI / 3 ) {
+		length = 0;
+	}
+	double height = MAX_HEIGHT - length;
 	if ( fabs( _height - height ) < HEIGHT_SPEED ) {
 		_height = height;
 	} else if ( _height > height ) {
@@ -57,7 +65,6 @@ void AppCamera::move( ) {
 	}
 	_before_target = target;
 	//‰ñ“]
-	Vector dir = target - getPos( );
 	dir.z = 0;
 	Matrix rot = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), rot_speed );
 	dir = rot.multiply( dir );
