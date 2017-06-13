@@ -55,6 +55,7 @@ private:
 	void moveReflection( );
 	void moveLiftUp( );
 	void moveLiftDown( );
+	void moveBound( );
 	void acceleration( );
 	void accelTranslation( );
 	void accelRotation( DIR dir );
@@ -78,7 +79,7 @@ private:
 	std::array< Vector, 2 > _vec_rot;
 	std::array< Vector, 2 > _vec_scale;
 	std::array< Vector, 2 > _vec_reflection;
-	std::array< Vector, 2 > _vec_lift;
+	std::array< double, 2 > _vec_z;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
 	LaserPtr _laser;
