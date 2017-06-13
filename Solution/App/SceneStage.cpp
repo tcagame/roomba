@@ -46,6 +46,7 @@ _countdown( START_COUNTDOWN_TIME ) {
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
 	drawer->loadGraph( GRAPH_MATRIX, "UI/matrix.png" );
 	drawer->loadGraph( GRAPH_MATRIX_ERASE, "UI/matrix_erase.png" );
+	drawer->loadGraph( GRAPH_READY, "UI/ready.png" );	
 	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", delivery_scale );
 

@@ -7,7 +7,8 @@
 #include "Device.h"
 #include "laser.h"
 #include <assert.h>
-#include  "Sound.h"
+#include "Sound.h"
+#include "Application.h"
 
 //デバッグのためスピード遅め
 //static const double SPEED = 0.1;
@@ -30,6 +31,7 @@ const double LINK_RECOVERS_SPEED = 4.0;
 const double BOUND_POW = 0.6;
 const double EFFECT_REBOOT_SIZE = 0.7;
 const double EFFECT_CHANGE_STATE_SIZE = 0.2;
+const int WAIT_TIME = 200;
 
 static const Vector START_POS[ 2 ] {
 	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, ROOMBA_SIZE.z ) ),
@@ -37,12 +39,13 @@ static const Vector START_POS[ 2 ] {
 };
 
 Roomba::Roomba( ) :
-_state( MOVE_STATE_NEUTRAL ),
+_state( MOVE_STATE_LIFT_DOWN ),
 _trans_speed( Vector( ) ),
 _vec_trans( Vector( ) ),
 _rot_speed( 0 ),
-_link_break( false ),
-_link_gauge( MAX_LINK_GAUGE / 2 ) {
+_link_break( true ),
+_link_gauge( MAX_LINK_GAUGE / 2 ),
+_wait_count( WAIT_TIME ) {
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ] = BallPtr( new Ball( START_POS[ i ] ) );
 		_vec_rot[ i ] = Vector( );
@@ -76,9 +79,23 @@ void Roomba::draw( ) const {
 			drawer->setModelMDL( _delivery[ i ] );
 		}
 	}
+
+	if ( _state == MOVE_STATE_WAIT ) {
+		ApplicationPtr app = Application::getInstance( );
+		int sx = app->getWindowWidth( ) / 2 - 512 / 2;
+		int sy = app->getWindowHeight( ) / 2 - 256 / 2;
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 512, 256 ), GRAPH_READY ) );		
+	}
+	if ( _wait_count > -10 && _wait_count <= 0 ) {
+		ApplicationPtr app = Application::getInstance( );
+		int sx = app->getWindowWidth( ) / 2 - 512 / 2;
+		int sy = app->getWindowHeight( ) / 2 - 256 / 2;
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 256, 512, 256 ), GRAPH_READY ) );
+	}
 }
 
 void Roomba::updateState( ) {
+	_wait_count--;
 	acceleration( );
 	moveTranslation( );
 	moveRotation( );
@@ -88,12 +105,7 @@ void Roomba::updateState( ) {
 }
 
 void Roomba::updateLaser( CameraConstPtr camera ) {
-	bool show_laser = (
-		_state != MOVE_STATE_REFLECTION &&
-		_state != MOVE_STATE_REFLECTION_RESTORE &&
-		_state != MOVE_STATE_LIFT_DOWN &&
-		_state != MOVE_STATE_LIFT_UP );
-	_laser->show( show_laser );
+	_laser->show( !_link_break );
 	_laser->update( getCentralPos( ), camera, _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ), _crystal );
 }
 
@@ -192,10 +204,12 @@ void Roomba::changeState( CameraPtr camera ) {
 		}
 	}
 
-	if ( _wait_count > 0 ) {
-		state = MOVE_STATE_WAIT;
+	if ( (  _state == MOVE_STATE_LIFT_DOWN && state != MOVE_STATE_LIFT_DOWN ) ||
+			_state == MOVE_STATE_WAIT ) {
+		if ( _wait_count > 0 ) {
+			state = MOVE_STATE_WAIT;
+		}
 	}
-
 	if ( _link_break ) {
 		if ( _balls[ 0 ]->getPos( ).z < LIFT_Z ) {
 			state = MOVE_STATE_LIFT_UP;
@@ -249,6 +263,7 @@ void Roomba::changeState( CameraPtr camera ) {
 			_delivery[ 1 ].pos = _balls[ 1 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
 			setVecReflection( Vector( ), Vector( ) );
 			setVecScale( Vector( ), Vector( ) );
+			_trans_speed = Vector( );
 			_crystal = CrystalPtr( );
 		}
 
@@ -292,7 +307,6 @@ void Roomba::acceleration( ) {
 	case MOVE_STATE_WAIT:
 		brakeTranslation( );
 		brakeRotation( );
-		_wait_count--;
 		break;
 	default:
 		assert( -1 );
@@ -511,8 +525,9 @@ void Roomba::reset( ) {
 	_crystal = CrystalPtr( );
 }
 
-void Roomba::setWaitCount( int count ) {
-	_wait_count = count;
+void Roomba::setWaitCount( ) {
+	_wait_count = WAIT_TIME;
+	_link_break = true;
 }
 
 void Roomba::checkLeftRight( CameraPtr camera ) {	

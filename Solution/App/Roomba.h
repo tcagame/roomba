@@ -31,7 +31,7 @@ public:
 	void updateLaser( CameraConstPtr camera );
 	void draw( ) const;
 	void reset( );
-	void setWaitCount( int count );
+	void setWaitCount( );
 	double getRotSpeed( ) const;
 	double getLink( ) const;
 	Vector getDir( ) const;

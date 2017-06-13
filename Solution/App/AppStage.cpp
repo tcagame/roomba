@@ -9,7 +9,6 @@
 #include "Timer.h"
 #include "Roomba.h"
 
-const int WAIT_TIME = 300;
 const double DELIVERY_POS_Z = EARTH_POS_Z + WORLD_SCALE;
 const double CRYSTAL_POS_Z = CRYSTAL_SIZE.z * -2;
 
@@ -63,7 +62,7 @@ void AppStage::updateCrystal( TimerPtr timer ) {
 			crystal.~shared_ptr( );
 			ite = _crystals.erase( ite );
 			timer->addTime( );
-			_roomba->setWaitCount( WAIT_TIME );
+			_roomba->setWaitCount( );
 			continue;
 		}
 		AppStagePtr stage = std::dynamic_pointer_cast< AppStage >( shared_from_this( ) );
