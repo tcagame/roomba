@@ -6,13 +6,13 @@
 #include "Sound.h"
 
 static const int FPS = 60;
-static const int START_TIME = 20 * FPS;
+static const int START_TIME = 9000 * FPS;
 static const int ADD_TIME = 5;
 
 Timer::Timer( ) :
 _timer( START_TIME ) {
 	SoundPtr sound = Sound::getTask( );
-	sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
+	sound->playBGM( "bgm_maoudamashii_cyber06.wav");
 }
 
 

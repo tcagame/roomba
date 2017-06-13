@@ -259,7 +259,7 @@ void Roomba::changeState( CameraPtr camera ) {
 				_delivery[ i ].pos = ball + Vector( 0, 0, DELIVERY_FOOT );
 			}
 		}
-		drawEffect( state );
+		announceChangeState( state );
 		_state = state;
 	}
 }
@@ -617,7 +617,7 @@ void Roomba::shiftPos( CameraPtr camera ) {
 	}
 }
 
-void Roomba::drawEffect( MOVE_STATE state ) {
+void Roomba::announceChangeState( MOVE_STATE state ) {
 	if ( _state == MOVE_STATE_REFLECTION ) {
 		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_REBOOT, getCentralPos( ), EFFECT_REBOOT_SIZE, EFFECT_ROTATE ) );
 		return;

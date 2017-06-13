@@ -2,6 +2,7 @@
 #include "Viewer.h"
 #include "Crystal.h"
 #include "Camera.h"
+#include "Sound.h"
 
 static const double MOVE_SPEED = 0.1;
 static const double START_POS_Z = 20;
@@ -45,6 +46,7 @@ void Delivery::update( CameraPtr camera ) {
 	switch ( _state ) {
 	case STATE_WAIT:
 		updateWait( );
+
 		break;
 	case STATE_CATCH:
 		updateCatch( );
