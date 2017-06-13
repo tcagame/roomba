@@ -7,10 +7,11 @@
 
 static const int MAX_EFFECT_COUNT = 50;
 static const double CRYSTAL_RADIUS = CRYSTAL_SIZE.x / 3;
-static const double MAX_SPEED = REFLECTION_POWER;
+static const double MAX_SPEED = 0.6;
 static const double DECELERATION = 0.02;
-static const double DECELERATION_DROP_DOWN_RATIO = 1.2;
-static const double BOUND_POW = 0.7;
+static const double DECELERATION_DROP_DOWN_RATIO = 1;
+static const double BOUND_POW = 0.9;
+static const double BOUND_REFLECTION = 0.4;
 static const double EFFECT_AURA_SIZE = 0.5;
 static const double EFFECT_COLLISION_WALL_SIZE = 0.75;
 
@@ -44,16 +45,29 @@ void Crystal::update( AppStagePtr stage ) {
 	}
 
 
-	// バウンド
-	if ( _pos.z > _start_pos.z ) {
+	double deceleration = DECELERATION;
+	if ( _drop_down ) {
+		deceleration *= DECELERATION_DROP_DOWN_RATIO;
+	}
+	if ( _pos.z > _start_pos.z ) {//浮いている
 		_vec.z -= GRAVITY;
-		if ( _pos.z + _vec.z < _start_pos.z ) {
+		if ( _pos.z + _vec.z < _start_pos.z ) {//次で地面につく
 			if ( fabs( _vec.z ) > GRAVITY * 2 ) {
-				_vec.z *= -0.6;
+				_vec.z *= -BOUND_REFLECTION;
 			} else {
 				_vec.z = _start_pos.z - _pos.z;
 			}
+			if ( _vec.getLength( ) > deceleration ) {//減速
+				_vec -= _vec.normalize( ) * deceleration;
+			} else {
+				_vec = Vector( );
+			}
+
 		}
+	} else if ( _vec.getLength( ) > deceleration ) {//減速
+		_vec -= _vec.normalize( ) * deceleration;
+	} else {
+		_vec = Vector( );
 	}
 
 	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
@@ -70,17 +84,6 @@ void Crystal::update( AppStagePtr stage ) {
 	_pos += _vec;
 	if ( _pos.z < _start_pos.z ) {
 		_pos.z = _start_pos.z;
-	}
-
-
-	double deceleration = DECELERATION;
-	if ( _drop_down ) {
-		deceleration *= DECELERATION_DROP_DOWN_RATIO;
-	}
-	if ( _vec.getLength( ) > DECELERATION ) {
-		_vec -= _vec.normalize( ) * deceleration;
-	} else {
-		_vec = Vector( );
 	}
 
 	_effect_count++;
@@ -151,18 +154,16 @@ Vector Crystal::adjustHitToCircle( Vector pos, Vector vec, double radius ) {
 	if ( radius < 0 ) {
 		radius = CRYSTAL_RADIUS;
 	}
+	Vector result = Vector( );
 	pos.z = _pos.z;
-	Vector tmp_vec = vec;
 	Vector future_pos = pos + vec;
-	Vector distance = future_pos - _pos;//ボール→クリスタル
-	if ( distance.getLength( ) < CRYSTAL_RADIUS + radius ) {
-		tmp_vec = ( pos - _pos ).normalize( ) * vec.getLength( );
+	if ( ( future_pos - _pos ).getLength( ) < CRYSTAL_RADIUS + radius ) {
+		result = ( pos - _pos ).normalize( ) * vec.getLength( );
 		// クリスタルの反射
-		_vec = ( tmp_vec - vec ).normalize( ) * -REFLECTION_POWER;
+		_vec = ( _pos - pos ).normalize( ) * REFLECTION_POWER;
 		toBound( );
 	}
-	vec = tmp_vec - vec;
-	return vec;
+	return result;
 }
 
 bool Crystal::isFinished( ) const {

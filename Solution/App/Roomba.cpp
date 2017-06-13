@@ -29,7 +29,7 @@ const int MAX_LINK_GAUGE = 400;
 const double BOUND_POW = 0.7;
 const double EFFECT_REBOOT_SIZE = 0.7;
 const double EFFECT_CHANGE_STATE_SIZE = 0.2;
-const int WAIT_TIME = 200;
+const int WAIT_TIME = 0;
 
 static const Vector START_POS[ 2 ] {
 	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, ROOMBA_SIZE.z ) ),

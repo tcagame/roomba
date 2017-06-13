@@ -1,7 +1,7 @@
 #pragma once
 #include "mathmatics.h"
 
-const double REFLECTION_POWER = 0.5;
+const double REFLECTION_POWER = 0.35;
 const int STAGE_WIDTH_NUM = 40;
 const int STAGE_HEIGHT_NUM = 35;
 const double WORLD_SCALE = 2;
