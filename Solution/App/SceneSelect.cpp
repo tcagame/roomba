@@ -50,10 +50,12 @@ Scene::NEXT SceneSelect::update( ) {
 			sound->playSE( "se_maoudamashii_system43.wav" );
 			_count++;
 			_select++;
+			_rot_right = true;
 			_ispush = true;
 		}
 		if ( right_stick.y < 0 && left_stick.y > 0 ) {
 			sound->playSE( "se_maoudamashii_system43.wav" );
+			_rot_right = false;
 			_count++;
 			_select--;
 			_ispush = true;
@@ -95,26 +97,45 @@ void SceneSelect::drawSelect( ) {
 	double tw2 = SELECT_CENTER_X / 2;
 	double th2 = SELECT_CENTER_Y / 2;
 
-	GRAPH graph = (GRAPH)( GRAPH_STAGE_SELECT_1 );
+	GRAPH graph = (GRAPH)( GRAPH_STAGE_SELECT_1 + ( select - 1 ) );
 
 	// stage
 	//^‚ñ’†
-	if ( graph > (GRAPH)( GRAPH_STAGE_SELECT_3 + 1 ) ) {
+	if ( graph == (GRAPH)( GRAPH_STAGE_SELECT_3 + 1 ) ) {
 		graph = GRAPH_STAGE_SELECT_1;
+	}
+	if ( graph == (GRAPH)( GRAPH_STAGE_SELECT_1 - 1 ) ) {
+		graph = GRAPH_STAGE_SELECT_3;
 	}
 	Drawer::Sprite sprite_1( Drawer::Transform( _pos[ 0 ].x, _pos[ 0 ].y, 0, 0, SELECT_WIDTH, SELECT_HEIGHT, _pos[ 0 ].x + tw1, _pos[ 0 ].y + th1 ), graph );
 	drawer->setSprite( sprite_1 );
 	//¶
-	if ( graph > (GRAPH)( GRAPH_STAGE_SELECT_3 + 1 ) ) {
+	if ( _rot_right ) {
+		graph = (GRAPH)( graph + 1 );
+	} else {
+		graph = (GRAPH)( graph - 1 );
+	}
+	if ( graph == (GRAPH)( GRAPH_STAGE_SELECT_3 + 1 ) ) {
 		graph = GRAPH_STAGE_SELECT_1;
 	}
-	Drawer::Sprite sprite_2( Drawer::Transform( _pos[ 1 ].x, _pos[ 1 ].y, 0, 0, SELECT_WIDTH, SELECT_HEIGHT, _pos[ 1 ].x + tw2, _pos[ 1 ].y + th2 ), graph + 1 );
+	if ( graph == (GRAPH)( GRAPH_STAGE_SELECT_1 - 1 ) ) {
+		graph = GRAPH_STAGE_SELECT_3;
+	}
+	Drawer::Sprite sprite_2( Drawer::Transform( _pos[ 1 ].x, _pos[ 1 ].y, 0, 0, SELECT_WIDTH, SELECT_HEIGHT, _pos[ 1 ].x + tw2, _pos[ 1 ].y + th2 ), graph );
 	drawer->setSprite( sprite_2 );
 	//‰E
-	if ( graph > (GRAPH)( GRAPH_STAGE_SELECT_3 + 1 ) ) {
+	if ( _rot_right ) {
+		graph = (GRAPH)( graph + 1 );
+	} else {
+		graph = (GRAPH)( graph - 1 );
+	}
+	if ( graph == (GRAPH)( GRAPH_STAGE_SELECT_3 + 1 ) ) {
 		graph = GRAPH_STAGE_SELECT_1;
 	}
-	Drawer::Sprite sprite_3( Drawer::Transform( _pos[ 2 ].x, _pos[ 2 ].y, 0, 0, SELECT_WIDTH, SELECT_HEIGHT, _pos[ 2 ].x + tw2, _pos[ 2 ].y + th2 ), graph + 2 );
+	if ( graph == (GRAPH)( GRAPH_STAGE_SELECT_1 - 1 ) ) {
+		graph = GRAPH_STAGE_SELECT_3;
+	}
+	Drawer::Sprite sprite_3( Drawer::Transform( _pos[ 2 ].x, _pos[ 2 ].y, 0, 0, SELECT_WIDTH, SELECT_HEIGHT, _pos[ 2 ].x + tw2, _pos[ 2 ].y + th2 ), graph );
 	drawer->setSprite( sprite_3 );
 	
 }
@@ -126,10 +147,18 @@ void SceneSelect::moveSelect( ) {
 	const Vector target1( WIDTH / 2 - SELECT_WIDTH / 2, HEIGHT - SELECT_CENTER_Y + 10 );
 	const Vector target2( target1.x - SELECT_CENTER_X / 3, target1.y - SELECT_CENTER_Y / 4 );
 	const Vector target3( target2.x + SELECT_CENTER_X * 1.2, target2.y - SELECT_CENTER_Y / 4 );
-
-	const Vector vec1 = ( target2 - target1 ) * 0.1;
-	const Vector vec2 = ( target3 - target2 ) * 0.1;
-	const Vector vec3 = ( target1 - target3 ) * 0.1;
+	Vector vec1;
+	Vector vec2;
+	Vector vec3;
+	if ( _rot_right ) {
+		vec1 = ( target2 - target1 ) * 0.1;
+		vec2 = ( target3 - target2 ) * 0.1;
+		vec3 = ( target1 - target3 ) * 0.1;
+	} else {
+		vec1 = ( target3 - target1 ) * 0.1;
+		vec2 = ( target1 - target2 ) * 0.1;
+		vec3 = ( target2 - target3 ) * 0.1;
+	}
 
 	_pos[ 0 ] += vec1;
 	_pos[ 1 ] += vec2;
