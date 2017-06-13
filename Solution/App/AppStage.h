@@ -7,10 +7,11 @@ PTR( Delivery );
 PTR( Crystal );
 PTR( Viewer );
 PTR( Timer );
+PTR( Roomba );
 
 class AppStage : public Stage, public std::enable_shared_from_this< Stage > {
 public:
-	AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer );
+	AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer, RoombaPtr roomba );
 	virtual ~AppStage( );
 public:
 	void update( CameraPtr camera );
@@ -46,5 +47,6 @@ private:
 	bool _finished;
 	ViewerPtr _viewer;
 	TimerPtr _timer;
+	RoombaPtr _roomba;
 };
 

@@ -7,15 +7,17 @@
 #include "Keyboard.h"
 #include "Delivery.h"
 #include "Timer.h"
+#include "Roomba.h"
 
 const double DELIVERY_POS_Z = EARTH_POS_Z + WORLD_SCALE;
 const double CRYSTAL_POS_Z = CRYSTAL_SIZE.z * -2;
 
-AppStage::AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer ) :
+AppStage::AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer, RoombaPtr roomba ) :
 _delivery_count( 0 ),
 _viewer( viewer ),
 _finished( false ),
-_timer( timer ) {
+_timer( timer ),
+_roomba( roomba ) {
 	load( 0 );//0~2:’Êí 3:test_stage
 	loadMapData( );
 }
@@ -60,6 +62,7 @@ void AppStage::updateCrystal( TimerPtr timer ) {
 			crystal.~shared_ptr( );
 			ite = _crystals.erase( ite );
 			timer->addTime( );
+			_roomba->setWaitCount( );
 			continue;
 		}
 		AppStagePtr stage = std::dynamic_pointer_cast< AppStage >( shared_from_this( ) );

@@ -8,8 +8,8 @@
 static const int MAX_EFFECT_COUNT = 50;
 static const double CRYSTAL_RADIUS = CRYSTAL_SIZE.x / 3;
 static const double MAX_SPEED = REFLECTION_POWER;
-static const double DECELERATION = 0.03;
-static const double DECELERATION_DROP_DOWN_RATIO = 2;
+static const double DECELERATION = 0.02;
+static const double DECELERATION_DROP_DOWN_RATIO = 1.2;
 static const double BOUND_POW = 0.7;
 static const double EFFECT_AURA_SIZE = 0.5;
 static const double EFFECT_COLLISION_WALL_SIZE = 0.75;

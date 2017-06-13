@@ -1,7 +1,7 @@
 #pragma once
 #include "mathmatics.h"
 
-const double REFLECTION_POWER = 1.8;
+const double REFLECTION_POWER = 0.5;
 const int STAGE_WIDTH_NUM = 40;
 const int STAGE_HEIGHT_NUM = 35;
 const double WORLD_SCALE = 2;
@@ -86,6 +86,7 @@ enum GRAPH {
 	GRAPH_LASER,
 	GRAPH_MATRIX,
 	GRAPH_MATRIX_ERASE,
+	GRAPH_READY,
 	MAX_GRAPH
 };
 

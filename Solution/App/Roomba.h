@@ -20,6 +20,7 @@ public:
 		MOVE_STATE_NEUTRAL,
 		MOVE_STATE_LIFT_UP,
 		MOVE_STATE_LIFT_DOWN,
+		MOVE_STATE_WAIT,
 		MAX_STATE,
 	};
 public:
@@ -30,11 +31,13 @@ public:
 	void updateLaser( CameraConstPtr camera );
 	void draw( ) const;
 	void reset( );
+	void setWaitCount( );
 	double getRotSpeed( ) const;
-	double getLink( ) const;
 	Vector getDir( ) const;
 	Vector getCentralPos( ) const;
 	Vector getBallPos( int ball ) const;
+	MOVE_STATE getMoveState( ) const;
+	bool isWait( ) const;
 private:
 	enum BALL {
 		BALL_LEFT,
@@ -47,13 +50,14 @@ private:
 private:
 	void updateState( );
 	void updateBalls( StagePtr stage );
-	void updateLink( );
 	void changeState( CameraPtr camera );
 	void moveTranslation( );
 	void moveRotation( );
 	void moveReflection( );
+	void moveRestore( );
 	void moveLiftUp( );
 	void moveLiftDown( );
+	void moveBound( );
 	void acceleration( );
 	void accelTranslation( );
 	void accelRotation( DIR dir );
@@ -68,8 +72,8 @@ private:
 	void shiftPos( CameraPtr camera );
 	void announceChangeState( MOVE_STATE state );
 private:
+	int _wait_count;
 	double _rot_speed;
-	double _link_gauge;
 	bool _link_break;
 	Vector _trans_speed;
 	Vector _move_dir;
@@ -77,7 +81,7 @@ private:
 	std::array< Vector, 2 > _vec_rot;
 	std::array< Vector, 2 > _vec_scale;
 	std::array< Vector, 2 > _vec_reflection;
-	std::array< Vector, 2 > _vec_lift;
+	std::array< double, 2 > _vec_z;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
 	LaserPtr _laser;
