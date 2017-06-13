@@ -124,8 +124,9 @@ Scene::NEXT SceneStage::update( ) {
 	_roomba->update( _stage, _camera );
 	_stage->update( _camera );
 	_roomba->updateLaser( _camera );
-	if ( !_roomba->isWait( ) ) {
-		_timer->update( );
+	_timer->update( );
+	if ( _roomba->isWait( ) ) {
+		_timer->reset( );
 	}
 
 	_roomba->draw( );
