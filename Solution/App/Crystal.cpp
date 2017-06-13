@@ -58,7 +58,9 @@ void Crystal::update( AppStagePtr stage ) {
 				_vec.z = _start_pos.z - _pos.z;
 			}
 			if ( _vec.getLength( ) > deceleration ) {//Œ¸‘¬
+				double vec_z = _vec.z;
 				_vec -= _vec.normalize( ) * deceleration;
+				_vec.z = vec_z;
 			} else {
 				_vec = Vector( );
 			}

@@ -46,12 +46,9 @@ void AppCamera::move( ) {
 	setTarget( target );
 	//‚‚³ŒvŽZ
 	Vector vec = target - _before_target;
-	double angle = Vector( 0, 0, dir.z ).angle( Vector( vec.x, vec.y ) );
 	double length = vec.getLength( ) * HEIGHT_RATIO;
-	if ( angle > PI / 3 ) {
-		length = 0;
-	}
 	double height = MAX_HEIGHT - length;
+
 	if ( fabs( _height - height ) < HEIGHT_SPEED ) {
 		_height = height;
 	} else if ( _height > height ) {
