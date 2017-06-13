@@ -13,7 +13,7 @@ static const double DECELERATION_DROP_DOWN_RATIO = 1;
 static const double BOUND_POW = 0.9;
 static const double BOUND_REFLECTION = 0.4;
 static const double EFFECT_AURA_SIZE = 0.5;
-static const double EFFECT_COLLISION_WALL_SIZE = 0.75;
+static const double EFFECT_COLLISION_WALL_SIZE = 0.5;
 
 Crystal::Crystal( Vector& pos, MDL type ) :
 _pos( pos ),

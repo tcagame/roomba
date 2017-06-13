@@ -1,8 +1,8 @@
 #include "Ball.h"
 #include "AppStage.h"
 
-static const double EFFECT_COLLISION_CRYSTAL_SIZE = 0.25;
-static const double EFFECT_COLLISION_WALL_SIZE = 0.75;
+static const double EFFECT_COLLISION_CRYSTAL_SIZE = 0.5;
+static const double EFFECT_COLLISION_WALL_SIZE = 0.5;
 static const Vector BALL_SIZE( 0.1, 0.1, 0.1 );
 static const double BALL_MODEL_ROT_SPEED = PI / 3;
 

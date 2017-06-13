@@ -31,13 +31,14 @@
                 <Min>-1</Min>
               </X>
               <Y>
+                <Center>0.5</Center>
                 <Max>1</Max>
-                <Min>-1</Min>
               </Y>
               <Z>
                 <Max>1</Max>
                 <Min>-1</Min>
               </Z>
+              <DrawnAs>0</DrawnAs>
             </Velocity>
           </PVA>
         </LocationValues>

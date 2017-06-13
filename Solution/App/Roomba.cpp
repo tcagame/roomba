@@ -28,7 +28,7 @@ const double DELIVERY_FOOT = 2.5;
 const int MAX_LINK_GAUGE = 400;
 const double BOUND_POW = 0.7;
 const double EFFECT_REBOOT_SIZE = 0.7;
-const double EFFECT_CHANGE_STATE_SIZE = 0.2;
+const double EFFECT_CHANGE_STATE_SIZE = 0.7;
 const int WAIT_TIME = 0;
 
 static const Vector START_POS[ 2 ] {
@@ -599,11 +599,13 @@ void Roomba::shiftPos( CameraPtr camera ) {
 }
 
 void Roomba::announceChangeState( MOVE_STATE state ) {
-	if ( _state == MOVE_STATE_REFLECTION ) {
+	if ( _state == MOVE_STATE_REFLECTION_RESTORE &&
+		 state != MOVE_STATE_REFLECTION_RESTORE ) {
 		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_REBOOT, getCentralPos( ), EFFECT_REBOOT_SIZE, EFFECT_ROTATE ) );
 		return;
 	}
-	if ( state == MOVE_STATE_REFLECTION_RESTORE ||
+	if ( state == MOVE_STATE_REFLECTION ||
+		 state == MOVE_STATE_REFLECTION_RESTORE ||
 		 state == MOVE_STATE_NEUTRAL ||
 		 state == MOVE_STATE_LIFT_UP ||
 		 state == MOVE_STATE_LIFT_DOWN ) {
@@ -614,9 +616,7 @@ void Roomba::announceChangeState( MOVE_STATE state ) {
 		return;
 	}
 
-	for ( int i = 0; i < 2; i++ ) {
-		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CHANGE_ROOMBA_STATE, _balls[ i ]->getPos( ), EFFECT_CHANGE_STATE_SIZE, EFFECT_ROTATE ) );
-	}
+	Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CHANGE_ROOMBA_STATE, getCentralPos( ), EFFECT_CHANGE_STATE_SIZE, EFFECT_ROTATE ) );
 }
 
 Vector Roomba::getDir( ) const {
