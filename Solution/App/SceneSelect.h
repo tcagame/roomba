@@ -19,5 +19,6 @@ private:
 	int _count;
 	int _select;
 	bool _ispush;
+	bool _rot_right;
 };
 
