@@ -32,7 +32,7 @@ Scene::NEXT SceneSelect::update( ) {
 	draw( );
 	DevicePtr device = Device::getTask( );
 	if ( device->getPush( ) && BUTTON_D ) {
-		sound->playSE( "se_maoudamashii_system49.wav" );
+		sound->playSE( "se_maoudamashii_system45.wav" );
 		GamePtr game = Game::getTask( );
 		game->setStage( _select );
 		return NEXT_STAGE;

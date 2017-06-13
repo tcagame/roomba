@@ -7,8 +7,8 @@
 static const int FPS = 60;
 static const int START_TIME = 20 * FPS;
 static const int ADD_TIME = 5 * FPS;
-static const int RECOVERY_SPEED = 10;
-static const double MAX_ZOOM = 1.5;
+static const int RECOVERY_SPEED = 15;
+static const double MAX_ZOOM = 1.3;
 static const double ZOOM_SPEED = 0.02;
 
 Timer::Timer( ) :
@@ -71,9 +71,9 @@ void Timer::draw( ) const {
 	int time = _timer / FPS;
 	// 強調表示
 	double size = _size;
-	if ( time < 6 ) {
+	if ( time < 3 ) {
 		size *= 2;
-		x += TW;
+		x += (int)( TW * ( size - 1 ) );
 	}
 
 	// タイマー表示
