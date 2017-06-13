@@ -10,6 +10,7 @@ static const int RESULT_WIDTH  = 512;
 static const int RESULT_HEIGHT = 256;
 static const std::string DIRECTORY = "../Resource/Savedata/";
 static const std::string FILENAME = DIRECTORY + "best_time.dat";
+static const int BRANK = 500;
 
 SceneResult::SceneResult( int time ) {
 	DrawerPtr drawer = Drawer::getTask( );
@@ -40,7 +41,7 @@ void SceneResult::draw( ) const {
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - RESULT_WIDTH / 2, HEIGHT / 10, 0, 0, 512, 256 ), GRAPH_RESULT );
+	Drawer::Sprite sprite( Drawer::Transform( BRANK, HEIGHT / 10, 0, 0, 512, 256, WIDTH - BRANK, HEIGHT * 3 / 10 ), GRAPH_RESULT );
 	drawer->setSprite( sprite );
 	drawThisTime( );
 	drawBestTime( );
@@ -82,9 +83,9 @@ int SceneResult::drawTime( int x, int y, int time ) const {
 }
 
 void SceneResult::drawThisTime( ) const {
-	ApplicationPtr app = Application::getInstance();
-	const int WIDTH = app->getWindowWidth();
-	const int HEIGHT = app->getWindowHeight();
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
 	int x = WIDTH / 3 * 2;
 	int y = HEIGHT * 2 / 5;
 	x = drawTime( x, y, _this_time );

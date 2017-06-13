@@ -8,6 +8,7 @@
 static const int TITLE_WIDTH  = 1024;
 static const int TITLE_HEIGHT = 256;
 static const int DRAW_TIME = 30;
+static const int BRANK = 250;
 
 SceneTitle::SceneTitle( ) :
 _count( 0 ) {
@@ -40,11 +41,11 @@ void SceneTitle::draw( ) {
 	const int HEIGHT = app->getWindowHeight( );
 	DrawerPtr drawer = Drawer::getTask( );
 	{
-		Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - TITLE_WIDTH / 2, HEIGHT / 10 ), GRAPH_TITLE );
+		Drawer::Sprite sprite( Drawer::Transform( BRANK, HEIGHT / 10, 0, 0, TITLE_WIDTH, TITLE_HEIGHT, WIDTH - BRANK, HEIGHT * 4 / 10 ), GRAPH_TITLE );
 		drawer->setSprite( sprite );
 	}
 	if ( _count % DRAW_TIME < DRAW_TIME / 2 ) {
-		Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - TITLE_WIDTH / 2, HEIGHT / 2 - TITLE_HEIGHT / 2 ), GRAPH_PLEASE_PUSH_BUTTON );
+		Drawer::Sprite sprite( Drawer::Transform( BRANK, HEIGHT * 5 / 10, 0, 0, TITLE_WIDTH, TITLE_HEIGHT, WIDTH - BRANK, HEIGHT * 5 / 10 + 256 ), GRAPH_PLEASE_PUSH_BUTTON );
 		drawer->setSprite( sprite );
 	}
 }

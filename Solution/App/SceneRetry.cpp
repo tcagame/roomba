@@ -6,6 +6,10 @@
 #include "Game.h"
 #include "Sound.h"
 
+static const int GRAPH_GAMEOVER_WIDTH  = 1024;
+static const int GRAPH_GAMEOVER_HEIGHT = 256;
+static const int BRANK = 300;
+
 SceneRetry::SceneRetry( int stage_num ) :
 _stage( stage_num ),
 _select( false ) {
@@ -59,9 +63,11 @@ void SceneRetry::draw( ) {
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
-	int select_y = HEIGHT / 2 + 64 + _select * 32;
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( WIDTH / 2 - 512, HEIGHT / 10 ), GRAPH_GAMEOVER ) ); // ゲームオーバー
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( WIDTH / 2 - 64, HEIGHT / 2, 0, 0, 128, 64 ), GRAPH_SELECT_MENU ) ); // リトライ文字
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( WIDTH / 2 - 32, HEIGHT / 2 + 64, 0, 64, 64, 64 ), GRAPH_SELECT_MENU ) ); // yes no
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( WIDTH / 2 - 64, select_y, 64, 64, 64, 64 ), GRAPH_SELECT_MENU ) ); // →
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( BRANK, HEIGHT / 10, 0, 0, GRAPH_GAMEOVER_WIDTH, GRAPH_GAMEOVER_HEIGHT, WIDTH - BRANK, HEIGHT * 3 / 10 ), GRAPH_GAMEOVER ) ); // ゲームオーバー
+	int sy = HEIGHT / 2;
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( BRANK * 2, sy, 0, 0, 128, 64, WIDTH - BRANK * 2, sy + HEIGHT / 10 ), GRAPH_SELECT_MENU ) ); // リトライ文字
+	sy += HEIGHT / 10;
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( BRANK * 2, sy, 0, 64, 64, 64, WIDTH - BRANK * 2, sy + HEIGHT / 5 ), GRAPH_SELECT_MENU ) ); // yes no
+	sy += HEIGHT / 50;
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( BRANK * 2 - WIDTH / 10, sy + _select * HEIGHT / 10, 64, 64, 64, 64, BRANK * 2, sy + HEIGHT / 10 + _select * HEIGHT / 10 ), GRAPH_SELECT_MENU ) ); // →
 }
