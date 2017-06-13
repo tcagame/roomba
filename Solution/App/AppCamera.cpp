@@ -14,9 +14,10 @@ AppCamera::AppCamera( RoombaPtr roomba ) :
 _roomba( roomba ),
 _mouse_x( 0 ),
 _height( MAX_HEIGHT ),
-Camera( roomba->getCentralPos( ) -  getCalcDir( roomba->getDir( ) ) * CAMERA_LENGTH, roomba->getCentralPos( ) ) {
+Camera( Vector( roomba->getCentralPos( ).x, roomba->getCentralPos( ).y ) -  getCalcDir( roomba->getDir( ) ) * CAMERA_LENGTH, Vector( roomba->getCentralPos( ).x, roomba->getCentralPos( ).y )  ) {
 	_dir = getCalcDir( roomba->getDir( ) );
 	_before_target = roomba->getCentralPos( );
+	_before_target.z = 0;
 }
 
 
@@ -40,6 +41,7 @@ void AppCamera::move( ) {
 		rot_speed = _roomba->getRotSpeed( ) * ROTE_SPEED;
 	}
 	Vector target = _roomba->getCentralPos( );
+	target.z = 0;
 	Vector dir = target - getPos( );
 	setTarget( target );
 	//‚‚³ŒvZ
