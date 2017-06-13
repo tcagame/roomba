@@ -525,6 +525,11 @@ Vector Roomba::getBallPos( int ball ) const {
 	return _balls[ ball ]->getPos( );
 }
 
+Roomba::MOVE_STATE Roomba::getMoveState( ) const {
+	return _state;
+}
+
+
 bool Roomba::isWait( ) const {
 	return ( _wait_count > 0 );
 }

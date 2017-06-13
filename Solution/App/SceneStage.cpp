@@ -124,11 +124,12 @@ Scene::NEXT SceneStage::update( ) {
 	_roomba->update( _stage, _camera );
 	_stage->update( _camera );
 	_roomba->updateLaser( _camera );
-	_timer->update( );
-	if ( _roomba->isWait( ) ) {
+	if ( !_roomba->isWait( ) ) {
+		_timer->update( );
+	}
+	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_LIFT_DOWN ) {
 		_timer->reset( );
 	}
-
 	_roomba->draw( );
 	_stage->draw( );
 	drawUI( );

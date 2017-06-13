@@ -60,7 +60,7 @@ void Timer::addTime( ) {
 }
 
 void Timer::reset( ) {
-	_add_time = START_TIME - _timer;
+	_timer = START_TIME;
 }
 
 bool Timer::isTimeOver( ) const {
