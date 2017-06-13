@@ -192,6 +192,10 @@ void Roomba::changeState( CameraPtr camera ) {
 		}
 	}
 
+	if ( _wait_count > 0 ) {
+		state = MOVE_STATE_WAIT;
+	}
+
 	if ( _link_break ) {
 		if ( _balls[ 0 ]->getPos( ).z < LIFT_Z ) {
 			state = MOVE_STATE_LIFT_UP;
@@ -284,6 +288,11 @@ void Roomba::acceleration( ) {
 		break;
 	case MOVE_STATE_REFLECTION:
 	case MOVE_STATE_REFLECTION_RESTORE:
+		break;
+	case MOVE_STATE_WAIT:
+		brakeTranslation( );
+		brakeRotation( );
+		_wait_count--;
 		break;
 	default:
 		assert( -1 );
@@ -502,6 +511,10 @@ void Roomba::reset( ) {
 	_crystal = CrystalPtr( );
 }
 
+void Roomba::setWaitCount( int count ) {
+	_wait_count = count;
+}
+
 void Roomba::checkLeftRight( CameraPtr camera ) {	
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), PI / 2 );
 	Vector vec = mat.multiply( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) );
@@ -515,6 +528,10 @@ void Roomba::checkLeftRight( CameraPtr camera ) {
 
 Vector Roomba::getBallPos( int ball ) const {
 	return _balls[ ball ]->getPos( );
+}
+
+bool Roomba::isWait( ) const {
+	return ( _state == MOVE_STATE_WAIT );
 }
 
 void Roomba::setVecTrans( Vector vec ) {

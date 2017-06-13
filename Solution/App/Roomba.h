@@ -20,6 +20,7 @@ public:
 		MOVE_STATE_NEUTRAL,
 		MOVE_STATE_LIFT_UP,
 		MOVE_STATE_LIFT_DOWN,
+		MOVE_STATE_WAIT,
 		MAX_STATE,
 	};
 public:
@@ -30,11 +31,13 @@ public:
 	void updateLaser( CameraConstPtr camera );
 	void draw( ) const;
 	void reset( );
+	void setWaitCount( int count );
 	double getRotSpeed( ) const;
 	double getLink( ) const;
 	Vector getDir( ) const;
 	Vector getCentralPos( ) const;
 	Vector getBallPos( int ball ) const;
+	bool isWait( ) const;
 private:
 	enum BALL {
 		BALL_LEFT,
@@ -68,6 +71,7 @@ private:
 	void shiftPos( CameraPtr camera );
 	void drawEffect( MOVE_STATE state );
 private:
+	int _wait_count;
 	double _rot_speed;
 	double _link_gauge;
 	bool _link_break;

@@ -1,6 +1,5 @@
 #include "AppCamera.h"
 #include "define.h"
-#include "Mouse.h"
 #include "Device.h"
 #include "Roomba.h"
 
@@ -26,6 +25,20 @@ AppCamera::~AppCamera( ) {
 }
 
 void AppCamera::move( ) {
+	double rot_speed = 0;
+	if ( _roomba->isWait( ) ) {
+		DevicePtr device = Device::getTask( );
+		double right_stick = device->getRightDirY( );
+		double left_stick = device->getDirY( );
+		if ( right_stick > 0 && left_stick < 0 ) {
+			rot_speed = -ROTE_SPEED;
+		}
+		if ( right_stick < 0 && left_stick > 0 ) {
+			rot_speed = ROTE_SPEED;
+		}
+	} else {
+		rot_speed = _roomba->getRotSpeed( ) * ROTE_SPEED;
+	}
 	Vector target = _roomba->getCentralPos( );
 	setTarget( target );
 	//çÇÇ≥åvéZ
@@ -46,7 +59,7 @@ void AppCamera::move( ) {
 	//âÒì]
 	Vector dir = target - getPos( );
 	dir.z = 0;
-	Matrix rot = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), _roomba->getRotSpeed( ) * ROTE_SPEED );
+	Matrix rot = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), rot_speed );
 	dir = rot.multiply( dir );
 	//ç¿ïWåvéZ
 	_dir = getCalcDir( dir );

@@ -27,8 +27,8 @@ _countdown( START_COUNTDOWN_TIME ) {
 
 	_viewer = ViewerPtr( new Viewer );
 	_timer = TimerPtr( new Timer );
-	_stage = StagePtr( new AppStage( stage_num, _viewer, _timer ) );//0-2:í èÌ 3:test_stage
 	_roomba = RoombaPtr( new Roomba );
+	_stage = StagePtr( new AppStage( stage_num, _viewer, _timer, _roomba ) );//0-2:í èÌ 3:test_stage
 	_camera = CameraPtr( new AppCamera( _roomba ) );
 	
 
