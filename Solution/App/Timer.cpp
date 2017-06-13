@@ -43,7 +43,7 @@ void Timer::draw( ) const {
 	int time = _timer / FPS;
 	// ‹­’²•\Ž¦
 	bool big = false;
-	if ( time < 6 ) {
+	if ( time < 3 ) {
 		big = true;
 		x += TW;
 	}

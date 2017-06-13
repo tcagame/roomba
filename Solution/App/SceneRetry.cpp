@@ -24,7 +24,7 @@ Scene::NEXT SceneRetry::update( ) {
 	SoundPtr sound = Sound::getTask( );
 	DevicePtr device = Device::getTask( );
 	if ( device->getPush( ) && BUTTON_D ) {
-		sound->playSE( "se_maoudamashii_system49.wav" );
+		sound->playSE( "se_maoudamashii_system45.wav" );
 		if ( !_select ) {
 			GamePtr game = Game::getTask( );
 			game->setStage( _stage );
