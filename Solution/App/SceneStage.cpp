@@ -127,8 +127,7 @@ Scene::NEXT SceneStage::update( ) {
 		_timer->draw( );
 		drawUI( );
 	} else {
-		//countdown( );
-		_countdown--;
+		countdown( );
 		drawCountdown( );
 	}
 
@@ -137,9 +136,6 @@ Scene::NEXT SceneStage::update( ) {
 
 void SceneStage::countdown( ) {
 	_countdown--;
-}
-
-void SceneStage::updateRestart( ) {
 }
 
 void SceneStage::updatePlay( ) {

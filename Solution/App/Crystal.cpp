@@ -6,9 +6,8 @@
 #include "Viewer.h"
 
 static const int MAX_EFFECT_COUNT = 50;
-static const double REFLECTION_POWER = 0.3;
 static const double CRYSTAL_RADIUS = CRYSTAL_SIZE.x / 3;
-static const double MAX_SPEED = 0.7;
+static const double MAX_SPEED = REFLECTION_POWER;
 static const double DECELERATION = 0.03;
 static const double DECELERATION_DROP_DOWN_RATIO = 2;
 static const double BOUND_POW = 0.7;

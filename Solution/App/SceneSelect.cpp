@@ -8,9 +8,7 @@
 
 static const int SELECT_WIDTH  = 1024;
 static const int SELECT_HEIGHT = 256;
-static const int SELECT_CENTER_X = 1450 / 2;
-static const int SELECT_CENTER_Y = 180;
-static const int PITCH = 150; 
+static const int BRANK = 300;
 
 SceneSelect::SceneSelect( ) :
 _select( 1 ),
@@ -65,7 +63,7 @@ void SceneSelect::drawRogo( ) {
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - SELECT_WIDTH / 2, HEIGHT / 10 ), GRAPH_STAGE_SELECT_ROGO );
+	Drawer::Sprite sprite( Drawer::Transform( BRANK, HEIGHT / 10, 0, 0, SELECT_WIDTH, SELECT_HEIGHT, WIDTH - BRANK, HEIGHT * 3 / 10 ), GRAPH_STAGE_SELECT_ROGO );
 	drawer->setSprite( sprite );
 }
 
@@ -73,6 +71,7 @@ void SceneSelect::drawSelect( ) {
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
+	const int PITCH = HEIGHT / 6; 
 	DrawerPtr drawer = Drawer::getTask( );
 	int x = WIDTH / 4;
 	int y = HEIGHT / 3;
@@ -81,7 +80,7 @@ void SceneSelect::drawSelect( ) {
 		select = 3;
 	}
 	// –îˆó
-	Drawer::Sprite sprite( Drawer::Transform( x, y + 64 ), GRAPH_STAGE_SELECTER );
+	Drawer::Sprite sprite( Drawer::Transform( x, y + 64, 0, 0, 128, 128, x + WIDTH / 15, y + 64 + HEIGHT / 10 ), GRAPH_STAGE_SELECTER );
 	drawer->setSprite( sprite );
 
 	GRAPH graph = (GRAPH)( GRAPH_STAGE_SELECT_1 + ( select - 1 ) );
@@ -91,7 +90,9 @@ void SceneSelect::drawSelect( ) {
 		if ( graph == (GRAPH)( GRAPH_STAGE_SELECT_3 + 1 ) ) {
 			graph = GRAPH_STAGE_SELECT_1;
 		}
-		Drawer::Sprite sprite( Drawer::Transform( x + i * PITCH, y + i * PITCH ), graph );
+		int sx = x + i * PITCH;
+		int sy = y + i * PITCH;
+		Drawer::Sprite sprite( Drawer::Transform( sx, sy, 0, 0, SELECT_WIDTH, SELECT_HEIGHT, sx + (int)( WIDTH / 2.5 ), sy + HEIGHT / 4 ), graph );
 		drawer->setSprite( sprite );
 	}
 }

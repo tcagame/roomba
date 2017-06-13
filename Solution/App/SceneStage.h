@@ -17,7 +17,6 @@ public:
 	Scene::NEXT update( );
 private:
 	void countdown( );
-	void updateRestart( );
 	void updatePlay( );
 	void drawCountdown( ) const;
 	void drawUI( );

@@ -292,74 +292,31 @@ void Roomba::acceleration( ) {
 }
 
 void Roomba::accelTranslation( ) {
-	_trans_speed.x += _move_dir.x * ACCEL_SPEED;
-	_trans_speed.y += _move_dir.y * ACCEL_SPEED;
-	if ( _move_dir.x > 0 ) {
-		if ( _trans_speed.x > MAX_TRANS_SPEED ) {
-			_trans_speed.x = MAX_TRANS_SPEED;
-		}
-	} else if ( _move_dir.x < 0 ) {
-		if ( _trans_speed.x < -MAX_TRANS_SPEED ) {
-			_trans_speed.x = -MAX_TRANS_SPEED;
-		}
-	}
-
-	if ( _move_dir.y > 0 ) {
-		if ( _trans_speed.y > MAX_TRANS_SPEED ) {
-			_trans_speed.y = MAX_TRANS_SPEED;
-		}
-	} else if ( _move_dir.y < 0 ) {
-		if ( _trans_speed.y < -MAX_TRANS_SPEED ) {
-			_trans_speed.y = -MAX_TRANS_SPEED;
-		}
+	_trans_speed += _move_dir * ACCEL_SPEED;
+	if ( _trans_speed.getLength( ) > MAX_TRANS_SPEED ) {
+		_trans_speed = _trans_speed.normalize( ) * MAX_TRANS_SPEED;
 	}
 }
 
 void Roomba::accelRotation( DIR dir ) {
 	_rot_speed += _move_dir.y * ACCEL_SPEED;
-	if ( _rot_speed > MAX_ROT_SPEED ) {
-		_rot_speed = MAX_ROT_SPEED;
+	if ( fabs( _rot_speed ) > MAX_ROT_SPEED ) {
+		_rot_speed = MAX_ROT_SPEED * ( 1 - ( _rot_speed < 0 ) * 2 );
 	}
-	if ( _rot_speed < -MAX_ROT_SPEED ) {
-		_rot_speed = -MAX_ROT_SPEED;
-	}	
 }
 
 void Roomba::brakeTranslation( ) {
-	double deceletion_trans_speed_x = DECELETION_TRANS_SPEED;
-	double deceletion_trans_speed_y = DECELETION_TRANS_SPEED;
+	double deceletion_trans_speed = DECELETION_TRANS_SPEED;
 	if ( _state != MOVE_STATE_TRANSLATION ) {
-		deceletion_trans_speed_x *= OTHER_TRANS_RATIO;
-		deceletion_trans_speed_y *= OTHER_TRANS_RATIO;
+		deceletion_trans_speed *= OTHER_TRANS_RATIO;
 	}
-	if ( fabs( _move_dir.x ) < 0.1 && fabs( _move_dir.y ) > 0.1 ) {
-		deceletion_trans_speed_x = ACCEL_SPEED / 2;
+	if ( _move_dir.getLength( ) > 0.001 ) {
+		deceletion_trans_speed = ACCEL_SPEED / 2;
 	}
-	if ( fabs( _move_dir.y ) < 0.1 && fabs( _move_dir.x ) > 0.1 ) {
-		deceletion_trans_speed_y = ACCEL_SPEED / 2;
-	}
-	if ( _trans_speed.x > 0 ) {
-		_trans_speed.x -= deceletion_trans_speed_x;
-		if ( _trans_speed.x < 0 ) {
-			_trans_speed.x = 0;
-		}
+	if ( _trans_speed.getLength( ) > deceletion_trans_speed ) {
+		_trans_speed -= _trans_speed.normalize( ) * deceletion_trans_speed;
 	} else {
-		_trans_speed.x += deceletion_trans_speed_x;
-		if ( _trans_speed.x > 0 ) {
-			_trans_speed.x = 0;
-		}
-	}
-
-	if ( _trans_speed.y > 0 ) {
-		_trans_speed.y -= deceletion_trans_speed_y;
-		if ( _trans_speed.y < 0 ) {
-			_trans_speed.y = 0;
-		}
-	} else {
-		_trans_speed.y += deceletion_trans_speed_y;
-		if ( _trans_speed.y > 0 ) {
-			_trans_speed.y = 0;
-		}
+		_trans_speed = Vector( );
 	}
 }
 
@@ -369,16 +326,10 @@ void Roomba::brakeRotation( ) {
 		 _state != MOVE_STATE_ROTATION_RIGHT ) {
 		deceletion_speed *= OTHER_ROT_RATIO;
 	}
-	if ( _rot_speed < 0 ) {
-		_rot_speed += deceletion_speed;
-		if ( _rot_speed > 0 ) {
-			_rot_speed = 0;
-		}
-	} else {
-		_rot_speed -= deceletion_speed;
-		if ( _rot_speed < 0 ) {
-			_rot_speed = 0;
-		}
+	if ( fabs( _rot_speed ) > deceletion_speed ) {
+		_rot_speed += deceletion_speed * ( 1 - ( _rot_speed > 0 ) * 2 );
+	 } else {
+		_rot_speed = 0;
 	}
 }
 
@@ -452,13 +403,12 @@ void Roomba::moveReflection( ) {
 
 	Vector laser = _balls[ 1 ]->getPos( ) - _balls[ 0 ]->getPos( );
 	laser.z = 0;
-	Vector vec = laser.normalize( ) * RESTORE_SPEED;
 	double scale = ( _balls[ 1 ]->getPos( ) - _balls[ 0 ]->getPos( ) ).getLength( );
 	for ( int i = 0; i < 2; i++ ) {
 		if ( scale > SCALE_SIZE ) {
-				_vec_scale[ i ] += laser.normalize( ) * ( scale - SCALE_SIZE + 0.1 ) * ( 1 - ( i != 0 ) * 2 ) * 0.001;
+				_vec_scale[ i ] = laser.normalize( ) * ( scale - SCALE_SIZE + 0.1 ) * ( 1 - ( i != 0 ) * 2 ) * RESTORE_SPEED;
 		} else  if ( scale < MIN_SCALE ) {
-				_vec_scale[ i ] += laser.normalize( ) * ( MIN_SCALE - scale + 0.1 ) * ( 1 - ( i != 0 ) * 2 ) * -0.001;
+				_vec_scale[ i ] = laser.normalize( ) * ( MIN_SCALE - scale + 0.1 ) * ( 1 - ( i != 0 ) * 2 ) * -RESTORE_SPEED;
 		} else {
 			_vec_scale[ i ] = Vector( );
 		}
