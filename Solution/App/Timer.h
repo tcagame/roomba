@@ -1,4 +1,6 @@
 #pragma once
+#include "Drawer.h"
+#include <list>
 
 class Timer {
 public:
@@ -12,6 +14,10 @@ public:
 	void finalize( );
 	bool isTimeOver( ) const;
 private:
+	void updateRecovery( );
+private:
 	int _timer;
+	double _size;
+	std::list< int > _add_times;
 };
 

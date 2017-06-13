@@ -452,13 +452,12 @@ void Roomba::moveReflection( ) {
 
 	Vector laser = _balls[ 1 ]->getPos( ) - _balls[ 0 ]->getPos( );
 	laser.z = 0;
-	Vector vec = laser.normalize( ) * RESTORE_SPEED;
 	double scale = ( _balls[ 1 ]->getPos( ) - _balls[ 0 ]->getPos( ) ).getLength( );
 	for ( int i = 0; i < 2; i++ ) {
 		if ( scale > SCALE_SIZE ) {
-				_vec_scale[ i ] += laser.normalize( ) * ( scale - SCALE_SIZE + 0.1 ) * ( 1 - ( i != 0 ) * 2 ) * 0.001;
+				_vec_scale[ i ] = laser.normalize( ) * ( scale - SCALE_SIZE + 0.1 ) * ( 1 - ( i != 0 ) * 2 ) * RESTORE_SPEED;
 		} else  if ( scale < MIN_SCALE ) {
-				_vec_scale[ i ] += laser.normalize( ) * ( MIN_SCALE - scale + 0.1 ) * ( 1 - ( i != 0 ) * 2 ) * -0.001;
+				_vec_scale[ i ] = laser.normalize( ) * ( MIN_SCALE - scale + 0.1 ) * ( 1 - ( i != 0 ) * 2 ) * -RESTORE_SPEED;
 		} else {
 			_vec_scale[ i ] = Vector( );
 		}
