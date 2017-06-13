@@ -14,7 +14,7 @@ static const double ZOOM_SPEED = 0.02;
 Timer::Timer( ) :
 _timer( START_TIME ) {
 	SoundPtr sound = Sound::getTask( );
-	sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
+	sound->playBGM( "bgm_maoudamashii_cyber06.wav");
 }
 
 
