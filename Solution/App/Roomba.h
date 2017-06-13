@@ -33,7 +33,6 @@ public:
 	void reset( );
 	void setWaitCount( );
 	double getRotSpeed( ) const;
-	double getLink( ) const;
 	Vector getDir( ) const;
 	Vector getCentralPos( ) const;
 	Vector getBallPos( int ball ) const;
@@ -50,7 +49,6 @@ private:
 private:
 	void updateState( );
 	void updateBalls( StagePtr stage );
-	void updateLink( );
 	void changeState( CameraPtr camera );
 	void moveTranslation( );
 	void moveRotation( );
@@ -73,7 +71,6 @@ private:
 private:
 	int _wait_count;
 	double _rot_speed;
-	double _link_gauge;
 	bool _link_break;
 	Vector _trans_speed;
 	Vector _move_dir;

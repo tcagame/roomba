@@ -26,8 +26,6 @@ const double MIN_SCALE = 5;
 const double LIFT_Z = 10;
 const double DELIVERY_FOOT = 2.5;
 const int MAX_LINK_GAUGE = 400;
-const double LINK_REDUCED_SPEED = 1.5;
-const double LINK_RECOVERS_SPEED = 4.0;
 const double BOUND_POW = 0.6;
 const double EFFECT_REBOOT_SIZE = 0.7;
 const double EFFECT_CHANGE_STATE_SIZE = 0.2;
@@ -44,7 +42,6 @@ _trans_speed( Vector( ) ),
 _vec_trans( Vector( ) ),
 _rot_speed( 0 ),
 _link_break( true ),
-_link_gauge( MAX_LINK_GAUGE / 2 ),
 _wait_count( WAIT_TIME ) {
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ] = BallPtr( new Ball( START_POS[ i ] ) );
@@ -66,7 +63,6 @@ void Roomba::update( StagePtr stage, CameraPtr camera ) {
 	holdCrystal( stage );
 	updateBalls( stage );
 	shiftPos( camera );
-	updateLink( );
 }
 
 void Roomba::draw( ) const {
@@ -107,22 +103,6 @@ void Roomba::updateState( ) {
 void Roomba::updateLaser( CameraConstPtr camera ) {
 	_laser->show( !_link_break );
 	_laser->update( getCentralPos( ), camera, _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ), _crystal );
-}
-
-void Roomba::updateLink( ) {
-	if ( _state != MOVE_STATE_REFLECTION &&
-		 _state != MOVE_STATE_REFLECTION_RESTORE ) {
-		_link_gauge += LINK_RECOVERS_SPEED;
-		if ( _link_gauge > MAX_LINK_GAUGE ) {
-			_link_gauge = MAX_LINK_GAUGE;
-		}
-	} else {
-		_link_gauge -= LINK_REDUCED_SPEED;
-		if ( _link_gauge <= 0 ) {
-			_link_gauge = 0;
-			_link_break = true;
-		}
-	}
 }
 
 void Roomba::updateBalls( StagePtr stage) {
@@ -628,8 +608,4 @@ Vector Roomba::getDir( ) const {
 
 double Roomba::getRotSpeed( ) const {
 	return _rot_speed;
-}
-
-double Roomba::getLink( ) const {
-	return _link_gauge;
 }
