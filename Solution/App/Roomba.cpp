@@ -44,7 +44,7 @@ _rot_speed( 0 ),
 _link_break( true ),
 _wait_count( WAIT_TIME ) {
 	for ( int i = 0; i < 2; i++ ) {
-		_balls[ i ] = BallPtr( new Ball( START_POS[ i ] ) );
+		_balls[ i ] = BallPtr( new Ball( START_POS[ i ] + Vector( 0, 0, 5 ) ) );
 		_vec_rot[ i ] = Vector( );
 		_vec_scale[ i ] = Vector( );
 		_vec_reflection[ i ] = Vector( );
@@ -105,7 +105,7 @@ void Roomba::updateLaser( CameraConstPtr camera ) {
 	_laser->update( getCentralPos( ), camera, _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ), _crystal );
 }
 
-void Roomba::updateBalls( StagePtr stage) {
+void Roomba::updateBalls( StagePtr stage ) {
 	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( stage );
 	Vector vec[ 2 ];
 	for ( int i = 0; i < 2; i++ ) {
@@ -526,7 +526,7 @@ Vector Roomba::getBallPos( int ball ) const {
 }
 
 bool Roomba::isWait( ) const {
-	return ( _state == MOVE_STATE_WAIT );
+	return ( _wait_count > 0 );
 }
 
 void Roomba::setVecTrans( Vector vec ) {

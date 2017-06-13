@@ -16,9 +16,6 @@ public:
 	virtual ~SceneStage( );
 	Scene::NEXT update( );
 private:
-	void countdown( );
-	void updatePlay( );
-	void drawCountdown( ) const;
 	void drawUI( );
 	void drawUIDelivery( );
 	void drawUILinKGauge( );
@@ -40,7 +37,6 @@ private:
 		NUMBER_STATE state;
 	};
 private:
-	int _countdown;
 	NUMBER _phase_number[ 2 ];
 	NUMBER _delivery_number[ 2 ];
 	CameraPtr _camera;
