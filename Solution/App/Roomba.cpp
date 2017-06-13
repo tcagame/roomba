@@ -300,12 +300,9 @@ void Roomba::accelTranslation( ) {
 
 void Roomba::accelRotation( DIR dir ) {
 	_rot_speed += _move_dir.y * ACCEL_SPEED;
-	if ( _rot_speed > MAX_ROT_SPEED ) {
-		_rot_speed = MAX_ROT_SPEED;
+	if ( fabs( _rot_speed ) > MAX_ROT_SPEED ) {
+		_rot_speed = MAX_ROT_SPEED * ( 1 - ( _rot_speed < 0 ) * 2 );
 	}
-	if ( _rot_speed < -MAX_ROT_SPEED ) {
-		_rot_speed = -MAX_ROT_SPEED;
-	}	
 }
 
 void Roomba::brakeTranslation( ) {
@@ -329,16 +326,10 @@ void Roomba::brakeRotation( ) {
 		 _state != MOVE_STATE_ROTATION_RIGHT ) {
 		deceletion_speed *= OTHER_ROT_RATIO;
 	}
-	if ( _rot_speed < 0 ) {
-		_rot_speed += deceletion_speed;
-		if ( _rot_speed > 0 ) {
-			_rot_speed = 0;
-		}
-	} else {
-		_rot_speed -= deceletion_speed;
-		if ( _rot_speed < 0 ) {
-			_rot_speed = 0;
-		}
+	if ( fabs( _rot_speed ) > deceletion_speed ) {
+		_rot_speed += deceletion_speed * ( 1 - ( _rot_speed > 0 ) * 2 );
+	 } else {
+		_rot_speed = 0;
 	}
 }
 
