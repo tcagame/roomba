@@ -6,16 +6,16 @@
 #include "Binary.h"
 #include "Sound.h"
 
-static const int RESULT_WIDTH  = 512;
-static const int RESULT_HEIGHT = 256;
-static const std::string DIRECTORY = "../Resource/Savedata/";
-static const std::string FILENAME = DIRECTORY + "best_time.dat";
-static const int BRANK = 500;
+const int RESULT_WIDTH  = 512;
+const int RESULT_HEIGHT = 256;
+const std::string DIRECTORY = "../Resource/Savedata/";
+const std::string FILENAME = DIRECTORY + "best_time.dat";
+const int BRANK = 500;
 
 SceneResult::SceneResult( int time ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_RESULT, "Result/result.png" );
-	drawer->loadGraph( GRAPH_NUMBER, "Result/time.png" );
+	drawer->loadGraph( GRAPH_NUMBER, "Result/number.png" );
 	_this_time = time;
 	_best_time = 0;
 	loadBestTime( );

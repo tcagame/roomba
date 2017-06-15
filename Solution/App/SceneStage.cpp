@@ -115,7 +115,11 @@ SceneStage::~SceneStage( ) {
 Scene::NEXT SceneStage::update( ) {
 	// ƒJƒƒ‰&viwerí‚ÉXV‚·‚é
 	_camera->update( );
-	_viewer->update( _roomba->getCentralPos( ) );
+	if ( _roomba->isStarting( ) ) {
+		_viewer->update( _roomba->getStartPos( ) );
+	} else {
+		_viewer->update( _roomba->getCentralPos( ) );
+	}
 
 	if ( _timer->isTimeOver( ) ) {
 		return NEXT_RETRY;
