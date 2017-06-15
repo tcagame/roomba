@@ -39,6 +39,7 @@ public:
 	MOVE_STATE getMoveState( ) const;
 	bool isWait( ) const;
 	bool isFinished( ) const;
+	CrystalPtr getCrystalPtr( ) const;
 private:
 	enum BALL {
 		BALL_LEFT,

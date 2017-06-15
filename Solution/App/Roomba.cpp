@@ -547,6 +547,9 @@ bool Roomba::isFinished( ) const {
 	return _finished;
 }
 
+CrystalPtr Roomba::getCrystalPtr( ) const {
+	return _crystal;
+}
 
 void Roomba::setVecTrans( Vector vec ) {
 	_vec_trans = vec;

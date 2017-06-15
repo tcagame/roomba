@@ -10,6 +10,7 @@
 #include "Game.h"
 #include "Viewer.h"
 #include "Sound.h"
+#include "Model.h"
 
 static const int UI_DELIVERY_FOOT_X = 80;
 static const int UI_DELIVERY_Y = 20;
@@ -21,9 +22,10 @@ static const int UI_MAP_FOOT_Y = 30;
 static const int UI_MAP_RANGE = 20;
 static const int START_COUNTDOWN_TIME = 120;
 static const int ERASE_COUNTDOWN_TIME = 15;
+static const double GUIDELINE_VIEW_RANGE = 5 * WORLD_SCALE;
 
 SceneStage::SceneStage( int stage_num ) {	
-
+	_guideline = ModelPtr( new Model );
 	_viewer = ViewerPtr( new Viewer );
 	_timer = TimerPtr( new Timer );
 	_roomba = RoombaPtr( new Roomba );
@@ -36,7 +38,11 @@ SceneStage::SceneStage( int stage_num ) {
 	_delivery_number[ 0 ].num = _stage->getMaxDeliveryNum( ) - std::dynamic_pointer_cast<AppStage>( _stage )->getDeliveryCount( ) + 1;
 	_phase_number[ 0 ].state = NUMBER_STATE_IN;
 	_phase_number[ 1 ].state = NUMBER_STATE_NONE;
+	
 
+	_guideline->load( "../Resource/Model/Guideline/guideline.mdl" );
+	_guideline->multiply( Matrix::makeTransformScaling( Vector( 0.3, 0.3, 0.3 ) ) );
+	_guideline->multiply( Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 ) );
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
@@ -45,7 +51,8 @@ SceneStage::SceneStage( int stage_num ) {
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
 	drawer->loadGraph( GRAPH_MATRIX, "UI/matrix.png" );
 	drawer->loadGraph( GRAPH_MATRIX_ERASE, "UI/matrix_erase.png" );
-	drawer->loadGraph( GRAPH_READY, "UI/ready.png" );	
+	drawer->loadGraph( GRAPH_READY, "UI/ready.png" );
+	drawer->loadGraph( GRAPH_GUIDELINE, "Model/Guideline/guideline.jpg" );
 	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", delivery_scale );
 
@@ -138,6 +145,33 @@ Scene::NEXT SceneStage::update( ) {
 	return Scene::NEXT_CONTINUE;
 }
 
+void SceneStage::drawGuidline( ) const {
+	DrawerPtr drawer = Drawer::getTask( );
+	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
+	Vector min_distance = Vector( 100, 100 );
+	Vector roomba_pos = _roomba->getCentralPos( );
+
+	if ( _roomba->getCrystalPtr( ) ) {
+		
+
+	} else {
+		std::list< CrystalPtr > crystals = app_stage->getCrystalList( );
+		std::list< CrystalPtr >::const_iterator crystal_ite = crystals.begin( );
+		while ( crystal_ite != crystals.end( ) ) {
+			CrystalPtr crystal = *crystal_ite;
+			if ( !crystal ) {
+				crystal_ite++;
+				continue;
+			}
+			Vector distance = ( getAdjustPos( crystal->getPos( ), roomba_pos ) - roomba_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
+			if ( distance.getLength( ) > min_distance.getLength( ) ) {
+				min_distance = distance;
+			}
+			crystal_ite++;
+		}
+	}
+}
+
 void SceneStage::drawUI( ) {
 	drawUIDelivery( );
 	drawUILinKGauge( );
@@ -206,6 +240,8 @@ void SceneStage::drawUIMap( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
 	Vector base_pos = _roomba->getCentralPos( );
+	base_pos.z = 0;
+	Vector guideline_distance = Vector( 100, 100 );
 	Vector dir = _camera->getDir( );
 	dir.z = 0;
 	Matrix mat = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( dir ), Vector( 0, -1 ).angle( dir ) );
@@ -230,6 +266,11 @@ void SceneStage::drawUIMap( ) const {
 			Vector station_pos( i % STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2, i / STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2 ); 
 			Vector distance = ( getAdjustPos( station_pos, base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
 			double length = distance.getLength( );
+			if ( _roomba->getCrystalPtr( ) ) {
+				if ( length < guideline_distance.getLength( ) ) {
+					guideline_distance = distance;
+				}
+			}
 			if ( distance.getLength( ) > RANGE ) {
 				distance = distance.normalize( ) * RANGE;
 
@@ -261,7 +302,14 @@ void SceneStage::drawUIMap( ) const {
 			crystal_ite++;
 			continue;
 		}
-		Vector distance = ( getAdjustPos( crystal->getPos( ), base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
+		Vector pos = crystal->getPos( );
+		pos.z = 0;
+		Vector distance = ( getAdjustPos( pos, base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
+		if ( !_roomba->getCrystalPtr( ) ) {
+			if ( distance.getLength( ) < guideline_distance.getLength( ) ) {
+				guideline_distance = distance;
+			}
+		}
 		distance = mat.multiply( distance );
 		if ( distance.getLength( ) > RANGE ) {
 			distance = distance.normalize( ) * RANGE;
@@ -270,6 +318,21 @@ void SceneStage::drawUIMap( ) const {
 		int sy = (int)( map_central_sy + distance.y );
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 32, 16, 16, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
 		crystal_ite++;
+	}
+	if ( _roomba->getMoveState( ) != Roomba::MOVE_STATE_LIFT_UP &&
+		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_LIFT_DOWN &&
+		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_WAIT &&
+		 guideline_distance.getLength( ) > GUIDELINE_VIEW_RANGE ) {
+		ModelPtr guideline = ModelPtr( new Model );
+		guideline->mergeModel( _guideline );
+		Matrix rot = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( guideline_distance ) * -1, Vector( 0, -1 ).angle( guideline_distance ) );
+		guideline->multiply( rot );
+		guideline->setPos( base_pos + guideline_distance.normalize( ) + Vector( 0, 0, 1 ) );
+		Drawer::ModelSelf self;
+		self.model = guideline;
+		self.graph = GRAPH_GUIDELINE;
+		self.add = false;
+		drawer->setModelSelf( self );
 	}
 }
 
