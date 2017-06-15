@@ -42,6 +42,7 @@ public:
 	bool isStarting( ) const;
 	bool isFinished( ) const;
 	Vector getStartPos( ) const;
+	CrystalPtr getCrystalPtr( ) const;
 private:
 	enum BALL {
 		BALL_LEFT,

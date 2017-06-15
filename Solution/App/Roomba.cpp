@@ -563,6 +563,9 @@ Vector Roomba::getStartPos( ) const {
 	return ( START_POS[ 0 ] + START_POS[ 1 ] ) * 0.5;
 }
 
+CrystalPtr Roomba::getCrystalPtr( ) const {
+	return _crystal;
+}
 
 void Roomba::setVecTrans( Vector vec ) {
 	_vec_trans = vec;

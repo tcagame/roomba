@@ -16,6 +16,7 @@ public:
 	virtual ~SceneStage( );
 	Scene::NEXT update( );
 private:
+	void drawGuidline( ) const;
 	void drawUI( );
 	void drawUIDelivery( );
 	void drawUILinKGauge( );
@@ -37,6 +38,7 @@ private:
 		NUMBER_STATE state;
 	};
 private:
+	ModelPtr _guideline;
 	NUMBER _phase_number[ 2 ];
 	NUMBER _delivery_number[ 2 ];
 	CameraPtr _camera;
