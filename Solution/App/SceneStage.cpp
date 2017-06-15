@@ -12,8 +12,8 @@
 #include "Sound.h"
 #include "Model.h"
 
-const int UI_DELIVERY_FOOT_X = 80;
-const int UI_DELIVERY_Y = 20;
+const int UI_PHASE_FOOT_X = 100;
+const int UI_PHASE_Y = 40;
 const int UI_NUM_SIZE = 64;
 const int UI_MAP_SIZE = 6;
 const int UI_MAP_X = 30;
@@ -46,7 +46,7 @@ SceneStage::SceneStage( int stage_num ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
-	drawer->loadGraph( GRAPH_DELIVERY, "UI/station.png" );
+	drawer->loadGraph( GRAPH_PHASE, "UI/phase.png" );
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
 	drawer->loadGraph( GRAPH_READY, "UI/ready.png" );	
 	drawer->loadGraph( GRAPH_GUIDELINE, "Model/Guideline/guideline.jpg" );
@@ -166,8 +166,15 @@ void SceneStage::drawUIDelivery( ) {
 
 	int delivery_num = _stage->getMaxDeliveryNum( ) - app_stage->getDeliveryCount( ) + 1;
 	
-	int x = scr_width - UI_DELIVERY_FOOT_X;
-	int y = UI_DELIVERY_Y;
+	int x = scr_width - UI_PHASE_FOOT_X;
+	int y = UI_PHASE_Y;
+	{
+		int sx = x - UI_NUM_SIZE / 2;
+		int sy = y - UI_NUM_SIZE / 3;
+		int sx2 = sx + UI_NUM_SIZE * 2;
+		int sy2 = sy + UI_NUM_SIZE * 2;
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 256, 256, sx2, sy2 ), GRAPH_PHASE ) );
+	}
 	
 	if ( _delivery_number[ 0 ].num != delivery_num ) {
 		_delivery_number[ 1 ] = _delivery_number[ 0 ];
@@ -204,8 +211,6 @@ void SceneStage::drawUIDelivery( ) {
 		Drawer::Sprite sprite( Drawer::Transform( sx, sy, number * UI_NUM_SIZE, 0, UI_NUM_SIZE, UI_NUM_SIZE, sx2, sy2 ), GRAPH_NUMBER );
 		drawer->setSprite( sprite );
 	}
-	x -= 64;
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( x, y ), GRAPH_DELIVERY ) );
 }
 
 
@@ -222,14 +227,13 @@ void SceneStage::drawUIMap( ) const {
 	ApplicationPtr app = Application::getInstance( );
 	int map_central_sx = UI_MAP_X + UI_MAP_SIZE * UI_MAP_RANGE;
 	int map_central_sy = app->getWindowHeight( ) - UI_MAP_FOOT_Y - UI_MAP_SIZE * UI_MAP_RANGE;
-	const int RANGE = UI_MAP_RANGE * UI_MAP_SIZE / 4 * 3;
-	{//”wŒi(’n–Ê)
+	const int RANGE = UI_MAP_RANGE * UI_MAP_SIZE;
+	{//”wŒi
 		int sx = map_central_sx - UI_MAP_SIZE * UI_MAP_RANGE;
 		int sy = map_central_sy - UI_MAP_SIZE * UI_MAP_RANGE;
 		int sx2 = sx + UI_MAP_SIZE * UI_MAP_RANGE * 2 + UI_MAP_SIZE;
 		int sy2 = sy + UI_MAP_SIZE * UI_MAP_RANGE * 2 + UI_MAP_SIZE;
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 128, 0, 128, 128, sx2, sy2 ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.5 ) );
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 128, 128, 128, sx2, sy2 ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.5 ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 256, 0, 256, 256, sx2, sy2 ), GRAPH_MAP ) );
 	}
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		//ƒfƒŠƒo[•\Ž¦
