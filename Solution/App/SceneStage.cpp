@@ -320,3 +320,4 @@ Vector SceneStage::getAdjustPos( Vector pos, Vector base_pos ) const {
 	}
 	return pos;
 }
+
