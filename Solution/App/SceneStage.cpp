@@ -131,7 +131,9 @@ Scene::NEXT SceneStage::update( ) {
 	_roomba->update( _stage, _camera );
 	_stage->update( _camera );
 	_roomba->updateLaser( _camera );
-	if ( !_roomba->isWait( ) &&
+	if ( _roomba->getMoveState( ) != Roomba::MOVE_STATE_LIFT_UP &&
+		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_LIFT_DOWN &&
+		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_WAIT &&
 		 !std::dynamic_pointer_cast< AppStage >( _stage )->isFinished( ) ) {
 		_timer->update( );
 	}
