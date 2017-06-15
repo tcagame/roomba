@@ -117,8 +117,6 @@ void Roomba::updateBalls( StagePtr stage ) {
 			 _state == MOVE_STATE_REFLECTION_RESTORE ) {
 			vec[ i ] = _vec_reflection[ i ] + _vec_scale[ i ];
 			vec[ i ].z = _vec_z[ i ];
-		} else if (	_state == MOVE_STATE_LIFT_UP ) {
-			vec[ i ].z = _vec_z[ i ];
 		} else if ( _state == MOVE_STATE_LIFT_DOWN ) {
 			vec[ i ].z = _vec_z[ i ];
 		} else {
@@ -245,7 +243,6 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera ) {
 			_delivery[ 1 ].pos = _balls[ 1 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
 			setVecReflection( Vector( ), Vector( ) );
 			setVecScale( Vector( ), Vector( ) );
-			_trans_speed = Vector( );
 			_crystal = CrystalPtr( );
 		}
 
@@ -283,6 +280,7 @@ void Roomba::acceleration( ) {
 		accelRotation( DIR_LEFT );
 		break;
 	case MOVE_STATE_NEUTRAL:
+	case MOVE_STATE_LIFT_UP:
 		brakeTranslation( );
 		brakeRotation( );
 		break;
@@ -446,6 +444,13 @@ void Roomba::moveLiftUp( ) {
 	if ( _state != MOVE_STATE_LIFT_UP ) {
 		return;
 	}
+	if ( _trans_speed.getLength( ) > 0 ||
+		 _rot_speed > 0 ) {
+		_vec_z[ 0 ] = 0;
+		_vec_z[ 1 ] = 0;
+		return;
+	}
+
 	for ( int i = 0; i < 2; i++ ) {
 		Vector ball = _balls[ i ]->getPos( ) + Vector( 0, 0, DELIVERY_FOOT );
 		Vector distance = _delivery[ i ].pos - ball;
