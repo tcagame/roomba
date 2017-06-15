@@ -58,7 +58,7 @@ Scene::NEXT SceneSelect::update( ) {
 			sound->playSE( "se_maoudamashii_system43.wav" );
 			_rot_right = false;
 			_count++;
-			_select--;
+			_select++;
 			_ispush = true;
 		}
 	}
@@ -68,6 +68,7 @@ Scene::NEXT SceneSelect::update( ) {
 		_count++;
 		_count %= MAX_COUNT;
 	}
+
 
 	_select = abs( _select ) % 3;
 
@@ -96,9 +97,7 @@ void SceneSelect::drawRogo( ) {
 void SceneSelect::drawSelect( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	int select = _select;
-	if ( _select == 0 ) {
-		select = 3;
-	}
+
 
 	GRAPH graph = (GRAPH)( GRAPH_NUM_1 + ( select - 1 ) );
 	
@@ -156,13 +155,13 @@ void SceneSelect::moveSelect( ) {
 	Vector vec2;
 	Vector vec3;
 	if ( _rot_right ) {
+		vec1 = ( target3 - target1 ) * 0.1;
+		vec2 = ( target3 - target2 ) * 0.1;
+		vec3 = ( target2 - target1 ) * 0.1;
+	} else {
 		vec1 = ( target2 - target1 ) * 0.1;
 		vec2 = ( target3 - target2 ) * 0.1;
 		vec3 = ( target1 - target3 ) * 0.1;
-	} else {
-		vec1 = ( target3 - target1 ) * 0.1;
-		vec2 = ( target1 - target2 ) * 0.1;
-		vec3 = ( target2 - target3 ) * 0.1;
 	}
 
 	_pos[ 0 ] += vec1;
