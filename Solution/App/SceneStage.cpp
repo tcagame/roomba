@@ -132,14 +132,18 @@ Scene::NEXT SceneStage::update( ) {
 	_roomba->update( _stage, _camera );
 	_stage->update( _camera );
 	_roomba->updateLaser( _camera );
+
+	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
 	if ( _roomba->getMoveState( ) != Roomba::MOVE_STATE_LIFT_UP &&
 		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_LIFT_DOWN &&
 		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_WAIT &&
-		 !std::dynamic_pointer_cast< AppStage >( _stage )->isFinished( ) ) {
+		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_STARTING &&
+		 !app_stage->isFinished( ) ) {
 		_timer->update( );
 	}
 	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_LIFT_DOWN ) {
 		_timer->reset( );
+		app_stage->eraseOldDelivery( );
 	}
 	_roomba->draw( );
 	_stage->draw( );

@@ -239,8 +239,7 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera ) {
 			_rot_speed = 0;
 		}
 		if ( state == MOVE_STATE_LIFT_UP ) {
-			_delivery[ 0 ].pos = _balls[ 0 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
-			_delivery[ 1 ].pos = _balls[ 1 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
+			_delivery[ 0 ].pos.x = -1;
 			setVecReflection( Vector( ), Vector( ) );
 			setVecScale( Vector( ), Vector( ) );
 			_crystal = CrystalPtr( );
@@ -316,6 +315,9 @@ void Roomba::brakeTranslation( ) {
 	if ( _state != MOVE_STATE_TRANSLATION ) {
 		deceletion_trans_speed *= OTHER_TRANS_RATIO;
 	}
+	if ( _state == MOVE_STATE_LIFT_UP ) {
+		deceletion_trans_speed *= 3;
+	}
 	if ( _move_dir.getLength( ) > 0.001 ) {
 		deceletion_trans_speed = ACCEL_SPEED / 2;
 	}
@@ -331,6 +333,9 @@ void Roomba::brakeRotation( ) {
 	if ( _state != MOVE_STATE_ROTATION_LEFT &&
 		 _state != MOVE_STATE_ROTATION_RIGHT ) {
 		deceletion_speed *= OTHER_ROT_RATIO;
+	}
+	if ( _state == MOVE_STATE_LIFT_UP ) {
+		deceletion_speed *= 3;
 	}
 	if ( fabs( _rot_speed ) > deceletion_speed ) {
 		_rot_speed += deceletion_speed * ( 1 - ( _rot_speed > 0 ) * 2 );
@@ -449,6 +454,9 @@ void Roomba::moveLiftUp( ) {
 		_vec_z[ 0 ] = 0;
 		_vec_z[ 1 ] = 0;
 		return;
+	} else if ( _delivery[ 0 ].pos.x < 0 ) {
+		_delivery[ 0 ].pos = _balls[ 0 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
+		_delivery[ 1 ].pos = _balls[ 1 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
 	}
 
 	for ( int i = 0; i < 2; i++ ) {

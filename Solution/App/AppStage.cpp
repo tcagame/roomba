@@ -406,6 +406,23 @@ std::list< CrystalPtr > AppStage::getCrystalList( ) const {
 	return _crystals;
 }
 
+void AppStage::eraseOldDelivery( ) {
+	std::list< DeliveryPtr >::iterator ite = _deliverys.begin( );
+	while ( ite != _deliverys.end( ) ) {
+		DeliveryPtr delivery = (*ite);
+		if ( !delivery ) {
+			ite++;
+			continue;
+		}
+		if ( delivery->isHaveCrystal( ) ) {
+			ite = _deliverys.erase( ite );
+			continue;
+		}
+		ite++;
+	}
+}
+
+
 void AppStage::drawEarth( ) const {
 	Vector adjust_pos = Vector( WORLD_SCALE * 2, WORLD_SCALE * 2 + WORLD_SCALE / 3, EARTH_POS_Z );
 	Drawer::ModelMDL model( adjust_pos, MDL_EARTH );
