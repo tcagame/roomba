@@ -14,6 +14,8 @@ private:
 	void drawSelect( );
 	void moveSelect( );
 	void freazeSelect( );
+	void drawFrame( );
+	void drawTriangle( );
 private:
 	std::array< Vector, 3 > _pos;
 	int _count;
