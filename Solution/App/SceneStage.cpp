@@ -11,16 +11,13 @@
 #include "Viewer.h"
 #include "Sound.h"
 
-static const int UI_DELIVERY_FOOT_X = 80;
-static const int UI_DELIVERY_Y = 20;
-static const int UI_NUM_WIDTH = 32;
-static const int UI_NUM_HEIGHT = 64;
-static const int UI_MAP_SIZE = 6;
-static const int UI_MAP_X = 30;
-static const int UI_MAP_FOOT_Y = 30;
-static const int UI_MAP_RANGE = 20;
-static const int START_COUNTDOWN_TIME = 120;
-static const int ERASE_COUNTDOWN_TIME = 15;
+const int UI_DELIVERY_FOOT_X = 80;
+const int UI_DELIVERY_Y = 20;
+const int UI_NUM_SIZE = 64;
+const int UI_MAP_SIZE = 6;
+const int UI_MAP_X = 30;
+const int UI_MAP_FOOT_Y = 30;
+const int UI_MAP_RANGE = 20;
 
 SceneStage::SceneStage( int stage_num ) {	
 
@@ -41,10 +38,7 @@ SceneStage::SceneStage( int stage_num ) {
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
 	drawer->loadGraph( GRAPH_DELIVERY, "UI/station.png" );
-	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
-	drawer->loadGraph( GRAPH_MATRIX, "UI/matrix.png" );
-	drawer->loadGraph( GRAPH_MATRIX_ERASE, "UI/matrix_erase.png" );
 	drawer->loadGraph( GRAPH_READY, "UI/ready.png" );	
 	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", delivery_scale );
@@ -192,9 +186,9 @@ void SceneStage::drawUIDelivery( ) {
 		int number = _delivery_number[ i ].num;
 		int sx = x + _delivery_number[ i ].x;
 		int sy = y + _delivery_number[ i ].y;
-		int sx2 = sx + (int)( UI_NUM_WIDTH * _delivery_number[ i ].size );
-		int sy2 = sy + (int)( UI_NUM_HEIGHT * _delivery_number[ i ].size );
-		Drawer::Sprite sprite( Drawer::Transform( sx, sy, number * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT, sx2, sy2 ), GRAPH_NUMBER );
+		int sx2 = sx + (int)( UI_NUM_SIZE * _delivery_number[ i ].size );
+		int sy2 = sy + (int)( UI_NUM_SIZE * _delivery_number[ i ].size );
+		Drawer::Sprite sprite( Drawer::Transform( sx, sy, number * UI_NUM_SIZE, 0, UI_NUM_SIZE, UI_NUM_SIZE, sx2, sy2 ), GRAPH_NUMBER );
 		drawer->setSprite( sprite );
 	}
 	x -= 64;
