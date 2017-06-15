@@ -29,9 +29,7 @@ private:
 		NUMBER_STATE_OUT,
 	};
 	struct NUMBER {
-		int x;
 		int y;
-		int speed_y;
 		int num;
 		double size;
 		NUMBER_STATE state;
