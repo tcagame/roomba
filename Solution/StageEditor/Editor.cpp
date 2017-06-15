@@ -25,9 +25,7 @@ Editor::~Editor( ) {
 void Editor::initialize( ) {
 	//drawer‰Šú‰»Œã
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
-	drawer->loadGraph( GRAPH_SELECT_MENU, "UI/UI_retry_select.png" );
-	
+
 	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", delivery_scale );
 

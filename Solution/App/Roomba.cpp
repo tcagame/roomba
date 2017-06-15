@@ -30,22 +30,29 @@ const double BOUND_POW = 0.7;
 const double EFFECT_REBOOT_SIZE = 0.7;
 const double EFFECT_CHANGE_STATE_SIZE = 0.7;
 const int WAIT_TIME = 0;
+const int START_TIME = 360;
 
-static const Vector START_POS[ 2 ] {
+const Vector START_POS[ 2 ] {
 	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, ROOMBA_SIZE.z ) ),
 	( Vector( STAGE_WIDTH_NUM + 22, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, ROOMBA_SIZE.z ) )
 };
 
+const Vector POP_POS[ 2 ] {
+	Vector( -5, -7, 10 ),
+	Vector( -8, -7, 10 )
+};
+
 Roomba::Roomba( ) :
-_state( MOVE_STATE_LIFT_DOWN ),
+_state( MOVE_STATE_STARTING ),
 _trans_speed( Vector( ) ),
 _vec_trans( Vector( ) ),
 _rot_speed( 0 ),
-_link_break( true ),
+_link_break( false ),
 _finished( false ),
-_wait_count( WAIT_TIME ) {
+_wait_count( WAIT_TIME ),
+_start_count( 0 ) {
 	for ( int i = 0; i < 2; i++ ) {
-		_balls[ i ] = BallPtr( new Ball( START_POS[ i ] + Vector( 0, 0, 5 ) ) );
+		_balls[ i ] = BallPtr( new Ball( START_POS[ i ] + POP_POS[ i ] ) );
 		_vec_rot[ i ] = Vector( );
 		_vec_scale[ i ] = Vector( );
 		_vec_reflection[ i ] = Vector( );
@@ -100,6 +107,7 @@ void Roomba::updateState( ) {
 	moveRestore( );
 	moveLiftUp( );
 	moveLiftDown( );
+	moveStarting( );
 	moveBound( );
 }
 
@@ -218,6 +226,10 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera ) {
 			SoundPtr sound = Sound::getTask( );
 			//sound->playSE( "se_maoudamashii_effect14.wav" );
 		}
+	}
+
+	if ( _start_count < START_TIME ) {
+		state = MOVE_STATE_STARTING;
 	}
 
 	if ( state != _state ) {
@@ -547,6 +559,13 @@ bool Roomba::isFinished( ) const {
 	return _finished;
 }
 
+Vector Roomba::getStartPos( ) const {
+	return ( START_POS[ 0 ] + START_POS[ 1 ] ) * 0.5;
+}
+
+CrystalPtr Roomba::getCrystalPtr( ) const {
+	return _crystal;
+}
 
 void Roomba::setVecTrans( Vector vec ) {
 	_vec_trans = vec;
@@ -627,4 +646,26 @@ Vector Roomba::getDir( ) const {
 
 double Roomba::getRotSpeed( ) const {
 	return _rot_speed;
+}
+
+void Roomba::moveStarting( ) {
+	if ( _state != MOVE_STATE_STARTING ) {
+		return;
+	}
+	Vector vec[ 2 ];
+	for ( int i = 0; i < 2; i++ ) {
+		Vector diff = START_POS[ i ] - _balls[ i ]->getPos( );
+		vec[ i ] = diff;
+		vec[ i ].z = 0;
+		vec[ i ] = vec[ i ].normalize( ) * 0.2;		
+		if ( diff.x < vec[ i ].x && diff.y < vec[ i ].y ) {
+			vec[ i ] = diff;
+		}
+	}
+	setVecRot( vec[ 0 ], vec[ 1 ] );
+	_start_count++;
+}
+
+bool Roomba::isStarting( ) const {
+	return ( _state == MOVE_STATE_STARTING );
 }

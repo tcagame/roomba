@@ -21,6 +21,7 @@ public:
 		MOVE_STATE_LIFT_UP,
 		MOVE_STATE_LIFT_DOWN,
 		MOVE_STATE_WAIT,
+		MOVE_STATE_STARTING,
 		MAX_STATE,
 	};
 public:
@@ -38,7 +39,10 @@ public:
 	Vector getBallPos( int ball ) const;
 	MOVE_STATE getMoveState( ) const;
 	bool isWait( ) const;
+	bool isStarting( ) const;
 	bool isFinished( ) const;
+	Vector getStartPos( ) const;
+	CrystalPtr getCrystalPtr( ) const;
 private:
 	enum BALL {
 		BALL_LEFT,
@@ -59,6 +63,7 @@ private:
 	void moveLiftUp( );
 	void moveLiftDown( );
 	void moveBound( );
+	void moveStarting( );
 	void acceleration( );
 	void accelTranslation( );
 	void accelRotation( DIR dir );
@@ -73,6 +78,7 @@ private:
 	void shiftPos( CameraPtr camera );
 	void announceChangeState( MOVE_STATE state );
 private:
+	int _start_count;
 	int _wait_count;
 	double _rot_speed;
 	bool _link_break;
