@@ -19,6 +19,8 @@ const int UI_MAP_SIZE = 6;
 const int UI_MAP_X = 30;
 const int UI_MAP_FOOT_Y = 30;
 const int UI_MAP_RANGE = 20;
+const int UI_NUM_SCROLL_TIME = 20;
+const int UI_NUM_SCROLL_SPEED = 2;
 const double GUIDELINE_VIEW_RANGE = 5 * WORLD_SCALE;
 
 SceneStage::SceneStage( int stage_num ) {	
@@ -33,6 +35,7 @@ SceneStage::SceneStage( int stage_num ) {
 	_delivery_number[ 0 ].state = NUMBER_STATE_IN;
 	_delivery_number[ 1 ].state = NUMBER_STATE_NONE;
 	_delivery_number[ 0 ].num = _stage->getMaxDeliveryNum( ) - std::dynamic_pointer_cast<AppStage>( _stage )->getDeliveryCount( ) + 1;
+	_delivery_number[ 0 ].y = -UI_NUM_SCROLL_TIME * UI_NUM_SCROLL_SPEED;
 	_phase_number[ 0 ].state = NUMBER_STATE_IN;
 	_phase_number[ 1 ].state = NUMBER_STATE_NONE;
 	
@@ -112,7 +115,11 @@ SceneStage::~SceneStage( ) {
 Scene::NEXT SceneStage::update( ) {
 	// ƒJƒƒ‰&viwerí‚ÉXV‚·‚é
 	_camera->update( );
-	_viewer->update( _roomba->getCentralPos( ) );
+	if ( _roomba->isStarting( ) ) {
+		_viewer->update( _roomba->getStartPos( ) );
+	} else {
+		_viewer->update( _roomba->getCentralPos( ) );
+	}
 
 	if ( _timer->isTimeOver( ) ) {
 		return NEXT_RETRY;
@@ -165,36 +172,33 @@ void SceneStage::drawUIDelivery( ) {
 	if ( _delivery_number[ 0 ].num != delivery_num ) {
 		_delivery_number[ 1 ] = _delivery_number[ 0 ];
 		_delivery_number[ 1 ].state = NUMBER_STATE_OUT;
-		_delivery_number[ 1 ].speed_y = -10;
 		_delivery_number[ 0 ].num = delivery_num;
 		_delivery_number[ 0 ].state = NUMBER_STATE_IN;
-		_delivery_number[ 0 ].x = 0;
-		_delivery_number[ 0 ].y = 0;
+		_delivery_number[ 0 ].y = -UI_NUM_SCROLL_TIME * UI_NUM_SCROLL_SPEED;
 		_delivery_number[ 0 ].size = 0;
-		_delivery_number[ 0 ].speed_y = 0;
 	}
 	for ( int i = 0; i < 2; i++ ) {
 		if ( _delivery_number[ i ].state == NUMBER_STATE_NONE ) {
 			continue;
 		}
 		if ( _delivery_number[ i ].state == NUMBER_STATE_OUT ) {
-			_delivery_number[ i ].x += 2;
-			_delivery_number[ i ].speed_y++;
-			_delivery_number[ i ].y += _delivery_number[ i ].speed_y;
-			if ( _delivery_number[ i ].y >= 0 ) {
-				_delivery_number[ i ].speed_y *= -1;
+			_delivery_number[ i ].y += UI_NUM_SCROLL_SPEED;
+			_delivery_number[ i ].size -= 1.0 / UI_NUM_SCROLL_TIME;
+			if ( _delivery_number[ i ].size < 0 ) {
+				_delivery_number[ i ].size = 0;
 			}
 		}
 		if ( _delivery_number[ i ].state == NUMBER_STATE_IN ) {
-			_delivery_number[ i ].size += 0.05;
+			_delivery_number[ i ].y += UI_NUM_SCROLL_SPEED;
+			_delivery_number[ i ].size += 1.0 / UI_NUM_SCROLL_TIME;
 			if ( _delivery_number[ i ].size > 1 ) {
 				_delivery_number[ i ].size = 1;
 				_delivery_number[ i ].state = NUMBER_STATE_WAIT;
 			}
 		}
 		int number = _delivery_number[ i ].num;
-		int sx = x + _delivery_number[ i ].x;
-		int sy = y + _delivery_number[ i ].y;
+		int sx = x  + UI_NUM_SIZE / 2 - (int)( UI_NUM_SIZE * _delivery_number[ i ].size ) / 2;
+		int sy = y + UI_NUM_SIZE / 2  - (int)( UI_NUM_SIZE * _delivery_number[ i ].size ) / 2 + _delivery_number[ i ].y;
 		int sx2 = sx + (int)( UI_NUM_SIZE * _delivery_number[ i ].size );
 		int sy2 = sy + (int)( UI_NUM_SIZE * _delivery_number[ i ].size );
 		Drawer::Sprite sprite( Drawer::Transform( sx, sy, number * UI_NUM_SIZE, 0, UI_NUM_SIZE, UI_NUM_SIZE, sx2, sy2 ), GRAPH_NUMBER );

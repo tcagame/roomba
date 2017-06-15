@@ -38,8 +38,8 @@ const Vector START_POS[ 2 ] {
 };
 
 const Vector POP_POS[ 2 ] {
-	Vector( -5, -7, 10 ),
-	Vector( -8, -7, 10 )
+	Vector( -15, -5, 10 ),
+	Vector( -18, -5, 10 )
 };
 
 Roomba::Roomba( ) :
@@ -83,19 +83,6 @@ void Roomba::draw( ) const {
 			drawer->setModelMDL( _delivery[ i ] );
 		}
 	}
-
-	if ( _state == MOVE_STATE_WAIT ) {
-		ApplicationPtr app = Application::getInstance( );
-		int sx = app->getWindowWidth( ) / 2 - 512 / 2;
-		int sy = app->getWindowHeight( ) / 2 - 256 / 2;
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 512, 256 ), GRAPH_READY ) );		
-	}
-	if ( _wait_count > -10 && _wait_count <= 0 ) {
-		ApplicationPtr app = Application::getInstance( );
-		int sx = app->getWindowWidth( ) / 2 - 512 / 2;
-		int sy = app->getWindowHeight( ) / 2 - 256 / 2;
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 256, 512, 256 ), GRAPH_READY ) );
-	}
 }
 
 void Roomba::updateState( ) {
@@ -116,7 +103,8 @@ void Roomba::updateLaser( CameraConstPtr camera ) {
 		_state == MOVE_STATE_LIFT_DOWN ||
 		_state == MOVE_STATE_LIFT_UP ||
 		_state == MOVE_STATE_REFLECTION ||
-		_state == MOVE_STATE_REFLECTION_RESTORE );
+		_state == MOVE_STATE_REFLECTION_RESTORE ||
+		_state == MOVE_STATE_STARTING );
 	_laser->show( show );
 	_laser->update( getCentralPos( ), camera, _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ), _crystal );
 }
@@ -216,10 +204,16 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera ) {
 		}
 	}
 	if ( _link_break ) {
-		if ( _balls[ 0 ]->getPos( ).z < LIFT_Z ) {
+		if ( !( _balls[ 0 ]->getPos( ).z > START_POS[ 0 ].z ) &&
+			 !( _balls[ 1 ]->getPos( ).z > START_POS[ 1 ].z ) ) {
 			state = MOVE_STATE_LIFT_UP;
-		} else {
-			state = MOVE_STATE_LIFT_DOWN;
+		}
+		if ( _state == MOVE_STATE_LIFT_UP ) {
+			if ( _balls[ 0 ]->getPos( ).z < LIFT_Z ) {
+				state = MOVE_STATE_LIFT_UP;
+			} else {
+				state = MOVE_STATE_LIFT_DOWN;
+			}
 		}
 		if ( _state == MOVE_STATE_LIFT_DOWN ) {
 			state = MOVE_STATE_LIFT_DOWN;
@@ -479,7 +473,8 @@ void Roomba::moveLiftDown( ) {
 }
 
 void Roomba::moveBound( ) {
-	if ( _state == MOVE_STATE_LIFT_UP ) {
+	if ( _state == MOVE_STATE_LIFT_UP ||
+		 _start_count < START_TIME / 2 ) {
 		return;
 	}
 	for ( int i = 0; i < 2; i++ ) {
@@ -652,17 +647,29 @@ void Roomba::moveStarting( ) {
 	if ( _state != MOVE_STATE_STARTING ) {
 		return;
 	}
-	Vector vec[ 2 ];
-	for ( int i = 0; i < 2; i++ ) {
-		Vector diff = START_POS[ i ] - _balls[ i ]->getPos( );
-		vec[ i ] = diff;
-		vec[ i ].z = 0;
-		vec[ i ] = vec[ i ].normalize( ) * 0.2;		
-		if ( diff.x < vec[ i ].x && diff.y < vec[ i ].y ) {
+	if ( _start_count < START_TIME / 2 ) {
+		ApplicationPtr app = Application::getInstance( );
+		int sx = app->getWindowWidth( ) / 2 - 512 / 2;
+		int sy = app->getWindowHeight( ) / 2 - 256 / 2;
+		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 512, 256 ), GRAPH_READY ) );		
+	} else {
+		Vector vec[ 2 ];
+		bool boot = false;
+		for ( int i = 0; i < 2; i++ ) {
+			Vector diff = START_POS[ i ] - _balls[ i ]->getPos( );
 			vec[ i ] = diff;
+			vec[ i ].z = 0;
+			vec[ i ] = vec[ i ].normalize( ) * MAX_TRANS_SPEED;		
+			if ( diff.x <= vec[ i ].x && diff.y <= vec[ i ].y ) {
+				vec[ i ] = diff;
+				if ( boot ) {
+					_start_count = START_TIME;
+				}
+				boot = true;
+			}
 		}
+		setVecRot( vec[ 0 ], vec[ 1 ] );
 	}
-	setVecRot( vec[ 0 ], vec[ 1 ] );
 	_start_count++;
 }
 
