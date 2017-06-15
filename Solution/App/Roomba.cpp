@@ -216,10 +216,16 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera ) {
 		}
 	}
 	if ( _link_break ) {
-		if ( _balls[ 0 ]->getPos( ).z < LIFT_Z ) {
+		if ( !( _balls[ 0 ]->getPos( ).z > START_POS[ 0 ].z ) &&
+			 !( _balls[ 1 ]->getPos( ).z > START_POS[ 1 ].z ) ) {
 			state = MOVE_STATE_LIFT_UP;
-		} else {
-			state = MOVE_STATE_LIFT_DOWN;
+		}
+		if ( _state == MOVE_STATE_LIFT_UP ) {
+			if ( _balls[ 0 ]->getPos( ).z < LIFT_Z ) {
+				state = MOVE_STATE_LIFT_UP;
+			} else {
+				state = MOVE_STATE_LIFT_DOWN;
+			}
 		}
 		if ( _state == MOVE_STATE_LIFT_DOWN ) {
 			state = MOVE_STATE_LIFT_DOWN;
