@@ -14,8 +14,6 @@ public:
 	void finalize( );
 	bool isTimeOver( ) const;
 private:
-	void updateRecovery( );
-private:
 	int _timer;
 	int _add_time;
 };

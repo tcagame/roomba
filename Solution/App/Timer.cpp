@@ -22,22 +22,12 @@ Timer::~Timer( ) {
 
 void Timer::update( ) {
 	_timer--;
-	updateRecovery( );
 	if ( _timer == 3 * FPS ) {
 		SoundPtr sound = Sound::getTask( );
 	    sound->playBGM( "meka_ge_keihou.wav" );
 	}
 }
 
-void Timer::updateRecovery( ) {
-	if( _add_time < RECOVERY_SPEED ) {
-		_timer += _add_time;
-		_add_time = 0;
-	} else {
-		_timer += RECOVERY_SPEED;
-		_add_time -= RECOVERY_SPEED;
-	}
-}
 
 void Timer::draw( ) const {
 	if ( _timer < 0 ) {
@@ -52,12 +42,12 @@ void Timer::draw( ) const {
 }
 
 void Timer::addTime( ) {
-	if ( _timer < 3 * FPS ) {
-		SoundPtr sound = Sound::getTask( );
-		sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
-	}
-	_add_time += ADD_TIME;
-	
+	//if ( _timer < 3 * FPS ) {
+	//	SoundPtr sound = Sound::getTask( );
+	//	sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
+	//}
+	//_add_time += ADD_TIME;
+	//
 }
 
 void Timer::reset( ) {
