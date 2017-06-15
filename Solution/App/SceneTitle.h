@@ -10,5 +10,6 @@ private:
 	void draw( );
 private:
 	int _count;
+	bool _ispush;
 };
 

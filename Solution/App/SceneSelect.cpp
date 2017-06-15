@@ -47,20 +47,23 @@ Scene::NEXT SceneSelect::update( ) {
 	}
 	if ( _count == 0 ) {
 		freazeSelect( );
-		if ( left_stick.x > 0 ) {
+		if ( left_stick.x > 0 && !_ispush ) {
 			sound->playSE( "se_maoudamashii_system43.wav" );
 			_count++;
 			_select++;
 			_rot_right = true;
 			_ispush = true;
 		}
-		if ( left_stick.x < 0 ) {
+		if ( left_stick.x < 0 && !_ispush ) {
 			sound->playSE( "se_maoudamashii_system43.wav" );
 			_rot_right = false;
 			_count++;
 			_select++;
 			_ispush = true;
 		}
+	}
+	if ( left_stick.x == 0 && _ispush ) {
+		_ispush = false;
 	}
 
 	if ( _count != 0 ) {

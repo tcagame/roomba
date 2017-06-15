@@ -11,7 +11,8 @@ static const int DRAW_TIME = 30;
 static const int BRANK = 250;
 
 SceneTitle::SceneTitle( ) :
-_count( 0 ) {
+_count( 0 ),
+_ispush( false ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_TITLE, "title/roomb_title.png" );
 	drawer->loadGraph( GRAPH_PLEASE_PUSH_BUTTON, "title/pleasepushbutton.png" );
@@ -27,10 +28,17 @@ Scene::NEXT SceneTitle::update( ) {
 	_count++;
 	draw( );
 	DevicePtr device = Device::getTask( );
-	if ( device->getPush( ) && BUTTON_D ) {
-		SoundPtr sound = Sound::getTask( );
-		sound->playSE( "se_maoudamashii_system45.wav" );
-		return NEXT_STAGE_SELECT;
+	Vector right_stick = Vector( device->getRightDirX( ), device->getRightDirY( ) );
+	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) );
+	if ( !_ispush ) {
+		if ( right_stick.y > 0 && left_stick.y < 0 ) {
+			SoundPtr sound = Sound::getTask( );
+			sound->playSE( "se_maoudamashii_system45.wav" );
+			return NEXT_STAGE_SELECT;
+			_ispush = true;
+		}
+	} else {
+		_ispush = false;
 	}
 	return NEXT_CONTINUE;
 }
