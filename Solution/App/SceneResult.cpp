@@ -6,16 +6,16 @@
 #include "Binary.h"
 #include "Sound.h"
 
-static const int RESULT_WIDTH  = 512;
-static const int RESULT_HEIGHT = 256;
-static const std::string DIRECTORY = "../Resource/Savedata/";
-static const std::string FILENAME = DIRECTORY + "best_time.dat";
-static const int BRANK = 500;
+const int RESULT_WIDTH  = 512;
+const int RESULT_HEIGHT = 256;
+const std::string DIRECTORY = "../Resource/Savedata/";
+const std::string FILENAME = DIRECTORY + "best_time.dat";
+const int BRANK = 500;
 
 SceneResult::SceneResult( int time ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_RESULT, "Result/result.png" );
-	drawer->loadGraph( GRAPH_TIMER_NUM, "Result/time.png" );
+	drawer->loadGraph( GRAPH_NUMBER, "Result/number.png" );
 	_this_time = time;
 	_best_time = 0;
 	loadBestTime( );
@@ -52,27 +52,27 @@ void SceneResult::draw( ) const {
 
 int SceneResult::drawTime( int x, int y, int time ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	const int WIDTH = 32;
+	const int WIDTH = 64;
 	const int HEIGHT = 64;
 	const int SIZE = 2;
 	int x2 = x + WIDTH * SIZE;
 	int y2 = y + HEIGHT * SIZE;
 	// ¬”“_ˆÈ‰º”Žš
 	Drawer::Transform trans( x, y, ( time % 10 ) * WIDTH, 0, WIDTH, HEIGHT, x2, y2 );
-	drawer->setSprite( Drawer::Sprite( trans, GRAPH_TIMER_NUM ) );
+	drawer->setSprite( Drawer::Sprite( trans, GRAPH_NUMBER ) );
 	time /= 10;
 	// ¬”“_
 	x -= WIDTH * SIZE / 2;
 	x2 = x + WIDTH * SIZE / 2;
 	trans =  Drawer::Transform( x, y, 10 * WIDTH, 0, WIDTH / 2, HEIGHT, x2, y2 );
-	drawer->setSprite( Drawer::Sprite( trans, GRAPH_TIMER_NUM ) );
+	drawer->setSprite( Drawer::Sprite( trans, GRAPH_NUMBER ) );
 	
 	// ¬”“_ˆÈã”Žš
 	x -= WIDTH * SIZE;
 	x2 = x + WIDTH * SIZE;
 	while ( time >= 0 ) {
 		trans =  Drawer::Transform( x, y, ( time % 10 ) * WIDTH, 0, WIDTH, HEIGHT, x2, y2 );
-		drawer->setSprite( Drawer::Sprite( trans, GRAPH_TIMER_NUM ) );
+		drawer->setSprite( Drawer::Sprite( trans, GRAPH_NUMBER ) );
 		x -= WIDTH * SIZE;
 		x2 = x + WIDTH * SIZE;
 		time /= 10;

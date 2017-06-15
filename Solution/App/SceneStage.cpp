@@ -12,17 +12,16 @@
 #include "Sound.h"
 #include "Model.h"
 
-static const int UI_DELIVERY_FOOT_X = 80;
-static const int UI_DELIVERY_Y = 20;
-static const int UI_NUM_WIDTH = 32;
-static const int UI_NUM_HEIGHT = 64;
-static const int UI_MAP_SIZE = 6;
-static const int UI_MAP_X = 30;
-static const int UI_MAP_FOOT_Y = 30;
-static const int UI_MAP_RANGE = 20;
-static const int START_COUNTDOWN_TIME = 120;
-static const int ERASE_COUNTDOWN_TIME = 15;
-static const double GUIDELINE_VIEW_RANGE = 5 * WORLD_SCALE;
+const int UI_DELIVERY_FOOT_X = 80;
+const int UI_DELIVERY_Y = 20;
+const int UI_NUM_SIZE = 64;
+const int UI_MAP_SIZE = 6;
+const int UI_MAP_X = 30;
+const int UI_MAP_FOOT_Y = 30;
+const int UI_MAP_RANGE = 20;
+const int UI_NUM_SCROLL_TIME = 20;
+const int UI_NUM_SCROLL_SPEED = 2;
+const double GUIDELINE_VIEW_RANGE = 5 * WORLD_SCALE;
 
 SceneStage::SceneStage( int stage_num ) {	
 	_guideline = ModelPtr( new Model );
@@ -36,6 +35,7 @@ SceneStage::SceneStage( int stage_num ) {
 	_delivery_number[ 0 ].state = NUMBER_STATE_IN;
 	_delivery_number[ 1 ].state = NUMBER_STATE_NONE;
 	_delivery_number[ 0 ].num = _stage->getMaxDeliveryNum( ) - std::dynamic_pointer_cast<AppStage>( _stage )->getDeliveryCount( ) + 1;
+	_delivery_number[ 0 ].y = -UI_NUM_SCROLL_TIME * UI_NUM_SCROLL_SPEED;
 	_phase_number[ 0 ].state = NUMBER_STATE_IN;
 	_phase_number[ 1 ].state = NUMBER_STATE_NONE;
 	
@@ -47,11 +47,8 @@ SceneStage::SceneStage( int stage_num ) {
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
 	drawer->loadGraph( GRAPH_DELIVERY, "UI/station.png" );
-	drawer->loadGraph( GRAPH_TIMER_NUM, "UI/timenumber.png" );
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
-	drawer->loadGraph( GRAPH_MATRIX, "UI/matrix.png" );
-	drawer->loadGraph( GRAPH_MATRIX_ERASE, "UI/matrix_erase.png" );
-	drawer->loadGraph( GRAPH_READY, "UI/ready.png" );
+	drawer->loadGraph( GRAPH_READY, "UI/ready.png" );	
 	drawer->loadGraph( GRAPH_GUIDELINE, "Model/Guideline/guideline.jpg" );
 	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", delivery_scale );
@@ -151,33 +148,6 @@ Scene::NEXT SceneStage::update( ) {
 	return Scene::NEXT_CONTINUE;
 }
 
-void SceneStage::drawGuidline( ) const {
-	DrawerPtr drawer = Drawer::getTask( );
-	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
-	Vector min_distance = Vector( 100, 100 );
-	Vector roomba_pos = _roomba->getCentralPos( );
-
-	if ( _roomba->getCrystalPtr( ) ) {
-		
-
-	} else {
-		std::list< CrystalPtr > crystals = app_stage->getCrystalList( );
-		std::list< CrystalPtr >::const_iterator crystal_ite = crystals.begin( );
-		while ( crystal_ite != crystals.end( ) ) {
-			CrystalPtr crystal = *crystal_ite;
-			if ( !crystal ) {
-				crystal_ite++;
-				continue;
-			}
-			Vector distance = ( getAdjustPos( crystal->getPos( ), roomba_pos ) - roomba_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
-			if ( distance.getLength( ) > min_distance.getLength( ) ) {
-				min_distance = distance;
-			}
-			crystal_ite++;
-		}
-	}
-}
-
 void SceneStage::drawUI( ) {
 	drawUIDelivery( );
 	drawUILinKGauge( );
@@ -202,39 +172,36 @@ void SceneStage::drawUIDelivery( ) {
 	if ( _delivery_number[ 0 ].num != delivery_num ) {
 		_delivery_number[ 1 ] = _delivery_number[ 0 ];
 		_delivery_number[ 1 ].state = NUMBER_STATE_OUT;
-		_delivery_number[ 1 ].speed_y = -10;
 		_delivery_number[ 0 ].num = delivery_num;
 		_delivery_number[ 0 ].state = NUMBER_STATE_IN;
-		_delivery_number[ 0 ].x = 0;
-		_delivery_number[ 0 ].y = 0;
+		_delivery_number[ 0 ].y = -UI_NUM_SCROLL_TIME * UI_NUM_SCROLL_SPEED;
 		_delivery_number[ 0 ].size = 0;
-		_delivery_number[ 0 ].speed_y = 0;
 	}
 	for ( int i = 0; i < 2; i++ ) {
 		if ( _delivery_number[ i ].state == NUMBER_STATE_NONE ) {
 			continue;
 		}
 		if ( _delivery_number[ i ].state == NUMBER_STATE_OUT ) {
-			_delivery_number[ i ].x += 2;
-			_delivery_number[ i ].speed_y++;
-			_delivery_number[ i ].y += _delivery_number[ i ].speed_y;
-			if ( _delivery_number[ i ].y >= 0 ) {
-				_delivery_number[ i ].speed_y *= -1;
+			_delivery_number[ i ].y += UI_NUM_SCROLL_SPEED;
+			_delivery_number[ i ].size -= 1.0 / UI_NUM_SCROLL_TIME;
+			if ( _delivery_number[ i ].size < 0 ) {
+				_delivery_number[ i ].size = 0;
 			}
 		}
 		if ( _delivery_number[ i ].state == NUMBER_STATE_IN ) {
-			_delivery_number[ i ].size += 0.05;
+			_delivery_number[ i ].y += UI_NUM_SCROLL_SPEED;
+			_delivery_number[ i ].size += 1.0 / UI_NUM_SCROLL_TIME;
 			if ( _delivery_number[ i ].size > 1 ) {
 				_delivery_number[ i ].size = 1;
 				_delivery_number[ i ].state = NUMBER_STATE_WAIT;
 			}
 		}
 		int number = _delivery_number[ i ].num;
-		int sx = x + _delivery_number[ i ].x;
-		int sy = y + _delivery_number[ i ].y;
-		int sx2 = sx + (int)( UI_NUM_WIDTH * _delivery_number[ i ].size );
-		int sy2 = sy + (int)( UI_NUM_HEIGHT * _delivery_number[ i ].size );
-		Drawer::Sprite sprite( Drawer::Transform( sx, sy, number * UI_NUM_WIDTH, 0, UI_NUM_WIDTH, UI_NUM_HEIGHT, sx2, sy2 ), GRAPH_NUMBER );
+		int sx = x  + UI_NUM_SIZE / 2 - (int)( UI_NUM_SIZE * _delivery_number[ i ].size ) / 2;
+		int sy = y + UI_NUM_SIZE / 2  - (int)( UI_NUM_SIZE * _delivery_number[ i ].size ) / 2 + _delivery_number[ i ].y;
+		int sx2 = sx + (int)( UI_NUM_SIZE * _delivery_number[ i ].size );
+		int sy2 = sy + (int)( UI_NUM_SIZE * _delivery_number[ i ].size );
+		Drawer::Sprite sprite( Drawer::Transform( sx, sy, number * UI_NUM_SIZE, 0, UI_NUM_SIZE, UI_NUM_SIZE, sx2, sy2 ), GRAPH_NUMBER );
 		drawer->setSprite( sprite );
 	}
 	x -= 64;
@@ -357,3 +324,4 @@ Vector SceneStage::getAdjustPos( Vector pos, Vector base_pos ) const {
 	}
 	return pos;
 }
+
