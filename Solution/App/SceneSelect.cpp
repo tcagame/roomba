@@ -133,7 +133,6 @@ void SceneSelect::drawSelect( ) {
 
 	GRAPH graph = (GRAPH)( GRAPH_NUM_1 + ( select - 1 ) );
 	
-	// stage
 	//^‚ñ’†
 	if ( graph == (GRAPH)( GRAPH_NUM_3 + 1 ) ) {
 		graph = GRAPH_NUM_1;
@@ -143,13 +142,9 @@ void SceneSelect::drawSelect( ) {
 	}
 	Drawer::Sprite sprite_1( Drawer::Transform( (int)_pos[ 0 ].x, (int)_pos[ 0 ].y, 0, 0, NUM_SIZE, NUM_SIZE  ), graph );
 	drawer->setSprite( sprite_1 );
-	//¶
-	if ( _rot_right ) {
-		graph = (GRAPH)( graph + 1 );
-	} else {
-		graph = (GRAPH)( graph - 1 );
-	}
 
+	//¶
+	graph = (GRAPH)( graph + 1 );
 	if ( graph == (GRAPH)( GRAPH_NUM_3 + 1 ) ) {
 		graph = GRAPH_NUM_1;
 	}
@@ -158,13 +153,9 @@ void SceneSelect::drawSelect( ) {
 	}
 	Drawer::Sprite sprite_2( Drawer::Transform( (int)_pos[ 1 ].x, (int)_pos[ 1 ].y, 0, 0, NUM_SIZE, NUM_SIZE, (int)_pos[ 1 ].x + NUM_SIZE * 3 / 5, (int)_pos[ 1 ].y + NUM_SIZE * 3 / 5 ), graph );
 	drawer->setSprite( sprite_2 );
-	//‰E
-	if ( _rot_right ) {
-		graph = (GRAPH)( graph + 1 );
-	} else {
-		graph = (GRAPH)( graph - 1 );
-	}
 
+	//‰E
+	graph = (GRAPH)( graph + 1 );
 	if ( graph == (GRAPH)( GRAPH_NUM_3 + 1 ) ) {
 		graph = GRAPH_NUM_1;
 	}
