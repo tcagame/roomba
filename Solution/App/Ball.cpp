@@ -42,7 +42,7 @@ void Ball::update( const Vector& vec, StagePtr stage ) {
 
 void Ball::draw( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::ModelMV1 model( getMat( _pos ), 0, 0, 0 );
+	Drawer::ModelMV1 model( getMat( _pos ), MV1_BALL, 0, 0 );
 	drawer->setModelMV1( model );
 }
 

@@ -53,17 +53,18 @@ SceneStage::SceneStage( int stage_num ) {
 	drawer->loadGraph( GRAPH_READY, "UI/ready.png" );	
 	drawer->loadGraph( GRAPH_GUIDELINE, "Model/Guideline/guideline.jpg" );
 	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
-	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", delivery_scale );
 
 	Matrix crystal_scale = Matrix::makeTransformScaling( CRYSTAL_SIZE );
 	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/crystal.jpg", crystal_scale );
 		
 	Matrix roomba_scale = Matrix::makeTransformScaling( ROOMBA_SIZE );
 	//drawer->loadMDLModel( MDL_BALL, "Model/Roomba/roomba.mdl", "Model/Roomba/texture.jpg", roomba_scale );
-	drawer->loadMV1Model( 0, "Model/Roomba/roomba.mv1" );
 	
 	Matrix earth_scale = Matrix::makeTransformScaling( EARTH_SIZE );
 	drawer->loadMDLModel( MDL_EARTH, "Model/Stage/earth.mdl", "Model/Stage/earth.jpg", earth_scale );
+	
+	drawer->loadMV1Model( MV1_BALL, "Model/Roomba/roomba.mv1" );
+	drawer->loadMV1Model( MV1_DELIVERY, "Model/Delivery/delivery.mv1" );
 
 	drawer->loadMV1Model( MV1_WALL_0_1 , "Model/Stage/0_1.mv1"  );
 	drawer->loadMV1Model( MV1_WALL_0_2 , "Model/Stage/0_2.mv1"  );

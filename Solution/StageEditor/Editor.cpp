@@ -27,7 +27,6 @@ void Editor::initialize( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 
 	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
-	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", delivery_scale );
 
 	Matrix crystal_scale = Matrix::makeTransformScaling( CRYSTAL_SIZE );
 	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/crystal.jpg", crystal_scale );
@@ -37,6 +36,8 @@ void Editor::initialize( ) {
 	
 	Matrix cursor_scale = Matrix::makeTransformScaling( cursor_size );
 	drawer->loadMDLModel( MDL_CURSOR, "Model/Editor/cursor.mdl", "Model/Editor/red.jpg", cursor_scale );
+	
+	drawer->loadMV1Model( MV1_DELIVERY, "Model/Delivery/delivery.mv1" );
 
 	drawer->loadMV1Model( MV1_WALL_0_1 , "Model/Stage/0_1.mv1"  );
 	drawer->loadMV1Model( MV1_WALL_0_2 , "Model/Stage/0_2.mv1"  );

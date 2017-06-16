@@ -56,7 +56,7 @@ _start_count( 0 ) {
 		_vec_rot[ i ] = Vector( );
 		_vec_scale[ i ] = Vector( );
 		_vec_reflection[ i ] = Vector( );
-		_delivery[ i ].type = MDL_DELIVERY;
+		_delivery[ i ].type = MV1_DELIVERY;
 	}
 	_laser = LaserPtr( new Laser );
 }
@@ -80,7 +80,10 @@ void Roomba::draw( ) const {
 		_balls[ i ]->draw( );
 		if ( _state == MOVE_STATE_LIFT_UP ||
 			 _state == MOVE_STATE_LIFT_DOWN ) {
-			drawer->setModelMDL( _delivery[ i ] );
+			Matrix trans = Matrix::makeTransformTranslation( _delivery[ i ].pos );
+			Matrix rot = Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 );
+			Matrix scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
+			drawer->setModelMV1( Drawer::ModelMV1( scale.multiply( rot ).multiply( trans ), _delivery[ i ].type, 0 ) );
 		}
 	}
 }
