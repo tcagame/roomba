@@ -22,10 +22,11 @@ _select( 1 ),
 _count( 0 ),
 _ispush( false ) {
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->loadGraph( GRAPH_STAGE_SELECT, "select/Stage Select.png");
-	drawer->loadGraph( GRAPH_NUM_1, "select/1.png");
-	drawer->loadGraph( GRAPH_NUM_2, "select/2.png");
-	drawer->loadGraph( GRAPH_NUM_3, "select/3.png");
+	drawer->loadGraph( GRAPH_CIRCLE, "select/circle.png" );
+	drawer->loadGraph( GRAPH_STAGE_SELECT, "select/Stage Select.png" );
+	drawer->loadGraph( GRAPH_NUM_1, "select/1.png" );
+	drawer->loadGraph( GRAPH_NUM_2, "select/2.png" );
+	drawer->loadGraph( GRAPH_NUM_3, "select/3.png" );
 	freazeSelect( );
 }
 
@@ -101,6 +102,10 @@ void SceneSelect::drawSelect( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	int select = _select;
 
+	if ( select == 0 ) {
+		select = 3;
+	}
+
 
 	GRAPH graph = (GRAPH)( GRAPH_NUM_1 + ( select - 1 ) );
 	
@@ -159,8 +164,8 @@ void SceneSelect::moveSelect( ) {
 	Vector vec3;
 	if ( _rot_right ) {
 		vec1 = ( target3 - target1 ) * 0.1;
-		vec2 = ( target3 - target2 ) * 0.1;
-		vec3 = ( target2 - target1 ) * 0.1;
+		vec2 = ( target1 - target2 ) * 0.1;
+		vec3= ( target2 - target3 ) * 0.1;
 	} else {
 		vec1 = ( target2 - target1 ) * 0.1;
 		vec2 = ( target3 - target2 ) * 0.1;
