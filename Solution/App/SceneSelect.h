@@ -16,9 +16,11 @@ private:
 	void freazeSelect( );
 	void drawFrame( );
 	void drawTriangle( );
+	void drawCircle( ) const;
 private:
 	std::array< Vector, 3 > _pos;
-	int _count;
+	int _move_count;
+	int _change_scene_count;
 	int _select;
 	bool _ispush;
 	bool _rot_right;

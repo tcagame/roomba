@@ -13,13 +13,16 @@ static const int NUM_SIZE = 64;
 static const int NUM_CENTER = 64 / 2;
 static const int PITCH = 150; 
 static const int MOVE_SPEED = 1;
-static const int MAX_COUNT = 10;
+static const int MAX_MOVE_COUNT = 10;
+static const int ANIME_FLAME = 4;
+static const int MAX_CHANGE_SCENE_COUNT = 25 * ANIME_FLAME;
 static const int THICK_FRAME_SIZE = 57;
 static const int TRIANGLE_CENTER_X = 312 / 2;
 
 SceneSelect::SceneSelect( ) :
 _select( 1 ),
-_count( 0 ),
+_move_count( 0 ),
+_change_scene_count( 0 ),
 _ispush( false ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_CIRCLE, "select/circle.png" );
@@ -41,16 +44,22 @@ Scene::NEXT SceneSelect::update( ) {
 	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) );
 
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
+		_change_scene_count++;
 		sound->playSE( "se_maoudamashii_system45.wav" );
-		GamePtr game = Game::getTask( );
-		game->setStage( _select );
-		return NEXT_STAGE;
+		if ( _change_scene_count > MAX_CHANGE_SCENE_COUNT ) {
+			GamePtr game = Game::getTask( );
+			game->setStage( _select );
+			return NEXT_STAGE;
+		}
+	} else {
+		_change_scene_count = 0;
 	}
-	if ( _count == 0 ) {
+
+	if ( _move_count == 0 ) {
 		freazeSelect( );
 		if ( left_stick.x > 0 && !_ispush ) {
 			sound->playSE( "se_maoudamashii_system43.wav" );
-			_count++;
+			_move_count++;
 			_select++;
 			_rot_right = true;
 			_ispush = true;
@@ -58,7 +67,7 @@ Scene::NEXT SceneSelect::update( ) {
 		if ( left_stick.x < 0 && !_ispush ) {
 			sound->playSE( "se_maoudamashii_system43.wav" );
 			_rot_right = false;
-			_count++;
+			_move_count++;
 			_select++;
 			_ispush = true;
 		}
@@ -67,10 +76,10 @@ Scene::NEXT SceneSelect::update( ) {
 		_ispush = false;
 	}
 
-	if ( _count != 0 ) {
+	if ( _move_count != 0 ) {
 		moveSelect( );
-		_count++;
-		_count %= MAX_COUNT;
+		_move_count++;
+		_move_count %= MAX_MOVE_COUNT;
 	}
 
 
@@ -85,7 +94,7 @@ void SceneSelect::draw( ) {
 	drawTriangle( );
 	drawSelect( );
 	drawFrame( );
-	
+	drawCircle( );
 }
 
 void SceneSelect::drawRogo( ) {
@@ -117,7 +126,7 @@ void SceneSelect::drawSelect( ) {
 	if ( graph == (GRAPH)( GRAPH_NUM_1 - 1 ) ) {
 		graph = GRAPH_NUM_3;
 	}
-	Drawer::Sprite sprite_1( Drawer::Transform( _pos[ 0 ].x, _pos[ 0 ].y, 0, 0, NUM_SIZE, NUM_SIZE  ), graph );
+	Drawer::Sprite sprite_1( Drawer::Transform( (int)_pos[ 0 ].x, (int)_pos[ 0 ].y, 0, 0, NUM_SIZE, NUM_SIZE  ), graph );
 	drawer->setSprite( sprite_1 );
 	//¶
 	if ( _rot_right ) {
@@ -132,7 +141,7 @@ void SceneSelect::drawSelect( ) {
 	if ( graph == (GRAPH)( GRAPH_NUM_1 - 1 ) ) {
 		graph = GRAPH_NUM_3;
 	}
-	Drawer::Sprite sprite_2( Drawer::Transform( _pos[ 1 ].x, _pos[ 1 ].y, 0, 0, NUM_SIZE, NUM_SIZE, _pos[ 1 ].x + NUM_SIZE * 3 / 5, _pos[ 1 ].y + NUM_SIZE * 3 / 5 ), graph );
+	Drawer::Sprite sprite_2( Drawer::Transform( (int)_pos[ 1 ].x, (int)_pos[ 1 ].y, 0, 0, NUM_SIZE, NUM_SIZE, (int)_pos[ 1 ].x + NUM_SIZE * 3 / 5, (int)_pos[ 1 ].y + NUM_SIZE * 3 / 5 ), graph );
 	drawer->setSprite( sprite_2 );
 	//‰E
 	if ( _rot_right ) {
@@ -147,7 +156,7 @@ void SceneSelect::drawSelect( ) {
 	if ( graph == (GRAPH)( GRAPH_NUM_1 - 1 ) ) {
 		graph = GRAPH_NUM_3;
 	}
-	Drawer::Sprite sprite_3( Drawer::Transform( _pos[ 2 ].x, _pos[ 2 ].y, 0, 0, NUM_SIZE, NUM_SIZE, _pos[ 2 ].x + NUM_SIZE * 3 / 5, _pos[ 2 ].y + NUM_SIZE * 3 / 5 ), graph );
+	Drawer::Sprite sprite_3( Drawer::Transform( (int)_pos[ 2 ].x, (int)_pos[ 2 ].y, 0, 0, NUM_SIZE, NUM_SIZE, (int)_pos[ 2 ].x + NUM_SIZE * 3 / 5, (int)_pos[ 2 ].y + NUM_SIZE * 3 / 5 ), graph );
 	drawer->setSprite( sprite_3 );
 	
 }
@@ -229,5 +238,25 @@ void SceneSelect::drawTriangle( ) {
 	const int HEIGHT = app->getWindowHeight( );
 	DrawerPtr drawer = Drawer::getTask( );
 	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - TRIANGLE_CENTER_X, HEIGHT / 2 + HEIGHT / 5, 100, 225, 305, 70 ), GRAPH_STAGE_SELECT );
+	drawer->setSprite( sprite );
+}
+
+void SceneSelect::drawCircle( ) const {
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+	
+	const int CIRCLE_SIZE = 100;
+	const int idx = _change_scene_count / ANIME_FLAME;
+	int tx = ( idx % 4 ) * CIRCLE_SIZE;
+	int ty = ( idx / 4 ) * CIRCLE_SIZE;
+	if ( ty > 6 * CIRCLE_SIZE ) {
+		ty = 6;
+		if ( tx > 1 * CIRCLE_SIZE ) {
+			tx = 1;
+		}
+	}
+	DrawerPtr drawer = Drawer::getTask( );
+	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT / 2 - CIRCLE_SIZE / 2, tx, ty, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
 }

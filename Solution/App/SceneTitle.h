@@ -8,8 +8,9 @@ public:
 private:
 	NEXT update( );
 	void draw( );
+	void drawCircle( ) const;
 private:
 	int _count;
-	bool _ispush;
+	int _change_scene_count;
 };
 
