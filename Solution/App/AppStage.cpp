@@ -433,7 +433,7 @@ void AppStage::drawWall( ) const {
 	std::vector< Stage::MV1_INFO > walls = getWalls( );
 	std::vector< Stage::MV1_INFO >::const_iterator ite = walls.begin( );
 	while ( ite != walls.end( ) ) {
-		_viewer->drawModelMV1( *ite );
+		_viewer->drawModelMV1( *ite, Matrix::makeTransformScaling( WALL_SIZE ) );
 		ite++;
 	}
 }

@@ -30,11 +30,18 @@ Delivery::~Delivery( ) {
 void Delivery::draw( ViewerPtr viewer ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->drawLine( _pos, _pos - Vector( 0, 0, 4 ) );
+	Matrix scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
+	Matrix rot = Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 );
+	
 	if ( _have_crystal ) {
-		drawer->setModelMDL( Drawer::ModelMDL( _pos, MDL_DELIVERY ) );
+		Matrix trans = Matrix::makeTransformTranslation( _pos );
+		drawer->setModelMV1( Drawer::ModelMV1( scale.multiply( rot ).multiply( trans ), MV1_DELIVERY, 0 ) );
 		drawer->setModelMDL( _crystal );
 	} else {
-		viewer->drawModelMDL( Drawer::ModelMDL( _pos, MDL_DELIVERY ) );
+		Stage::MV1_INFO mv1 = Stage::MV1_INFO( );
+		mv1.pos = _pos;
+		mv1.type = MV1_DELIVERY;
+		viewer->drawModelMV1( mv1, scale.multiply( rot ) );
 	}
 	
 	if ( _state == STATE_WAIT && !_effect_count ) {

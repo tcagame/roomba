@@ -297,7 +297,8 @@ void EditorStage::drawWall( ) const {
 	std::vector< Stage::MV1_INFO >::const_iterator ite = walls.begin( );
 	while ( ite != walls.end( ) ) {
 		Stage::MV1_INFO mv1 = (*ite);
-		Drawer::ModelMV1 model( Matrix::makeTransformTranslation( mv1.pos ), mv1.type, 0 );
+		Matrix mat = Matrix::makeTransformScaling( WALL_SIZE );
+		Drawer::ModelMV1 model( mat.multiply( Matrix::makeTransformTranslation( mv1.pos ) ), mv1.type, 0 );
 		drawer->setModelMV1( model );
 		ite++;
 	}
@@ -309,7 +310,10 @@ void EditorStage::drawDelivery( ) const {
 		if ( getData( i ).delivery != 0 ) {
 			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			drawer->setModelMDL( Drawer::ModelMDL( Vector( x, y, DELIVERY_POS_Z ), MDL_DELIVERY ) );
+			Matrix trans = Matrix::makeTransformTranslation( Vector( x, y, 0 ) );
+			Matrix rot = Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 );
+			Matrix scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
+			drawer->setModelMV1( Drawer::ModelMV1( scale.multiply( rot ).multiply( trans ), MV1_DELIVERY, 0, 0 ) );
 		}
 	}
 }

@@ -25,10 +25,10 @@ void Viewer::drawModelMDL( Drawer::ModelMDL mdl ) const {
 	drawer->setModelMDL( mdl );
 }
 
-void Viewer::drawModelMV1( Stage::MV1_INFO mv1 ) const {
+void Viewer::drawModelMV1( Stage::MV1_INFO mv1, Matrix scale_rot ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	mv1.pos = getViewPos( mv1.pos );
-	Drawer::ModelMV1 model( Matrix::makeTransformTranslation( mv1.pos ), mv1.type, 0 );
+	Drawer::ModelMV1 model( scale_rot.multiply( Matrix::makeTransformTranslation( mv1.pos ) ), mv1.type, 0 );
 	drawer->setModelMV1( model );
 }
 

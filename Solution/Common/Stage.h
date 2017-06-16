@@ -17,6 +17,12 @@ public:
 	struct MV1_INFO {
 		Vector pos;
 		MV1 type;
+		int time;
+		MV1_INFO( ) {
+			pos = Vector( );
+			type = MV1_NONE;
+			time = 0;
+		}
 	};
 public:
 	Stage( );

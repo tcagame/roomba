@@ -82,25 +82,6 @@ void Stage::loadWall( ) {
 	_walls.clear( );
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
 	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
-	const double ROTE[ 4 ] = { PI / 2 * 0, PI / 2 * 1, PI / 2 * 3, PI / 2 * 2 };
-	const Vector ADJUST[ 16 ] {
-		Vector( 0, 0 ),
-		Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
-		Vector( WORLD_SCALE / 2, -WORLD_SCALE / 8 ),
-		Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
-		Vector( -WORLD_SCALE / 2, WORLD_SCALE / 8 ),
-		Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 ),
-		Vector( 0, 0 ),
-		Vector( 0, 0 ),
-		Vector( WORLD_SCALE / 8, WORLD_SCALE / 2 ),
-		Vector( 0, 0 ),
-		Vector( WORLD_SCALE / 2, -WORLD_SCALE / 8 ),
-		Vector( 0, 0 ),
-		Vector( -WORLD_SCALE / 2, WORLD_SCALE / 8 ),
-		Vector( 0, 0 ),
-		Vector( 0, 0 ),
-		Vector( -WORLD_SCALE / 8, -WORLD_SCALE / 2 )
-	};
 
 	for ( int i = 0; i < 16; i++ ) {
 		int tmp = 1;
@@ -148,19 +129,6 @@ void Stage::loadWall( ) {
 				}
 			}
 		}
-		Vector adjust_pos;
-		if ( type == 1 ) {
-			if ( flag == 1 ||
-				 flag == 3 ||
-				 flag == 5 ||
-				 flag == 15 ) {
-				adjust_pos = Vector( -WORLD_SCALE / 2, 0 );
-			}
-		}
-		if ( type == 0 ) {
-			adjust_pos += ADJUST[ flag ];
-		}
-		//adjust_pos -= Vector( WORLD_SCALE, WORLD_SCALE );
 		if ( type == 0 && flag == 0 ) {
 				continue;
 		}
