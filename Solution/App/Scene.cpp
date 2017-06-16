@@ -17,17 +17,14 @@ Scene::~Scene( ) {
 }
 
 void Scene::drawFadeIn( ) const {
-	if ( _fade_in_count == 0 ) {
-		int a  = 0;
-	}
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );	
 	const int idx = _fade_in_count / ANIME_FLAME;
 	int tx = idx % 6;
 	int ty = idx / 6;
-	if ( ty > 6 ) {
-		ty = 6;
+	if ( idx >= 32 ) {
+		ty = 5;
 		if ( tx > 2 ) {
 			tx = 2;
 		}
@@ -44,8 +41,8 @@ void Scene::drawFadeOut( ) const {
 	const int idx = _fade_out_count / ANIME_FLAME;
 	int tx = idx % 6;
 	int ty = idx / 6;
-	if ( ty > 6 ) {
-		ty = 6;
+	if ( idx >= 32 ) {
+		ty = 5;
 		if ( tx > 2 ) {
 			tx = 2;
 		}

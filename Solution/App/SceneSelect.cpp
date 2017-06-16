@@ -22,7 +22,7 @@ static const int TRIANGLE_CENTER_X = 312 / 2;
 SceneSelect::SceneSelect( ) :
 _select( 1 ),
 _move_count( 0 ),
-_change_scene_count( 0 ),
+_choice_count( 0 ),
 _ispush( false ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
@@ -48,7 +48,7 @@ Scene::NEXT SceneSelect::update( ) {
 		addFadeInCount( );
 	}
 	// フェードアウト
-	if ( _change_scene_count > MAX_CHOICE_COUNT ||
+	if ( _choice_count > MAX_CHOICE_COUNT ||
 		getFadeOutCount( ) < MAX_FADE_COUNT ) {
 		subFadeOutCount( );
 		if ( getFadeOutCount( ) < 0 ) {
@@ -58,10 +58,10 @@ Scene::NEXT SceneSelect::update( ) {
 		}
 	}
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
-		_change_scene_count++;
+		_choice_count++;
 		sound->playSE( "se_maoudamashii_system45.wav" );
 	} else {
-		_change_scene_count = 0;
+		_choice_count = 0;
 	}
 
 	if ( _move_count == 0 ) {
@@ -253,7 +253,7 @@ void SceneSelect::drawCircle( ) const {
 	const int HEIGHT = app->getWindowHeight( );
 	
 	const int CIRCLE_SIZE = 100;
-	const int idx = _change_scene_count / CIRCLE_ANIME_FLAME;
+	const int idx = _choice_count / CIRCLE_ANIME_FLAME;
 	int tx = idx % 4;
 	int ty = idx / 4;
 	if ( ty > 6 ) {

@@ -11,6 +11,6 @@ private:
 	void drawCircle( ) const;
 private:
 	int _count;
-	int _change_scene_count;
+	int _choice_count;
 };
 

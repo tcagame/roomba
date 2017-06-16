@@ -13,7 +13,8 @@ static const int CIRCLE_ANIME_FLAME = 4;
 static const int MAX_CHOICE_COUNT = 24 * CIRCLE_ANIME_FLAME;
 
 SceneTitle::SceneTitle( ) :
-_count( 0 ) {
+_count( 0 ),
+_choice_count( 0 ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_TITLE, "title/roomb_title.png" );
 	drawer->loadGraph( GRAPH_PLEASE_PUSH_BUTTON, "title/pleasepushbutton.png" );
@@ -39,7 +40,7 @@ Scene::NEXT SceneTitle::update( ) {
 		return NEXT_CONTINUE;
 	}
 	// フェードアウト
-	if ( _change_scene_count > MAX_CHOICE_COUNT ||
+	if ( _choice_count > MAX_CHOICE_COUNT ||
 		 getFadeOutCount( ) < MAX_FADE_COUNT ) {
 		subFadeOutCount( );
 		if ( getFadeOutCount( ) < 0 ) {
@@ -47,11 +48,11 @@ Scene::NEXT SceneTitle::update( ) {
 		}
 	}
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
-		_change_scene_count++;
+		_choice_count++;
 		SoundPtr sound = Sound::getTask( );
 		sound->playSE( "se_maoudamashii_system45.wav" );
 	} else {
-		_change_scene_count = 0;
+		_choice_count = 0;
 	}
 	return NEXT_CONTINUE;
 }
@@ -83,7 +84,7 @@ void SceneTitle::drawCircle( ) const {
 	const int HEIGHT = app->getWindowHeight( );
 	
 	const int CIRCLE_SIZE = 100;
-	const int idx = _change_scene_count / CIRCLE_ANIME_FLAME;
+	const int idx = _choice_count / CIRCLE_ANIME_FLAME;
 	int tx = idx % 4;
 	int ty = idx / 4;
 	if ( ty > 6 ) {
@@ -92,6 +93,11 @@ void SceneTitle::drawCircle( ) const {
 			tx = 1;
 		}
 	}
+	// 保留
+	//if ( getFadeOutCount( ) < MAX_FADE_COUNT ) {
+	//	tx = 0;
+	//	ty = 6;
+	//}
 	DrawerPtr drawer = Drawer::getTask( );
 	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT / 2 - CIRCLE_SIZE / 2, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
