@@ -129,7 +129,7 @@ Scene::NEXT SceneStage::update( ) {
 		 !app_stage->isFinished( ) ) {
 		_timer->update( );
 	}
-	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_LIFT_DOWN ) {
+	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_WAIT ) {
 		_timer->reset( );
 		app_stage->eraseOldDelivery( );
 	}
@@ -288,9 +288,11 @@ void SceneStage::drawUIMap( ) const {
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 32, 16, 16, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
 		crystal_ite++;
 	}
+	// ƒKƒCƒhƒ‰ƒCƒ“
 	if ( _roomba->getMoveState( ) != Roomba::MOVE_STATE_LIFT_UP &&
 		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_LIFT_DOWN &&
 		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_WAIT &&
+		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_STARTING &&
 		 guideline_distance.getLength( ) > GUIDELINE_VIEW_RANGE ) {
 		ModelPtr guideline = ModelPtr( new Model );
 		guideline->mergeModel( _guideline );
