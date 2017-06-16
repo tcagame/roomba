@@ -127,7 +127,7 @@ void SceneSelect::drawSelect( ) {
 	if ( graph == (GRAPH)( GRAPH_NUM_1 - 1 ) ) {
 		graph = GRAPH_NUM_3;
 	}
-	Drawer::Sprite sprite_2( Drawer::Transform( _pos[ 1 ].x, _pos[ 1 ].y, 0, 0, NUM_SIZE, NUM_SIZE  ), graph );
+	Drawer::Sprite sprite_2( Drawer::Transform( _pos[ 1 ].x, _pos[ 1 ].y, 0, 0, NUM_SIZE, NUM_SIZE, _pos[ 1 ].x + NUM_SIZE * 3 / 5, _pos[ 1 ].y + NUM_SIZE * 3 / 5 ), graph );
 	drawer->setSprite( sprite_2 );
 	//‰E
 	if ( _rot_right ) {
@@ -142,7 +142,7 @@ void SceneSelect::drawSelect( ) {
 	if ( graph == (GRAPH)( GRAPH_NUM_1 - 1 ) ) {
 		graph = GRAPH_NUM_3;
 	}
-	Drawer::Sprite sprite_3( Drawer::Transform( _pos[ 2 ].x, _pos[ 2 ].y, 0, 0, NUM_SIZE, NUM_SIZE  ), graph );
+	Drawer::Sprite sprite_3( Drawer::Transform( _pos[ 2 ].x, _pos[ 2 ].y, 0, 0, NUM_SIZE, NUM_SIZE, _pos[ 2 ].x + NUM_SIZE * 3 / 5, _pos[ 2 ].y + NUM_SIZE * 3 / 5 ), graph );
 	drawer->setSprite( sprite_3 );
 	
 }
@@ -152,8 +152,8 @@ void SceneSelect::moveSelect( ) {
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
 	const Vector target1( WIDTH / 2 - NUM_CENTER,  HEIGHT / 2 + HEIGHT / 5 );
-	const Vector target2( target1.x - ( WIDTH / 2 - NUM_SIZE * 5 ), target1.y - SELECT_CENTER_Y / 4 );
-	const Vector target3( target1.x + ( WIDTH / 2 - NUM_SIZE * 5 ), target1.y + SELECT_CENTER_Y / 4 );
+	const Vector target2( target1.x - ( WIDTH / 2 - NUM_SIZE * 5 ), target1.y - SELECT_CENTER_Y / 4 - HEIGHT / 10 );
+	const Vector target3( target1.x + ( WIDTH / 2 - NUM_SIZE * 5 ), target1.y - SELECT_CENTER_Y / 4 - HEIGHT / 10 );
 	Vector vec1;
 	Vector vec2;
 	Vector vec3;
@@ -177,8 +177,8 @@ void SceneSelect::freazeSelect( ) {
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
 	_pos[ 0 ] = Vector( WIDTH / 2 - NUM_CENTER, HEIGHT / 2 + HEIGHT / 5 );
-	_pos[ 1 ] = Vector( _pos[ 0 ].x - ( WIDTH / 2 - NUM_SIZE * 5 ), _pos[ 0 ].y - SELECT_CENTER_Y / 4 );
-	_pos[ 2 ] = Vector( _pos[ 0 ].x + ( WIDTH / 2 - NUM_SIZE * 5 ), _pos[ 0 ].y + SELECT_CENTER_Y / 4 );
+	_pos[ 1 ] = Vector( _pos[ 0 ].x - ( WIDTH / 2 - NUM_SIZE * 5 ), _pos[ 0 ].y - SELECT_CENTER_Y / 4 - HEIGHT / 10 );
+	_pos[ 2 ] = Vector( _pos[ 0 ].x + ( WIDTH / 2 - NUM_SIZE * 5 ), _pos[ 0 ].y - SELECT_CENTER_Y / 4 - HEIGHT / 10 );
 }
 
 void SceneSelect::drawFrame( ) {
