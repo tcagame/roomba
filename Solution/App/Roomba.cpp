@@ -30,7 +30,7 @@ const double BOUND_POW = 0.7;
 const double EFFECT_REBOOT_SIZE = 0.7;
 const double EFFECT_CHANGE_STATE_SIZE = 0.7;
 const int WAIT_TIME = 0;
-const int START_TIME = 360;
+const int START_TIME = 500;
 
 const Vector START_POS[ 2 ] {
 	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, ROOMBA_SIZE.z ) ),
@@ -661,10 +661,18 @@ void Roomba::moveStarting( ) {
 		return;
 	}
 	if ( _start_count < START_TIME / 2 ) {
+		const int TW = 500;
+		const int TH = 400;
 		ApplicationPtr app = Application::getInstance( );
-		int sx = app->getWindowWidth( ) / 2 - 512 / 2;
-		int sy = app->getWindowHeight( ) / 2 - 256 / 2;
-		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 512, 256 ), GRAPH_READY ) );		
+		int sx = app->getWindowWidth( ) / 2 - TW / 2;
+		int sy = app->getWindowHeight( ) / 2 - TH / 2;
+		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, TW, TH ), GRAPH_COMMAND_PROMPT_BACK ) );
+		for ( int i = 0; i < 10 * 8; i ++ ) {
+			Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 50 * ( i % 11 ), 50 * ( i / 9 ) ), GRAPH_COMMAND_PROMPT_STRING ) );
+			if ( i > _start_count / 3 ) {
+				break;
+			}
+		}
 	} else {
 		Vector vec[ 2 ];
 		bool boot = false;

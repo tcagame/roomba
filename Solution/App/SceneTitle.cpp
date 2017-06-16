@@ -28,10 +28,8 @@ Scene::NEXT SceneTitle::update( ) {
 	_count++;
 	draw( );
 	DevicePtr device = Device::getTask( );
-	Vector right_stick = Vector( device->getRightDirX( ), device->getRightDirY( ) );
-	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) );
 	if ( !_ispush ) {
-		if ( right_stick.y > 0 && left_stick.y < 0 ) {
+		if ( device->getButton( ) ) {
 			SoundPtr sound = Sound::getTask( );
 			sound->playSE( "se_maoudamashii_system45.wav" );
 			return NEXT_STAGE_SELECT;

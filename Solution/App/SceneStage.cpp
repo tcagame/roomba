@@ -44,6 +44,8 @@ SceneStage::SceneStage( int stage_num ) {
 	_guideline->multiply( Matrix::makeTransformScaling( Vector( 0.3, 0.3, 0.3 ) ) );
 	_guideline->multiply( Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 ) );
 	DrawerPtr drawer = Drawer::getTask( );
+	drawer->loadGraph( GRAPH_COMMAND_PROMPT_STRING, "UI/op.png" );
+	drawer->loadGraph( GRAPH_COMMAND_PROMPT_BACK, "UI/op_background.png" );
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
 	drawer->loadGraph( GRAPH_PHASE, "UI/phase.png" );
