@@ -254,11 +254,11 @@ void SceneSelect::drawCircle( ) const {
 	
 	const int CIRCLE_SIZE = 100;
 	const int idx = _change_scene_count / CIRCLE_ANIME_FLAME;
-	int tx = ( idx % 4 );
-	int ty = ( idx / 4 );
-	if ( ty > 6 * CIRCLE_SIZE ) {
+	int tx = idx % 4;
+	int ty = idx / 4;
+	if ( ty > 6 ) {
 		ty = 6;
-		if ( tx > 1 * CIRCLE_SIZE ) {
+		if ( tx > 1 ) {
 			tx = 1;
 		}
 	}
