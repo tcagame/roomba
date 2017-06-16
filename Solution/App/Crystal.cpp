@@ -31,7 +31,7 @@ Crystal::~Crystal( ) {
 }
 
 void Crystal::draw( ViewerPtr viewer ) const {
-	viewer->drawModelMDL( Drawer::ModelMDL( _pos + Vector( -CRYSTAL_SIZE.x, -CRYSTAL_SIZE.y ), _type ) );
+	viewer->drawModelMDL( Drawer::ModelMDL( _pos, _type ) );
 	if ( !_effect_count  ) {
 		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CRYSTAL_AURA, _pos + Vector( 0, 0, 1 ), EFFECT_AURA_SIZE, EFFECT_ROTATE ) );
 	}

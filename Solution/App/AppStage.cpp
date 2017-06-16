@@ -10,7 +10,7 @@
 #include "Roomba.h"
 
 const double DELIVERY_POS_Z = EARTH_POS_Z + WORLD_SCALE;
-const double CRYSTAL_POS_Z = CRYSTAL_SIZE.z * -2;
+const double CRYSTAL_POS_Z = 0;
 
 AppStage::AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer, RoombaPtr roomba ) :
 _delivery_count( 0 ),

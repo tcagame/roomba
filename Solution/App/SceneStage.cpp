@@ -54,7 +54,7 @@ SceneStage::SceneStage( int stage_num ) {
 	drawer->loadMDLModel( MDL_DELIVERY, "Model/Delivery/delivery.mdl", "Model/Delivery/blue.jpg", delivery_scale );
 
 	Matrix crystal_scale = Matrix::makeTransformScaling( CRYSTAL_SIZE );
-	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/purple.jpg", crystal_scale );
+	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/crystal.jpg", crystal_scale );
 		
 	Matrix roomba_scale = Matrix::makeTransformScaling( ROOMBA_SIZE );
 	//drawer->loadMDLModel( MDL_BALL, "Model/Roomba/roomba.mdl", "Model/Roomba/texture.jpg", roomba_scale );
