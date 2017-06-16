@@ -14,7 +14,7 @@ _reflection( false ) {
 Ball::~Ball( ) {
 }
 
-void Ball::update( const Vector& vec, StagePtr stage ) {
+void Ball::update( const Vector& vec, StagePtr stage, bool rot ) {
 	_vec = vec;
 
 	AppStagePtr stage_ptr = std::dynamic_pointer_cast< AppStage >( stage );
@@ -30,7 +30,7 @@ void Ball::update( const Vector& vec, StagePtr stage ) {
 	}
 	_vec = adjust_vec;
 	_pos += _vec;
-	if ( !_reflection ) {
+	if ( rot ) {
 		Matrix adjust_rot = Matrix::makeTransformRotation( Vector( 0, 0, -1 ), PI / 2 );
 		Vector axis = adjust_rot.multiply( _vec.normalize( ) );
 		axis = _rot.multiply( axis );

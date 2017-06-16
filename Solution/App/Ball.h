@@ -10,7 +10,7 @@ public:
 	Ball( const Vector& pos );
 	virtual ~Ball( );
 public:
-	void update( const Vector& vec, StagePtr stage );
+	void update( const Vector& vec, StagePtr stage, bool rot );
 	void draw( ) const;
 	void reset( const Vector& pos );
 	void setPos( Vector& pos );
