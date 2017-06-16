@@ -15,5 +15,18 @@ public:
 	Scene( );
 	virtual ~Scene( );
 	virtual NEXT update( ) = 0;
+	virtual void drawFadeIn( ) const;
+	virtual void drawFadeOut( ) const;
+	void addFadeInCount( );
+	void subFadeOutCount( );
+	int getFadeInCount( ) const;
+	int getFadeOutCount( ) const;
+	void resetCount( );
+public:
+	const int ANIME_FLAME = 2;
+	const int MAX_FADE_COUNT = 34 * ANIME_FLAME;
+private:
+	int _fade_in_count;
+	int _fade_out_count;
 };
 
