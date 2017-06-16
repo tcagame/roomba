@@ -25,6 +25,13 @@ void Viewer::drawModelMDL( Drawer::ModelMDL mdl ) const {
 	drawer->setModelMDL( mdl );
 }
 
+void Viewer::drawModelMV1( Stage::MV1_INFO mv1 ) const {
+	DrawerPtr drawer = Drawer::getTask( );
+	mv1.pos = getViewPos( mv1.pos );
+	Drawer::ModelMV1 model( Matrix::makeTransformTranslation( mv1.pos ), mv1.type, 0 );
+	drawer->setModelMV1( model );
+}
+
 void Viewer::drawModelMDLTransfer( Drawer::ModelMDL mdl ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	int map_x = (int)( _base_pos.x / STAGE_WIDTH_NUM / WORLD_SCALE );

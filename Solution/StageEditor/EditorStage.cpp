@@ -293,10 +293,12 @@ void EditorStage::drawEarth( ) const {
 
 void EditorStage::drawWall( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	std::vector< Drawer::ModelMDL > walls = getWalls( );
-	std::vector< Drawer::ModelMDL >::const_iterator ite = walls.begin( );
+	std::vector< Stage::MV1_INFO > walls = getWalls( );
+	std::vector< Stage::MV1_INFO >::const_iterator ite = walls.begin( );
 	while ( ite != walls.end( ) ) {
-		drawer->setModelMDL( (*ite) );
+		Stage::MV1_INFO mv1 = (*ite);
+		Drawer::ModelMV1 model( Matrix::makeTransformTranslation( mv1.pos ), mv1.type, 0 );
+		drawer->setModelMV1( model );
 		ite++;
 	}
 }

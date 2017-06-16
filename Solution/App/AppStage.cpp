@@ -430,10 +430,10 @@ void AppStage::drawEarth( ) const {
 }
 
 void AppStage::drawWall( ) const {
-	std::vector< Drawer::ModelMDL > walls = getWalls( );
-	std::vector< Drawer::ModelMDL >::const_iterator ite = walls.begin( );
+	std::vector< Stage::MV1_INFO > walls = getWalls( );
+	std::vector< Stage::MV1_INFO >::const_iterator ite = walls.begin( );
 	while ( ite != walls.end( ) ) {
-		_viewer->drawModelMDL( *ite );
+		_viewer->drawModelMV1( *ite );
 		ite++;
 	}
 }
