@@ -30,7 +30,7 @@ const double BOUND_POW = 0.7;
 const double EFFECT_REBOOT_SIZE = 0.7;
 const double EFFECT_CHANGE_STATE_SIZE = 0.7;
 const int WAIT_TIME = 0;
-const int START_TIME = 500;
+const int START_TIME = 10 * 8 * 5 * 2; // ï∂éöâ°ïù * ï∂éöècïù * ÉtÉåÅ[ÉÄêî * 2î{
 
 const Vector START_POS[ 2 ] {
 	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, BALL_RADIUS ) ),
@@ -79,7 +79,8 @@ void Roomba::draw( ) const {
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ]->draw( );
 		if ( _state == MOVE_STATE_LIFT_UP ||
-			 _state == MOVE_STATE_LIFT_DOWN ) {
+			 _state == MOVE_STATE_LIFT_DOWN ||
+			 _state == MOVE_STATE_STARTING ) {
 			Matrix trans = Matrix::makeTransformTranslation( _delivery[ i ].pos );
 			Matrix rot = Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 );
 			Matrix scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
@@ -530,20 +531,27 @@ void Roomba::moveStarting( ) {
 	if ( _state != MOVE_STATE_STARTING ) {
 		return;
 	}
+
 	if ( _start_count < START_TIME / 2 ) {
+		// command prompt
 		const int TW = 500;
 		const int TH = 400;
 		ApplicationPtr app = Application::getInstance( );
 		int sx = app->getWindowWidth( ) / 2 - TW / 2;
 		int sy = app->getWindowHeight( ) / 2 - TH / 2;
 		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, TW, TH ), GRAPH_COMMAND_PROMPT_BACK ) );
-		for ( int i = 0; i < 10 * 8; i ++ ) {
-			Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 50 * ( i % 11 ), 50 * ( i / 9 ) ), GRAPH_COMMAND_PROMPT_STRING ) );
-			if ( i > _start_count / 3 ) {
+		for ( int i = 0; i < 10 * 8; i++ ) {
+			const int string = 50;
+			int tx = i % 10;
+			int ty = i / 10;
+			Drawer::Transform trans( sx + ( string * tx ), sy + ( string * ty ), string * tx, string * ty, string, string );
+			Drawer::getTask( )->setSprite( Drawer::Sprite( trans, GRAPH_COMMAND_PROMPT_STRING ) );
+			if ( i > _start_count / 5 ) {
 				break;
 			}
 		}
 	} else {
+		// ball drop
 		Vector vec[ 2 ];
 		bool boot = false;
 		for ( int i = 0; i < 2; i++ ) {
@@ -560,6 +568,21 @@ void Roomba::moveStarting( ) {
 			}
 		}
 		setVecRot( vec[ 0 ], vec[ 1 ] );
+	}
+
+	// delivery
+	for ( int i = 0; i < 2; i++ ) {
+		Vector ball = _balls[ i ]->getPos( );
+		Vector pos( ball.x, ball.y, POP_POS[0].z );
+		_delivery[ i ].pos = pos;
+		if ( _start_count > START_TIME / 2 ) {
+			_delivery[ i ].pos += Vector( 1, 1, 1 ) * ( ACCEL_SPEED * ( _start_count - ( START_TIME / 2 ) ) );
+		}
+		//Vector pos = START_POS[ i ] + POP_POS[ i ];
+		//_delivery[ i ].pos = pos;
+		//if ( _start_count > START_TIME / 2 ) {
+		//	_delivery[ i ].pos += Vector( 1, 1, 0 ) * ( MAX_TRANS_SPEED * ( _start_count - ( START_TIME / 2 ) ) );
+		//}
 	}
 	_start_count++;
 }
