@@ -14,8 +14,8 @@ static const int NUM_CENTER = 64 / 2;
 static const int PITCH = 150; 
 static const int MOVE_SPEED = 1;
 static const int MAX_MOVE_COUNT = 10;
-static const int ANIME_FLAME = 4;
-static const int MAX_CHANGE_SCENE_COUNT = 25 * ANIME_FLAME;
+static const int CIRCLE_ANIME_FLAME = 4;
+static const int MAX_CHOICE_COUNT = 25 * CIRCLE_ANIME_FLAME;
 static const int THICK_FRAME_SIZE = 57;
 static const int TRIANGLE_CENTER_X = 312 / 2;
 
@@ -25,12 +25,13 @@ _move_count( 0 ),
 _change_scene_count( 0 ),
 _ispush( false ) {
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->loadGraph( GRAPH_CIRCLE, "select/circle.png" );
+	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
 	drawer->loadGraph( GRAPH_STAGE_SELECT, "select/Stage Select.png" );
 	drawer->loadGraph( GRAPH_NUM_1, "select/1.png" );
 	drawer->loadGraph( GRAPH_NUM_2, "select/2.png" );
 	drawer->loadGraph( GRAPH_NUM_3, "select/3.png" );
 	freazeSelect( );
+	resetCount( );
 }
 
 
@@ -42,15 +43,23 @@ Scene::NEXT SceneSelect::update( ) {
 	DevicePtr device = Device::getTask( );
 	Vector right_stick = Vector( device->getRightDirX( ), device->getRightDirY( ) );
 	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) );
-
-	if ( right_stick.y > 0 && left_stick.y < 0 ) {
-		_change_scene_count++;
-		sound->playSE( "se_maoudamashii_system45.wav" );
-		if ( _change_scene_count > MAX_CHANGE_SCENE_COUNT ) {
+	// フェードイン
+	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
+		addFadeInCount( );
+	}
+	// フェードアウト
+	if ( _change_scene_count > MAX_CHOICE_COUNT ||
+		getFadeOutCount( ) < MAX_FADE_COUNT ) {
+		subFadeOutCount( );
+		if ( getFadeOutCount( ) < 0 ) {
 			GamePtr game = Game::getTask( );
 			game->setStage( _select );
 			return NEXT_STAGE;
 		}
+	}
+	if ( right_stick.y > 0 && left_stick.y < 0 ) {
+		_change_scene_count++;
+		sound->playSE( "se_maoudamashii_system45.wav" );
 	} else {
 		_change_scene_count = 0;
 	}
@@ -94,7 +103,13 @@ void SceneSelect::draw( ) {
 	drawTriangle( );
 	drawSelect( );
 	drawFrame( );
+	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
+		drawFadeIn( );
+	} else {
+		drawFadeOut( );
+	}
 	drawCircle( );
+
 }
 
 void SceneSelect::drawRogo( ) {
@@ -118,7 +133,6 @@ void SceneSelect::drawSelect( ) {
 
 	GRAPH graph = (GRAPH)( GRAPH_NUM_1 + ( select - 1 ) );
 	
-	// stage
 	//真ん中
 	if ( graph == (GRAPH)( GRAPH_NUM_3 + 1 ) ) {
 		graph = GRAPH_NUM_1;
@@ -128,13 +142,9 @@ void SceneSelect::drawSelect( ) {
 	}
 	Drawer::Sprite sprite_1( Drawer::Transform( (int)_pos[ 0 ].x, (int)_pos[ 0 ].y, 0, 0, NUM_SIZE, NUM_SIZE  ), graph );
 	drawer->setSprite( sprite_1 );
-	//左
-	if ( _rot_right ) {
-		graph = (GRAPH)( graph + 1 );
-	} else {
-		graph = (GRAPH)( graph - 1 );
-	}
 
+	//左
+	graph = (GRAPH)( graph + 1 );
 	if ( graph == (GRAPH)( GRAPH_NUM_3 + 1 ) ) {
 		graph = GRAPH_NUM_1;
 	}
@@ -143,13 +153,9 @@ void SceneSelect::drawSelect( ) {
 	}
 	Drawer::Sprite sprite_2( Drawer::Transform( (int)_pos[ 1 ].x, (int)_pos[ 1 ].y, 0, 0, NUM_SIZE, NUM_SIZE, (int)_pos[ 1 ].x + NUM_SIZE * 3 / 5, (int)_pos[ 1 ].y + NUM_SIZE * 3 / 5 ), graph );
 	drawer->setSprite( sprite_2 );
-	//右
-	if ( _rot_right ) {
-		graph = (GRAPH)( graph + 1 );
-	} else {
-		graph = (GRAPH)( graph - 1 );
-	}
 
+	//右
+	graph = (GRAPH)( graph + 1 );
 	if ( graph == (GRAPH)( GRAPH_NUM_3 + 1 ) ) {
 		graph = GRAPH_NUM_1;
 	}
@@ -247,16 +253,16 @@ void SceneSelect::drawCircle( ) const {
 	const int HEIGHT = app->getWindowHeight( );
 	
 	const int CIRCLE_SIZE = 100;
-	const int idx = _change_scene_count / ANIME_FLAME;
-	int tx = ( idx % 4 ) * CIRCLE_SIZE;
-	int ty = ( idx / 4 ) * CIRCLE_SIZE;
-	if ( ty > 6 * CIRCLE_SIZE ) {
+	const int idx = _change_scene_count / CIRCLE_ANIME_FLAME;
+	int tx = idx % 4;
+	int ty = idx / 4;
+	if ( ty > 6 ) {
 		ty = 6;
-		if ( tx > 1 * CIRCLE_SIZE ) {
+		if ( tx > 1 ) {
 			tx = 1;
 		}
 	}
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT / 2 - CIRCLE_SIZE / 2, tx, ty, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
+	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT / 2 - CIRCLE_SIZE / 2, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
 }
