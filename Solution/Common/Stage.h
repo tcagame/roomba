@@ -14,6 +14,10 @@ public:
 		char crystal;
 		char delivery;
 	};
+	struct MV1_INFO {
+		Vector pos;
+		MV1 type;
+	};
 public:
 	Stage( );
 	virtual ~Stage( );
@@ -40,13 +44,13 @@ protected:
 	void loadWall( );
 	virtual void loadCrystal( );
 	virtual void loadDelivery( );
-	const std::vector< Drawer::ModelMDL >& getWalls( ) const;
+	const std::vector< MV1_INFO >& getWalls( ) const;
 private:
 	virtual void drawEarth( ) const = 0;
 	virtual void drawWall( ) const = 0;
 private:
 	std::array< DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _data;
-	std::vector< Drawer::ModelMDL > _walls;
+	std::vector< MV1_INFO > _walls;
 	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _earth;
 	int _max_delivery;
 };
