@@ -3,7 +3,6 @@
 
 static const double EFFECT_COLLISION_CRYSTAL_SIZE = 0.5;
 static const double EFFECT_COLLISION_WALL_SIZE = 0.5;
-static const Vector BALL_SIZE( 0.1, 0.1, 0.1 );
 static const double BALL_MODEL_ROT_SPEED = PI / 3;
 
 Ball::Ball( const Vector& pos ) :

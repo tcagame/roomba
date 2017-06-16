@@ -33,8 +33,8 @@ const int WAIT_TIME = 0;
 const int START_TIME = 500;
 
 const Vector START_POS[ 2 ] {
-	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, ROOMBA_SIZE.z ) ),
-	( Vector( STAGE_WIDTH_NUM + 22, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, ROOMBA_SIZE.z ) )
+	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, BALL_RADIUS ) ),
+	( Vector( STAGE_WIDTH_NUM + 22, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, BALL_RADIUS ) )
 };
 
 const Vector POP_POS[ 2 ] {
