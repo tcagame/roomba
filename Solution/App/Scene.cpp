@@ -10,6 +10,7 @@ _fade_in_count( 0 ),
 _fade_out_count( MAX_FADE_COUNT ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_FADE, "scene/fade.png" );
+	drawer->loadGraph( GRAPH_FADE_BG, "scene/fade_bg.png" );
 }
 
 
@@ -43,6 +44,15 @@ void Scene::drawFadeOut( ) const {
 	int ty = idx / 6;
 	DrawerPtr drawer = Drawer::getTask( );
 	Drawer::Sprite sprite( Drawer::Transform( 0, 0, tx * FADE_SIZE, ty * FADE_SIZE, FADE_SIZE, FADE_SIZE, WIDTH, HEIGHT ), GRAPH_FADE );
+	drawer->setSprite( sprite );
+}
+
+void Scene::drawFadeBg( ) const {
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+	DrawerPtr drawer = Drawer::getTask( );
+	Drawer::Sprite sprite( Drawer::Transform( 0, 0, 0, 0, 256, 256, WIDTH, HEIGHT ), GRAPH_FADE_BG, Drawer::BLEND_ALPHA, 0.75 );
 	drawer->setSprite( sprite );
 }
 

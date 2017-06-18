@@ -18,6 +18,7 @@ public:
 protected:
 	void drawFadeIn( ) const;
 	void drawFadeOut( ) const;
+	void drawFadeBg( ) const;
 	void addFadeInCount( );
 	void subFadeOutCount( );
 	int getFadeInCount( ) const;

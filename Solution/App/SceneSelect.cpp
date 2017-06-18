@@ -103,6 +103,7 @@ void SceneSelect::draw( ) {
 	drawTriangle( );
 	drawSelect( );
 	drawFrame( );
+	drawFadeBg( );
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
 		drawFadeIn( );
 	} else {

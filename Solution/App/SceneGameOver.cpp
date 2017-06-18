@@ -67,6 +67,7 @@ void SceneGameOver::draw( ) {
 	const int HEIGHT = app->getWindowHeight( );
 	drawer->setSprite( Drawer::Sprite( Drawer::Transform( WIDTH / 2 - GRAPH_GAMEOVER_WIDTH / 2, HEIGHT / 2 - GRAPH_GAMEOVER_HEIGHT / 2 , 0, 0 ), GRAPH_GAMEOVER ) ); // ゲームオーバー
 	drawFrame( );
+	drawFadeBg( );
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
 		drawFadeIn( );
 	} else {
