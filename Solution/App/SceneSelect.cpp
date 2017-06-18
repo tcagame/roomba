@@ -253,15 +253,12 @@ void SceneSelect::drawCircle( ) const {
 	const int HEIGHT = app->getWindowHeight( );
 	
 	const int CIRCLE_SIZE = 100;
-	const int idx = _choice_count / CIRCLE_ANIME_FLAME;
+	int idx = _choice_count / CIRCLE_ANIME_FLAME;
+	if ( idx > 25 ) {
+		idx = 25;
+	}
 	int tx = idx % 4;
 	int ty = idx / 4;
-	if ( ty > 6 ) {
-		ty = 6;
-		if ( tx > 1 ) {
-			tx = 1;
-		}
-	}
 	DrawerPtr drawer = Drawer::getTask( );
 	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT / 2 - CIRCLE_SIZE / 2, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
