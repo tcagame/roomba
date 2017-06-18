@@ -236,18 +236,21 @@ void SceneResult::drawOperationRank( ) const {
 		ty = 0;
 		break;
 	case 1: // A
+	case 2:
 		tx = SIZE * 0;
 		ty = SIZE;
 		break;
 	case 3: // B
+	case 4:
 		tx = SIZE * 1;
 		ty = SIZE;
 		break;
 	case 5: // C
+	case 6:
 		tx = SIZE * 2;
 		ty = SIZE;
 		break;
-	case 7: // D
+	default: // D
 		tx = SIZE * 3;
 		ty = SIZE;
 		break;

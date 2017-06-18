@@ -58,7 +58,7 @@ _rot_speed( 0 ),
 _link_break( false ),
 _finished( false ),
 _wait_count( 0 ),
-_start_count( START_TIME / 2 ) {
+_start_count( 0 ) {
 	for ( int i = 0; i < 2; i++ ) {
 		_vec_trans[ i ] = Vector( );
 		_balls[ i ] = BallPtr( new Ball( START_POS[ i ] + POP_POS[ i ] ) );
