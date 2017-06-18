@@ -36,7 +36,7 @@ private:
 	int _count;
 	Vector _before_mouse_pos;
 	EDIT_MODE _mode;
-	std::array< Drawer::ModelMV1, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _floor;
+	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _floor;
 	CameraPtr _camera;
 };
 

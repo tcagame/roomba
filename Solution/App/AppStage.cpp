@@ -22,10 +22,8 @@ _roomba( roomba ) {
 	loadMapData( );
 	int width = ( STAGE_WIDTH_NUM / FLOOR_CHIP_SIZE );
 	int height = ( STAGE_HEIGHT_NUM / FLOOR_CHIP_SIZE );
-	for ( int i = 0; i < width * height; i++ ) {
-		_floor[ i ].pos = Vector( i % width * FLOOR_CHIP_SIZE * WORLD_SCALE, i / width * FLOOR_CHIP_SIZE * WORLD_SCALE );
-		_floor[ i ].type = MV1_FLOOR;
-	}
+	_floor.pos = Vector( );
+	_floor.type = MDL_FLOOR;
 }
 
 
@@ -368,17 +366,14 @@ std::list< CrystalPtr > AppStage::getCrystalList( ) const {
 }
 
 void AppStage::drawFloor( ) const {
-	Matrix scale = Matrix::makeTransformScaling( FLOOR_SIZE );
-	for ( int i = 0; i < ( STAGE_WIDTH_NUM / FLOOR_CHIP_SIZE ) * ( STAGE_HEIGHT_NUM / FLOOR_CHIP_SIZE ); i++ ) {
-		_viewer->drawModelMV1( _floor[ i ], scale );
-	}
+	_viewer->drawModelMDL( _floor );
 }
 
 void AppStage::drawWall( ) const {
-	std::vector< Stage::MV1_INFO > walls = getWalls( );
-	std::vector< Stage::MV1_INFO >::const_iterator ite = walls.begin( );
+	std::vector< Drawer::ModelMDL > walls = getWalls( );
+	std::vector< Drawer::ModelMDL >::const_iterator ite = walls.begin( );
 	while ( ite != walls.end( ) ) {
-		_viewer->drawModelMV1( *ite, Matrix::makeTransformScaling( WALL_SIZE ) );
+		_viewer->drawModelMDL( *ite );
 		ite++;
 	}
 }

@@ -19,10 +19,9 @@ _camera( camera ) {
 
 	int width = ( STAGE_WIDTH_NUM / FLOOR_CHIP_SIZE );
 	int height = ( STAGE_HEIGHT_NUM / FLOOR_CHIP_SIZE );
-	for ( int i = 0; i < width * height; i++ ) {
-		Vector pos = Vector( i % width * FLOOR_CHIP_SIZE * WORLD_SCALE, i / width * FLOOR_CHIP_SIZE * WORLD_SCALE );
-		Matrix mat = scale.multiply( Matrix::makeTransformTranslation( pos ) );
-		_floor[ i ] = Drawer::ModelMV1( mat, MV1_FLOOR, 0 );
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		Vector pos = Vector( i % STAGE_WIDTH_NUM * WORLD_SCALE, i / STAGE_WIDTH_NUM * WORLD_SCALE );
+		_floor[ i ] = Drawer::ModelMDL( pos, MDL_FLOOR );
 	}
 }
 
@@ -296,19 +295,17 @@ void EditorStage::updateMode( ) {
 void EditorStage::drawFloor( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	for ( int i = 0; i < ( STAGE_WIDTH_NUM / FLOOR_CHIP_SIZE ) * ( STAGE_HEIGHT_NUM / FLOOR_CHIP_SIZE ); i++ ) {
-		drawer->setModelMV1( _floor[ i ] );
+		drawer->setModelMDL( _floor[ i ] );
 	}
 }
 
 void EditorStage::drawWall( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	std::vector< Stage::MV1_INFO > walls = getWalls( );
-	std::vector< Stage::MV1_INFO >::const_iterator ite = walls.begin( );
+	std::vector< Drawer::ModelMDL > walls = getWalls( );
+	std::vector< Drawer::ModelMDL >::const_iterator ite = walls.begin( );
 	while ( ite != walls.end( ) ) {
-		Stage::MV1_INFO mv1 = (*ite);
-		Matrix mat = Matrix::makeTransformScaling( WALL_SIZE );
-		Drawer::ModelMV1 model( mat.multiply( Matrix::makeTransformTranslation( mv1.pos ) ), mv1.type, 0 );
-		drawer->setModelMV1( model );
+		Drawer::ModelMDL mdl = (*ite);
+		drawer->setModelMDL( mdl );
 		ite++;
 	}
 }

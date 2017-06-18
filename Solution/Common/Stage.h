@@ -50,13 +50,13 @@ protected:
 	void loadWall( );
 	virtual void loadCrystal( );
 	virtual void loadDelivery( );
-	const std::vector< MV1_INFO >& getWalls( ) const;
+	const std::vector< Drawer::ModelMDL >& getWalls( ) const;
 private:
 	virtual void drawFloor( ) const = 0;
 	virtual void drawWall( ) const = 0;
 private:
 	std::array< DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _data;
-	std::vector< MV1_INFO > _walls;
+	std::vector< Drawer::ModelMDL > _walls;
 	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _floor;
 	int _max_delivery;
 };

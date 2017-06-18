@@ -132,14 +132,14 @@ void Stage::loadWall( ) {
 		if ( type == 0 && flag == 0 ) {
 				continue;
 		}
-		MV1 wall_type = (MV1)( MV1_WALL_0_0 + type * 16 + flag );
-		if ( wall_type == MV1_WALL_0_0 ) {
+		MDL wall_type = (MDL)( MDL_WALL_0_0 + type * 16 + flag );
+		if ( wall_type == MDL_WALL_0_0 ) {
 			continue;
 		}
-		MV1_INFO mv1;
-		mv1.pos = pos;
-		mv1.type = wall_type;
-		_walls.push_back( mv1 );
+		Drawer::ModelMDL mdl;
+		mdl.pos = pos;
+		mdl.type = wall_type;
+		_walls.push_back( mdl );
 	}
 }
 
@@ -187,6 +187,6 @@ int Stage::getMaxDeliveryNum( ) const {
 }
 
 
-const std::vector< Stage::MV1_INFO >& Stage::getWalls( ) const {
+const std::vector< Drawer::ModelMDL >& Stage::getWalls( ) const {
 	return _walls;
 }
