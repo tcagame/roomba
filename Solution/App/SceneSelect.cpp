@@ -21,8 +21,8 @@ static const int TRIANGLE_CENTER_X = 312 / 2;
 
 SceneSelect::SceneSelect( ) :
 _select( 1 ),
-_move_count( 0 ),
 _choice_count( 0 ),
+_move_count( 0 ),
 _ispush( false ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
