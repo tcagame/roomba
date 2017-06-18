@@ -19,7 +19,7 @@ GamePtr Game::getTask( ) {
 }
 
 Game::Game( ) :
-_next( Scene::NEXT_RESULT ),
+_next( Scene::NEXT_GAMEOVER ),
 _stage_num( 0 ),
 _result_time( 0 ) {
 }
@@ -57,7 +57,7 @@ void Game::changeScene( ) {
 	case Scene::NEXT_RESULT:
 		_scene = ScenePtr( new SceneResult( _result_time ) );
 		break;
-	case Scene::NEXT_RETRY:
+	case Scene::NEXT_GAMEOVER:
 		_scene = ScenePtr( new SceneGameOver( _stage_num ) );
 	}
 }

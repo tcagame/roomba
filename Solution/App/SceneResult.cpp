@@ -49,8 +49,6 @@ Scene::NEXT SceneResult::update( ) {
 		getFadeOutCount( ) < MAX_FADE_COUNT ) {
 		subFadeOutCount( );
 		if ( getFadeOutCount( ) < 0 ) {
-			GamePtr game = Game::getTask( );
-			game->setStage( _select );
 			return NEXT_TITLE;
 		}
 	}

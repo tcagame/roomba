@@ -8,15 +8,16 @@ public:
 		NEXT_TITLE,
 		NEXT_STAGE,
 		NEXT_RESULT,
-		NEXT_RETRY,
+		NEXT_GAMEOVER,
 		NEXT_DEBUG_RESULT,
 	};
 public:
 	Scene( );
 	virtual ~Scene( );
 	virtual NEXT update( ) = 0;
-	virtual void drawFadeIn( ) const;
-	virtual void drawFadeOut( ) const;
+protected:
+	void drawFadeIn( ) const;
+	void drawFadeOut( ) const;
 	void addFadeInCount( );
 	void subFadeOutCount( );
 	int getFadeInCount( ) const;

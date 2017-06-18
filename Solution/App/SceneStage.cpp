@@ -110,7 +110,7 @@ Scene::NEXT SceneStage::update( ) {
 	}
 
 	if ( _timer->isTimeOver( ) ) {
-		return NEXT_RETRY;
+		return NEXT_GAMEOVER;
 	}
 	if ( _roomba->isFinished( ) ) {
 		_timer->finalize( );
