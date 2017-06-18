@@ -3,10 +3,10 @@
 #include "Device.h"
 #include "Roomba.h"
 
-const double HEIGHT_RATIO = 2.0;
-const double HEIGHT_SPEED = 0.008;
+const double HEIGHT_RATIO = 0.06;
+const double HEIGHT_SPEED = 0.01;
 const double MAX_HEIGHT = 1.3;//íxÇ¢Ç∆Ç´ÇÃçÇÇ≥
-const double MIN_HEIGHT = 0.3;//ëÅÇ¢Ç∆Ç´ÇÃçÇÇ≥
+const double MIN_HEIGHT = 0.5;//ëÅÇ¢Ç∆Ç´ÇÃçÇÇ≥
 const double ROTE_SPEED = 0.05;
 const int CAMERA_LENGTH = (int)( 40 * WORLD_SCALE );
 
@@ -15,7 +15,6 @@ _roomba( roomba ),
 _mouse_x( 0 ),
 _height( MAX_HEIGHT ),
 Camera( Vector( roomba->getStartPos( ).x, roomba->getStartPos( ).y ) -  getCalcDir( Vector( 0, 1 ) ) * CAMERA_LENGTH, Vector( roomba->getStartPos( ).x, roomba->getStartPos( ).y )  ) {
-	_dir = getCalcDir( Vector( 0, 1 ) );
 	_before_target = roomba->getStartPos( );
 	_before_target.z = 0;
 }
@@ -51,41 +50,36 @@ void AppCamera::move( ) {
 	setTarget( target );
 	//çÇÇ≥åvéZ
 	Vector vec = target - _before_target;
-	double length = vec.getLength( ) * HEIGHT_RATIO;
-	double height = MAX_HEIGHT - length;
-
-	if ( fabs( _height - height ) < HEIGHT_SPEED ) {
-		_height = height;
-	} else if ( _height > height ) {
-		_height -= HEIGHT_SPEED;
-	} else {
-		_height += HEIGHT_SPEED;
+	double ratio = 0;
+	if ( vec.getLength( ) > 0.001 ) {
+		ratio = vec.getLength( ) / _roomba->getMaxSpeed( );
 	}
-
-	if ( _height < MIN_HEIGHT ) {
-		_height = MIN_HEIGHT;
+	double height_vec = ( MAX_HEIGHT - ( MAX_HEIGHT - MIN_HEIGHT ) * ratio ) - _height;
+	height_vec *= HEIGHT_RATIO;
+	if ( fabs( height_vec ) > HEIGHT_SPEED ) {
+		height_vec = HEIGHT_SPEED * ( 1 - ( height_vec < 0 ) * 2 );
 	}
+	_height += height_vec;
 	_before_target = target;
 	//âÒì]
 	dir.z = 0;
 	Matrix rot = Matrix::makeTransformRotation( Vector( 0, 0, 1 ), rot_speed );
 	dir = rot.multiply( dir );
 	//ç¿ïWåvéZ
-	_dir = getCalcDir( dir );
-	Vector pos = target - _dir * CAMERA_LENGTH;
+	Vector pos = target - getCalcDir( dir ) * CAMERA_LENGTH;
 	setPos( pos );
 }
 
 void AppCamera::reset( ) {
 	setPos( _roomba->getCentralPos( ) - getCalcDir( _roomba->getDir( ) ) * CAMERA_LENGTH );
 	setTarget( _roomba->getCentralPos( ) );
-	_dir = getCalcDir( _roomba->getDir( ) );
 }
 
 void AppCamera::shiftPos( Vector pos ) {
 	_before_target = pos;
+	Vector dir = getDir( );
 	setTarget( pos );
-	setPos( pos - _dir * CAMERA_LENGTH );
+	setPos( pos - dir * CAMERA_LENGTH );
 }
 
 Vector AppCamera::getCalcDir( Vector dir ) const {

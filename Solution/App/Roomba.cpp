@@ -728,6 +728,10 @@ double Roomba::getRotSpeed( ) const {
 	return _rot_speed;
 }
 
+const double Roomba::getMaxSpeed( ) const {
+	return MAX_TRANS_SPEED;
+}
+
 bool Roomba::isStarting( ) const {
 	return ( _state == MOVE_STATE_STARTING );
 }
