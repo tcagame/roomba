@@ -17,16 +17,17 @@ static const int SELECT_SIZE  = 512;
 static const int CIRCLE_ANIME_FLAME = 4;
 static const int MAX_CHOICE_COUNT = 25 * CIRCLE_ANIME_FLAME;
 
-SceneResult::SceneResult( int time ) :
+SceneResult::SceneResult( int time, int col_num ) :
 _select( 1 ),
 _choice_count( 0 ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
 	drawer->loadGraph( GRAPH_STAGE_SELECT, "select/Stage Select.png" );
 	drawer->loadGraph( GRAPH_RESULT, "Result/result.png" );
-	drawer->loadGraph( GRAPH_NUMBER, "Result/number.png" );
+	drawer->loadGraph( GRAPH_RANK, "Result/rank.png" );
 	_this_time = time;
 	_best_time = 0;
+	_col_num = col_num;
 	loadBestTime( );
 	SoundPtr sound = Sound::getTask( );
 	sound->playBGM( "bgm_maoudamashii_cyber13.wav" );
@@ -40,7 +41,7 @@ Scene::NEXT SceneResult::update( ) {
 	DevicePtr device = Device::getTask( );
 	Vector right_stick = Vector( device->getRightDirX( ), device->getRightDirY( ) );
 	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) );
-		// フェードイン
+	// フェードイン
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
 		addFadeInCount( );
 	}
@@ -68,8 +69,9 @@ void SceneResult::draw( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	Drawer::Sprite sprite( Drawer::Transform( BRANK, HEIGHT / 10, 0, 0, 512, 256, WIDTH - BRANK, HEIGHT * 3 / 10 ), GRAPH_RESULT );
 	drawer->setSprite( sprite );
-	drawThisTime( );
-	drawBestTime( );
+	//drawThisTime( );
+	//drawBestTime( );
+	drawOperationRank( );
 	drawFrame( );
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
 		drawFadeIn( );
@@ -221,4 +223,57 @@ void SceneResult::drawCircle( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT / 2 - CIRCLE_SIZE / 2, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
+}
+
+void SceneResult::drawOperationRank( ) const {
+	DrawerPtr drawer = Drawer::getTask( );
+	const int SIZE = 128;
+	int tx = 0;
+	int ty = 0;
+	switch ( _col_num ) {
+	case 0: // S
+		tx = SIZE * 3;
+		ty = 0;
+		break;
+	case 1: // A
+	case 2:
+		tx = SIZE * 0;
+		ty = SIZE;
+		break;
+	case 3: // B
+	case 4:
+		tx = SIZE * 1;
+		ty = SIZE;
+		break;
+	case 5: // C
+	case 6:
+		tx = SIZE * 2;
+		ty = SIZE;
+		break;
+	default: // D
+		tx = SIZE * 3;
+		ty = SIZE;
+		break;
+	}
+
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+	int sx = WIDTH / 2 - SIZE * 3;
+	int sy = HEIGHT / 2 - SIZE / 2;
+	int sx2 = WIDTH / 2 + SIZE * 3;
+	int sy2 = HEIGHT / 2 + SIZE / 2;
+	{ // RANK
+		Drawer::Transform trans( sx, sy, 0, 0, SIZE * 3, SIZE, sx2, sy2 );
+		Drawer::Sprite sprite( trans, GRAPH_RANK );
+		drawer->setSprite( sprite );
+	}
+	{ // S A B C D
+		static int count = 0;
+		count++;
+		double ratio = (double)count / 50;
+		Drawer::Transform trans( sx2 + 10, sy, tx, ty, SIZE, SIZE, sx2 + SIZE, sy2 );
+		Drawer::Sprite sprite( trans, GRAPH_RANK, Drawer::BLEND_ALPHA, ratio );
+		drawer->setSprite( sprite );
+	}
 }

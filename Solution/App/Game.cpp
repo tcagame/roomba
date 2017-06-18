@@ -55,7 +55,7 @@ void Game::changeScene( ) {
 		_scene = ScenePtr( new SceneStage( _stage_num ) );
 		break;
 	case Scene::NEXT_RESULT:
-		_scene = ScenePtr( new SceneResult( _result_time ) );
+		_scene = ScenePtr( new SceneResult( _result_time, _col_num ) );
 		break;
 	case Scene::NEXT_GAMEOVER:
 		_scene = ScenePtr( new SceneGameOver( _stage_num ) );
@@ -72,4 +72,8 @@ void Game::setStage( int stage_num ) {
 
 void Game::setResultTime( int time ) {
 	_result_time = time;
+}
+
+void Game::setCollisionNum( int col_num ) {
+	_col_num = col_num;
 }

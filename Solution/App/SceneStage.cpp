@@ -116,6 +116,7 @@ Scene::NEXT SceneStage::update( ) {
 	}
 	if ( _roomba->isFinished( ) ) {
 		_timer->finalize( );
+		_roomba->finalize( );
 		return NEXT_RESULT;
 	}
 

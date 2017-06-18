@@ -9,6 +9,7 @@
 #include <assert.h>
 #include "Sound.h"
 #include "Application.h"
+#include "Game.h"
 
 //èâë¨ìx
 const double BOUND_POW = 0.7;
@@ -57,7 +58,7 @@ _rot_speed( 0 ),
 _link_break( false ),
 _finished( false ),
 _wait_count( 0 ),
-_start_count( START_TIME / 2 ) {
+_start_count( 0 ) {
 	for ( int i = 0; i < 2; i++ ) {
 		_vec_trans[ i ] = Vector( );
 		_balls[ i ] = BallPtr( new Ball( START_POS[ i ] + POP_POS[ i ] ) );
@@ -764,4 +765,9 @@ double Roomba::getRotSpeed( ) const {
 
 const double Roomba::getMaxSpeed( ) const {
 	return MAX_TRANS_SPEED;
+}
+
+void Roomba::finalize( ) {
+	int col_num = _balls[ BALL_LEFT ]->getColCount( ) + _balls[ BALL_RIGHT ]->getColCount( );
+	Game::getTask( )->setCollisionNum( col_num );	
 }

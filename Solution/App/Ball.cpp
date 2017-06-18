@@ -7,6 +7,7 @@ static const double BALL_MODEL_ROT_SPEED = PI / 3;
 
 Ball::Ball( const Vector& pos ) :
 _pos( pos ),
+_collision_count( 0 ),
 _reflection( false ) {
 }
 
@@ -26,6 +27,7 @@ void Ball::update( const Vector& vec, StagePtr stage, bool rot ) {
 			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_CRYSTAL, _pos, EFFECT_COLLISION_CRYSTAL_SIZE, EFFECT_ROTATE ) );
 		} else {
 			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_WALL, _pos, EFFECT_COLLISION_WALL_SIZE, EFFECT_ROTATE ) );
+			_collision_count++;
 		}
 	}
 	_vec = adjust_vec;
@@ -77,4 +79,8 @@ bool Ball::isReflection( ) const {
 
 void Ball::setReflection( bool ref ) {
 	_reflection = ref;
+}
+
+int Ball::getColCount( ) const {
+	return _collision_count;
 }
