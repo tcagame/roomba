@@ -99,24 +99,24 @@ bool Crystal::isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 ) {
 	//pos0とpos1の間にクリスタルがあるかどうか
 	Vector crystal_pos = _pos;
 	crystal_pos.z = pos0.z;
-	//if ( vec0.angle( vec1 ) > PI / 2 ) {
-	//	pos1 += vec1;
-	//	vec1 *= -1;
-	//};
-	//
-	//Vector distance0 = crystal_pos - pos0;
-	//Vector distance1 = pos1 - pos0;
-	//double angle = distance0.angle( distance1 );
-	//if ( fabs( angle ) > PI / 2 ) {//範囲外
-	//	return false;
-	//}
-	//if ( distance0.getLength( ) > distance1.getLength( ) ) {//範囲外
-	//	return false;
-	//}
-	//double distance = distance0.getLength( ) * fabs( sin( angle ) );
-	//if ( fabs( distance ) < CRYSTAL_RADIUS ) {
-	//	return true;
-	//}
+	if ( vec0.angle( vec1 ) > PI / 2 ) {
+		pos1 += vec1;
+		vec1 *= -1;
+	};
+	
+	Vector distance0 = crystal_pos - pos0;
+	Vector distance1 = pos1 - pos0;
+	double angle = distance0.angle( distance1 );
+	if ( fabs( angle ) > PI / 2 ) {//範囲外
+		return false;
+	}
+	if ( distance0.getLength( ) > distance1.getLength( ) ) {//範囲外
+		return false;
+	}
+	double distance = distance0.getLength( ) * fabs( sin( angle ) );
+	if ( fabs( distance ) < CRYSTAL_RADIUS ) {
+		return true;
+	}
 
 	//ballの速度が速い時の処理
 	bool result = false;

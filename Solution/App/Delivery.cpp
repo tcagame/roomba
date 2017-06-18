@@ -152,6 +152,9 @@ Vector Delivery::getPos( ) const {
 }
 
 void Delivery::setCrystal( Vector pos ) {
+	if ( _have_crystal ) {
+		return;
+	}
 	_have_crystal = true;
 	_crystal.pos = pos;
 	while ( _pos.x - pos.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {

@@ -40,7 +40,7 @@ void AppCamera::move( ) {
 		rot_speed = _roomba->getRotSpeed( ) * ROTE_SPEED;
 	}
 	Vector target;
-	if ( _roomba->isStarting( ) ) {
+	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_STARTING ) {
 		target = _roomba->getStartPos( );
 	} else {
 		target = _roomba->getCentralPos( );
