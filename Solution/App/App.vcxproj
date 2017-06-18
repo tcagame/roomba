@@ -158,6 +158,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AppCamera.cpp" />
     <ClCompile Include="AppStage.cpp" />
     <ClCompile Include="Ball.cpp" />
@@ -178,6 +179,7 @@
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="AppCamera.h" />
     <ClInclude Include="AppStage.h" />
     <ClInclude Include="Ball.h" />

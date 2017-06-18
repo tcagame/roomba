@@ -28,7 +28,7 @@ void Viewer::drawModelMDL( Drawer::ModelMDL mdl ) const {
 void Viewer::drawModelMV1( Stage::MV1_INFO mv1, Matrix scale_rot ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	mv1.pos = getViewPos( mv1.pos );
-	Drawer::ModelMV1 model( scale_rot.multiply( Matrix::makeTransformTranslation( mv1.pos ) ), mv1.type, 0 );
+	Drawer::ModelMV1 model( scale_rot.multiply( Matrix::makeTransformTranslation( mv1.pos ) ), mv1.type, 0, mv1.time );
 	drawer->setModelMV1( model );
 }
 

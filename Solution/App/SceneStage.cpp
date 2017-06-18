@@ -65,7 +65,9 @@ SceneStage::SceneStage( int stage_num ) {
 	drawer->loadMDLModel( MDL_EARTH, "Model/Stage/earth.mdl", "Model/Stage/earth.jpg", earth_scale );
 	
 	drawer->loadMV1Model( MV1_BALL, "Model/Roomba/ball.mv1" );
-	drawer->loadMV1Model( MV1_DELIVERY, "Model/Delivery/delivery.mv1" );
+	drawer->loadMV1Model( MV1_DELIVERY_STAND, "Model/Delivery/delivery_wait.mv1" );
+	drawer->loadMV1Model( MV1_DELIVERY_CATCH, "Model/Delivery/delivery_catch.mv1" );
+	drawer->loadMV1Model( MV1_DELIVERY_CARRY, "Model/Delivery/delivery_carry.mv1" );
 
 	drawer->loadMV1Model( MV1_WALL_0_1 , "Model/Stage/0_1.mv1"  );
 	drawer->loadMV1Model( MV1_WALL_0_2 , "Model/Stage/0_2.mv1"  );

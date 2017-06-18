@@ -1,6 +1,8 @@
 #pragma once
 #include "Drawer.h"
 #include "define.h"
+#include "Stage.h"
+#include "Animation.h"
 
 PTR( Camera );
 PTR( Crystal );
@@ -38,4 +40,5 @@ private:
 	bool _finished;
 	bool _have_crystal;
 	Drawer::ModelMDL _crystal;
+	AnimationPtr _animation;
 };

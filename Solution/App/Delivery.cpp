@@ -7,7 +7,7 @@
 static const double MOVE_SPEED = 0.1;
 static const double START_POS_Z = 20;
 static const double MIN_POS_Z = 2;
-static const double FOOT = 3;
+static const double FOOT = 0.3;
 static const double EFFECT_POINT_SIZE = 0.5;
 static const double EFFECT_CATCH_SIZE = 0.5;
 static const int MAX_EFFECT_COUNT = 30;
@@ -20,6 +20,7 @@ _state( STATE_WAIT ),
 _effect_count( MAX_EFFECT_COUNT - 1 ) {
 	_pos = target;
 	_pos.z = START_POS_Z;
+	_animation = AnimationPtr( new Animation( Animation::ANIM::ANIM_DELIVERY_STAND ) );
 }
 
 
@@ -32,16 +33,14 @@ void Delivery::draw( ViewerPtr viewer ) const {
 	drawer->drawLine( _pos, _pos - Vector( 0, 0, 4 ) );
 	Matrix scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 	Matrix rot = Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 );
-	
+	Stage::MV1_INFO model = _animation->getModel( );
 	if ( _have_crystal ) {
 		Matrix trans = Matrix::makeTransformTranslation( _pos );
-		drawer->setModelMV1( Drawer::ModelMV1( scale.multiply( rot ).multiply( trans ), MV1_DELIVERY, 0 ) );
+		drawer->setModelMV1( Drawer::ModelMV1( scale.multiply( rot ).multiply( trans ), model.type, 0, model.time ) );
 		drawer->setModelMDL( _crystal );
 	} else {
-		Stage::MV1_INFO mv1 = Stage::MV1_INFO( );
-		mv1.pos = _pos;
-		mv1.type = MV1_DELIVERY;
-		viewer->drawModelMV1( mv1, scale.multiply( rot ) );
+		model.pos = _pos;
+		viewer->drawModelMV1( model, scale.multiply( rot ) );
 	}
 	
 	if ( _state == STATE_WAIT && !_effect_count ) {
@@ -53,7 +52,6 @@ void Delivery::update( CameraPtr camera ) {
 	switch ( _state ) {
 	case STATE_WAIT:
 		updateWait( );
-
 		break;
 	case STATE_CATCH:
 		updateCatch( );
@@ -65,7 +63,7 @@ void Delivery::update( CameraPtr camera ) {
 		updateCarry( );
 		break;
 	}
-
+	_animation->update( );
 }
 
 
@@ -96,9 +94,14 @@ void Delivery::updateCatch( ) {
 	}
 	_pos += _vec;
 	if ( _vec.getLength( ) < 0.01 ) {
-		_target = _pos + Vector( 0, 0, 4 );
-		_state = STATE_LIFT;
-		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CATCH_CRYSTAL, _pos, EFFECT_CATCH_SIZE, EFFECT_ROTATE ) );
+		if ( _animation->getAnim( ) == Animation::ANIM::ANIM_DELIVERY_STAND ) {
+			_animation->changeAnim( Animation::ANIM::ANIM_DELIVERY_CATCH );
+		}
+		if ( _animation->getAnim( ) == Animation::ANIM::ANIM_DELIVERY_CARRY ) {
+			_target = _pos + Vector( 0, 0, 2 );
+			_state = STATE_LIFT;
+			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CATCH_CRYSTAL, _pos, EFFECT_CATCH_SIZE, EFFECT_ROTATE ) );
+		}
 	}
 }
 
@@ -175,4 +178,3 @@ void Delivery::setCrystal( Vector pos ) {
 bool Delivery::isHaveCrystal( ) {
 	return _have_crystal;
 }
-
