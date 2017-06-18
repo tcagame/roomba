@@ -103,7 +103,7 @@ SceneStage::~SceneStage( ) {
 Scene::NEXT SceneStage::update( ) {
 	// ƒJƒƒ‰&viwerí‚ÉXV‚·‚é
 	_camera->update( );
-	if ( _roomba->isStarting( ) ) {
+	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_STARTING ) {
 		_viewer->update( _roomba->getStartPos( ) );
 	} else {
 		_viewer->update( _roomba->getCentralPos( ) );
@@ -131,7 +131,6 @@ Scene::NEXT SceneStage::update( ) {
 	}
 	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_WAIT ) {
 		_timer->reset( );
-		app_stage->eraseOldDelivery( );
 	}
 	_roomba->draw( );
 	_stage->draw( );

@@ -279,51 +279,6 @@ Vector AppStage::adjustCollisionToCrystal( Vector pos, Vector& vec, const double
 	return result;
 }
 
-//void AppStage::drawCollisionLine( ) const {
-//	int phase = getPhase( );
-//	DATA data = getData( );
-//	if ( phase >= MAX_PHASE ) {
-//		return;	
-//	}
-//    DrawerPtr drawer = Drawer::getTask( );
-//	
-//	for ( int i = 0; i <= STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2; i++ ) {
-//		int x = i % ( STAGE_WIDTH_NUM * 2 );
-//		int y = i / ( STAGE_WIDTH_NUM * 2 );
-//		drawer->drawLine( Vector( 0, y * WORLD_SCALE / 2, -WORLD_SCALE / 2 ), Vector( STAGE_WIDTH_NUM * WORLD_SCALE, y * WORLD_SCALE / 2, -WORLD_SCALE / 2 ) );
-//		drawer->drawLine( Vector( x * WORLD_SCALE / 2, 0, -WORLD_SCALE / 2 ), Vector( x * WORLD_SCALE / 2, STAGE_HEIGHT_NUM * WORLD_SCALE, -WORLD_SCALE / 2) );
-//	}
-//
-//    for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-//        if ( data.wall[ i ] == 1 ) {
-//            Vector vec1 = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE, 0.1 );
-//            Vector vec2 = vec1 + Vector( WORLD_SCALE, 0, 0 );
-//            Vector vec3 = vec1 + Vector( 0, WORLD_SCALE, 0 );
-//            Vector vec4 = vec1 + Vector( WORLD_SCALE, WORLD_SCALE, 0 );
-//
-//            Vector vec5 = vec1 + Vector( WORLD_SCALE / 2, 0, 0 );
-//            Vector vec6 = vec1 + Vector( WORLD_SCALE, WORLD_SCALE / 2, 0 );
-//            Vector vec7 = vec1 + Vector( 0, WORLD_SCALE / 2, 0 );
-//            Vector vec8 = vec1 + Vector( WORLD_SCALE / 2, WORLD_SCALE, 0 );
-//            Vector vec9 = vec1 + Vector( WORLD_SCALE / 2, WORLD_SCALE / 2, 0 );
-//			// c–_
-//            drawer->drawLine( vec1 - Vector( 0, 0, WORLD_SCALE ), vec1 );
-//            drawer->drawLine( vec2 - Vector( 0, 0, WORLD_SCALE ), vec2 );
-//            drawer->drawLine( vec3 - Vector( 0, 0, WORLD_SCALE ), vec3 );
-//            drawer->drawLine( vec4 - Vector( 0, 0, WORLD_SCALE ), vec4 );
-//            drawer->drawLine( vec5 - Vector( 0, 0, WORLD_SCALE ), vec5 );
-//            drawer->drawLine( vec6 - Vector( 0, 0, WORLD_SCALE ), vec6 );
-//            drawer->drawLine( vec7 - Vector( 0, 0, WORLD_SCALE ), vec7 );
-//            drawer->drawLine( vec8 - Vector( 0, 0, WORLD_SCALE ), vec8 );
-//            drawer->drawLine( vec9 - Vector( 0, 0, WORLD_SCALE ), vec9 );
-//			//@“Vˆä‚Ì‰¡–_
-//            drawer->drawLine( vec1, vec2 );
-//            drawer->drawLine( vec2, vec4 );
-//            drawer->drawLine( vec3, vec4 );
-//            drawer->drawLine( vec3, vec1 );
-//        }
-//    }
-//}
 
 void AppStage::loadMapData( ) {
 	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
@@ -405,23 +360,6 @@ bool AppStage::isOnDelivery( Vector& pos ) {
 std::list< CrystalPtr > AppStage::getCrystalList( ) const {
 	return _crystals;
 }
-
-void AppStage::eraseOldDelivery( ) {
-	std::list< DeliveryPtr >::iterator ite = _deliverys.begin( );
-	while ( ite != _deliverys.end( ) ) {
-		DeliveryPtr delivery = (*ite);
-		if ( !delivery ) {
-			ite++;
-			continue;
-		}
-		if ( delivery->isHaveCrystal( ) ) {
-			ite = _deliverys.erase( ite );
-			continue;
-		}
-		ite++;
-	}
-}
-
 
 void AppStage::drawEarth( ) const {
 	Vector adjust_pos = Vector( WORLD_SCALE * 2, WORLD_SCALE * 2 + WORLD_SCALE / 3, EARTH_POS_Z );

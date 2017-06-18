@@ -10,29 +10,36 @@
 #include "Sound.h"
 #include "Application.h"
 
-//デバッグのためスピード遅め
-//static const double SPEED = 0.1;
+//初速度
+const double BOUND_POW = 0.7;
+//加速度
 const double ACCEL_SPEED = 0.03;
+//一定速度
 const double RESTORE_SPEED = 0.06;
+//最大速度
 const double MAX_ROT_SPEED = 0.2;
 const double MAX_TRANS_SPEED = 0.4;
+//減速速度
 const double DECELETION_ROT_SPEED = 0.002;
 const double DECELETION_TRANS_SPEED = 0.001;
 const double EMERGENCY_DECELERATION_SPEED = 1;
+//減速倍率
 const double OTHER_TRANS_RATIO = 6;
 const double OTHER_ROT_RATIO = 2;
-const double SCALE_SIZE = 6 + 0.01;
-const double MIN_SCALE = 5 - 0.01;
+//サイズ
+const double MAX_SCALE_SIZE = 6 + 0.01;
+const double MIN_SCALE_SIZE = 5 - 0.01;
+//ルンバ回収系
 const double LIFT_Z = 10;
 const double DELIVERY_FOOT = 2.5;
-const int MAX_LINK_GAUGE = 400;
-const double BOUND_POW = 0.7;
+//エフェクト
 const double EFFECT_REBOOT_SIZE = 0.7;
 const double EFFECT_CHANGE_STATE_SIZE = 0.7;
+//待機時間
 const int WAIT_TIME = 180;
 const int START_TIME = 10 * 8 * 5 * 2; // 文字横幅 * 文字縦幅 * フレーム数 * 2倍
 
-const Vector START_POS[ 2 ] {
+const Vector START_POS[ 2 ] {//スケールが MIN < size < MAXになるようにする
 	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, BALL_RADIUS ) ),
 	( Vector( STAGE_WIDTH_NUM + 22, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, BALL_RADIUS ) )
 };
@@ -89,7 +96,7 @@ void Roomba::draw( ) const {
 	}
 	if ( _state == MOVE_STATE_WAIT ) {
 		ApplicationPtr app = Application::getInstance( );
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 0, 0, 0, 0, 512, 512, app->getWindowWidth( ), app->getWindowHeight( ) ), GRAPH_COMMAND_PROMPT_BACK ) );;
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 0, 0, 0, 0, 512, 512, app->getWindowWidth( ), app->getWindowHeight( ) ), GRAPH_COMMAND_PROMPT_BACK ) );
 	}
 }
 
@@ -138,12 +145,6 @@ void Roomba::updateBalls( StagePtr stage ) {
 			_crystal->setDropDown( false );
 		}
 	}
-	if ( _balls[ 0 ]->getPos( ).z < START_POS[ 0 ].z ) {
-		int check = -1;
-	}
-	if ( _balls[ 1 ]->getPos( ).z < START_POS[ 1 ].z ) {
-		int check = -1;
-	}
 
 	for ( int i = 0; i < 2; i++ ) {
 		bool rot = (
@@ -190,7 +191,7 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera ) {
 	if ( _state == MOVE_STATE_REFLECTION_RESTORE ) {
 		state = MOVE_STATE_REFLECTION_RESTORE;
 		double scale = ( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).getLength( );	
-		if ( scale > MIN_SCALE && scale < SCALE_SIZE ) {
+		if ( scale > MIN_SCALE_SIZE && scale < MAX_SCALE_SIZE ) {
 			state = MOVE_STATE_NEUTRAL;
 		}
 	}
@@ -446,10 +447,10 @@ void Roomba::moveRestore( ) {
 		if ( pos.z + _vec_z[ i ] > START_POS[ i ].z ) {
 			continue;
 		}
-		if ( scale > SCALE_SIZE ) {
-				_vec_scale[ i ] = ( laser * ( scale - SCALE_SIZE ) * ( 1 - ( i != 0 ) * 2 ) ).normalize( ) * RESTORE_SPEED;
-		} else  if ( scale < MIN_SCALE ) {
-				_vec_scale[ i ] = ( laser * ( MIN_SCALE - scale ) * ( 1 - ( i != 0 ) * 2 ) ).normalize( ) * -RESTORE_SPEED;
+		if ( scale > MAX_SCALE_SIZE ) {
+				_vec_scale[ i ] = ( laser * ( scale - MAX_SCALE_SIZE ) * ( 1 - ( i != 0 ) * 2 ) ).normalize( ) * RESTORE_SPEED;
+		} else  if ( scale < MIN_SCALE_SIZE ) {
+				_vec_scale[ i ] = ( laser * ( MIN_SCALE_SIZE - scale ) * ( 1 - ( i != 0 ) * 2 ) ).normalize( ) * -RESTORE_SPEED;
 		} else {
 			_vec_scale[ i ] = Vector( );
 		}
@@ -730,8 +731,4 @@ double Roomba::getRotSpeed( ) const {
 
 const double Roomba::getMaxSpeed( ) const {
 	return MAX_TRANS_SPEED;
-}
-
-bool Roomba::isStarting( ) const {
-	return ( _state == MOVE_STATE_STARTING );
 }

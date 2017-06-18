@@ -41,7 +41,6 @@ public:
 	Vector getBallPos( int ball ) const;
 	MOVE_STATE getMoveState( ) const;
 	bool isWait( ) const;
-	bool isStarting( ) const;
 	bool isFinished( ) const;
 	Vector getStartPos( ) const;
 	CrystalPtr getCrystalPtr( ) const;
