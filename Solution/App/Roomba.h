@@ -34,6 +34,7 @@ public:
 	void draw( ) const;
 	void reset( );
 	void setWaitCount( );
+	void finalize( );
 	double getRotSpeed( ) const;
 	const double getMaxSpeed( ) const;
 	Vector getDir( ) const;
