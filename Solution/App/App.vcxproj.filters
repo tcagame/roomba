@@ -30,6 +30,7 @@
     <ClCompile Include="SceneGameOver.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Animation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -60,6 +61,7 @@
     <ClInclude Include="SceneGameOver.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Animation.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scene">

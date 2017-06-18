@@ -37,7 +37,7 @@ void Editor::initialize( ) {
 	Matrix cursor_scale = Matrix::makeTransformScaling( cursor_size );
 	drawer->loadMDLModel( MDL_CURSOR, "Model/Editor/cursor.mdl", "Model/Editor/red.jpg", cursor_scale );
 	
-	drawer->loadMV1Model( MV1_DELIVERY, "Model/Delivery/delivery.mv1" );
+	drawer->loadMV1Model( MV1_DELIVERY_STAND, "Model/Delivery/delivery_wait.mv1" );
 
 	drawer->loadMV1Model( MV1_WALL_0_1 , "Model/Stage/0_1.mv1"  );
 	drawer->loadMV1Model( MV1_WALL_0_2 , "Model/Stage/0_2.mv1"  );

@@ -1,6 +1,7 @@
 #pragma once
 #include "Drawer.h"
 #include "Stage.h"
+#include "Animation.h"
 #include <array>
 
 PTR( Stage );
@@ -97,6 +98,6 @@ private:
 	LaserPtr _laser;
 	CrystalPtr _crystal;
 	Matrix _stick_rot;
-	std::array< Stage::MV1_INFO, 2 > _delivery;
+	std::array< AnimationPtr, 2 > _delivery;
 };
 

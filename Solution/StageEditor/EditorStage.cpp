@@ -313,7 +313,7 @@ void EditorStage::drawDelivery( ) const {
 			Matrix trans = Matrix::makeTransformTranslation( Vector( x, y, 0 ) );
 			Matrix rot = Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 );
 			Matrix scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
-			drawer->setModelMV1( Drawer::ModelMV1( scale.multiply( rot ).multiply( trans ), MV1_DELIVERY, 0, 0 ) );
+			drawer->setModelMV1( Drawer::ModelMV1( scale.multiply( rot ).multiply( trans ), MV1_DELIVERY_STAND, 0, 0 ) );
 		}
 	}
 }
