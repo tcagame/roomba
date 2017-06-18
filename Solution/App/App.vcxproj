@@ -173,6 +173,7 @@
     <ClCompile Include="SceneSelect.cpp" />
     <ClCompile Include="SceneStage.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
+    <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
@@ -191,6 +192,7 @@
     <ClInclude Include="SceneSelect.h" />
     <ClInclude Include="SceneStage.h" />
     <ClInclude Include="SceneTitle.h" />
+    <ClInclude Include="Shadow.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Viewer.h" />
   </ItemGroup>

@@ -9,6 +9,7 @@ PTR( AppCamera );
 PTR( Ball );
 PTR( Crystal );
 PTR( Laser );
+PTR( Shadow );
 
 class Roomba {
 public:
@@ -29,7 +30,7 @@ public:
 	Roomba( );
 	virtual ~Roomba( );
 public:
-	void update( StagePtr stage, CameraPtr camera );
+	void update( StagePtr stage, CameraPtr camera, ShadowPtr shadow );
 	void updateLaser( CameraConstPtr camera );
 	void draw( ) const;
 	void reset( );
@@ -80,6 +81,7 @@ private:
 	void setVecReflection( Vector& vec_left, Vector& vec_right );
 	void shiftPos( CameraPtr camera );
 	void announceChangeState( MOVE_STATE state );
+	void setShadow( ShadowPtr shadow );
 private:
 	int _start_count;
 	int _wait_count;
