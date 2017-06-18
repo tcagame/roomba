@@ -1,4 +1,4 @@
-#include "SceneRetry.h"
+#include "SceneGameOver.h"
 #include "Application.h"
 #include "define.h"
 #include "Drawer.h"
@@ -10,7 +10,7 @@ static const int GRAPH_GAMEOVER_WIDTH  = 1024;
 static const int GRAPH_GAMEOVER_HEIGHT = 256;
 static const int BRANK = 300;
 
-SceneRetry::SceneRetry( int stage_num ) :
+SceneGameOver::SceneGameOver( int stage_num ) :
 _stage( stage_num ),
 _select( false ) {
 	DrawerPtr drawer = Drawer::getTask( );
@@ -21,10 +21,10 @@ _select( false ) {
 }
 
 
-SceneRetry::~SceneRetry( ) {
+SceneGameOver::~SceneGameOver( ) {
 }
 
-Scene::NEXT SceneRetry::update( ) {
+Scene::NEXT SceneGameOver::update( ) {
 	SoundPtr sound = Sound::getTask( );
 	DevicePtr device = Device::getTask( );
 	if ( device->getPush( ) && BUTTON_D ) {
@@ -57,7 +57,7 @@ Scene::NEXT SceneRetry::update( ) {
 	return NEXT_CONTINUE;
 }
 
-void SceneRetry::draw( ) {
+void SceneGameOver::draw( ) {
 	//‘I‘ð‰æ–Ê
 	DrawerPtr drawer = Drawer::getTask( );
 	ApplicationPtr app = Application::getInstance( );

@@ -12,7 +12,11 @@ private:
 	void drawBestTime( ) const;
 	void loadBestTime( );
 	void saveBestTime( );
+	void drawFrame( ) const;
+	void drawCircle( ) const;
 private:
+	int _choice_count;
+	int _select;
 	int _this_time;
 	int _best_time;
 };

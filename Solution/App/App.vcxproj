@@ -169,7 +169,7 @@
     <ClCompile Include="Roomba.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneResult.cpp" />
-    <ClCompile Include="SceneRetry.cpp" />
+    <ClCompile Include="SceneGameOver.cpp" />
     <ClCompile Include="SceneSelect.cpp" />
     <ClCompile Include="SceneStage.cpp" />
     <ClCompile Include="SceneTitle.cpp" />
@@ -187,7 +187,7 @@
     <ClInclude Include="Roomba.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneResult.h" />
-    <ClInclude Include="SceneRetry.h" />
+    <ClInclude Include="SceneGameOver.h" />
     <ClInclude Include="SceneSelect.h" />
     <ClInclude Include="SceneStage.h" />
     <ClInclude Include="SceneTitle.h" />
