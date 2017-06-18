@@ -66,6 +66,7 @@ private:
 	void moveLiftDown( );
 	void moveBound( );
 	void moveStarting( );
+	void moveWait( );
 	void acceleration( );
 	void accelTranslation( );
 	void accelRotation( DIR dir );
@@ -73,10 +74,10 @@ private:
 	void brakeRotation( );
 	void holdCrystal( StagePtr stage );
 	void checkLeftRight( CameraPtr camera );
-	void setVecTrans( Vector vec );
-	void setVecRot( Vector vec_left, Vector vec_right );
-	void setVecScale( Vector vec_left, Vector vec_right );
-	void setVecReflection( Vector vec_left, Vector vec_right );
+	void setVecTrans( Vector& vec );
+	void setVecRot( Vector& vec_left, Vector& vec_right );
+	void setVecScale( Vector& vec_left, Vector& vec_right );
+	void setVecReflection( Vector& vec_left, Vector& vec_right );
 	void shiftPos( CameraPtr camera );
 	void announceChangeState( MOVE_STATE state );
 private:
@@ -87,7 +88,7 @@ private:
 	bool _finished;
 	Vector _trans_speed;
 	Vector _move_dir;
-	Vector _vec_trans;
+	std::array< Vector, 2 > _vec_trans;
 	std::array< Vector, 2 > _vec_rot;
 	std::array< Vector, 2 > _vec_scale;
 	std::array< Vector, 2 > _vec_reflection;
