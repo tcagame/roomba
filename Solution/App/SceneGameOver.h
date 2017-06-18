@@ -1,10 +1,10 @@
 #pragma once
 #include "Scene.h"
 
-class SceneRetry : public Scene {
+class SceneGameOver : public Scene {
 public:
-	SceneRetry( int stage_num );
-	virtual ~SceneRetry( );
+	SceneGameOver( int stage_num );
+	virtual ~SceneGameOver( );
 private:
 	NEXT update( );
 	void draw( );

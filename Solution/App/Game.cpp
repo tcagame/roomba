@@ -5,7 +5,7 @@
 #include "SceneSelect.h"
 #include "SceneStage.h"
 #include "SceneResult.h"
-#include "SceneRetry.h"
+#include "SceneGameOver.h"
 #include "Drawer.h"
 #include "AppCamera.h"
 #include "Roomba.h"
@@ -19,7 +19,7 @@ GamePtr Game::getTask( ) {
 }
 
 Game::Game( ) :
-_next( Scene::NEXT_TITLE ),
+_next( Scene::NEXT_RESULT ),
 _stage_num( 0 ),
 _result_time( 0 ) {
 }
@@ -58,7 +58,7 @@ void Game::changeScene( ) {
 		_scene = ScenePtr( new SceneResult( _result_time ) );
 		break;
 	case Scene::NEXT_RETRY:
-		_scene = ScenePtr( new SceneRetry( _stage_num ) );
+		_scene = ScenePtr( new SceneGameOver( _stage_num ) );
 	}
 }
 
