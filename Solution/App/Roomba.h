@@ -35,6 +35,7 @@ public:
 	void reset( );
 	void setWaitCount( );
 	double getRotSpeed( ) const;
+	const double getMaxSpeed( ) const;
 	Vector getDir( ) const;
 	Vector getCentralPos( ) const;
 	Vector getBallPos( int ball ) const;

@@ -17,7 +17,6 @@ private:
 private:
 	int _mouse_x;
 	double _height;
-	Vector _dir;
 	Vector _before_target;
 	RoombaPtr _roomba;
 };
