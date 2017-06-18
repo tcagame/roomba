@@ -70,12 +70,13 @@ void SceneTitle::draw( ) {
 		Drawer::Sprite sprite( Drawer::Transform( BRANK, HEIGHT * 5 / 10, 0, 0, TITLE_WIDTH, TITLE_HEIGHT, WIDTH - BRANK, HEIGHT * 5 / 10 + 256 ), GRAPH_PLEASE_PUSH_BUTTON );
 		drawer->setSprite( sprite );
 	}
+	drawFadeBg( );
+	drawCircle( );
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
 		drawFadeIn( );
 	} else {
 		drawFadeOut( );
 	}
-	drawCircle( );
 }
 
 void SceneTitle::drawCircle( ) const {
