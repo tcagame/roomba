@@ -11,6 +11,7 @@
 #include "Viewer.h"
 #include "Sound.h"
 #include "Model.h"
+#include "Shadow.h"
 
 const int UI_PHASE_FOOT_X = 100;
 const int UI_PHASE_Y = 40;
@@ -23,7 +24,8 @@ const int UI_NUM_SCROLL_TIME = 20;
 const int UI_NUM_SCROLL_SPEED = 2;
 const double GUIDELINE_VIEW_RANGE = 5 * WORLD_SCALE;
 
-SceneStage::SceneStage( int stage_num ) {	
+SceneStage::SceneStage( int stage_num ) {
+	_shadow = ShadowPtr( new Shadow );
 	_guideline = ModelPtr( new Model );
 	_viewer = ViewerPtr( new Viewer );
 	_timer = TimerPtr( new Timer );
@@ -44,6 +46,7 @@ SceneStage::SceneStage( int stage_num ) {
 	_guideline->multiply( Matrix::makeTransformScaling( Vector( 0.3, 0.3, 0.3 ) ) );
 	_guideline->multiply( Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 ) );
 	DrawerPtr drawer = Drawer::getTask( );
+	drawer->loadGraph( GRAPH_SHADOW, "texture/shadow.png" );
 	drawer->loadGraph( GRAPH_COMMAND_PROMPT_STRING, "UI/op.png" );
 	drawer->loadGraph( GRAPH_COMMAND_PROMPT_BACK, "UI/op_background.png" );
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
@@ -117,7 +120,7 @@ Scene::NEXT SceneStage::update( ) {
 		return NEXT_RESULT;
 	}
 
-	_roomba->update( _stage, _camera );
+	_roomba->update( _stage, _camera, _shadow );
 	_stage->update( _camera );
 	_roomba->updateLaser( _camera );
 
@@ -134,6 +137,8 @@ Scene::NEXT SceneStage::update( ) {
 	}
 	_roomba->draw( );
 	_stage->draw( );
+	_shadow->update( );
+	_shadow->draw( );
 	drawUI( );
 
 	return Scene::NEXT_CONTINUE;

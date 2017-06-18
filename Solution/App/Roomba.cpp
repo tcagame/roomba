@@ -10,6 +10,7 @@
 #include "Sound.h"
 #include "Application.h"
 #include "Game.h"
+#include "Shadow.h"
 
 //èâë¨ìx
 const double BOUND_POW = 0.7;
@@ -74,14 +75,21 @@ _start_count( 0 ) {
 Roomba::~Roomba( ) {
 }
 
-void Roomba::update( StagePtr stage, CameraPtr camera ) {
+void Roomba::update( StagePtr stage, CameraPtr camera, ShadowPtr shadow ) {
 	changeState( stage, camera );
 	updateState( );
 	holdCrystal( stage );
 	updateBalls( stage );
 	shiftPos( camera );
+	setShadow( shadow );
 	for ( int i = 0; i < 2; i++ ) {
 		_delivery[ i ]->update( );
+	}
+}
+
+void Roomba::setShadow( ShadowPtr shadow ) {
+	for ( int i = 0; i < 2; i++ ) {
+		shadow->set( _balls[ i ]->getPos( ) );
 	}
 }
 

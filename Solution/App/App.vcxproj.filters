@@ -30,7 +30,11 @@
     <ClCompile Include="SceneGameOver.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+<<<<<<< HEAD
+    <ClCompile Include="Shadow.cpp" />
+=======
     <ClCompile Include="Animation.cpp" />
+>>>>>>> 412553196583f6c990225c9e3a9798cf642b1013
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -61,7 +65,11 @@
     <ClInclude Include="SceneGameOver.h">
       <Filter>Scene</Filter>
     </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="Shadow.h" />
+=======
     <ClInclude Include="Animation.h" />
+>>>>>>> 412553196583f6c990225c9e3a9798cf642b1013
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scene">
