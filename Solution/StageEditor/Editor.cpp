@@ -31,8 +31,7 @@ void Editor::initialize( ) {
 	Matrix crystal_scale = Matrix::makeTransformScaling( CRYSTAL_SIZE );
 	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/crystal.jpg", crystal_scale );
 	
-	Matrix earth_scale = Matrix::makeTransformScaling( EARTH_SIZE );
-	drawer->loadMDLModel( MDL_EARTH, "Model/Stage/earth.mdl", "Model/Stage/earth.jpg", earth_scale );
+	drawer->loadMV1Model( MV1_FLOOR, "Model/Stage/floor.mv1" );
 	
 	Matrix cursor_scale = Matrix::makeTransformScaling( cursor_size );
 	drawer->loadMDLModel( MDL_CURSOR, "Model/Editor/cursor.mdl", "Model/Editor/red.jpg", cursor_scale );

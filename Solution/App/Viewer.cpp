@@ -32,21 +32,6 @@ void Viewer::drawModelMV1( Stage::MV1_INFO mv1, Matrix scale_rot ) const {
 	drawer->setModelMV1( model );
 }
 
-void Viewer::drawModelMDLTransfer( Drawer::ModelMDL mdl ) const {
-	DrawerPtr drawer = Drawer::getTask( );
-	int map_x = (int)( _base_pos.x / STAGE_WIDTH_NUM / WORLD_SCALE );
-	int map_y = (int)( _base_pos.y / STAGE_HEIGHT_NUM / WORLD_SCALE );
-	mdl.pos += Vector( map_x * STAGE_WIDTH_NUM * WORLD_SCALE, map_y * STAGE_HEIGHT_NUM * WORLD_SCALE );
-	drawer->setModelMDL( mdl );
-	const int OFF_X[ 8 ] = { 4, 4, 0, 0, 0, 1, 1, 1 };
-	const int OFF_Y[ 8 ] = { 2, 3, 2, 4, 3, 2, 4, 3 };
-	for ( int i = 0; i < 8; i++ ) {
-		Drawer::ModelMDL model = mdl;
-		model.pos += OFFSET[ OFF_X[ i ] ] + OFFSET[ OFF_Y[ i ] ];
-		drawer->setModelMDL( model );
-	}
-}
-
 Vector Viewer::getViewPos( Vector pos ) const {
 	while ( pos.x - _base_pos.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
 		pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;

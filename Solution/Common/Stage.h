@@ -52,12 +52,12 @@ protected:
 	virtual void loadDelivery( );
 	const std::vector< MV1_INFO >& getWalls( ) const;
 private:
-	virtual void drawEarth( ) const = 0;
+	virtual void drawFloor( ) const = 0;
 	virtual void drawWall( ) const = 0;
 private:
 	std::array< DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _data;
 	std::vector< MV1_INFO > _walls;
-	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _earth;
+	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _floor;
 	int _max_delivery;
 };
 

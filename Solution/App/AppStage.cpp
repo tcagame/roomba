@@ -9,7 +9,7 @@
 #include "Timer.h"
 #include "Roomba.h"
 
-const double DELIVERY_POS_Z = EARTH_POS_Z + WORLD_SCALE;
+const double DELIVERY_POS_Z = FLOOR_POS_Z + WORLD_SCALE;
 const double CRYSTAL_POS_Z = 0;
 
 AppStage::AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer, RoombaPtr roomba ) :
@@ -20,6 +20,12 @@ _timer( timer ),
 _roomba( roomba ) {
 	load( 0 );//0~2:í èÌ 3:test_stage
 	loadMapData( );
+	int width = ( STAGE_WIDTH_NUM / FLOOR_CHIP_SIZE );
+	int height = ( STAGE_HEIGHT_NUM / FLOOR_CHIP_SIZE );
+	for ( int i = 0; i < width * height; i++ ) {
+		_floor[ i ].pos = Vector( i % width * FLOOR_CHIP_SIZE * WORLD_SCALE, i / width * FLOOR_CHIP_SIZE * WORLD_SCALE );
+		_floor[ i ].type = MV1_FLOOR;
+	}
 }
 
 
@@ -43,7 +49,7 @@ void AppStage::update( CameraPtr camera ) {
 
 void AppStage::draw( ) const {
 	drawModel( );
-	drawEarth( );
+	drawFloor( );
 	drawWall( );
 }
 
@@ -361,10 +367,11 @@ std::list< CrystalPtr > AppStage::getCrystalList( ) const {
 	return _crystals;
 }
 
-void AppStage::drawEarth( ) const {
-	Vector adjust_pos = Vector( WORLD_SCALE * 2, WORLD_SCALE * 2 + WORLD_SCALE / 3, EARTH_POS_Z );
-	Drawer::ModelMDL model( adjust_pos, MDL_EARTH );
-	_viewer->drawModelMDLTransfer( model );
+void AppStage::drawFloor( ) const {
+	Matrix scale = Matrix::makeTransformScaling( FLOOR_SIZE );
+	for ( int i = 0; i < ( STAGE_WIDTH_NUM / FLOOR_CHIP_SIZE ) * ( STAGE_HEIGHT_NUM / FLOOR_CHIP_SIZE ); i++ ) {
+		_viewer->drawModelMV1( _floor[ i ], scale );
+	}
 }
 
 void AppStage::drawWall( ) const {

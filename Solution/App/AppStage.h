@@ -27,7 +27,7 @@ public:
 private:
 	void updateCrystal( TimerPtr timer );
 	void updateDelivery( CameraPtr camera );
-	void drawEarth( ) const;
+	void drawFloor( ) const;
 	void drawWall( ) const;
 	void drawCrystal( ) const;
 	void drawDelivery( ) const;
@@ -48,5 +48,6 @@ private:
 	ViewerPtr _viewer;
 	TimerPtr _timer;
 	RoombaPtr _roomba;
+	std::array< Stage::MV1_INFO, ( STAGE_WIDTH_NUM / FLOOR_CHIP_SIZE ) * ( STAGE_HEIGHT_NUM / FLOOR_CHIP_SIZE ) > _floor;
 };
 

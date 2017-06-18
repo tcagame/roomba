@@ -3,11 +3,10 @@
 #include "Mouse.h"
 #include "Application.h"
 #include "Binary.h"
-#include "define.h"
 #include "Camera.h"
 
 static const double CURSOR_MOVE_SPEED = 0.5;
-static const double DELIVERY_POS_Z = EARTH_POS_Z + WORLD_SCALE;
+static const double DELIVERY_POS_Z = FLOOR_POS_Z + WORLD_SCALE;
 
 
 EditorStage::EditorStage( CameraPtr camera ) :
@@ -16,6 +15,15 @@ _camera( camera ) {
 	reset( );
 	MousePtr mouse = Mouse::getTask( );
 	_before_mouse_pos = mouse->getPos( );
+	Matrix scale = Matrix::makeTransformScaling( FLOOR_SIZE );
+
+	int width = ( STAGE_WIDTH_NUM / FLOOR_CHIP_SIZE );
+	int height = ( STAGE_HEIGHT_NUM / FLOOR_CHIP_SIZE );
+	for ( int i = 0; i < width * height; i++ ) {
+		Vector pos = Vector( i % width * FLOOR_CHIP_SIZE * WORLD_SCALE, i / width * FLOOR_CHIP_SIZE * WORLD_SCALE );
+		Matrix mat = scale.multiply( Matrix::makeTransformTranslation( pos ) );
+		_floor[ i ] = Drawer::ModelMV1( mat, MV1_FLOOR, 0 );
+	}
 }
 
 
@@ -95,7 +103,7 @@ void EditorStage::updateCursor( ) {
 
 void EditorStage::draw( ) const {
 	drawModel( );
-	drawEarth( );
+	drawFloor( );
 	drawWall( );
 	DrawerPtr drawer = Drawer::getTask( );
 	Vector cursor_pos( (int)_cursor_pos.x * WORLD_SCALE + WORLD_SCALE / 2, (int)_cursor_pos.y * WORLD_SCALE  + WORLD_SCALE / 4 );
@@ -285,10 +293,11 @@ void EditorStage::updateMode( ) {
 	}
 }
 
-void EditorStage::drawEarth( ) const {
-	Vector adjust_pos = Vector( WORLD_SCALE * 2, WORLD_SCALE * 2 + WORLD_SCALE / 3, EARTH_POS_Z );
+void EditorStage::drawFloor( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->setModelMDL( Drawer::ModelMDL( adjust_pos, MDL_EARTH ) );
+	for ( int i = 0; i < ( STAGE_WIDTH_NUM / FLOOR_CHIP_SIZE ) * ( STAGE_HEIGHT_NUM / FLOOR_CHIP_SIZE ); i++ ) {
+		drawer->setModelMV1( _floor[ i ] );
+	}
 }
 
 void EditorStage::drawWall( ) const {

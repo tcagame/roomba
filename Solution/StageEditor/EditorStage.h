@@ -1,6 +1,7 @@
 #pragma once
 #include "Stage.h"
 #include "Editor.h"
+#include "define.h"
 
 class EditorStage : public Stage {
 public:
@@ -27,7 +28,7 @@ private:
 	void updateCursor( );
 	void updateMode( );
 	void drawCrystal( ) const;
-	void drawEarth( ) const;
+	void drawFloor( ) const;
 	void drawWall( ) const;
 	void drawDelivery( ) const;
 private:
@@ -35,6 +36,7 @@ private:
 	int _count;
 	Vector _before_mouse_pos;
 	EDIT_MODE _mode;
+	std::array< Drawer::ModelMV1, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _floor;
 	CameraPtr _camera;
 };
 

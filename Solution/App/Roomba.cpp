@@ -458,10 +458,12 @@ void Roomba::moveRestore( ) {
 		}
 		if ( scale > MAX_SCALE_SIZE ) {
 				_vec_scale[ i ] = ( laser * ( scale - MAX_SCALE_SIZE ) * ( 1 - ( i != 0 ) * 2 ) ).normalize( ) * RESTORE_SPEED;
-		} else  if ( scale < MIN_SCALE_SIZE ) {
+		} else  {
+			if ( scale < MIN_SCALE_SIZE ) {
 				_vec_scale[ i ] = ( laser * ( MIN_SCALE_SIZE - scale ) * ( 1 - ( i != 0 ) * 2 ) ).normalize( ) * -RESTORE_SPEED;
-		} else {
-			_vec_scale[ i ] = Vector( );
+			} else {
+				_vec_scale[ i ] = Vector( );
+			}
 		}
 	}
 
@@ -480,9 +482,11 @@ void Roomba::moveLiftUp( ) {
 		_vec_z[ 0 ] = 0;
 		_vec_z[ 1 ] = 0;
 		return;
-	} else if ( delivery[ 0 ].pos.x < 0 ) {
-		delivery[ 0 ].pos = _balls[ 0 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
-		delivery[ 1 ].pos = _balls[ 1 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
+	} else {
+		if ( delivery[ 0 ].pos.x < 0 ) {
+			delivery[ 0 ].pos = _balls[ 0 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
+			delivery[ 1 ].pos = _balls[ 1 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
+		}
 	}
 
 	for ( int i = 0; i < 2; i++ ) {
