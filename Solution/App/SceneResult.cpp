@@ -46,9 +46,12 @@ Scene::NEXT SceneResult::update( ) {
 	DevicePtr device = Device::getTask( );
 	Vector right_stick = Vector( device->getRightDirX( ), device->getRightDirY( ) );
 	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) );
+
+	draw( );
 	// フェードイン
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
 		addFadeInCount( );
+		return NEXT_CONTINUE;
 	}
 	// フェードアウト
 	if ( _choice_count > MAX_CHOICE_COUNT ||
@@ -63,7 +66,6 @@ Scene::NEXT SceneResult::update( ) {
 	} else {
 		_choice_count = 0;
 	}
-	draw( );
 	return NEXT_CONTINUE;
 }
 
