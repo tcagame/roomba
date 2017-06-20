@@ -25,7 +25,28 @@ void Viewer::update( Vector roomba_pos ) {
 
 void Viewer::drawModelMDL( Drawer::ModelMDL mdl ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	mdl.pos = getViewPos( mdl.pos );
+	int x = (int)( _base_pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
+	int y = (int)( _base_pos.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
+	mdl.pos += Vector( x, y );
+	drawer->setModelMDL( mdl );
+	Vector add1;
+	Vector add2;
+	if ( (int)( _base_pos.x / WORLD_SCALE ) % STAGE_WIDTH_NUM > STAGE_WIDTH_NUM / 2 ) {
+		add1 = Vector(  STAGE_WIDTH_NUM * WORLD_SCALE, 0 );
+	} else {
+		add1 = Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, 0 );
+	}
+	if ( (int)( _base_pos.x / WORLD_SCALE ) % STAGE_WIDTH_NUM > STAGE_WIDTH_NUM / 2 ) {
+		add2 = Vector( 0,  STAGE_HEIGHT_NUM * WORLD_SCALE );
+	} else {
+		add2 = Vector( 0, -STAGE_HEIGHT_NUM * WORLD_SCALE );
+	}
+	Vector pos = mdl.pos;
+	mdl.pos = pos + add1;
+	drawer->setModelMDL( mdl );
+	mdl.pos = pos + add2;
+	drawer->setModelMDL( mdl );
+	mdl.pos = pos + add1 + add2;
 	drawer->setModelMDL( mdl );
 }
 

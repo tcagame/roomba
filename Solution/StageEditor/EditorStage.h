@@ -20,11 +20,12 @@ private:
 private:
 	void saveFile( ) const;
 	void loadFile( );
+	void saveWall( ) const;
+	void saveFloor( ) const;
 	void edit( );
 	void editWall( );
 	void editCrystal( );
 	void editDelivery( );
-private:
 	void updateCursor( );
 	void updateMode( );
 	void drawCrystal( ) const;

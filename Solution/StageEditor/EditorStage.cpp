@@ -74,60 +74,59 @@ void EditorStage::saveFile( ) const {
 	ApplicationPtr app = Application::getInstance( );
 	std::string filename = "../Resource/Map/" + app->inputString( 0, 40 );
 	saveData( filename );
-	{
-		ModelPtr model[ 32 ];
-		for ( int i = 0; i < 32; i++ ) {
-			if ( FILENAME[ i ] != "" ) {
-				model[ i ] = ModelPtr( new Model );
-				model[ i ]->load( "../Resource/Model/Stage/" + FILENAME[ i ] );
-			}
-		}
-		std::vector< ModelPtr > walls;
-		std::vector< Drawer::ModelMDL >::const_iterator ite = _walls.begin( );
-		ModelPtr wall_model[ 4 ] = {
-			ModelPtr( new Model ),
-			ModelPtr( new Model ),
-			ModelPtr( new Model ),
-			ModelPtr( new Model )
-		};
-		int size = _walls.size( );
-		
-		int count = 0;
-		for ( int i = 0; i < WALL_DIV_SIZE; i++ ) {
-			while ( ite != _walls.end( ) ) {
-				int idx = ( count * WALL_DIV_SIZE ) / size;
-				if ( idx != i ) {
-					if ( idx == 1 ) {
-					}
-					break;
-				}
-				int type = (*ite).type - MDL_WALL_0_0;
-				Vector pos = Vector( (*ite).pos.x, (*ite).pos.y ) * ( 1 / WALL_SIZE.x );
-				model[ type ]->setPos( pos );
-				count++;
-				wall_model[ idx ]->mergeModel( model[ type ] );
-				ite++;
-			}
-			wall_model[ i ]->save( "../Resource/Model/Stage/_wall_" + std::to_string( i ) + ".mdl" );
-			wall_model[ i ] = ModelPtr( );
-		}
-	}
-	{
-		ModelPtr floor_model = ModelPtr( new Model );
-		ModelPtr tmp = ModelPtr( new Model );
-		tmp->load( "../Resource/Model/Stage/floor.mdl" );
-		for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-			tmp->setPos( _floor[ i ].pos * ( 1 / FLOOR_SIZE.x ) );
-			floor_model->mergeModel( tmp );
-		}
-		floor_model->save( "../Resource/Model/Stage/_floor" );
-	}
+	saveWall( );
+	saveFloor( );
 }
 
 void EditorStage::loadFile( ) {
 	ApplicationPtr app = Application::getInstance( );
 	std::string filename = "../Resource/Map/" + app->inputString( 0, 40 );
 	loadData( filename );
+}
+
+
+void EditorStage::saveWall( ) const {
+	ModelPtr base_model[ 32 ];
+	for ( int i = 0; i < 32; i++ ) {
+		if ( FILENAME[ i ] != "" ) {
+			base_model[ i ] = ModelPtr( new Model );
+			base_model[ i ]->load( "../Resource/Model/Stage/" + FILENAME[ i ] );
+		}
+	}
+
+	std::vector< Drawer::ModelMDL >::const_iterator ite = _walls.begin( );
+	int size = _walls.size( );
+	
+	int count = 0;
+	for ( int i = 0; i < WALL_DIV_SIZE; i++ ) {
+		ModelPtr wall_div_model( new Model );
+		while ( ite != _walls.end( ) ) {
+			int idx = ( count * WALL_DIV_SIZE ) / size;
+			if ( idx != i ) {
+				if ( idx == i + 1 ) {
+					break;
+				}
+			}
+			int type = (*ite).type - MDL_WALL_0_0;
+			Vector pos = Vector( (*ite).pos.x, (*ite).pos.y ) * ( 1 / WALL_SIZE.x );
+			base_model[ type ]->setPos( pos );
+			wall_div_model->mergeModel( base_model[ type ] );
+			count++;
+			ite++;
+		}
+		wall_div_model->save( "../Resource/Model/Stage/_wall_" + std::to_string( i ) + ".mdl" );
+		wall_div_model.reset( );
+	}
+}
+void EditorStage::saveFloor( ) const {
+	ModelPtr floor_model = ModelPtr( new Model );
+	ModelPtr tmp = ModelPtr( new Model );
+	tmp->load( "../Resource/Model/Stage/floor.mdl" );
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		tmp->setPos( _floor[ i ].pos * ( 1 / FLOOR_SIZE.x ) );
+		floor_model->mergeModel( tmp );
+	}
+	floor_model->save( "../Resource/Model/Stage/_floor" );
 }
 
 void EditorStage::updateCursor( ) {
