@@ -93,7 +93,7 @@ void SceneResult::drawResult( ) const {
 	const int RESULT_WIDTH = 169;
 	const int RESULT_HEIGHT = 37;
 
-	Drawer::Transform trans( WIDTH / 2 - RESULT_WIDTH / 2, HEIGHT / 4, 427, 50, RESULT_WIDTH, RESULT_HEIGHT );
+	Drawer::Transform trans( WIDTH / 2 - RESULT_WIDTH / 2, HEIGHT / 2 - RESULT_HEIGHT * 8, 427, 50, RESULT_WIDTH, RESULT_HEIGHT );
 	Drawer::Sprite sprite( trans, GRAPH_GAME_OVER );
 	drawer->setSprite( sprite );
 }
@@ -107,7 +107,7 @@ void SceneResult::drawGameClear( ) const {
 	const int GAMEOVER_WIDTH = 655;
 	const int GAMEOVER_HEIGHT = 80;
 
-	Drawer::Transform trans( WIDTH / 2 - GAMEOVER_WIDTH / 2, HEIGHT / 2 - GAMEOVER_HEIGHT * 2 / 4, 192, 114, GAMEOVER_WIDTH, GAMEOVER_HEIGHT );
+	Drawer::Transform trans( WIDTH / 2 - GAMEOVER_WIDTH  / 2, HEIGHT / 2 - GAMEOVER_HEIGHT * 2, 192, 114, GAMEOVER_WIDTH, GAMEOVER_HEIGHT );
 	Drawer::Sprite sprite( trans, GRAPH_GAME_CLEAR );
 	drawer->setSprite( sprite );
 }
@@ -289,11 +289,11 @@ void SceneResult::drawOperationRank( ) const {
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
 	int sx = WIDTH / 2 - SIZE * 3;
-	int sy = HEIGHT * 3 / 4 - SIZE / 2;
-	int sx2 = WIDTH / 2 + SIZE * 3;
-	int sy2 = HEIGHT * 3 / 4 + SIZE / 2;
+	int sy = HEIGHT * 3 / 4 - SIZE * 2;
+	int sx2 = WIDTH / 2 + SIZE;
+	int sy2 = HEIGHT * 3 / 4 - SIZE;
 	{ // RANK
-		Drawer::Transform trans( sx, sy, 0, 0, SIZE * 3, SIZE, sx2, sy2 );
+		Drawer::Transform trans( sx, sy + ( SIZE - 50 ), 0, 0, SIZE * 3, SIZE, sx2, sy2 +  ( SIZE - 50 ) );
 		Drawer::Sprite sprite( trans, GRAPH_RANK );
 		drawer->setSprite( sprite );
 	}
@@ -301,7 +301,7 @@ void SceneResult::drawOperationRank( ) const {
 		static int count = 0;
 		count++;
 		double ratio = (double)count / 50;
-		Drawer::Transform trans( sx2 + 10, sy, tx, ty, SIZE, SIZE, sx2 + SIZE, sy2 );
+		Drawer::Transform trans( sx2 - SIZE, sy - 20, tx, ty, SIZE, SIZE, sx2 + SIZE * 2, sy2  + SIZE );
 		Drawer::Sprite sprite( trans, GRAPH_RANK, Drawer::BLEND_ALPHA, ratio );
 		drawer->setSprite( sprite );
 	}
