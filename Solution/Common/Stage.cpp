@@ -78,76 +78,15 @@ void Stage::drawCrystal( ) const {
 void Stage::drawDelivery( ) const {
 }
 
-void Stage::loadWall( ) {
-	_walls.clear( );
-	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
-	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
-
-	for ( int i = 0; i < 16; i++ ) {
-		int tmp = 1;
-		for ( int j = 0; j < 4; j++ ) {
-			tmp *= 2;
-			int type = 0;
-			if ( i % tmp >= tmp / 2 ) {
-				type = 1;
-			}
-		}
-	}
-	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		//•Ç¶¬
-		int x = i % STAGE_WIDTH_NUM;
-		int y = i / STAGE_WIDTH_NUM;
-		Vector pos( x * WORLD_SCALE + WORLD_SCALE / 2, y * WORLD_SCALE + WORLD_SCALE / 2, WALL_POS_Z );
-		int type = _data[ i ].wall;
-		if ( type != 0 && type != 1 ) {
-			continue;
-		}
-		unsigned char flag = 0;
-		for ( int j = 0; j < 4; j++ ) {
-			int idx0 = i + OFFSET_X[ j ];
-			int idx1 = i + OFFSET_Y[ j ] * STAGE_WIDTH_NUM;
-			if ( x + OFFSET_X[ j ] < 0 ) {
-				idx0 += STAGE_WIDTH_NUM;
-			}
-			if ( x + OFFSET_X[ j ] >= STAGE_WIDTH_NUM ) {
-				idx0 -= STAGE_WIDTH_NUM;
-			}
-			if ( y + OFFSET_Y[ j ] < 0 ) {
-				idx1 += STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM;
-			}
-			if ( y + OFFSET_Y[ j ] >= STAGE_HEIGHT_NUM ) {
-				idx1 -= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM;
-			}
-			if ( type == 1 ) {
-				if ( _data[ idx0 ].wall == 0 && _data[ idx1 ].wall == 0 ) {
-					flag |= 1 << j;
-				}
-			}
-			if ( type == 0 ) {
-				if ( _data[ idx0 ].wall == 1 && _data[ idx1 ].wall == 1 ) {
-					flag |= 1 << j;
-				}
-			}
-		}
-		if ( type == 0 && flag == 0 ) {
-				continue;
-		}
-		MDL wall_type = (MDL)( MDL_WALL_0_0 + type * 16 + flag );
-		if ( wall_type == MDL_WALL_0_0 ) {
-			continue;
-		}
-		Drawer::ModelMDL mdl;
-		mdl.pos = pos;
-		mdl.type = wall_type;
-		_walls.push_back( mdl );
-	}
-}
-
 void Stage::loadCrystal( ) {
 
 }
 
 void Stage::loadDelivery( ) {
+
+}
+
+void Stage::loadWall( ) {
 
 }
 
@@ -184,9 +123,4 @@ void Stage::debug( ) {
 
 int Stage::getMaxDeliveryNum( ) const {
 	return _max_delivery;
-}
-
-
-const std::vector< Drawer::ModelMDL >& Stage::getWalls( ) const {
-	return _walls;
 }

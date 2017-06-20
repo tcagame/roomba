@@ -47,16 +47,14 @@ protected:
 	void saveData( std::string filename ) const;
 	virtual void drawCrystal( ) const;
 	virtual void drawDelivery( ) const;
-	void loadWall( );
 	virtual void loadCrystal( );
 	virtual void loadDelivery( );
-	const std::vector< Drawer::ModelMDL >& getWalls( ) const;
+	virtual void loadWall( );
 private:
 	virtual void drawFloor( ) const = 0;
 	virtual void drawWall( ) const = 0;
 private:
 	std::array< DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _data;
-	std::vector< Drawer::ModelMDL > _walls;
 	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _floor;
 	int _max_delivery;
 };

@@ -32,7 +32,6 @@ AppStage::~AppStage( ) {
 
 void AppStage::reset( ) {
 	loadMapData( );
-	Stage::reset( );
 }
 
 bool AppStage::isFinished( ) const {
@@ -332,6 +331,13 @@ void AppStage::loadMapData( ) {
 	}
 }
 
+void AppStage::loadWall( ) {
+	for ( int i = 0; i < WALL_DIV_SIZE; i++ ) {
+		_walls[ i ].pos = Vector( );
+		_walls[ i ].type = MDL_WALL_0 + i;
+	}
+}
+
 bool AppStage::isOnDelivery( Vector& pos ) {
 	bool result = false;
 	std::list< DeliveryPtr >::iterator ite = _deliverys.begin( );
@@ -366,15 +372,12 @@ std::list< CrystalPtr > AppStage::getCrystalList( ) const {
 }
 
 void AppStage::drawFloor( ) const {
-	_viewer->drawModelMDL( _floor );
+	_viewer->drawModelMDLMulti( _floor );
 }
 
 void AppStage::drawWall( ) const {
-	std::vector< Drawer::ModelMDL > walls = getWalls( );
-	std::vector< Drawer::ModelMDL >::const_iterator ite = walls.begin( );
-	while ( ite != walls.end( ) ) {
-		_viewer->drawModelMDL( *ite );
-		ite++;
+	for ( int i = 0; i < WALL_DIV_SIZE; i++ ) {
+		_viewer->drawModelMDLMulti( _walls[ i ] );
 	}
 }
 

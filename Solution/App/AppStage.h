@@ -16,13 +16,13 @@ public:
 public:
 	void update( CameraPtr camera );
 	void draw( ) const;
-	void reset( );
 	bool isFinished( ) const;
 	Vector adjustCollisionToWall( Vector pos, Vector vec, const double radius );
 	Vector adjustCollisionToCrystal( Vector pos, Vector& vec, const double radius );
 	CrystalPtr getHittingCrystal( Vector& pos0, Vector& pos1, Vector& vec0, Vector& vec1) const;
 	bool isOnDelivery( Vector& pos );
 	int getDeliveryCount( ) const;
+	void reset( );
 	std::list< CrystalPtr > getCrystalList( ) const;
 private:
 	void updateCrystal( TimerPtr timer );
@@ -34,6 +34,7 @@ private:
 	void loadCrystal( );
 	void loadDelivery( );
 	void loadMapData( );
+	void loadWall( );
 	void adjustPos( Vector& pos, Vector& base_pos ) const;
 	bool isCollisionToSquare( Vector& square_pos, Vector pos, double radius ) const;
 	bool isCollisionToCircle( Vector circle_pos, Vector pos, double radius ) const;
@@ -49,5 +50,6 @@ private:
 	TimerPtr _timer;
 	RoombaPtr _roomba;
 	Drawer::ModelMDL _floor;
+	std::array< Drawer::ModelMDL, WALL_DIV_SIZE > _walls;
 };
 

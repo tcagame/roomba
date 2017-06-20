@@ -31,11 +31,13 @@ private:
 	void drawFloor( ) const;
 	void drawWall( ) const;
 	void drawDelivery( ) const;
+	void loadWall( );
 private:
 	Vector _cursor_pos;
 	int _count;
 	Vector _before_mouse_pos;
 	EDIT_MODE _mode;
+	std::vector< Drawer::ModelMDL > _walls;
 	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _floor;
 	CameraPtr _camera;
 };

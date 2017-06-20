@@ -5,6 +5,7 @@ const double REFLECTION_POWER = 0.25;
 const int STAGE_WIDTH_NUM = 40;
 const int STAGE_HEIGHT_NUM = 35;
 const int FLOOR_CHIP_SIZE = 1;
+const int WALL_DIV_SIZE = 4;//save•ªŠ„
 const double WORLD_SCALE = 2;
 const double ROOMBA_SCALE = 0.4;
 const double STAGE_MODEL_SIZE = 4;
@@ -31,6 +32,13 @@ enum MDL {
 	MDL_NONE,
 	MDL_CURSOR,
 	MDL_CRYSTAL,
+	//app
+	MDL_WALL_0,
+	MDL_WALL_1,
+	MDL_WALL_2,
+	MDL_WALL_3,
+
+	//editor
 	MDL_WALL_0_0,
 	MDL_WALL_0_1,
 	MDL_WALL_0_2,
