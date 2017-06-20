@@ -58,6 +58,7 @@ _trans_speed( Vector( ) ),
 _rot_speed( 0 ),
 _link_break( false ),
 _finished( false ),
+_boot( true ),
 _wait_count( 0 ),
 _start_count( 0 ) {
 	for ( int i = 0; i < 2; i++ ) {
@@ -251,7 +252,7 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera ) {
 			//sound->playSE( "se_maoudamashii_effect14.wav" );
 		}
 	}
-	if ( _start_count < START_TIME ) {
+	if ( _boot ) {
 		state = MOVE_STATE_STARTING;
 	}
 
@@ -525,8 +526,7 @@ void Roomba::moveLiftDown( ) {
 }
 
 void Roomba::moveBound( ) {
-	if ( _state == MOVE_STATE_LIFT_UP ||
-		 _start_count < START_TIME / 2 ) {
+	if ( _state == MOVE_STATE_LIFT_UP ) {
 		return;
 	}
 	for ( int i = 0; i < 2; i++ ) {
@@ -553,8 +553,7 @@ void Roomba::moveStarting( ) {
 	if ( _state != MOVE_STATE_STARTING ) {
 		return;
 	}
-
-	if ( _start_count < START_TIME / 2 ) {
+	{
 		// command prompt
 		const int TW = 500;
 		const int TH = 400;
@@ -562,7 +561,7 @@ void Roomba::moveStarting( ) {
 		int sx = app->getWindowWidth( ) / 2 - TW / 2;
 		int sy = app->getWindowHeight( ) / 2 - TH / 2;
 		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, TW, TH ), GRAPH_COMMAND_PROMPT_BACK ) );
-		for ( int i = 0; i < 10 * 8; i++ ) {
+		for ( int i = 0; i < 10; i++ ) {
 			const int string = 50;
 			int tx = i % 10;
 			int ty = i / 10;
@@ -572,7 +571,8 @@ void Roomba::moveStarting( ) {
 				break;
 			}
 		}
-	} else {
+	}
+	{
 		// ball drop
 		Vector vec[ 2 ];
 		bool boot = false;
@@ -585,6 +585,7 @@ void Roomba::moveStarting( ) {
 				vec[ i ] = diff;
 				if ( boot ) {
 					_start_count = START_TIME;
+					_boot = false;
 				}
 				boot = true;
 			}
@@ -606,7 +607,6 @@ void Roomba::moveStarting( ) {
 		//	_delivery[ i ].pos += Vector( 1, 1, 0 ) * ( MAX_TRANS_SPEED * ( _start_count - ( START_TIME / 2 ) ) );
 		//}
 	}
-	_start_count++;
 }
 
 void Roomba::moveWait( ) {
