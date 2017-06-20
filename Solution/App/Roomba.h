@@ -90,6 +90,7 @@ private:
 	bool _link_break;
 	bool _finished;
 	Vector _trans_speed;
+	double _start_speed;
 	Vector _move_dir;
 	std::array< bool, 4 > _boot;
 	std::array< Vector, 2 > _vec_trans;

@@ -55,6 +55,7 @@ const Vector POP_POS[ 2 ] {
 Roomba::Roomba( ) :
 _state( MOVE_STATE_STARTING ),
 _trans_speed( Vector( ) ),
+_start_speed( 0 ),
 _rot_speed( 0 ),
 _link_break( false ),
 _finished( false ),
@@ -583,22 +584,24 @@ void Roomba::moveStarting( ) {
 				target[ i ] = START_POS[ i ] + Vector(  0,  0 );
 			}
 			if ( _boot[ 1 ] ) {
-				target[ i ] = START_POS[ i ] + Vector( -1, -1 );
+				target[ i ] = START_POS[ i ] + Vector( -5, -5 );
 			}
 			if ( _boot[ 2 ] ) {
-				target[ i ] = START_POS[ i ] + Vector(  0, -1 );
+				target[ i ] = START_POS[ i ] + Vector(  0, -5 );
 			}
 			if ( _boot[ 3 ] ) {
-				target[ i ] = START_POS[ i ] + Vector(  1,  1 );
+				target[ i ] = START_POS[ i ] + Vector(  5,  5 );
 			}
 		}
+
+		_start_speed += ( Vector( target[ 0 ].x, target[ 0 ].y ).normalize( ) * ACCEL_SPEED ).getLength( );
 
 		Vector vec[ 2 ];
 		for ( int i = 0; i < 2; i++ ) {
 			Vector diff = target[ i ] - _balls[ i ]->getPos( );
 			diff.z = 0;
 			vec[ i ] = diff;
-			vec[ i ] = vec[ i ].normalize( ) * MAX_TRANS_SPEED;
+			vec[ i ] = vec[ i ].normalize( ) * _start_speed;
 			if ( _boot[ 1 ] ) {
 				_vec_z[ i ] = 0;
 			}
