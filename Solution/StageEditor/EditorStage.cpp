@@ -4,10 +4,44 @@
 #include "Application.h"
 #include "Binary.h"
 #include "Camera.h"
+#include "Model.h"
 
 static const double CURSOR_MOVE_SPEED = 0.5;
 static const double DELIVERY_POS_Z = FLOOR_POS_Z + WORLD_SCALE;
-
+std::string FILENAME[ 32 ] = {
+	"" ,
+	"0_1.mdl" ,
+	"0_2.mdl" ,
+	"0_3.mdl" ,
+	"0_4.mdl" ,
+	"0_5.mdl" ,
+	"" ,
+	"" ,
+	"0_8.mdl" ,
+	"" ,
+	"0_10.mdl",
+	"",
+	"0_12.mdl",
+	"",
+	"",
+	"0_15.mdl",
+	"1_0.mdl" ,
+	"1_1.mdl" ,
+	"1_2.mdl" ,
+	"1_3.mdl" ,
+	"1_4.mdl" ,
+	"1_5.mdl" ,
+	"" ,
+	"" ,
+	"1_8.mdl" ,
+	"" ,
+	"1_10.mdl",
+	"",
+	"1_12.mdl",
+	"",
+	"",
+	"1_15.mdl",
+};
 
 EditorStage::EditorStage( CameraPtr camera ) :
 _count( 0 ),
@@ -40,6 +74,54 @@ void EditorStage::saveFile( ) const {
 	ApplicationPtr app = Application::getInstance( );
 	std::string filename = "../Resource/Map/" + app->inputString( 0, 40 );
 	saveData( filename );
+	{
+		ModelPtr model[ 32 ];
+		for ( int i = 0; i < 32; i++ ) {
+			if ( FILENAME[ i ] != "" ) {
+				model[ i ] = ModelPtr( new Model );
+				model[ i ]->load( "../Resource/Model/Stage/" + FILENAME[ i ] );
+			}
+		}
+		std::vector< ModelPtr > walls;
+		std::vector< Drawer::ModelMDL >::const_iterator ite = _walls.begin( );
+		ModelPtr wall_model[ 4 ] = {
+			ModelPtr( new Model ),
+			ModelPtr( new Model ),
+			ModelPtr( new Model ),
+			ModelPtr( new Model )
+		};
+		int size = _walls.size( );
+		
+		int count = 0;
+		for ( int i = 0; i < WALL_DIV_SIZE; i++ ) {
+			while ( ite != _walls.end( ) ) {
+				int idx = ( count * WALL_DIV_SIZE ) / size;
+				if ( idx != i ) {
+					if ( idx == 1 ) {
+					}
+					break;
+				}
+				int type = (*ite).type - MDL_WALL_0_0;
+				Vector pos = Vector( (*ite).pos.x, (*ite).pos.y ) * ( 1 / WALL_SIZE.x );
+				model[ type ]->setPos( pos );
+				count++;
+				wall_model[ idx ]->mergeModel( model[ type ] );
+				ite++;
+			}
+			wall_model[ i ]->save( "../Resource/Model/Stage/_wall_" + std::to_string( i ) + ".mdl" );
+			wall_model[ i ] = ModelPtr( );
+		}
+	}
+	{
+		ModelPtr floor_model = ModelPtr( new Model );
+		ModelPtr tmp = ModelPtr( new Model );
+		tmp->load( "../Resource/Model/Stage/floor.mdl" );
+		for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+			tmp->setPos( _floor[ i ].pos * ( 1 / FLOOR_SIZE.x ) );
+			floor_model->mergeModel( tmp );
+		}
+		floor_model->save( "../Resource/Model/Stage/_floor" );
+	}
 }
 
 void EditorStage::loadFile( ) {
@@ -301,9 +383,8 @@ void EditorStage::drawFloor( ) const {
 
 void EditorStage::drawWall( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	std::vector< Drawer::ModelMDL > walls = getWalls( );
-	std::vector< Drawer::ModelMDL >::const_iterator ite = walls.begin( );
-	while ( ite != walls.end( ) ) {
+	std::vector< Drawer::ModelMDL >::const_iterator ite = _walls.begin( );
+	while ( ite != _walls.end( ) ) {
 		Drawer::ModelMDL mdl = (*ite);
 		drawer->setModelMDL( mdl );
 		ite++;
@@ -321,5 +402,76 @@ void EditorStage::drawDelivery( ) const {
 			Matrix scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 			drawer->setModelMV1( Drawer::ModelMV1( scale.multiply( rot ).multiply( trans ), MV1_DELIVERY_STAND, 0, 0 ) );
 		}
+	}
+}
+
+void EditorStage::loadWall( ) {
+	_walls.clear( );
+	const int OFFSET_X[ 8 ] = { -1, 1, -1, 1, 0, 0, -1, 1 };
+	const int OFFSET_Y[ 8 ] = { -1, -1, 1, 1, -1, 1, 0, 0 };
+
+	for ( int i = 0; i < 16; i++ ) {
+		int tmp = 1;
+		for ( int j = 0; j < 4; j++ ) {
+			tmp *= 2;
+			int type = 0;
+			if ( i % tmp >= tmp / 2 ) {
+				type = 1;
+			}
+		}
+	}
+	std::array< Stage::DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > data = getData( );
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		//•Ç¶¬
+		int x = i % STAGE_WIDTH_NUM;
+		int y = i / STAGE_WIDTH_NUM;
+		Vector pos( x * WORLD_SCALE + WORLD_SCALE / 2, y * WORLD_SCALE + WORLD_SCALE / 2, 0 );
+		int type = data[ i ].wall;
+		if ( type != 0 && type != 1 ) {
+			continue;
+		}
+		unsigned char flag = 0;
+		for ( int j = 0; j < 4; j++ ) {
+			int idx0 = i + OFFSET_X[ j ];
+			int idx1 = i + OFFSET_Y[ j ] * STAGE_WIDTH_NUM;
+			if ( x + OFFSET_X[ j ] < 0 ) {
+				idx0 += STAGE_WIDTH_NUM;
+			}
+			if ( x + OFFSET_X[ j ] >= STAGE_WIDTH_NUM ) {
+				idx0 -= STAGE_WIDTH_NUM;
+			}
+			if ( y + OFFSET_Y[ j ] < 0 ) {
+				idx1 += STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM;
+			}
+			if ( y + OFFSET_Y[ j ] >= STAGE_HEIGHT_NUM ) {
+				idx1 -= STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM;
+			}
+			if ( type == 1 ) {
+				if ( data[ idx0 ].wall == 0 && data[ idx1 ].wall == 0 ) {
+					flag |= 1 << j;
+				}
+			}
+			if ( type == 0 ) {
+				if ( data[ idx0 ].wall == 1 && data[ idx1 ].wall == 1 ) {
+					flag |= 1 << j;
+				}
+			}
+		}
+		if ( type == 0 && flag == 0 ) {
+				continue;
+		}
+		MDL wall_type = (MDL)( MDL_WALL_0_0 + type * 16 + flag );
+		if ( wall_type == MDL_WALL_0_0 ) {
+			continue;
+		}
+		Vector adjust_pos;
+		if ( ( wall_type > MDL_WALL_0_0 && wall_type <= MDL_WALL_0_15 ) ||
+			wall_type == MDL_WALL_1_0 ) {
+			adjust_pos.z = ( WALL_SIZE.z - 1 ) * 2.12;
+		}
+		Drawer::ModelMDL mdl;
+		mdl.pos = pos + adjust_pos;
+		mdl.type = wall_type;
+		_walls.push_back( mdl );
 	}
 }

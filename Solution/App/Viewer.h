@@ -14,6 +14,7 @@ public:
 public:
 	void update( Vector roomba_pos );
 	void drawModelMDL( Drawer::ModelMDL mdl ) const;
+	void drawModelMDLMulti( Drawer::ModelMDL mdl ) const;
 	void drawModelMV1( Stage::MV1_INFO mv1, Matrix scale_rot ) const;
 private:
 	Vector getViewPos( Vector pos ) const;
