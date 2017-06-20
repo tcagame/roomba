@@ -18,6 +18,7 @@ public:
 	void changeAnim( ANIM anim );
 	void setPos( Vector pos );
 	ANIM getAnim( ) const;
+	Vector getPos( ) const;
 	const Stage::MV1_INFO& getModel( ) const;
 private:
 	void updateAnimationDelivery( );

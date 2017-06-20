@@ -57,11 +57,14 @@ void Animation::setPos( Vector pos ) {
 	_model.pos = pos;
 }
 
-
 Animation::ANIM Animation::getAnim( ) const {
 	return _anim;
 }
 
 const Stage::MV1_INFO& Animation::getModel( ) const {
 	return _model;
+}
+
+Vector Animation::getPos( ) const {
+	return _model.pos;
 }
