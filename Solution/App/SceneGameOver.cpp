@@ -21,7 +21,8 @@ _choice_count( 0 ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
 	drawer->loadGraph( GRAPH_STAGE_SELECT, "select/Stage Select.png" );
-	drawer->loadGraph( GRAPH_GAMEOVER, "UI/game_over.png" );
+	drawer->loadGraph( GRAPH_GAME_OVER, "UI/game_over.png" );
+	drawer->loadGraph( GRAPH_FRAME, "UI/Frame.png" );
 	SoundPtr sound = Sound::getTask( );
 	sound->playBGM( "bgm_maoudamashii_cyber29.wav" );
 }
@@ -60,20 +61,44 @@ Scene::NEXT SceneGameOver::update( ) {
 }
 
 void SceneGameOver::draw( ) {
-	//選択画面
-	DrawerPtr drawer = Drawer::getTask( );
-	ApplicationPtr app = Application::getInstance( );
-	const int WIDTH = app->getWindowWidth( );
-	const int HEIGHT = app->getWindowHeight( );
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( WIDTH / 2 - GRAPH_GAMEOVER_WIDTH / 2, HEIGHT / 2 - GRAPH_GAMEOVER_HEIGHT / 2 , 0, 0 ), GRAPH_GAMEOVER ) ); // ゲームオーバー
+	drawResult( );
+	drawGameOver( );
 	drawFrame( );
 	drawFadeBg( );
+	drawCircle( );
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
 		drawFadeIn( );
 	} else {
 		drawFadeOut( );
 	}
-	drawCircle( );
+}
+
+void SceneGameOver::drawResult( ) {
+	DrawerPtr drawer = Drawer::getTask( );
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+
+	const int RESULT_WIDTH = 169;
+	const int RESULT_HEIGHT = 37;
+
+	Drawer::Transform trans( WIDTH / 2 - RESULT_WIDTH / 2, HEIGHT / 3, 427, 50, RESULT_WIDTH, RESULT_HEIGHT );
+	Drawer::Sprite sprite( trans, GRAPH_GAME_OVER );
+	drawer->setSprite( sprite );
+}
+
+void SceneGameOver::drawGameOver( ) {
+	DrawerPtr drawer = Drawer::getTask( );
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+
+	const int GAMEOVER_WIDTH = 655;
+	const int GAMEOVER_HEIGHT = 72;
+
+	Drawer::Transform trans( WIDTH / 2 - GAMEOVER_WIDTH / 2, HEIGHT / 2 - GAMEOVER_HEIGHT / 2, 192, 114, GAMEOVER_WIDTH, GAMEOVER_HEIGHT );
+	Drawer::Sprite sprite( trans, GRAPH_GAME_OVER );
+	drawer->setSprite( sprite );
 }
 
 void SceneGameOver::drawFrame( ) {
@@ -90,7 +115,7 @@ void SceneGameOver::drawFrame( ) {
 
 	for ( int i = 0; i < 4; i++ ) {
 		Drawer::Transform trans( T_SX[ i ], T_SY[ i ], T_TX[ i ], T_TY[ i ], THICK_FRAME_SIZE, THICK_FRAME_SIZE );
-		Drawer::Sprite sprite( trans, GRAPH_STAGE_SELECT );
+		Drawer::Sprite sprite( trans, GRAPH_FRAME );
 		drawer->setSprite( sprite );
 	}
 
@@ -119,15 +144,13 @@ void SceneGameOver::drawCircle( ) const {
 	const int HEIGHT = app->getWindowHeight( );
 	
 	const int CIRCLE_SIZE = 100;
-	const int idx = _choice_count / CIRCLE_ANIME_FLAME;
+	int idx = _choice_count / CIRCLE_ANIME_FLAME;
+	if ( idx > 25 || getFadeOutCount( ) != MAX_FADE_COUNT  ) {
+		idx = 25;
+	}
 	int tx = idx % 4;
 	int ty = idx / 4;
-	if ( ty > 6 ) {
-		ty = 6;
-		if ( tx > 1 ) {
-			tx = 1;
-		}
-	}
+	
 	DrawerPtr drawer = Drawer::getTask( );
 	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT / 2 - CIRCLE_SIZE / 2, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );

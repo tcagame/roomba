@@ -9,7 +9,9 @@ private:
 	NEXT update( );
 	void draw( );
 	void drawFrame( );
+	void drawResult( );
 	void drawCircle( ) const;
+	void drawGameOver( );
 private:
 	int _move_count;
 	int _choice_count;
