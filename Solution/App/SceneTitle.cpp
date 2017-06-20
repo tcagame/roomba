@@ -86,7 +86,7 @@ void SceneTitle::drawCircle( ) const {
 	
 	const int CIRCLE_SIZE = 100;
 	int idx = _choice_count / CIRCLE_ANIME_FLAME;
-	if ( idx > 25 ) {
+	if ( idx > 25 || getFadeOutCount( ) != MAX_FADE_COUNT  ) {
 		idx = 25;
 	}
 	int tx = idx % 4;

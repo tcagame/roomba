@@ -87,11 +87,11 @@ private:
 	int _start_count;
 	int _wait_count;
 	double _rot_speed;
-	bool _boot;
 	bool _link_break;
 	bool _finished;
 	Vector _trans_speed;
 	Vector _move_dir;
+	std::array< bool, 4 > _boot;
 	std::array< Vector, 2 > _vec_trans;
 	std::array< Vector, 2 > _vec_rot;
 	std::array< Vector, 2 > _vec_scale;
