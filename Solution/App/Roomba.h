@@ -87,6 +87,7 @@ private:
 	int _start_count;
 	int _wait_count;
 	double _rot_speed;
+	bool _boot;
 	bool _link_break;
 	bool _finished;
 	Vector _trans_speed;
