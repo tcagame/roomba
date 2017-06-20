@@ -15,6 +15,8 @@ private:
 	void saveBestTime( );
 	void drawFrame( ) const;
 	void drawCircle( ) const;
+	void drawResult( ) const;
+	void drawGameClear( ) const;
 private:
 	int _choice_count;
 	int _select;
