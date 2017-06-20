@@ -47,6 +47,7 @@ SceneStage::SceneStage( int stage_num ) {
 	_guideline->multiply( Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 ) );
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_SHADOW, "texture/shadow.png" );
+	drawer->loadGraph( GRAPH_RADAR, "UI/radar2.png" );
 	drawer->loadGraph( GRAPH_COMMAND_PROMPT_STRING, "UI/op.png" );
 	drawer->loadGraph( GRAPH_COMMAND_PROMPT_BACK, "UI/op_background.png" );
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
@@ -234,6 +235,12 @@ void SceneStage::drawUIMap( ) const {
 		int sx2 = sx + UI_MAP_SIZE * UI_MAP_RANGE * 2 + UI_MAP_SIZE;
 		int sy2 = sy + UI_MAP_SIZE * UI_MAP_RANGE * 2 + UI_MAP_SIZE;
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 256, 0, 256, 256, sx2, sy2 ), GRAPH_MAP ) );
+		static int count = 0;
+		count++;
+		count %= 60;
+		int tx = count % 6;
+		int ty = count / 6;
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, tx * 100, ty * 100, 100, 100, sx2, sy2 ), GRAPH_RADAR ) );
 	}
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		//デリバー表示
