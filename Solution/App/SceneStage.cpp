@@ -53,8 +53,7 @@ SceneStage::SceneStage( int stage_num ) {
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
 	drawer->loadGraph( GRAPH_PHASE, "UI/phase.png" );
-	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
-	drawer->loadGraph( GRAPH_READY, "UI/ready.png" );	
+	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );	
 	drawer->loadGraph( GRAPH_GUIDELINE, "Model/Guideline/guideline.jpg" );
 	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 

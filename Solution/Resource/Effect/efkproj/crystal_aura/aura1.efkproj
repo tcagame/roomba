@@ -6,9 +6,9 @@
       <Node>
         <CommonValues>
           <Life>
-            <Center>120</Center>
-            <Max>120</Max>
-            <Min>120</Min>
+            <Center>90</Center>
+            <Max>90</Max>
+            <Min>90</Min>
           </Life>
         </CommonValues>
         <LocationValues>
@@ -75,6 +75,10 @@
           <ColorTexture>texture/Shock_wave_ring001.png</ColorTexture>
           <AlphaBlend>2</AlphaBlend>
           <Filter>0</Filter>
+          <FadeOutType>1</FadeOutType>
+          <FadeOut>
+            <Frame>30</Frame>
+          </FadeOut>
           <UV>3</UV>
           <UVScroll>
             <Size>
@@ -89,7 +93,7 @@
             <Outer_Fixed>
               <Location>
                 <X>1</X>
-                <Y>-1</Y>
+                <Y>-0.5</Y>
               </Location>
             </Outer_Fixed>
             <Inner_Fixed>
