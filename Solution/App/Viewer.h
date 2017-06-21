@@ -17,7 +17,7 @@ public:
 	void drawModelMDLMulti( Drawer::ModelMDL mdl ) const;
 	void drawModelMV1( Stage::MV1_INFO mv1, Matrix scale_rot ) const;
 private:
-	Vector getViewPos( Vector pos ) const;
+	void setViewPos( Vector& pos ) const;
 private:
 	Vector _base_pos;
 };

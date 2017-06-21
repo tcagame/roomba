@@ -333,7 +333,6 @@ void AppStage::loadMapData( ) {
 
 void AppStage::loadWall( ) {
 	for ( int i = 0; i < WALL_DIV_SIZE; i++ ) {
-		_walls[ i ].pos = Vector( );
 		_walls[ i ].type = MDL_WALL_0 + i;
 	}
 }
@@ -373,13 +372,11 @@ std::list< CrystalPtr > AppStage::getCrystalList( ) const {
 
 void AppStage::drawFloor( ) const {
 	_viewer->drawModelMDLMulti( _floor );
-	//_viewer->drawModelMDL( _floor );
 }
 
 void AppStage::drawWall( ) const {
 	for ( int i = 0; i < WALL_DIV_SIZE; i++ ) {
 		_viewer->drawModelMDLMulti( _walls[ i ] );
-		//_viewer->drawModelMDL( _walls[ i ] );
 	}
 }
 
