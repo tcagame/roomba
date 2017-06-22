@@ -116,10 +116,44 @@ void Roomba::draw( ) const {
 		ApplicationPtr app = Application::getInstance( );
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 0, 0, 0, 0, 512, 512, app->getWindowWidth( ), app->getWindowHeight( ) ), GRAPH_COMMAND_PROMPT_BACK ) );
 	}
+	drawCommandPrompt( );
+}
+
+void Roomba::drawCommandPrompt( ) const {
+		const int TW = 650;
+		const int TH = 256;
+		const int draw = _start_count * 15;
+		ApplicationPtr app = Application::getInstance( );
+		const int sx = app->getWindowWidth( ) / 2;
+		const int sy = app->getWindowHeight( ) / 2 - TH / 2;
+		int sx2_left = sx - draw;
+		if ( sx2_left < sx - TW / 2 ) {
+			sx2_left = sx - TW / 2;
+		}
+		int sx2_right = sx + draw;
+		if ( sx2_right > sx + TW / 2 ) {
+			sx2_right = sx + TW / 2;
+		}
+		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 500, 500, sx2_left, sy + TH ), GRAPH_COMMAND_PROMPT_BACK ) );
+		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 500, 500, sx2_right, sy + TH ), GRAPH_COMMAND_PROMPT_BACK ) );
+		
+		int tx_left = ( TW / 2 ) - draw;
+		if ( tx_left < 0 ) {
+			tx_left = 0;
+		}
+		int tw_left = ( TW / 2 ) - tx_left;
+		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx - tw_left, sy, tx_left, 0, tw_left, TH, sx, sy + TH ), GRAPH_COMMAND_PROMPT_STRING ) );
+
+		int tw_right = draw;
+		if ( tw_right > TW / 2 ) {
+			tw_right = TW / 2;
+		}
+		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, TW / 2, 0, tw_right, TH, sx2_right, sy + TH ), GRAPH_COMMAND_PROMPT_STRING ) );
 }
 
 void Roomba::updateState( ) {
 	_wait_count--;
+	_start_count++;
 	acceleration( );
 	moveTranslation( );
 	moveRotation( );
@@ -303,7 +337,6 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera ) {
 void Roomba::acceleration( ) {
 	switch ( _state ) {
 	case MOVE_STATE_TRANSLATION:
-	case MOVE_STATE_STARTING:
 		brakeRotation( );
 		accelTranslation( );
 		break;
@@ -558,25 +591,10 @@ void Roomba::moveStarting( ) {
 	if ( _state != MOVE_STATE_STARTING ) {
 		return;
 	}
-	{
-		// command prompt
-		const int TW = 500;
-		const int TH = 50;
-		ApplicationPtr app = Application::getInstance( );
-		int sx = app->getWindowWidth( ) / 2 - TW / 2;
-		int sy = app->getWindowHeight( ) / 2 - TH / 2;
-		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, TW, TH ), GRAPH_COMMAND_PROMPT_BACK ) );
-		for ( int i = 0; i < 10; i++ ) {
-			const int string = 50;
-			int tx = i % 10;
-			int ty = i / 10;
-			Drawer::Transform trans( sx + ( string * tx ) + string * 2, sy + ( string * ty ), string * tx, string * ty, string, string );
-			Drawer::getTask( )->setSprite( Drawer::Sprite( trans, GRAPH_COMMAND_PROMPT_STRING ) );
-			if ( i > _start_count / 3 ) {
-				break;
-			}
-		}
-	}
+	setVecReflection( Vector( ), Vector( ) );
+	setVecRot( Vector( ), Vector( ) );
+	setVecScale( Vector( ), Vector( ) );
+	setVecTrans( Vector( ) );
 	{
 		// ball
 		Vector target[ 2 ];
@@ -618,10 +636,12 @@ void Roomba::moveStarting( ) {
 				_boot[ 2 ] = false;
 			} else if ( _boot[ 1 ] ) {
 				_boot[ 1 ] = false;
-			} else if ( _boot[ 0 ] ) {
-				_boot[ 0 ] = false;
-				_start_count = START_TIME;
 			}
+		}
+		if ( _boot[ 0 ] && !_boot[ 1 ] &&
+			 _balls[ 0 ]->getPos( ) == START_POS[ 0 ] &&
+			 _balls[ 1 ]->getPos( ) == START_POS[ 1 ] ) {
+			_boot[ 0 ] = false;
 		}
 		setVecRot( _vec_start[ 0 ], _vec_start[ 1 ] );
 	}
@@ -635,7 +655,6 @@ void Roomba::moveStarting( ) {
 			_delivery[ i ]->setPos( _delivery[ i ]->getPos( ) + _vec_start[ i ] );
 		}
 	}
-	_start_count++;
 }
 
 void Roomba::moveWait( ) {
