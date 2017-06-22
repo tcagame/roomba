@@ -23,8 +23,7 @@ _shadow( shadow ){
 	loadMapData( );
 	int width = ( STAGE_WIDTH_NUM / FLOOR_CHIP_SIZE );
 	int height = ( STAGE_HEIGHT_NUM / FLOOR_CHIP_SIZE );
-	_floor.pos = Vector( );
-	_floor.type = MDL_FLOOR;
+	loadFloor( );
 }
 
 
@@ -334,7 +333,26 @@ void AppStage::loadMapData( ) {
 
 void AppStage::loadWall( ) {
 	for ( int i = 0; i < WALL_DIV_SIZE; i++ ) {
-		_walls[ i ].type = MDL_WALL_0 + i;
+		for ( int j = 0; j < 4; j++ ) {
+			int idx = WALL_DIV_SIZE * i + j;
+			if ( _walls[ idx ] ) {
+				_walls[ idx ].reset( );
+				_walls[ idx ] = ModelPtr( );
+			}
+			_walls[ idx ] = ModelPtr( new Model );
+			_walls[ idx ]->load( "../Resource/Model/Stage/_wall_" + std::to_string( i ) + ".mdl" );
+			_walls[ idx ]->setTexture( "../Resource/Model/Stage/wall.jpg" );
+			_walls[ idx ]->multiply( Matrix::makeTransformScaling( WALL_SIZE ) );
+		}
+	}
+}
+
+void AppStage::loadFloor( ) {
+	for ( int i = 0; i < 4; i++ ) {
+		_floor[ i ] = ModelPtr( new Model );
+		_floor[ i ]->load( "../Resource/Model/Stage/_floor.mdl" );
+		_floor[ i ]->setTexture( "../Resource/Model/Stage/floor.png" );
+		_floor[ i ]->multiply( Matrix::makeTransformScaling( FLOOR_SIZE ) );
 	}
 }
 
@@ -372,12 +390,17 @@ std::list< CrystalPtr > AppStage::getCrystalList( ) const {
 }
 
 void AppStage::drawFloor( ) const {
-	_viewer->drawModelMDLMulti( _floor );
+	for ( int i = 0; i < 4; i++ ) {
+		_viewer->drawModelMDLMulti( _floor[ i ], GRAPH_FLOOR, i );
+	}
 }
 
 void AppStage::drawWall( ) const {
 	for ( int i = 0; i < WALL_DIV_SIZE; i++ ) {
-		_viewer->drawModelMDLMulti( _walls[ i ] );
+		for ( int j = 0; j < 4; j++ ) {
+			int idx = WALL_DIV_SIZE * i + j;
+			_viewer->drawModelMDLMulti( _walls[ idx ], GRAPH_WALL, j );
+		}
 	}
 }
 

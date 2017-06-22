@@ -165,6 +165,7 @@ void Laser::draw( ) const {
 		self.model = _model_line;
 		self.graph = GRAPH_LASER;
 		self.add = true;
+		self.z_buffer = false;
 		drawer->setModelSelf( self );
 	}
 	
@@ -173,6 +174,7 @@ void Laser::draw( ) const {
 		self.model = _model_hold;
 		self.graph = GRAPH_LASER;
 		self.add = true;
+		self.z_buffer = false;
 		drawer->setModelSelf( self );
 	}
 }

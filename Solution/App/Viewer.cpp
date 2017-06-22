@@ -1,4 +1,5 @@
 #include "Viewer.h"
+#include "Model.h"
 
 Viewer::Viewer( ) {
 }
@@ -17,31 +18,42 @@ void Viewer::drawModelMDL( Drawer::ModelMDL mdl ) const {
 	drawer->setModelMDL( mdl );
 }
 
-void Viewer::drawModelMDLMulti( Drawer::ModelMDL mdl ) const {
-	DrawerPtr drawer = Drawer::getTask( );
+void Viewer::drawModelMDLMulti( ModelPtr mdl, GRAPH graph, int idx ) const {
 	int x = (int)( _base_pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
 	int y = (int)( _base_pos.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
-	mdl.pos += Vector( x * STAGE_WIDTH_NUM * WORLD_SCALE, y * STAGE_HEIGHT_NUM * WORLD_SCALE );
-	drawer->setModelMDL( mdl );
-	Vector add1;
-	Vector add2;
-	if ( (int)( _base_pos.x / WORLD_SCALE ) % STAGE_WIDTH_NUM < STAGE_WIDTH_NUM / 2 ) {
-		add1 = Vector(  STAGE_WIDTH_NUM * WORLD_SCALE, 0 );
-	} else {
-		add1 = Vector( -STAGE_WIDTH_NUM * WORLD_SCALE, 0 );
+	if ( idx == 1 || idx == 3 ) {
+		if ( (int)( _base_pos.x / WORLD_SCALE ) % STAGE_WIDTH_NUM < STAGE_WIDTH_NUM / 2 ) {
+			x++;
+		} else {
+			x--;
+		}
 	}
-	if ( (int)( _base_pos.x / WORLD_SCALE ) % STAGE_WIDTH_NUM < STAGE_WIDTH_NUM / 2 ) {
-		add2 = Vector( 0,  STAGE_HEIGHT_NUM * WORLD_SCALE );
-	} else {
-		add2 = Vector( 0, -STAGE_HEIGHT_NUM * WORLD_SCALE );
+	if ( idx == 2 || idx == 3 ) {
+		if ( (int)( _base_pos.x / WORLD_SCALE ) % STAGE_WIDTH_NUM < STAGE_WIDTH_NUM / 2 ) {
+			y++;
+		} else {
+			y--;
+		}
 	}
-	//Vector pos = mdl.pos;
-	//mdl.pos = pos + add1;
-	//drawer->setModelMDL( mdl );
-	//mdl.pos = pos + add2;
-	//drawer->setModelMDL( mdl );
-	//mdl.pos = pos + add1 + add2;
-	//drawer->setModelMDL( mdl );
+	Vector pos = mdl->getPos( );
+	int mdl_x = (int)( pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
+	int mdl_y = (int)( pos.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
+
+	int diff_x = x - mdl_x;
+	int diff_y = y - mdl_y;
+
+	if ( diff_x != 0 || diff_y != 0 ) {
+		pos.x += diff_x * WORLD_SCALE * STAGE_WIDTH_NUM;
+		pos.y += diff_y * WORLD_SCALE * STAGE_HEIGHT_NUM;
+		mdl->setPos( pos );
+	}
+	Drawer::ModelSelf self;
+	self.model = mdl;
+	self.graph = graph;
+	self.add = false;
+	self.z_buffer = true;
+	DrawerPtr drawer = Drawer::getTask( );
+	drawer->setModelSelf( self );
 }
 
 void Viewer::drawModelMV1( Stage::MV1_INFO mv1, Matrix scale_rot ) const {

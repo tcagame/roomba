@@ -1,5 +1,6 @@
 #pragma once
 #include "Stage.h"
+#include "Model.h"
 #include <list>
 
 PTR( Camera );
@@ -36,6 +37,7 @@ private:
 	void loadDelivery( );
 	void loadMapData( );
 	void loadWall( );
+	void loadFloor( );
 	void adjustPos( Vector& pos, Vector& base_pos ) const;
 	bool isCollisionToSquare( Vector& square_pos, Vector pos, double radius ) const;
 	bool isCollisionToCircle( Vector circle_pos, Vector pos, double radius ) const;
@@ -51,7 +53,7 @@ private:
 	TimerPtr _timer;
 	RoombaPtr _roomba;
 	ShadowPtr _shadow;
-	Drawer::ModelMDL _floor;
-	std::array< Drawer::ModelMDL, WALL_DIV_SIZE > _walls;
+	std::array< ModelPtr, WALL_DIV_SIZE * 4 > _walls;
+	std::array< ModelPtr, 4 > _floor;
 };
 
