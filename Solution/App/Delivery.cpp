@@ -65,7 +65,7 @@ void Delivery::update( CameraPtr camera, ShadowPtr shadow ) {
 		break;
 	}
 	_animation->update( );
-	shadow->set( _animation->getPos( ) );
+	shadow->set( _pos );
 }
 
 

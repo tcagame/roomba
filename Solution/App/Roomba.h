@@ -84,6 +84,8 @@ private:
 	void announceChangeState( MOVE_STATE state );
 	void setShadow( ShadowPtr shadow );
 	void drawCommandPrompt( ) const;
+	void drawPromptIn( ) const;
+	void drawPromptOut( ) const;
 private:
 	int _start_count;
 	int _wait_count;
