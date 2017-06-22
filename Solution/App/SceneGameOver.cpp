@@ -25,7 +25,7 @@ _count( 0 ) {
 	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
 	drawer->loadGraph( GRAPH_OK, "UI/game_over_ok.png" );
-	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
+	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle_red1.png" );
 	drawer->loadGraph( GRAPH_STAGE_SELECT, "select/Stage Select.png" );
 	drawer->loadGraph( GRAPH_GAME_OVER, "UI/game_over.png" );
 	drawer->loadGraph( GRAPH_FRAME, "UI/Frame.png" );

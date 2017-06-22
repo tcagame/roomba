@@ -31,7 +31,7 @@ _ispush( false ) {
 	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
 	drawer->loadGraph( GRAPH_OK, "UI/select_ok.png" );
-	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
+	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle_yellow1.png" );
 	drawer->loadGraph( GRAPH_STAGE_SELECT, "select/Stage Select.png" );
 	drawer->loadGraph( GRAPH_NUM_1, "select/1.png" );
 	drawer->loadGraph( GRAPH_NUM_2, "select/2.png" );

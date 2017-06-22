@@ -21,7 +21,7 @@ _choice_count( 0 ) {
 	drawer->loadGraph( GRAPH_OK, "UI/ok.png" );
 	drawer->loadGraph( GRAPH_TITLE, "title/roomb_title.png" );
 	drawer->loadGraph( GRAPH_PLEASE_PUSH_BUTTON, "title/pleasepushbutton.png" );
-	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
+	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle_blue1.png" );
 	SoundPtr sound = Sound::getTask( );
 	sound->playBGM( "bgm_maoudamashii_cyber31.wav" );
 	resetCount( );
