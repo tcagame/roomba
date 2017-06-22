@@ -7,13 +7,14 @@
 PTR( Camera );
 PTR( Crystal );
 PTR( Viewer );
+PTR( Shadow );
 
 class Delivery {
 public:
 	Delivery( Vector pos );
 	virtual ~Delivery( );
 public:
-	void update( CameraPtr camera );
+	void update( CameraPtr camera, ShadowPtr shadow );
 	void draw( ViewerPtr viewer ) const;
 	void setCrystal( Vector pos );
 	bool isFinished( ) const;

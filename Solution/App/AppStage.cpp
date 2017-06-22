@@ -12,12 +12,13 @@
 const double DELIVERY_POS_Z = FLOOR_POS_Z + WORLD_SCALE;
 const double CRYSTAL_POS_Z = 0;
 
-AppStage::AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer, RoombaPtr roomba ) :
+AppStage::AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer, RoombaPtr roomba, ShadowPtr shadow ) :
 _delivery_count( 0 ),
 _viewer( viewer ),
 _finished( false ),
 _timer( timer ),
-_roomba( roomba ) {
+_roomba( roomba ),
+_shadow( shadow ){
 	load( 0 );//0~2:’Êí 3:test_stage
 	loadMapData( );
 	int width = ( STAGE_WIDTH_NUM / FLOOR_CHIP_SIZE );
@@ -39,8 +40,8 @@ bool AppStage::isFinished( ) const {
 }
 
 void AppStage::update( CameraPtr camera ) {
-	updateCrystal( _timer );
-	updateDelivery( camera );
+	updateCrystal( _timer, _shadow );
+	updateDelivery( camera, _shadow );
 	debug( );
 }
 
@@ -50,7 +51,7 @@ void AppStage::draw( ) const {
 	drawWall( );
 }
 
-void AppStage::updateCrystal( TimerPtr timer ) {
+void AppStage::updateCrystal( TimerPtr timer, ShadowPtr shadow ) {
 	ApplicationPtr app = Application::getInstance( );
 	int scr_width = app->getWindowWidth( );
 	DrawerPtr drawer = Drawer::getTask( );
@@ -70,7 +71,7 @@ void AppStage::updateCrystal( TimerPtr timer ) {
 		}
 		AppStagePtr stage = std::dynamic_pointer_cast< AppStage >( shared_from_this( ) );
 		collideCrystal( crystal );
-		crystal->update( stage );
+		crystal->update( stage, shadow );
 		ite++;
 	}
 }
@@ -95,7 +96,7 @@ void AppStage::collideCrystal( CrystalPtr crystal ) {
 	}
 }
 
-void AppStage::updateDelivery( CameraPtr camera ) {
+void AppStage::updateDelivery( CameraPtr camera, ShadowPtr shadow ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	std::list< DeliveryPtr >::iterator ite = _deliverys.begin( );
 	while ( ite != _deliverys.end( ) ) {
@@ -109,7 +110,7 @@ void AppStage::updateDelivery( CameraPtr camera ) {
 			ite = _deliverys.erase( ite );
 			continue;
 		}
-		delivery->update( camera );
+		delivery->update( camera, shadow );
 		ite++;
 	}
 }

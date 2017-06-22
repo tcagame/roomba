@@ -4,6 +4,7 @@
 #include "AppStage.h"
 #include "Roomba.h"
 #include "Viewer.h"
+#include "Shadow.h"
 
 static const int MAX_EFFECT_COUNT = 30;
 static const double CRYSTAL_RADIUS = CRYSTAL_SIZE.x / 3;
@@ -37,7 +38,8 @@ void Crystal::draw( ViewerPtr viewer ) const {
 	}
 }
 
-void Crystal::update( AppStagePtr stage ) {
+void Crystal::update( AppStagePtr stage, ShadowPtr shadow ) {
+	shadow->set( _pos );
 	if ( stage->isOnDelivery( _pos ) ) {
 		_drop_down = true;
 		_finished = true;
