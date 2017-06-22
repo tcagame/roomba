@@ -73,11 +73,11 @@ Scene::NEXT SceneGameOver::update( ) {
 }
 
 void SceneGameOver::draw( ) {
+	drawFadeBg( );
 	drawController( );
 	drawResult( );
 	drawGameOver( );
 	drawFrame( );
-	drawFadeBg( );
 	drawCircle( );
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
 		drawFadeIn( );

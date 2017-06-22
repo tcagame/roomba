@@ -113,12 +113,13 @@ Scene::NEXT SceneSelect::update( ) {
 }
 
 void SceneSelect::draw( ) {
+	drawFadeBg( );
 	drawRogo( );
 	drawController( );
 	drawTriangle( );
 	drawSelect( );
 	drawFrame( );
-	drawFadeBg( );
+	
 	drawCircle( );
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
 		drawFadeIn( );

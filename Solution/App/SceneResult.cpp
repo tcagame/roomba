@@ -85,12 +85,12 @@ Scene::NEXT SceneResult::update( ) {
 void SceneResult::draw( ) const {
 	//drawThisTime( );
 	//drawBestTime( );
+	drawFadeBg( );
 	drawController( );
 	drawResult( );
 	drawGameClear( );
-	drawOperationRank( );
+	//drawOperationRank( );
 	drawFrame( );
-	drawFadeBg( );
 	drawCircle( );
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
 		drawFadeIn( );

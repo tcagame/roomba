@@ -11,3 +11,12 @@ Solution/StageEditor/Debug/
 Solution/StageEditor/Log.txt
 Solution/StageEditor/x64/
 *.wav
+*.tlog
+*.obj
+*.pdb
+*.log
+Solution/Release/App.exe
+Solution/Release/App.iobj
+Solution/Release/App.ipdb
+Solution/Release/Common.lib
+Solution/Release/Framework2017.lib

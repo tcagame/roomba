@@ -9,7 +9,7 @@ Scene::Scene( ) :
 _fade_in_count( 0 ),
 _fade_out_count( MAX_FADE_COUNT ) {
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->loadGraph( GRAPH_FADE, "scene/fade.png" );
+	drawer->loadGraph( GRAPH_FADE, "scene/fade_1.png" );
 	drawer->loadGraph( GRAPH_FADE_BG, "scene/fade_bg.png" );
 }
 
@@ -21,14 +21,16 @@ void Scene::drawFadeIn( ) const {
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );	
-	int idx = _fade_in_count / ANIME_FLAME;
-	if ( idx > 32 ) {
-		idx = 32;
+
+	int fade_size = 256;
+	double blend = 1;
+	blend = 1 - ( (double)( _fade_in_count ) / 25 );
+	if ( blend < 0 ) {
+		blend = 0;
 	}
-	int tx = idx % 6;
-	int ty = idx / 6;
+
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( 0, 0, tx * FADE_SIZE, ty * FADE_SIZE, FADE_SIZE, FADE_SIZE, WIDTH, HEIGHT ), GRAPH_FADE );
+	Drawer::Sprite sprite( Drawer::Transform( 0, 0, 0, 0, fade_size, fade_size, WIDTH, HEIGHT ), GRAPH_FADE, Drawer::BLEND_ALPHA, blend );
 	drawer->setSprite( sprite );
 }
 
@@ -36,14 +38,15 @@ void Scene::drawFadeOut( ) const {
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
-	int idx = _fade_out_count / ANIME_FLAME;
-	if ( idx > 32 ) {
-		idx = 32;
+
+	int fade_size = 256;
+	double blend = 0;
+	blend = 0 + ( (double)( MAX_FADE_COUNT - _fade_out_count ) / 25 );
+	if ( blend > 1 ) {
+		blend = 1;
 	}
-	int tx = idx % 6;
-	int ty = idx / 6;
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( 0, 0, tx * FADE_SIZE, ty * FADE_SIZE, FADE_SIZE, FADE_SIZE, WIDTH, HEIGHT ), GRAPH_FADE );
+	Drawer::Sprite sprite( Drawer::Transform( 0, 0, 0, 0, fade_size, fade_size, WIDTH, HEIGHT ), GRAPH_FADE, Drawer::BLEND_ALPHA, blend );
 	drawer->setSprite( sprite );
 }
 

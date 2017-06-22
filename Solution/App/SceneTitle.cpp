@@ -66,10 +66,10 @@ Scene::NEXT SceneTitle::update( ) {
 }
 
 void SceneTitle::draw( ) {
+	drawFadeBg( );
 	drawTitle( );
 	//drawPlease( );
 	drawController( );
-	drawFadeBg( );
 	drawCircle( );
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
 		drawFadeIn( );
