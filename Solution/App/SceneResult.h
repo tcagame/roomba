@@ -17,7 +17,9 @@ private:
 	void drawCircle( ) const;
 	void drawResult( ) const;
 	void drawGameClear( ) const;
+	void drawController( ) const;
 private:
+	int _count;
 	int _choice_count;
 	int _select;
 	int _this_time;
