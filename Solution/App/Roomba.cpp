@@ -192,19 +192,17 @@ void Roomba::drawPromptOut( ) const {
 	const int TW = 650;
 	const int TH = 256;
 	const int RATIO = 10;
-	int draw_x = 10;
-	if ( _start_count > WAIT_TIME ) {
-		draw_x += ( _start_count - WAIT_TIME ) * RATIO;
-		if ( draw_x > TW / 2 ) {
-			draw_x = TW / 2;
-		}
+	const int DRAW_COUNT = _start_count - ( START_TIME / 2 );
+	int draw_x = ( TW  / 2 ) - ( DRAW_COUNT * RATIO );
+	if ( draw_x < 10 ) {
+		draw_x = 10;
 	}
 	
-	int draw_y = 10;
-	if ( draw_x == TW / 2 ) {
-		draw_y += ( _start_count - WAIT_TIME ) * RATIO - ( draw_x - 10 );
-		if ( draw_y > TH / 2 ) {
-			draw_y = TH / 2;
+	int draw_y = TH / 2;
+	if ( draw_x == 10 ) {
+		draw_y -= ( DRAW_COUNT - ( TW / RATIO ) ) * RATIO;
+		if ( draw_y < 10 ) {
+			draw_y = 10;
 		}
 	}
 	ApplicationPtr app = Application::getInstance( );
@@ -230,18 +228,20 @@ void Roomba::drawPromptOut( ) const {
 	Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 500, 500, sx2_left, sy2 ), GRAPH_COMMAND_PROMPT_BACK ) );
 	Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 500, 500, sx2_right, sy2 ), GRAPH_COMMAND_PROMPT_BACK ) );
 
-	int tx_left = ( TW / 2 ) - draw_x;
-	if ( tx_left < 0 ) {
-		tx_left = 0;
-	}
-	int tw_left = ( TW / 2 ) - tx_left;
-	Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx - tw_left, sy, tx_left, 0, tw_left, TH, sx, sy2 ), GRAPH_COMMAND_PROMPT_STRING ) );
+	if ( draw_x != 10 ) {
+		int tx_left = ( TW / 2 ) - draw_x;
+		if ( tx_left < 0 ) {
+			tx_left = 0;
+		}
+		int tw_left = ( TW / 2 ) - tx_left;
+		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx - tw_left, sy, tx_left, 0, tw_left, TH, sx, sy2 ), GRAPH_COMMAND_PROMPT_STRING ) );
 
-	int tw_right = draw_x;
-	if ( tw_right > TW / 2 ) {
-		tw_right = TW / 2;
+		int tw_right = draw_x;
+		if ( tw_right > TW / 2 ) {
+			tw_right = TW / 2;
+		}
+		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, TW / 2, 0, tw_right, TH, sx2_right, sy2 ), GRAPH_COMMAND_PROMPT_STRING ) );
 	}
-	Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, TW / 2, 0, tw_right, TH, sx2_right, sy2 ), GRAPH_COMMAND_PROMPT_STRING ) );
 }
 
 void Roomba::updateState( ) {
