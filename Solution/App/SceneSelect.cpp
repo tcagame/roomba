@@ -14,17 +14,23 @@ static const int NUM_CENTER = 64 / 2;
 static const int PITCH = 150; 
 static const int MOVE_SPEED = 1;
 static const int MAX_MOVE_COUNT = 10;
-static const int CIRCLE_ANIME_FLAME = 4;
+static const int CIRCLE_ANIME_FLAME = 2;
 static const int MAX_CHOICE_COUNT = 25 * CIRCLE_ANIME_FLAME;
 static const int THICK_FRAME_SIZE = 57;
 static const int TRIANGLE_CENTER_X = 312 / 2;
+static const int DRAW_TIME = 100;
+
 
 SceneSelect::SceneSelect( ) :
 _select( 1 ),
+_count( 0 ),
 _choice_count( 0 ),
 _move_count( 0 ),
 _ispush( false ) {
 	DrawerPtr drawer = Drawer::getTask( );
+	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
+	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
+	drawer->loadGraph( GRAPH_OK, "UI/select_ok.png" );
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
 	drawer->loadGraph( GRAPH_STAGE_SELECT, "select/Stage Select.png" );
 	drawer->loadGraph( GRAPH_NUM_1, "select/1.png" );
@@ -39,6 +45,7 @@ SceneSelect::~SceneSelect( ) {
 }
 
 Scene::NEXT SceneSelect::update( ) {
+	_count++;
 	SoundPtr sound = Sound::getTask( );
 	DevicePtr device = Device::getTask( );
 	Vector right_stick = Vector( device->getRightDirX( ), device->getRightDirY( ) );
@@ -107,6 +114,7 @@ Scene::NEXT SceneSelect::update( ) {
 
 void SceneSelect::draw( ) {
 	drawRogo( );
+	drawController( );
 	drawTriangle( );
 	drawSelect( );
 	drawFrame( );
@@ -179,7 +187,7 @@ void SceneSelect::moveSelect( ) {
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
-	const Vector target1( WIDTH / 2 - NUM_CENTER,  HEIGHT / 2 + HEIGHT / 5 );
+	const Vector target1( WIDTH / 2 - NUM_CENTER,  HEIGHT / 2 );
 	const Vector target2( target1.x - ( WIDTH / 2 - NUM_SIZE * 5 ), target1.y - SELECT_CENTER_Y / 4 - HEIGHT / 10 );
 	const Vector target3( target1.x + ( WIDTH / 2 - NUM_SIZE * 5 ), target1.y - SELECT_CENTER_Y / 4 - HEIGHT / 10 );
 	Vector vec1;
@@ -204,7 +212,7 @@ void SceneSelect::freazeSelect( ) {
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
-	_pos[ 0 ] = Vector( WIDTH / 2 - NUM_CENTER, HEIGHT / 2 + HEIGHT / 5 );
+	_pos[ 0 ] = Vector( WIDTH / 2 - NUM_CENTER, HEIGHT / 2 );
 	_pos[ 1 ] = Vector( _pos[ 0 ].x - ( WIDTH / 2 - NUM_SIZE * 5 ), _pos[ 0 ].y - SELECT_CENTER_Y / 4 - HEIGHT / 10 );
 	_pos[ 2 ] = Vector( _pos[ 0 ].x + ( WIDTH / 2 - NUM_SIZE * 5 ), _pos[ 0 ].y - SELECT_CENTER_Y / 4 - HEIGHT / 10 );
 }
@@ -251,7 +259,7 @@ void SceneSelect::drawTriangle( ) {
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - TRIANGLE_CENTER_X, HEIGHT / 2 + HEIGHT / 5, 100, 225, 305, 70 ), GRAPH_STAGE_SELECT );
+	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - TRIANGLE_CENTER_X, HEIGHT / 2, 100, 225, 305, 70 ), GRAPH_STAGE_SELECT );
 	drawer->setSprite( sprite );
 }
 
@@ -268,6 +276,33 @@ void SceneSelect::drawCircle( ) const {
 	int tx = idx % 4;
 	int ty = idx / 4;
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT / 2 - CIRCLE_SIZE / 2, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
+	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT * 5 / 6 - 74 + CIRCLE_SIZE * 3 / 5, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
+}
+
+void SceneSelect::drawController( ) {
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+
+	const int CONTROLLER_SIZE = 512;
+
+	DrawerPtr drawer = Drawer::getTask( );
+	//Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT * 3 / 5, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT * 3 / 5 + CONTROLLER_SIZE / 2 );
+	Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT / 2 + CONTROLLER_SIZE / 6, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT / 2 + CONTROLLER_SIZE / 2 + CONTROLLER_SIZE / 6);
+	if ( _count % DRAW_TIME < DRAW_TIME * 2 / 3 ) {
+		Drawer::Sprite sprite( trans, GRAPH_CONTROLLER_ROTATION );
+		drawer->setSprite( sprite );
+	} else {
+		Drawer::Sprite sprite( trans, GRAPH_CONTROLLER_NEUTRAL );
+		drawer->setSprite( sprite );
+	}
+	int tx = 168;
+	int ty = 366;
+	int tw = 167;
+	int th = 74;
+	Drawer::Transform trans2( WIDTH / 2 - tw / 2, HEIGHT * 5 / 6, tx, ty,  tw,  th, WIDTH / 2 + tw / 2,  HEIGHT * 5 / 6 + th );
+	Drawer::Sprite sprite( trans2, GRAPH_OK );
+	drawer->setSprite( sprite );
+	
 }

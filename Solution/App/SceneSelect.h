@@ -17,9 +17,11 @@ private:
 	void drawFrame( );
 	void drawTriangle( );
 	void drawCircle( ) const;
+	void drawController( );
 private:
 	std::array< Vector, 3 > _pos;
 	int _move_count;
+	int _count;
 	int _choice_count;
 	int _select;
 	bool _ispush;
