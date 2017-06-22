@@ -120,35 +120,42 @@ void Roomba::draw( ) const {
 }
 
 void Roomba::drawCommandPrompt( ) const {
-		const int TW = 650;
-		const int TH = 256;
-		const int draw = _start_count * 15;
-		ApplicationPtr app = Application::getInstance( );
-		const int sx = app->getWindowWidth( ) / 2;
-		const int sy = app->getWindowHeight( ) / 2 - TH / 2;
-		int sx2_left = sx - draw;
-		if ( sx2_left < sx - TW / 2 ) {
-			sx2_left = sx - TW / 2;
-		}
-		int sx2_right = sx + draw;
-		if ( sx2_right > sx + TW / 2 ) {
-			sx2_right = sx + TW / 2;
-		}
-		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 500, 500, sx2_left, sy + TH ), GRAPH_COMMAND_PROMPT_BACK ) );
-		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 500, 500, sx2_right, sy + TH ), GRAPH_COMMAND_PROMPT_BACK ) );
-		
-		int tx_left = ( TW / 2 ) - draw;
-		if ( tx_left < 0 ) {
-			tx_left = 0;
-		}
-		int tw_left = ( TW / 2 ) - tx_left;
-		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx - tw_left, sy, tx_left, 0, tw_left, TH, sx, sy + TH ), GRAPH_COMMAND_PROMPT_STRING ) );
+	const int TW = 650;
+	const int TH = 256;
+	const int draw = _start_count * 15;
+	ApplicationPtr app = Application::getInstance( );
+	int sx = app->getWindowWidth( ) / 2;
+	int sy = app->getWindowHeight( ) / 2 - draw;
+	if ( sy < app->getWindowHeight( ) / 2 - TH / 2 ) {
+		sy = app->getWindowHeight( ) / 2 - TH / 2;
+	}
+	int sy2 = app->getWindowHeight( ) / 2 + draw;
+	if ( sy2 > app->getWindowHeight( ) / 2 + TH / 2 ) {
+		sy2 = app->getWindowHeight( ) / 2 + TH / 2;
+	}
+	int sx2_left = sx - draw;
+	if ( sx2_left < sx - TW / 2 ) {
+		sx2_left = sx - TW / 2;
+	}
+	int sx2_right = sx + draw;
+	if ( sx2_right > sx + TW / 2 ) {
+		sx2_right = sx + TW / 2;
+	}
+	Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 500, 500, sx2_left, sy2 ), GRAPH_COMMAND_PROMPT_BACK ) );
+	Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 500, 500, sx2_right, sy2 ), GRAPH_COMMAND_PROMPT_BACK ) );
 
-		int tw_right = draw;
-		if ( tw_right > TW / 2 ) {
-			tw_right = TW / 2;
-		}
-		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, TW / 2, 0, tw_right, TH, sx2_right, sy + TH ), GRAPH_COMMAND_PROMPT_STRING ) );
+	int tx_left = ( TW / 2 ) - draw;
+	if ( tx_left < 0 ) {
+		tx_left = 0;
+	}
+	int tw_left = ( TW / 2 ) - tx_left;
+	Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx - tw_left, sy, tx_left, 0, tw_left, TH, sx, sy2 ), GRAPH_COMMAND_PROMPT_STRING ) );
+
+	int tw_right = draw;
+	if ( tw_right > TW / 2 ) {
+		tw_right = TW / 2;
+	}
+	Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, TW / 2, 0, tw_right, TH, sx2_right, sy2 ), GRAPH_COMMAND_PROMPT_STRING ) );
 }
 
 void Roomba::updateState( ) {
