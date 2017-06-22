@@ -3,6 +3,7 @@
 #include "Crystal.h"
 #include "Camera.h"
 #include "Sound.h"
+#include "Shadow.h"
 
 static const double MOVE_SPEED = 0.1;
 static const double START_POS_Z = 20;
@@ -48,7 +49,7 @@ void Delivery::draw( ViewerPtr viewer ) const {
 	}
 }
 
-void Delivery::update( CameraPtr camera ) {
+void Delivery::update( CameraPtr camera, ShadowPtr shadow ) {
 	switch ( _state ) {
 	case STATE_WAIT:
 		updateWait( );
@@ -64,6 +65,7 @@ void Delivery::update( CameraPtr camera ) {
 		break;
 	}
 	_animation->update( );
+	shadow->set( _animation->getPos( ) );
 }
 
 

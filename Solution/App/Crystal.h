@@ -5,13 +5,14 @@
 PTR( AppStage );
 PTR( Viewer );
 PTR( Crystal );
+PTR( Shadow );
 
 class Crystal {
 public:
 	Crystal( Vector& pos, MDL type );
 	virtual ~Crystal( );
 public:
-	void update( AppStagePtr stage );
+	void update( AppStagePtr stage, ShadowPtr shadow );
 	void draw( ViewerPtr viewer ) const;
 	bool isHitting( Vector pos0, Vector pos1, Vector vec0, Vector vec1 );
 	Vector adjustHitToCircle( Vector pos, Vector vec, double radius = -1 );
