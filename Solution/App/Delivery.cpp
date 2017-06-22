@@ -30,23 +30,19 @@ Delivery::~Delivery( ) {
 
 }
 
-void Delivery::draw( ViewerPtr viewer ) const {
+void Delivery::draw( ViewerConstPtr viewer ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	Matrix scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
-	Matrix rot = Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 );
-	Stage::MV1_INFO mv1 = _animation->getModel( );
-	Vector pos = _animation->getPos( );
 	if ( _have_crystal ) {
-		Matrix trans = Matrix::makeTransformTranslation( pos );
-		mv1.model.matrix = scale.multiply( rot ).multiply( trans );
-		drawer->setModelMV1( mv1.model );
+		_animation->draw( );
 		drawer->setModelMDL( _crystal );
 	} else {
-		viewer->drawModelMV1( mv1, scale.multiply( rot ) );
+		_animation->draw( viewer );
 	}
 	
 	if ( _state == STATE_WAIT && !_effect_count ) {
-		drawer->setEffect( Drawer::Effect( EFFECT_DELIVERY_POINT, Vector( pos.x, pos.y, 0 ), EFFECT_POINT_SIZE, EFFECT_ROTATE ) );
+		Vector pos = _animation->getPos( );
+		pos.z = 0;
+		drawer->setEffect( Drawer::Effect( EFFECT_DELIVERY_POINT, pos, EFFECT_POINT_SIZE, EFFECT_ROTATE ) );
 	}
 }
 

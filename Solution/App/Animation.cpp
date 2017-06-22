@@ -22,6 +22,32 @@ void Animation::update( ) {
 	updateAnimationDelivery( );
 }
 
+void Animation::draw( ViewerConstPtr viewer ) {
+	Matrix scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
+	Matrix rot = Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 );
+	Matrix scale_rot = scale.multiply( rot );
+	{
+		Vector vec = _mv1.pos - _old_pos;
+		vec.z = 0;
+		Vector vec_diff = vec - _old_vec;
+		Vector rot_vec = vec_diff + vec * -1.5;
+		Matrix rot2 = Matrix::makeTransformRotation( rot_vec.normalize( ), rot_vec.getLength( ) );
+		scale_rot = scale_rot.multiply( rot2 );
+		
+		_old_vec = vec;
+		_old_pos = _mv1.pos;
+	}
+	if ( viewer ) {
+		viewer->drawModelMV1( _mv1, scale_rot );
+	} else {
+		Matrix trans = Matrix::makeTransformTranslation( _mv1.pos );
+		_mv1.model.matrix = scale_rot.multiply( trans );
+		DrawerPtr drawer = Drawer::getTask( );
+		drawer->setModelMV1( _mv1.model );
+	}
+}
+
+
 void Animation::updateAnimationDelivery( ) {
 	_mv1.model.time += 1;
 	switch ( _anim ) {

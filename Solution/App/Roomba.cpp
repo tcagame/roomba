@@ -105,12 +105,7 @@ void Roomba::draw( ) const {
 		if ( _state == MOVE_STATE_LIFT_UP ||
 			 _state == MOVE_STATE_LIFT_DOWN ||
 			 _state == MOVE_STATE_STARTING ) {
-			Stage::MV1_INFO delivery = _delivery[ i ]->getModel( );
-			Matrix trans = Matrix::makeTransformTranslation( delivery.pos );
-			Matrix rot = Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 );
-			Matrix scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
-			delivery.model.matrix = scale.multiply( rot ).multiply( trans );
-			drawer->setModelMV1( delivery.model );
+			_delivery[ i ]->draw( );
 		}
 	}
 	if ( _state == MOVE_STATE_WAIT ) {

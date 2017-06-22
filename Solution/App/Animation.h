@@ -1,5 +1,6 @@
 #pragma once
 #include "Stage.h"
+#include "Viewer.h"
 
 PTR( Animation );
 
@@ -14,7 +15,9 @@ public:
 public:
 	Animation( ANIM anim );
 	virtual ~Animation( );
+public:
 	void update( );
+	void draw( ViewerConstPtr viewer = ViewerPtr( ) );
 	void changeAnim( ANIM anim );
 	void setPos( Vector& pos );
 	ANIM getAnim( ) const;
@@ -25,5 +28,7 @@ private:
 private:
 	ANIM _anim;
 	Stage::MV1_INFO _mv1;
+	Vector _old_pos;
+	Vector _old_vec;
 };
 
