@@ -8,6 +8,9 @@ public:
 private:
 	NEXT update( );
 	void draw( );
+	void drawTitle( );
+	void drawPlease( );
+	void drawController( );
 	void drawCircle( ) const;
 private:
 	int _count;

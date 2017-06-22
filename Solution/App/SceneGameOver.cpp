@@ -38,6 +38,7 @@ Scene::NEXT SceneGameOver::update( ) {
 	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) );
 
 	draw( );
+
 // フェードイン
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
 		addFadeInCount( );
@@ -51,11 +52,16 @@ Scene::NEXT SceneGameOver::update( ) {
 			return NEXT_TITLE;
 		}
 	}
+
+	// サークルカウント
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		_choice_count++;
-		sound->playSE( "se_maoudamashii_system45.wav" );
+		if ( _choice_count == 1 ) {
+			sound->playSE( "se_maoudamashii_effect01.wav" );
+		}
 	} else {
 		_choice_count = 0;
+		sound->stopSE( "se_maoudamashii_effect01.wav" );
 	}
 	return NEXT_CONTINUE;
 }
