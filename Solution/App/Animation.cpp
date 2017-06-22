@@ -9,6 +9,8 @@ static const int MAX_ANIM_TIME[ Animation::ANIM::MAX_ANIM ] = {
 
 
 Animation::Animation( ANIM anim ) {
+	_mv1.pos = Vector( );
+	_mv1.model = Drawer::ModelMV1( Matrix( ), MV1_NONE, 0, 0 );
 	changeAnim( anim );
 }
 
@@ -21,40 +23,40 @@ void Animation::update( ) {
 }
 
 void Animation::updateAnimationDelivery( ) {
-	_model.time++;
+	_mv1.model.time += 1;
 	switch ( _anim ) {
 	case ANIM_DELIVERY_STAND:
-		_model.time %= MAX_ANIM_TIME[ ANIM_DELIVERY_STAND ];
+		_mv1.model.time = (int)_mv1.model.time % MAX_ANIM_TIME[ ANIM_DELIVERY_STAND ];
 		break;
 	case ANIM_DELIVERY_CATCH:
-		if ( _model.time > MAX_ANIM_TIME[ ANIM_DELIVERY_CATCH ] ) {
+		if ( (int)_mv1.model.time > MAX_ANIM_TIME[ ANIM_DELIVERY_CATCH ] ) {
 			changeAnim( ANIM_DELIVERY_CARRY );
 		}
 		break;
 	case ANIM_DELIVERY_CARRY:
-		_model.time %= MAX_ANIM_TIME[ ANIM_DELIVERY_CARRY ];
+		_mv1.model.time = (int)_mv1.model.time % MAX_ANIM_TIME[ ANIM_DELIVERY_CARRY ];
 		break;
 	}
 }
 
 void Animation::changeAnim( ANIM anim ) {
 	_anim = anim;
-	_model.time = 0;
+	_mv1.model.time = 0;
 	switch ( _anim ) {
 	case ANIM_DELIVERY_STAND:
-		_model.type = MV1_DELIVERY_STAND;
+		_mv1.model.mesh = MV1_DELIVERY_STAND;
 		break;
 	case ANIM_DELIVERY_CATCH:
-		_model.type = MV1_DELIVERY_CATCH;
+		_mv1.model.mesh = MV1_DELIVERY_CATCH;
 		break;
 	case ANIM_DELIVERY_CARRY:
-		_model.type = MV1_DELIVERY_CARRY;
+		_mv1.model.mesh = MV1_DELIVERY_CARRY;
 		break;
 	}
 }
 
-void Animation::setPos( Vector pos ) {
-	_model.pos = pos;
+void Animation::setPos( Vector& pos ) {
+	_mv1.pos = pos;
 }
 
 Animation::ANIM Animation::getAnim( ) const {
@@ -62,9 +64,9 @@ Animation::ANIM Animation::getAnim( ) const {
 }
 
 const Stage::MV1_INFO& Animation::getModel( ) const {
-	return _model;
+	return _mv1;
 }
 
-Vector Animation::getPos( ) const {
-	return _model.pos;
+const Vector& Animation::getPos( ) const {
+	return _mv1.pos;
 }

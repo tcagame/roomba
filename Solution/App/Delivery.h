@@ -16,10 +16,10 @@ public:
 public:
 	void update( CameraPtr camera, ShadowPtr shadow );
 	void draw( ViewerPtr viewer ) const;
-	void setCrystal( Vector pos );
+	void setCrystal( Vector crystal_pos );
 	bool isFinished( ) const;
 	bool isHaveCrystal( );
-	Vector getPos( ) const;
+	const Vector& getPos( ) const;
 private:
 	enum STATE {
 		STATE_WAIT,
@@ -35,7 +35,6 @@ private:
 private:
 	int _effect_count;
 	STATE _state;
-	Vector _pos;
 	Vector _target;
 	Vector _vec;
 	bool _finished;

@@ -19,9 +19,10 @@ _finished( false ),
 _have_crystal( false ),
 _state( STATE_WAIT ),
 _effect_count( MAX_EFFECT_COUNT - 1 ) {
-	_pos = target;
-	_pos.z = START_POS_Z;
 	_animation = AnimationPtr( new Animation( Animation::ANIM::ANIM_DELIVERY_STAND ) );
+	Vector pos = target;
+	pos.z = START_POS_Z;
+	_animation->setPos( pos );
 }
 
 
@@ -31,21 +32,21 @@ Delivery::~Delivery( ) {
 
 void Delivery::draw( ViewerPtr viewer ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->drawLine( _pos, _pos - Vector( 0, 0, 4 ) );
 	Matrix scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 	Matrix rot = Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 );
-	Stage::MV1_INFO model = _animation->getModel( );
+	Stage::MV1_INFO mv1 = _animation->getModel( );
+	Vector pos = _animation->getPos( );
 	if ( _have_crystal ) {
-		Matrix trans = Matrix::makeTransformTranslation( _pos );
-		drawer->setModelMV1( Drawer::ModelMV1( scale.multiply( rot ).multiply( trans ), model.type, 0, model.time ) );
+		Matrix trans = Matrix::makeTransformTranslation( pos );
+		mv1.model.matrix = scale.multiply( rot ).multiply( trans );
+		drawer->setModelMV1( mv1.model );
 		drawer->setModelMDL( _crystal );
 	} else {
-		model.pos = _pos;
-		viewer->drawModelMV1( model, scale.multiply( rot ) );
+		viewer->drawModelMV1( mv1, scale.multiply( rot ) );
 	}
 	
 	if ( _state == STATE_WAIT && !_effect_count ) {
-		drawer->setEffect( Drawer::Effect( EFFECT_DELIVERY_POINT, Vector( _pos.x, _pos.y, 0 ), EFFECT_POINT_SIZE, EFFECT_ROTATE ) );
+		drawer->setEffect( Drawer::Effect( EFFECT_DELIVERY_POINT, Vector( pos.x, pos.y, 0 ), EFFECT_POINT_SIZE, EFFECT_ROTATE ) );
 	}
 }
 
@@ -65,51 +66,55 @@ void Delivery::update( CameraPtr camera, ShadowPtr shadow ) {
 		break;
 	}
 	_animation->update( );
-	shadow->set( _pos );
+	shadow->set( _animation->getPos( ) );
 }
 
 
 void Delivery::updateWait( ) {
 	_effect_count++;
 	_effect_count %= MAX_EFFECT_COUNT;
-	Vector vec = _target - _pos;
+	Vector pos = _animation->getPos( );
+	Vector vec = _target - pos;
 	if ( vec.getLength( ) > MOVE_SPEED ) {
-		_vec = ( _target - _pos ).normalize( ) * MOVE_SPEED;
+		_vec = ( _target - pos ).normalize( ) * MOVE_SPEED;
 	} else {
 		_vec = vec;
 	}
-	_pos += _vec;
+	pos += _vec;
 	
-	if ( _pos.z < MIN_POS_Z ) {
-		_pos.z = MIN_POS_Z;
+	if ( pos.z < MIN_POS_Z ) {
+		pos.z = MIN_POS_Z;
 	}
-
+	_animation->setPos( pos );
 	if ( _have_crystal ) {
 		_state = STATE_CATCH;
 	}
 }
 
 void Delivery::updateCatch( ) {
-	_vec = _crystal.pos - _pos + Vector( 0, 0, FOOT );
+	Vector pos = _animation->getPos( );
+	_vec = _crystal.pos - pos + Vector( 0, 0, FOOT );
 	if ( _vec.getLength( ) > MOVE_SPEED ) {
 		_vec = _vec.normalize( ) * MOVE_SPEED;
 	}
-	_pos += _vec;
+	pos += _vec;
 	if ( _vec.getLength( ) < 0.01 ) {
 		if ( _animation->getAnim( ) == Animation::ANIM::ANIM_DELIVERY_STAND ) {
 			_animation->changeAnim( Animation::ANIM::ANIM_DELIVERY_CATCH );
 		}
 		if ( _animation->getAnim( ) == Animation::ANIM::ANIM_DELIVERY_CARRY ) {
-			_target = _pos + Vector( 0, 0, 2 );
+			_target = pos + Vector( 0, 0, 2 );
 			_state = STATE_LIFT;
-			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CATCH_CRYSTAL, _pos, EFFECT_CATCH_SIZE, EFFECT_ROTATE ) );
+			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CATCH_CRYSTAL, pos, EFFECT_CATCH_SIZE, EFFECT_ROTATE ) );
 		}
 	}
+	_animation->setPos( pos );
 }
 
 void Delivery::updateLift( CameraPtr camera ) {
 	//デリバー
-	_vec = _target - _pos;
+	Vector pos = _animation->getPos( );
+	_vec = _target - pos;
 	if ( _vec.getLength( ) > MOVE_SPEED ) {
 		_vec = _vec.normalize( ) * MOVE_SPEED;
 	}
@@ -117,62 +122,67 @@ void Delivery::updateLift( CameraPtr camera ) {
 		_state = STATE_CARRY;
 		Vector dir = camera->getDir( );
 		dir.z = 0;
-		_target = _pos + dir.normalize( ) * 100 * WORLD_SCALE;
+		_target = pos + dir.normalize( ) * 100 * WORLD_SCALE;
 	}
-	_pos += _vec;
+	pos += _vec;
 
 	//クリスタル
-	Vector crystal_vec = _pos - _crystal.pos - Vector( 0, 0, FOOT );
+	Vector crystal_vec = pos - _crystal.pos - Vector( 0, 0, FOOT );
 	if ( crystal_vec.getLength( ) > MOVE_SPEED * 1.5 ) {
 		crystal_vec = crystal_vec.normalize( ) * MOVE_SPEED * 1.5;
 	}
 	_crystal.pos += crystal_vec;
+	_animation->setPos( pos );
 }
 
 void Delivery::updateCarry( ) {
 	//デリバー
-	_vec = _target - _pos;
+	Vector pos = _animation->getPos( );
+	_vec = _target - pos;
 	if ( _vec.getLength( ) > MOVE_SPEED ) {
 		_vec = _vec.normalize( ) * MOVE_SPEED;
 	}
 	if ( _vec.getLength( ) < 0.01 ) {
 		_finished = true;
 	}
-	_pos += _vec;
+	pos += _vec;
 
 	//クリスタル
-	Vector crystal_vec = _pos - _crystal.pos - Vector( 0, 0, FOOT );
+	Vector crystal_vec = pos - _crystal.pos - Vector( 0, 0, FOOT );
 	if ( crystal_vec.getLength( ) > MOVE_SPEED * 1.5 ) {
 		crystal_vec = crystal_vec.normalize( ) * MOVE_SPEED * 1.5;
 	}
 	_crystal.pos += crystal_vec;
+	_animation->setPos( pos );
 }
 
 bool Delivery::isFinished( ) const {
 	return _finished;
 }
 
-Vector Delivery::getPos( ) const {
-	return _pos;
+const Vector& Delivery::getPos( ) const {
+	return _animation->getPos( );
 }
 
-void Delivery::setCrystal( Vector pos ) {
+void Delivery::setCrystal( Vector crystal_pos ) {
 	if ( _have_crystal ) {
 		return;
 	}
 	_have_crystal = true;
-	_crystal.pos = pos;
-	while ( _pos.x - pos.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
-		_pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
+	_crystal.pos = crystal_pos;
+	Vector pos = _animation->getPos( );
+
+	while ( pos.x - crystal_pos.x > STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
+		pos.x -= STAGE_WIDTH_NUM * WORLD_SCALE;
 	}
-	while ( _pos.x - pos.x < -STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
-		_pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
+	while ( pos.x - crystal_pos.x < -STAGE_WIDTH_NUM * WORLD_SCALE / 2 ) {
+		pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
 	}
-	while ( _pos.y - pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
-		_pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
+	while ( pos.y - crystal_pos.y > STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
+		pos.y -= STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
-	while ( _pos.y - pos.y < -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
-		_pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
+	while ( pos.y - crystal_pos.y < -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
+		pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
 	_crystal.type = MDL_CRYSTAL;
 }

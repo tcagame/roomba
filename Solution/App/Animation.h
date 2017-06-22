@@ -16,14 +16,14 @@ public:
 	virtual ~Animation( );
 	void update( );
 	void changeAnim( ANIM anim );
-	void setPos( Vector pos );
+	void setPos( Vector& pos );
 	ANIM getAnim( ) const;
-	Vector getPos( ) const;
+	const Vector& getPos( ) const;
 	const Stage::MV1_INFO& getModel( ) const;
 private:
 	void updateAnimationDelivery( );
 private:
 	ANIM _anim;
-	Stage::MV1_INFO _model;
+	Stage::MV1_INFO _mv1;
 };
 
