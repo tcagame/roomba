@@ -109,7 +109,7 @@ void Roomba::draw( ) const {
 			Matrix trans = Matrix::makeTransformTranslation( delivery.pos );
 			Matrix rot = Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 );
 			Matrix scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
-			drawer->setModelMV1( Drawer::ModelMV1( scale.multiply( rot ).multiply( trans ), delivery.type, delivery.time ) );
+			drawer->setModelMV1( Drawer::ModelMV1( scale.multiply( rot ).multiply( trans ), delivery.type, 0, delivery.time ) );
 		}
 	}
 	if ( _state == MOVE_STATE_WAIT ) {
