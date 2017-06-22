@@ -215,9 +215,14 @@ void SceneStage::drawUIMap( ) const {
 		static int count = 0;
 		count++;
 		count %= 60;
-		int tx = count % 6;
-		int ty = count / 6;
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, tx * 100, ty * 100, 100, 100, sx2, sy2 ), GRAPH_RADAR ) );
+		int tx = count % 5;
+		int ty = count / 5;
+		if ( ty > 4 ) {
+			tx = 4;
+			ty = 4;
+		}
+		const int TEX_SIZE = 128;
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, tx * TEX_SIZE, ty * TEX_SIZE, TEX_SIZE, TEX_SIZE, sx2, sy2 ), GRAPH_RADAR ) );
 	}
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
 		//デリバー表示
