@@ -48,7 +48,7 @@ SceneStage::SceneStage( int stage_num ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_SHADOW, "texture/shadow.png" );
 	drawer->loadGraph( GRAPH_RADAR, "UI/radar2.png" );
-	drawer->loadGraph( GRAPH_COMMAND_PROMPT_STRING, "UI/op.png" );
+	drawer->loadGraph( GRAPH_COMMAND_PROMPT_STRING, "UI/Boot.png" );
 	drawer->loadGraph( GRAPH_COMMAND_PROMPT_BACK, "UI/op_background.png" );
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );

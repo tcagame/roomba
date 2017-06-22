@@ -7,7 +7,7 @@
 
 static const int TITLE_WIDTH  = 1024;
 static const int TITLE_HEIGHT = 256;
-static const int DRAW_TIME = 30;
+static const int DRAW_TIME = 100;
 static const int BRANK = 250;
 static const int CIRCLE_ANIME_FLAME = 4;
 static const int MAX_CHOICE_COUNT = 24 * CIRCLE_ANIME_FLAME;
@@ -16,6 +16,8 @@ SceneTitle::SceneTitle( ) :
 _count( 0 ),
 _choice_count( 0 ) {
 	DrawerPtr drawer = Drawer::getTask( );
+	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
+	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
 	drawer->loadGraph( GRAPH_TITLE, "title/roomb_title.png" );
 	drawer->loadGraph( GRAPH_PLEASE_PUSH_BUTTON, "title/pleasepushbutton.png" );
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
@@ -31,6 +33,7 @@ SceneTitle::~SceneTitle( ) {
 Scene::NEXT SceneTitle::update( ) {
 	_count++;
 	draw( );
+	SoundPtr sound = Sound::getTask( );
 	DevicePtr device = Device::getTask( );
 	Vector right_stick = Vector( device->getRightDirX( ), device->getRightDirY( ) );
 	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) );
@@ -47,29 +50,24 @@ Scene::NEXT SceneTitle::update( ) {
 			return NEXT_STAGE_SELECT;
 		}
 	}
+
+	// サークルカウント
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		_choice_count++;
-		SoundPtr sound = Sound::getTask( );
-		sound->playSE( "se_maoudamashii_system45.wav" );
+		if ( _choice_count == 1 ) {
+			sound->playSE( "se_maoudamashii_effect01.wav" );
+		}
 	} else {
 		_choice_count = 0;
+		sound->stopSE( "se_maoudamashii_effect01.wav" );
 	}
 	return NEXT_CONTINUE;
 }
 
 void SceneTitle::draw( ) {
-	ApplicationPtr app = Application::getInstance( );
-	const int WIDTH = app->getWindowWidth( );
-	const int HEIGHT = app->getWindowHeight( );
-	DrawerPtr drawer = Drawer::getTask( );
-	{
-		Drawer::Sprite sprite( Drawer::Transform( BRANK, HEIGHT / 10, 0, 0, TITLE_WIDTH, TITLE_HEIGHT, WIDTH - BRANK, HEIGHT * 4 / 10 ), GRAPH_TITLE );
-		drawer->setSprite( sprite );
-	}
-	if ( _count % DRAW_TIME < DRAW_TIME / 2 ) {
-		Drawer::Sprite sprite( Drawer::Transform( BRANK, HEIGHT * 5 / 10, 0, 0, TITLE_WIDTH, TITLE_HEIGHT, WIDTH - BRANK, HEIGHT * 5 / 10 + 256 ), GRAPH_PLEASE_PUSH_BUTTON );
-		drawer->setSprite( sprite );
-	}
+	drawTitle( );
+	//drawPlease( );
+	drawController( );
 	drawFadeBg( );
 	drawCircle( );
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
@@ -77,6 +75,52 @@ void SceneTitle::draw( ) {
 	} else {
 		drawFadeOut( );
 	}
+}
+
+void  SceneTitle::drawTitle( ) {
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+
+	DrawerPtr drawer = Drawer::getTask( );
+	Drawer::Sprite sprite( Drawer::Transform( BRANK, HEIGHT / 10, 0, 0, TITLE_WIDTH, TITLE_HEIGHT ), GRAPH_TITLE );
+	drawer->setSprite( sprite );
+	
+}
+
+void SceneTitle::drawPlease( ) {
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+
+	const int tx = 122;
+	const int ty = 116;
+	const int tx2 = 269;
+	const int ty2 = 52;
+
+	DrawerPtr drawer = Drawer::getTask( );
+	Drawer::Transform trans( WIDTH / 2 - tx2 / 2, HEIGHT / 2, tx, ty, tx2, ty2  );
+	Drawer::Sprite sprite( trans, GRAPH_PLEASE_PUSH_BUTTON );
+	drawer->setSprite( sprite );
+}
+
+void SceneTitle::drawController( ) {
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+
+	const int CONTROLLER_SIZE = 512;
+
+	DrawerPtr drawer = Drawer::getTask( );
+	Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT * 3 / 5, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT * 3 / 5 + CONTROLLER_SIZE / 2 );
+	if ( _count % DRAW_TIME < DRAW_TIME * 2 / 3 ) {
+		Drawer::Sprite sprite( trans , GRAPH_CONTROLLER_ROTATION );
+		drawer->setSprite( sprite );
+	} else {
+		Drawer::Sprite sprite( trans , GRAPH_CONTROLLER_NEUTRAL );
+		drawer->setSprite( sprite );
+	}
+	
 }
 
 void SceneTitle::drawCircle( ) const {

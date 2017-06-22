@@ -60,13 +60,19 @@ Scene::NEXT SceneSelect::update( ) {
 			return NEXT_STAGE;
 		}
 	}
+
+	// サークルカウント
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		_choice_count++;
-		sound->playSE( "se_maoudamashii_system45.wav" );
+		if ( _choice_count == 1 ) {
+			sound->playSE( "se_maoudamashii_effect01.wav" );
+		}
 	} else {
 		_choice_count = 0;
+		sound->stopSE( "se_maoudamashii_effect01.wav" );
 	}
 
+	//　ステージ番号選択
 	if ( _move_count == 0 ) {
 		freazeSelect( );
 		if ( left_stick.x > 0 && !_ispush ) {
