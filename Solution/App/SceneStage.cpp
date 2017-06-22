@@ -48,13 +48,15 @@ SceneStage::SceneStage( int stage_num ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_SHADOW, "texture/shadow.png" );
 	drawer->loadGraph( GRAPH_RADAR, "UI/radar2.png" );
-	drawer->loadGraph( GRAPH_COMMAND_PROMPT_STRING, "UI/op.png" );
+	drawer->loadGraph( GRAPH_COMMAND_PROMPT_STRING, "UI/Boot.png" );
 	drawer->loadGraph( GRAPH_COMMAND_PROMPT_BACK, "UI/op_background.png" );
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
 	drawer->loadGraph( GRAPH_PHASE, "UI/phase.png" );
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );	
 	drawer->loadGraph( GRAPH_GUIDELINE, "Model/Guideline/guideline.jpg" );
+	drawer->loadGraph( GRAPH_FLOOR, "Model/Stage/floor.jpg" );
+	drawer->loadGraph( GRAPH_WALL, "Model/Stage/wall.jpg" );
 	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 
 	Matrix crystal_scale = Matrix::makeTransformScaling( CRYSTAL_SIZE );
@@ -67,11 +69,6 @@ SceneStage::SceneStage( int stage_num ) {
 
 	Matrix floor_scale = Matrix::makeTransformScaling( FLOOR_SIZE );
 	drawer->loadMDLModel( MDL_FLOOR, "Model/Stage/_floor.mdl", "Model/Stage/colormap.png", floor_scale );
-	Matrix wall_scale = Matrix::makeTransformScaling( WALL_SIZE );
-	drawer->loadMDLModel( MDL_WALL_0 , "Model/Stage/_wall_0.mdl" , "Model/Stage/wall.jpg", wall_scale );
-	drawer->loadMDLModel( MDL_WALL_1 , "Model/Stage/_wall_1.mdl" , "Model/Stage/wall.jpg", wall_scale );
-	drawer->loadMDLModel( MDL_WALL_2 , "Model/Stage/_wall_2.mdl" , "Model/Stage/wall.jpg", wall_scale );
-	drawer->loadMDLModel( MDL_WALL_3 , "Model/Stage/_wall_3.mdl" , "Model/Stage/wall.jpg", wall_scale );
 
 	drawer->loadEffect( EFFECT_CATCH_CRYSTAL, "Effect/catch.efk" );
 	drawer->loadEffect( EFFECT_COLLISION_TO_WALL, "Effect/collision_wall.efk" );
@@ -298,6 +295,7 @@ void SceneStage::drawUIMap( ) const {
 		self.model = guideline;
 		self.graph = GRAPH_GUIDELINE;
 		self.add = false;
+		self.z_buffer = true;
 		drawer->setModelSelf( self );
 	}
 }
