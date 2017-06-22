@@ -22,14 +22,14 @@ void Viewer::drawModelMDLMulti( ModelPtr mdl, GRAPH graph, int idx ) const {
 	int x = (int)( _base_pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
 	int y = (int)( _base_pos.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
 	if ( idx == 1 || idx == 3 ) {
-		if ( (int)( _base_pos.x / WORLD_SCALE ) % STAGE_WIDTH_NUM < STAGE_WIDTH_NUM / 2 ) {
+		if ( (int)( _base_pos.x / WORLD_SCALE ) % STAGE_WIDTH_NUM > STAGE_WIDTH_NUM / 2 ) {
 			x++;
 		} else {
 			x--;
 		}
 	}
 	if ( idx == 2 || idx == 3 ) {
-		if ( (int)( _base_pos.x / WORLD_SCALE ) % STAGE_WIDTH_NUM < STAGE_WIDTH_NUM / 2 ) {
+		if ( (int)( _base_pos.y / WORLD_SCALE ) % STAGE_HEIGHT_NUM > STAGE_HEIGHT_NUM / 2 ) {
 			y++;
 		} else {
 			y--;

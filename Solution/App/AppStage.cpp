@@ -341,7 +341,6 @@ void AppStage::loadWall( ) {
 			}
 			_walls[ idx ] = ModelPtr( new Model );
 			_walls[ idx ]->load( "../Resource/Model/Stage/_wall_" + std::to_string( i ) + ".mdl" );
-			_walls[ idx ]->setTexture( "../Resource/Model/Stage/wall.jpg" );
 			_walls[ idx ]->multiply( Matrix::makeTransformScaling( WALL_SIZE ) );
 		}
 	}
@@ -351,7 +350,6 @@ void AppStage::loadFloor( ) {
 	for ( int i = 0; i < 4; i++ ) {
 		_floor[ i ] = ModelPtr( new Model );
 		_floor[ i ]->load( "../Resource/Model/Stage/_floor.mdl" );
-		_floor[ i ]->setTexture( "../Resource/Model/Stage/floor.png" );
 		_floor[ i ]->multiply( Matrix::makeTransformScaling( FLOOR_SIZE ) );
 	}
 }
