@@ -43,7 +43,9 @@ SceneResult::~SceneResult( ) {
 }
 
 Scene::NEXT SceneResult::update( ) {
+	SoundPtr sound = Sound::getTask( );
 	DevicePtr device = Device::getTask( );
+
 	Vector right_stick = Vector( device->getRightDirX( ), device->getRightDirY( ) );
 	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) );
 
@@ -61,10 +63,15 @@ Scene::NEXT SceneResult::update( ) {
 			return NEXT_TITLE;
 		}
 	}
+	// サークルカウント
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		_choice_count++;
+		if ( _choice_count == 1 ) {
+			sound->playSE( "se_maoudamashii_effect01.wav" );
+		}
 	} else {
 		_choice_count = 0;
+		sound->stopSE( "se_maoudamashii_effect01.wav" );
 	}
 	return NEXT_CONTINUE;
 }
