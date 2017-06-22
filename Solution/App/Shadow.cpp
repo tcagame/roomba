@@ -56,6 +56,7 @@ void Shadow::draw( ) const {
 	self.model = _model;
 	self.graph = GRAPH_SHADOW;
 	self.add = false;
+	self.z_buffer = false;
 
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->setModelSelf( self );

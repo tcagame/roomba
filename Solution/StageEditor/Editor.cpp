@@ -37,8 +37,6 @@ void Editor::initialize( ) {
 	
 	drawer->loadMV1Model( MV1_DELIVERY_STAND, "Model/Delivery/delivery_wait.mv1" );
 
-	Matrix floor_scale = Matrix::makeTransformScaling( FLOOR_SIZE );
-	drawer->loadMDLModel( MDL_FLOOR, "Model/Stage/floor.mdl", "Model/Stage/colormap.png", floor_scale );
 	Matrix wall = Matrix::makeTransformScaling( WALL_SIZE );
 	//Matrix wall = wall_scale.multiply( wall_rot );
 	drawer->loadMDLModel( MDL_WALL_0_1 , "Model/Stage/0_1.mdl" , "Model/Stage/wall.jpg", wall );
