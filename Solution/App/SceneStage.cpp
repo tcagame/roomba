@@ -47,7 +47,7 @@ SceneStage::SceneStage( int stage_num ) {
 	_guideline->multiply( Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 ) );
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_SHADOW, "texture/shadow.png" );
-	drawer->loadGraph( GRAPH_RADAR, "UI/radar2.png" );
+	drawer->loadGraph( GRAPH_RADAR, "UI/radar.png" );
 	drawer->loadGraph( GRAPH_COMMAND_PROMPT_STRING, "UI/Boot.png" );
 	drawer->loadGraph( GRAPH_COMMAND_PROMPT_BACK, "UI/op_background.png" );
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
