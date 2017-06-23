@@ -22,7 +22,7 @@ Timer::~Timer( ) {
 
 void Timer::update( ) {
 	_timer--;
-	if ( _timer == 3 * FPS ) {
+	if ( _timer == 5 * FPS ) {
 		SoundPtr sound = Sound::getTask( );
 	    sound->playBGM( "meka_ge_keihou.wav" );
 	}
@@ -64,4 +64,8 @@ bool Timer::isTimeOver( ) const {
 void Timer::finalize( ) {
 	GamePtr game = Game::getTask( );
 	game->setResultTime( _timer * 10 / FPS );
+}
+
+int Timer::getTime( ) const {
+	return _timer; 
 }
