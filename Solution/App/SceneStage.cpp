@@ -22,6 +22,7 @@ const int UI_MAP_FOOT_Y = 30;
 const int UI_MAP_RANGE = 20;
 const int UI_NUM_SCROLL_TIME = 20;
 const int UI_NUM_SCROLL_SPEED = 2;
+const int FPS = 60;
 const double GUIDELINE_VIEW_RANGE = 5 * WORLD_SCALE;
 
 SceneStage::SceneStage( int stage_num ) {
@@ -118,6 +119,10 @@ Scene::NEXT SceneStage::update( ) {
 		_timer->update( );
 	}
 	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_WAIT ) {
+		if ( _timer->getTime( ) < 5 * FPS ) {
+			SoundPtr sound = Sound::getTask( );
+			sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
+		}
 		_timer->reset( );
 	}
 	_roomba->draw( );
@@ -235,7 +240,7 @@ void SceneStage::drawUIMap( ) const {
 			Vector station_pos( i % STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2, i / STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2 ); 
 			Vector distance = ( getAdjustPos( station_pos, base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
 			double length = distance.getLength( );
-			if ( _roomba->getCrystalPtr( ) ) {
+			if ( _roomba->isHoldCrystal( ) ) {
 				if ( length < guideline_distance.getLength( ) ) {
 					guideline_distance = distance;
 				}
@@ -274,7 +279,7 @@ void SceneStage::drawUIMap( ) const {
 		Vector pos = crystal->getPos( );
 		pos.z = 0;
 		Vector distance = ( getAdjustPos( pos, base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
-		if ( !_roomba->getCrystalPtr( ) ) {
+		if ( !_roomba->isHoldCrystal( ) ) {
 			if ( distance.getLength( ) < guideline_distance.getLength( ) ) {
 				guideline_distance = distance;
 			}

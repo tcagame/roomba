@@ -8,7 +8,7 @@
 static const double MOVE_SPEED = 0.2;
 static const double START_POS_Z = 20;
 static const double FOOT = 0.3;
-static const double LIFT_UP_Z = 5;
+static const double LIFT_UP_Z = 6;
 static const double EFFECT_POINT_SIZE = 0.5;
 static const double EFFECT_CATCH_SIZE = 0.5;
 static const int MAX_EFFECT_COUNT = 50;

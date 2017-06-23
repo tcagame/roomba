@@ -9,7 +9,7 @@
 void main( ) {
 	Application::initialize( );
 	TaskPtr drawer( new Drawer( "../Resource" ) );
-	TaskPtr sound = SoundPtr( new Sound( "Sound" ) );
+	TaskPtr sound( new Sound( "Sound" ) );
 	TaskPtr mouse( new Mouse );
 	TaskPtr game( new Game );
 	TaskPtr device( new Device );

@@ -46,7 +46,7 @@ public:
 	bool isWait( ) const;
 	bool isFinished( ) const;
 	Vector getStartPos( ) const;
-	CrystalPtr getCrystalPtr( ) const;
+	bool isHoldCrystal( ) const;
 private:
 	enum BALL {
 		BALL_LEFT,
@@ -60,6 +60,7 @@ private:
 	void updateState( );
 	void updateBalls( StagePtr stage );
 	void changeState( StagePtr stage, CameraPtr camera );
+	void updateDeliverys( );
 	void moveTranslation( );
 	void moveRotation( );
 	void moveReflection( );
@@ -94,7 +95,7 @@ private:
 	bool _finished;
 	Vector _trans_speed;
 	Vector _move_dir;
-	std::array< bool, 4 > _boot;
+	std::array< std::array< bool, 4 >, 2 > _boot;
 	std::array< Vector, 2 > _vec_trans;
 	std::array< Vector, 2 > _vec_start;
 	std::array< Vector, 2 > _vec_rot;

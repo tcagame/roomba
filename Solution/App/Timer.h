@@ -13,6 +13,7 @@ public:
 	void reset( );
 	void finalize( );
 	bool isTimeOver( ) const;
+	int getTime( ) const;
 private:
 	int _timer;
 	int _add_time;
