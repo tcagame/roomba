@@ -5,10 +5,10 @@
 #include "Sound.h"
 #include "Shadow.h"
 
-static const double MOVE_SPEED = 0.1;
+static const double MOVE_SPEED = 0.2;
 static const double START_POS_Z = 20;
-static const double MIN_POS_Z = 2;
 static const double FOOT = 0.3;
+static const double LIFT_UP_Z = 5;
 static const double EFFECT_POINT_SIZE = 0.5;
 static const double EFFECT_CATCH_SIZE = 0.5;
 static const int MAX_EFFECT_COUNT = 50;
@@ -75,10 +75,6 @@ void Delivery::move( ) {
 	}
 	Vector pos = _animation->getPos( );
 	pos += _vec;
-	if ( pos.z < MIN_POS_Z ) {
-		pos.z = MIN_POS_Z;
-	}
-
 	_animation->setPos( pos );
 }
 
@@ -87,21 +83,17 @@ void Delivery::updateWait( ) {
 	_effect_count %= MAX_EFFECT_COUNT;
 	Vector pos = _animation->getPos( );
 	_vec = _target - pos;
-	
-	if ( _have_crystal ) {
-		_state = STATE_CATCH;
-	}
 }
 
 void Delivery::updateCatch( ) {
 	Vector pos = _animation->getPos( );
-	_vec = _crystal.pos - pos + Vector( 0, 0, FOOT );
+	_vec = _target - pos;
 	if ( _vec.getLength( ) < 0.01 ) {
 		if ( _animation->getAnim( ) == Animation::ANIM::ANIM_DELIVERY_STAND ) {
 			_animation->changeAnim( Animation::ANIM::ANIM_DELIVERY_CATCH );
 		}
 		if ( _animation->getAnim( ) == Animation::ANIM::ANIM_DELIVERY_CARRY ) {
-			_target = pos + Vector( 0, 0, 2 );
+			_target = pos + Vector( 0, 0, LIFT_UP_Z );
 			_state = STATE_LIFT;
 			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CATCH_CRYSTAL, pos, EFFECT_CATCH_SIZE, EFFECT_ROTATE ) );
 		}
@@ -177,8 +169,11 @@ void Delivery::setCrystal( Vector crystal_pos ) {
 	while ( pos.y - crystal_pos.y < -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
 		pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
+
 	_animation->setPos( pos );
+	_target = _crystal.pos + Vector( 0, 0, FOOT );
 	_crystal.type = MDL_CRYSTAL;
+	_state = STATE_CATCH;
 }
 
 bool Delivery::isHaveCrystal( ) {
