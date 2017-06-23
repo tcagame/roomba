@@ -122,18 +122,17 @@ void Roomba::draw( ) const {
 	
 	// チュートリアルコントローラー
 	if ( _start_count > START_TIME &&
-		 _start_count < (double)START_TIME * 2 ) {
+		 _start_count < START_TIME + 120 ) {
 		GRAPH graph = GRAPH_CONTROLLER_NEUTRAL;
-		if ( _start_count > (double)START_TIME * 1.2 && 
-			 _start_count < (double)START_TIME * 2 ) {
+		if ( _start_count > START_TIME + 15 ) {
 			graph = GRAPH_CONTROLLER_TRANSLATION;
 		}
 		double ratio = 1.0;
-		if ( _start_count < (double)START_TIME * 1.2 ) {
-			ratio = (double)( _start_count - START_TIME ) / 10;
+		if ( _start_count < START_TIME + 15 ) {
+			ratio = (double)( _start_count - START_TIME ) / 15;
 		}
-		if ( _start_count > (double)START_TIME * 1.8 ) {
-			ratio = 1.0 - ( (double)( _start_count - ( (double)START_TIME * 1.8 ) ) / 10 );
+		if ( _start_count > START_TIME + 105 ) {
+			ratio = 1.0 - ( ( (double)_start_count - ( START_TIME + 105 ) ) / 15 );
 		}
 		Drawer::Transform trans( ( WIDTH / 2 ) - 128, HEIGHT - 256, 0, 0, 512, 512, ( WIDTH / 2 ) + 128, HEIGHT );
 		drawer->setSprite( Drawer::Sprite( trans, graph, Drawer::BLEND_ALPHA, ratio ) );
