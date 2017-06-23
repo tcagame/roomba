@@ -12,6 +12,7 @@ private:
 	void drawPlease( );
 	void drawController( );
 	void drawCircle( ) const;
+	void drawBg( );
 private:
 	int _count;
 	int _choice_count;
