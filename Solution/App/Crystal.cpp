@@ -39,7 +39,8 @@ void Crystal::draw( ViewerPtr viewer ) const {
 }
 
 void Crystal::update( AppStagePtr stage, ShadowPtr shadow ) {
-	shadow->set( _pos );
+	const double SCALE = ( CRYSTAL_SIZE.x * SUN_POS ) / ( SUN_POS - CRYSTAL_SIZE.z );
+	shadow->set( _pos, SCALE );
 	if ( stage->isOnDelivery( _pos ) ) {
 		_drop_down = true;
 		_finished = true;

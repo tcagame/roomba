@@ -11,18 +11,19 @@ Shadow::Shadow( ) {
 Shadow::~Shadow( ) {
 }
 
-void Shadow::set( const Vector& pos ) {
+void Shadow::set( const Vector& pos, const double scale ) {
 	_pos[ _num ] = pos;
+	_scale[ _num ] = scale;
 	_num++;
 }
 
 void Shadow::update( ) {
 	for ( int i = 0; i < _num; i++ ) {
 		Model::VERTEX vertex[ 4 ];
-		vertex[ 0 ].pos = _pos[ i ] + Vector( -0.5, -0.5 );
-		vertex[ 1 ].pos = _pos[ i ] + Vector(  0.5, -0.5 );
-		vertex[ 2 ].pos = _pos[ i ] + Vector( -0.5,  0.5 );
-		vertex[ 3 ].pos = _pos[ i ] + Vector(  0.5,  0.5 );
+		vertex[ 0 ].pos = _pos[ i ] + Vector( -( _scale[ i ] / 2 ), -( _scale[ i ] / 2 ) );
+		vertex[ 1 ].pos = _pos[ i ] + Vector(  ( _scale[ i ] / 2 ), -( _scale[ i ] / 2 ) );
+		vertex[ 2 ].pos = _pos[ i ] + Vector( -( _scale[ i ] / 2 ),  ( _scale[ i ] / 2 ) );
+		vertex[ 3 ].pos = _pos[ i ] + Vector(  ( _scale[ i ] / 2 ),  ( _scale[ i ] / 2 ) );
 
 		vertex[ 0 ].pos.z = 0.1;
 		vertex[ 1 ].pos.z = 0.1;

@@ -62,7 +62,8 @@ void Delivery::update( CameraPtr camera, ShadowPtr shadow ) {
 		break;
 	}
 	_animation->update( );
-	shadow->set( _animation->getPos( ) );
+	const double SCALE = ( DELIVERY_SIZE.x * SUN_POS ) / ( SUN_POS - DELIVERY_SIZE.z );
+	shadow->set( _animation->getPos( ), SCALE );
 }
 
 
