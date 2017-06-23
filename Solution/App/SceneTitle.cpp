@@ -9,7 +9,7 @@ static const int TITLE_WIDTH  = 1024;
 static const int TITLE_HEIGHT = 256;
 static const int DRAW_TIME = 100;
 static const int BRANK = 250;
-static const int CIRCLE_ANIME_FLAME = 2;
+static const int CIRCLE_ANIME_FLAME = 3;
 static const int MAX_CHOICE_COUNT = 24 * CIRCLE_ANIME_FLAME;
 
 SceneTitle::SceneTitle( ) :
@@ -84,7 +84,7 @@ void  SceneTitle::drawTitle( ) {
 	const int HEIGHT = app->getWindowHeight( );
 
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( BRANK, HEIGHT / 7, 0, 0, TITLE_WIDTH, TITLE_HEIGHT ), GRAPH_TITLE );
+	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - TITLE_WIDTH / 2, HEIGHT / 7, 0, 0, TITLE_WIDTH, TITLE_HEIGHT ), GRAPH_TITLE );
 	drawer->setSprite( sprite );
 	
 }
@@ -139,11 +139,11 @@ void SceneTitle::drawCircle( ) const {
 	
 	const int CIRCLE_SIZE = 100;
 	int idx = _choice_count / CIRCLE_ANIME_FLAME;
-	if ( idx > 25 || getFadeOutCount( ) != MAX_FADE_COUNT  ) {
-		idx = 25;
+	if ( idx > 24 || getFadeOutCount( ) != MAX_FADE_COUNT  ) {
+		idx = 24;
 	}
-	int tx = idx % 4;
-	int ty = idx / 4;
+	int tx = idx % 5;
+	int ty = idx / 5;
 	DrawerPtr drawer = Drawer::getTask( );
 	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT * 5 / 6 - 74 + CIRCLE_SIZE * 3 / 5, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
