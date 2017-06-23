@@ -97,13 +97,14 @@ private:
 	bool _first_crystal_catch;
 	Vector _trans_speed;
 	Vector _move_dir;
-	std::array< std::array< bool, 4 >, 2 > _boot;
+	std::array< std::array< bool, 3 >, 2 > _boot;
 	std::array< Vector, 2 > _vec_trans;
 	std::array< Vector, 2 > _vec_start;
 	std::array< Vector, 2 > _vec_rot;
 	std::array< Vector, 2 > _vec_scale;
 	std::array< Vector, 2 > _vec_reflection;
 	std::array< double, 2 > _vec_z;
+	std::array< Vector, 2 > _vec_delivery;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
 	LaserPtr _laser;

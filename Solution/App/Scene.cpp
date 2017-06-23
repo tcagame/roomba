@@ -24,7 +24,7 @@ void Scene::drawFadeIn( ) const {
 
 	int fade_size = 256;
 	double blend = 1;
-	blend = 1 - ( (double)( _fade_in_count ) / 25 );
+	blend = 1 - ( (double)_fade_in_count / 25 );
 	if ( blend < 0 ) {
 		blend = 0;
 	}
