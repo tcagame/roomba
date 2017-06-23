@@ -232,7 +232,7 @@ void SceneStage::drawUIMap( ) const {
 			Vector station_pos( i % STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2, i / STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2 ); 
 			Vector distance = ( getAdjustPos( station_pos, base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
 			double length = distance.getLength( );
-			if ( _roomba->getCrystalPtr( ) ) {
+			if ( _roomba->isHoldCrystal( ) ) {
 				if ( length < guideline_distance.getLength( ) ) {
 					guideline_distance = distance;
 				}
@@ -271,7 +271,7 @@ void SceneStage::drawUIMap( ) const {
 		Vector pos = crystal->getPos( );
 		pos.z = 0;
 		Vector distance = ( getAdjustPos( pos, base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
-		if ( !_roomba->getCrystalPtr( ) ) {
+		if ( !_roomba->isHoldCrystal( ) ) {
 			if ( distance.getLength( ) < guideline_distance.getLength( ) ) {
 				guideline_distance = distance;
 			}
