@@ -27,10 +27,10 @@ const double GUIDELINE_VIEW_RANGE = 5 * WORLD_SCALE;
 SceneStage::SceneStage( int stage_num ) {
 	_shadow = ShadowPtr( new Shadow );
 	_guideline = ModelPtr( new Model );
-	_viewer = ViewerPtr( new Viewer );
+	_viewer = ViewerPtr( new Viewer( _shadow ) );
 	_timer = TimerPtr( new Timer );
 	_roomba = RoombaPtr( new Roomba );
-	_stage = StagePtr( new AppStage( stage_num, _viewer, _timer, _roomba, _shadow ) );//0-2:í èÌ 3:test_stage
+	_stage = StagePtr( new AppStage( stage_num, _viewer, _timer, _roomba ) );//0-2:í èÌ 3:test_stage
 	_camera = CameraPtr( new AppCamera( _roomba ) );
 	
 

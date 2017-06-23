@@ -36,11 +36,11 @@ void Crystal::draw( ViewerPtr viewer ) const {
 	if ( !_effect_count  ) {
 		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CRYSTAL_AURA, _pos + Vector( 0, 0, 1 ), EFFECT_AURA_SIZE, EFFECT_ROTATE ) );
 	}
+	const double SHADOW_SCALE = ( CRYSTAL_SIZE.x * SUN_POS ) / ( SUN_POS - CRYSTAL_SIZE.z );
+	viewer->setShadow( _pos, SHADOW_SCALE );
 }
 
-void Crystal::update( AppStagePtr stage, ShadowPtr shadow ) {
-	const double SCALE = ( CRYSTAL_SIZE.x * SUN_POS ) / ( SUN_POS - CRYSTAL_SIZE.z );
-	shadow->set( _pos, SCALE );
+void Crystal::update( AppStagePtr stage ) {
 	if ( stage->isOnDelivery( _pos ) ) {
 		_drop_down = true;
 		_finished = true;

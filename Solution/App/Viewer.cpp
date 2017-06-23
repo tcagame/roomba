@@ -1,7 +1,9 @@
 #include "Viewer.h"
 #include "Model.h"
+#include "Shadow.h"
 
-Viewer::Viewer( ) {
+Viewer::Viewer( ShadowPtr shadow ) :
+_shadow( shadow ) {
 }
 
 
@@ -76,4 +78,11 @@ void Viewer::setViewPos( Vector& pos ) const {
 	while ( pos.y - _base_pos.y < -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
 		pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
+}
+
+void Viewer::setShadow( Vector pos, const double scale, bool shift_pos ) {
+	if ( shift_pos ) {
+		setViewPos( pos );
+	}
+	_shadow->set( pos, scale );
 }

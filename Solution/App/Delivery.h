@@ -14,8 +14,8 @@ public:
 	Delivery( Vector pos );
 	virtual ~Delivery( );
 public:
-	void update( CameraPtr camera, ShadowPtr shadow );
-	void draw( ViewerConstPtr viewer ) const;
+	void update( CameraPtr camera );
+	void draw( ViewerPtr viewer ) const;
 	void setCrystal( Vector crystal_pos );
 	bool isFinished( ) const;
 	bool isHaveCrystal( );
