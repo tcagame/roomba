@@ -3,7 +3,8 @@
 static const int MAX_ANIM_TIME[ Animation::ANIM::MAX_ANIM ] = {
 	31,
 	31,
-	30
+	30,
+	30,
 };
 
 
@@ -31,7 +32,10 @@ void Animation::draw( ViewerConstPtr viewer ) {
 		vec.z = 0;
 		Vector vec_diff = vec - _old_vec;
 		Vector rot_vec = vec_diff + vec * -1.5;
-		Matrix rot2 = Matrix::makeTransformRotation( rot_vec.normalize( ), rot_vec.getLength( ) );
+		rot_vec.z = 0;
+		Vector axis = rot_vec.normalize( );
+		//axis = Vector( axis.y, axis.z );
+		Matrix rot2 = Matrix::makeTransformRotation( axis, rot_vec.getLength( ) );
 		scale_rot = scale_rot.multiply( rot2 );
 		
 		_old_vec = vec;
@@ -62,6 +66,12 @@ void Animation::updateAnimationDelivery( ) {
 	case ANIM_DELIVERY_CARRY:
 		_mv1.model.time = (int)_mv1.model.time % MAX_ANIM_TIME[ ANIM_DELIVERY_CARRY ];
 		break;
+	case ANIM_DELIVERY_DISENGAGE:
+		_mv1.model.time -= 4;
+		if ( _mv1.model.time < 0 ) {
+			_mv1.model.time = 0;
+			_anim = ANIM_DELIVERY_STAND;
+		}
 	}
 }
 
@@ -78,6 +88,9 @@ void Animation::changeAnim( ANIM anim ) {
 	case ANIM_DELIVERY_CARRY:
 		_mv1.model.mesh = MV1_DELIVERY_CARRY;
 		break;
+	case ANIM_DELIVERY_DISENGAGE:
+		_mv1.model.mesh = MV1_DELIVERY_CATCH;
+		_mv1.model.time = MAX_ANIM_TIME[ ANIM_DELIVERY_DISENGAGE ];
 	}
 }
 

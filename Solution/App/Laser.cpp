@@ -97,7 +97,7 @@ void Laser::update( const Vector& pos, CameraConstPtr camera, const Vector& left
 	
 	_holding = false;
 	Vector hold_pos;
-	if ( crystal ) {
+	if ( crystal != CrystalPtr( ) ) {
 		_holding = true;
 		hold_pos = crystal->getPos( );
 		hold_pos.z = pos.z;
