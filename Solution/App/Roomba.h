@@ -95,7 +95,7 @@ private:
 	bool _finished;
 	Vector _trans_speed;
 	Vector _move_dir;
-	std::array< std::array< bool, 4 >, 2 > _boot;
+	std::array< std::array< bool, 3 >, 2 > _boot;
 	std::array< Vector, 2 > _vec_trans;
 	std::array< Vector, 2 > _vec_start;
 	std::array< Vector, 2 > _vec_rot;
