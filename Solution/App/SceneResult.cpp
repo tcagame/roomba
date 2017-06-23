@@ -14,7 +14,7 @@ const std::string FILENAME = DIRECTORY + "best_time.dat";
 const int BRANK = 500;
 static const int THICK_FRAME_SIZE = 57;
 static const int SELECT_SIZE  = 512;
-static const int CIRCLE_ANIME_FLAME = 4;
+static const int CIRCLE_ANIME_FLAME = 3;
 static const int MAX_CHOICE_COUNT = 25 * CIRCLE_ANIME_FLAME;
 static const int DRAW_TIME = 100;
 
@@ -289,8 +289,8 @@ void SceneResult::drawCircle( ) const {
 	if ( idx > 25 || getFadeOutCount( ) != MAX_FADE_COUNT  ) {
 		idx = 25;
 	}
-	int tx = idx % 4;
-	int ty = idx / 4;
+	int tx = idx % 5;
+	int ty = idx / 5;
 
 	DrawerPtr drawer = Drawer::getTask( );
 	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT * 5 / 6 - 74 + CIRCLE_SIZE * 3 / 5, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
