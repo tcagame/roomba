@@ -102,6 +102,7 @@ private:
 	std::array< Vector, 2 > _vec_scale;
 	std::array< Vector, 2 > _vec_reflection;
 	std::array< double, 2 > _vec_z;
+	std::array< Vector, 2 > _vec_delivery;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
 	LaserPtr _laser;

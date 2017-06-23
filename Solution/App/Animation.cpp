@@ -34,8 +34,7 @@ void Animation::draw( ViewerConstPtr viewer ) {
 		Vector rot_vec = vec_diff + vec * -1.5;
 		rot_vec.z = 0;
 		Vector axis = rot_vec.normalize( );
-		//axis = Vector( axis.y, axis.z );
-		Matrix rot2 = Matrix::makeTransformRotation( axis, rot_vec.getLength( ) );
+		Matrix rot2 = Matrix::makeTransformRotation( axis, rot_vec.getLength( ) * 0.3 );
 		scale_rot = scale_rot.multiply( rot2 );
 		
 		_old_vec = vec;
@@ -70,7 +69,7 @@ void Animation::updateAnimationDelivery( ) {
 		_mv1.model.time -= 4;
 		if ( _mv1.model.time < 0 ) {
 			_mv1.model.time = 0;
-			_anim = ANIM_DELIVERY_STAND;
+			changeAnim( ANIM_DELIVERY_STAND );
 		}
 	}
 }
