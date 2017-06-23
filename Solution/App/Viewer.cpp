@@ -56,7 +56,7 @@ void Viewer::drawModelMDLMulti( ModelPtr mdl, GRAPH graph, int idx ) const {
 	drawer->setModelSelf( self );
 }
 
-void Viewer::drawModelMV1( Stage::MV1_INFO& mv1, Matrix scale_rot ) const {
+void Viewer::drawModelMV1( Stage::MV1_INFO mv1, Matrix scale_rot ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	setViewPos( mv1.pos );
 	mv1.model.matrix = scale_rot.multiply( Matrix::makeTransformTranslation( mv1.pos ) );
