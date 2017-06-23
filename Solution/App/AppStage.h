@@ -9,11 +9,10 @@ PTR( Crystal );
 PTR( Viewer );
 PTR( Timer );
 PTR( Roomba );
-PTR( Shadow )
 
 class AppStage : public Stage, public std::enable_shared_from_this< Stage > {
 public:
-	AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer, RoombaPtr roomba, ShadowPtr shadow );
+	AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer, RoombaPtr roomba );
 	virtual ~AppStage( );
 public:
 	void update( CameraPtr camera );
@@ -27,8 +26,8 @@ public:
 	void reset( );
 	std::list< CrystalPtr > getCrystalList( ) const;
 private:
-	void updateCrystal( TimerPtr timer, ShadowPtr shadow );
-	void updateDelivery( CameraPtr camera, ShadowPtr shadow );
+	void updateCrystal( TimerPtr timer );
+	void updateDelivery( CameraPtr camera );
 	void drawFloor( ) const;
 	void drawWall( ) const;
 	void drawCrystal( ) const;
@@ -52,7 +51,6 @@ private:
 	ViewerPtr _viewer;
 	TimerPtr _timer;
 	RoombaPtr _roomba;
-	ShadowPtr _shadow;
 	std::array< ModelPtr, WALL_DIV_SIZE * 4 > _walls;
 	std::array< ModelPtr, 4 > _floor;
 };

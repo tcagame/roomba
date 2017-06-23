@@ -30,23 +30,26 @@ Delivery::~Delivery( ) {
 
 }
 
-void Delivery::draw( ViewerConstPtr viewer ) const {
+void Delivery::draw( ViewerPtr viewer ) const {
 	DrawerPtr drawer = Drawer::getTask( );
+	Vector pos = _animation->getPos( );
+	const double SHADOW_SCALE = ( DELIVERY_SIZE.x * SUN_POS ) / ( SUN_POS - DELIVERY_SIZE.z );
 	if ( _have_crystal ) {
 		_animation->draw( );
 		drawer->setModelMDL( _crystal );
+		viewer->setShadow( pos, SHADOW_SCALE, false );
 	} else {
 		_animation->draw( viewer );
+		viewer->setShadow( pos, SHADOW_SCALE );
 	}
 	
 	if ( _state == STATE_WAIT && !_effect_count ) {
-		Vector pos = _animation->getPos( );
 		pos.z = 0;
 		drawer->setEffect( Drawer::Effect( EFFECT_DELIVERY_POINT, pos, EFFECT_POINT_SIZE, EFFECT_ROTATE ) );
 	}
 }
 
-void Delivery::update( CameraPtr camera, ShadowPtr shadow ) {
+void Delivery::update( CameraPtr camera ) {
 	switch ( _state ) {
 	case STATE_WAIT:
 		updateWait( );
@@ -64,8 +67,6 @@ void Delivery::update( CameraPtr camera, ShadowPtr shadow ) {
 	
 	move( );
 	_animation->update( );
-	const double SCALE = ( DELIVERY_SIZE.x * SUN_POS ) / ( SUN_POS - DELIVERY_SIZE.z );
-	shadow->set( _animation->getPos( ), SCALE );
 }
 
 void Delivery::move( ) {
