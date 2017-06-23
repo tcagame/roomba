@@ -40,7 +40,7 @@ const double EFFECT_REBOOT_SIZE = 0.7;
 const double EFFECT_CHANGE_STATE_SIZE = 0.7;
 //待機時間
 const int WAIT_TIME = 180;
-const int START_TIME = 162; // 文字横幅 * 文字縦幅 * フレーム数 * 2倍
+const int START_TIME = 162; // 随時要更新　ルンバがSTART_POSに配置されるまでのフレーム
 
 const Vector START_POS[ 2 ] {//スケールが MIN < size < MAXになるようにする
 	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, BALL_RADIUS ) ),
@@ -109,11 +109,22 @@ void Roomba::draw( ) const {
 			_delivery[ i ]->draw( );
 		}
 	}
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
 	if ( _state == MOVE_STATE_WAIT ) {
-		ApplicationPtr app = Application::getInstance( );
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 0, 0, 0, 0, 512, 512, app->getWindowWidth( ), app->getWindowHeight( ) ), GRAPH_COMMAND_PROMPT_BACK ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 0, 0, 0, 0, 512, 512, WIDTH, HEIGHT ), GRAPH_COMMAND_PROMPT_BACK ) );
 	}
 	drawCommandPrompt( );
+	if ( _start_count > START_TIME &&
+		 _start_count < START_TIME * 2 ) {
+		Drawer::Transform trans( ( WIDTH / 2 ) - 128, HEIGHT - 256, 0, 0, 512, 512, ( WIDTH / 2 ) + 128, HEIGHT );
+		if ( _start_count < (double)START_TIME * 1.5 ) {
+			drawer->setSprite( Drawer::Sprite( trans, GRAPH_CONTROLLER_TRANSLATION ) );
+		} else {
+			drawer->setSprite( Drawer::Sprite( trans, GRAPH_CONTROLLER_ROTATION ) );
+		}
+	}
 }
 
 void Roomba::drawCommandPrompt( ) const {
@@ -132,7 +143,7 @@ void Roomba::drawPromptIn( ) const {
 	const int TW = 650;
 	const int TH = 256;
 	const int WAIT_TIME = 10;
-	const int RATIO = 10;
+	const int RATIO = 15;
 	int draw_x = 10;
 	if ( _start_count > WAIT_TIME ) {
 		draw_x += ( _start_count - WAIT_TIME ) * RATIO;
@@ -192,7 +203,7 @@ void Roomba::drawPromptIn( ) const {
 void Roomba::drawPromptOut( ) const {
 	const int TW = 650;
 	const int TH = 256;
-	const int RATIO = 10;
+	const int RATIO = 15;
 	const int DRAW_COUNT = _start_count - ( START_TIME / 2 );
 	int draw_x = ( TW  / 2 ) - ( DRAW_COUNT * RATIO );
 	if ( draw_x < 10 ) {
