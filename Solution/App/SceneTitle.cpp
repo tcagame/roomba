@@ -10,6 +10,7 @@ static const int TITLE_HEIGHT = 256;
 static const int DRAW_TIME = 100;
 static const int BRANK = 250;
 static const int CIRCLE_ANIME_FLAME = 3;
+static const int MAX_TITLE_COUNT = 34 * 3;
 static const int MAX_CHOICE_COUNT = 24 * CIRCLE_ANIME_FLAME;
 
 SceneTitle::SceneTitle( ) :
@@ -94,9 +95,17 @@ void  SceneTitle::drawTitle( ) {
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
+	const int ANIME_TIME = 300;
+	double blend = 1;
+	const int now = _count % ANIME_TIME;
 
+	if ( now < ANIME_TIME / 2 ) {
+		blend = (double)( _count % ANIME_TIME ) / 100;
+	} else {
+		blend = 1 - ( (double)( _count % ( ANIME_TIME / 2 ) ) / 100 );
+	}
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - TITLE_WIDTH / 2, HEIGHT / 2 - TITLE_HEIGHT, 0, 0, TITLE_WIDTH, TITLE_HEIGHT ), GRAPH_TITLE );
+	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - TITLE_WIDTH / 2, HEIGHT / 2 - TITLE_HEIGHT, 0, 0, TITLE_WIDTH, TITLE_HEIGHT ), GRAPH_TITLE, Drawer::BLEND_ALPHA, blend );
 	drawer->setSprite( sprite );
 	
 }

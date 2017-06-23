@@ -19,7 +19,7 @@ GamePtr Game::getTask( ) {
 }
 
 Game::Game( ) :
-_next( Scene::NEXT_STAGE ),
+_next( Scene::NEXT_RESULT ),
 _stage_num( 0 ),
 _result_time( 0 ) {
 }

@@ -120,10 +120,11 @@ void SceneResult::drawGameClear( ) const {
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
 
-	const int GAMEOVER_WIDTH = 655;
-	const int GAMEOVER_HEIGHT = 80;
+	const int GAMECLEAR_WIDTH = 655;
+	const int GAMECLEAR_HEIGHT = 80;
 
-	Drawer::Transform trans( WIDTH / 2 - GAMEOVER_WIDTH  / 2, HEIGHT / 2 - GAMEOVER_HEIGHT * 2, 192, 114, GAMEOVER_WIDTH, GAMEOVER_HEIGHT );
+	Drawer::Transform trans( WIDTH / 2 - GAMECLEAR_WIDTH  / 2, HEIGHT / 2 - GAMECLEAR_HEIGHT / 2, 192, 114, GAMECLEAR_WIDTH, GAMECLEAR_HEIGHT );
+
 	Drawer::Sprite sprite( trans, GRAPH_GAME_CLEAR );
 	drawer->setSprite( sprite );
 }
