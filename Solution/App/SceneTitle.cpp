@@ -18,8 +18,9 @@ _choice_count( 0 ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
+	drawer->loadGraph( GRAPH_BG, "title/title_bg.png" );
 	drawer->loadGraph( GRAPH_OK, "UI/ok.png" );
-	drawer->loadGraph( GRAPH_TITLE, "title/roomb_title.png" );
+	drawer->loadGraph( GRAPH_TITLE, "title/roomb_title_2.png" );
 	drawer->loadGraph( GRAPH_PLEASE_PUSH_BUTTON, "title/pleasepushbutton.png" );
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle_blue1.png" );
 	SoundPtr sound = Sound::getTask( );
@@ -66,7 +67,8 @@ Scene::NEXT SceneTitle::update( ) {
 }
 
 void SceneTitle::draw( ) {
-	drawFadeBg( );
+	//drawFadeBg( );
+	drawBg( );
 	drawTitle( );
 	//drawPlease( );
 	drawController( );
@@ -78,13 +80,23 @@ void SceneTitle::draw( ) {
 	}
 }
 
+void SceneTitle::drawBg( ) {
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+
+	DrawerPtr drawer = Drawer::getTask( );
+	Drawer::Sprite sprite( Drawer::Transform( 0, 0, 0, 0, 1920, 1080, WIDTH, HEIGHT ), GRAPH_BG );
+	drawer->setSprite( sprite );
+}
+
 void  SceneTitle::drawTitle( ) {
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
 
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - TITLE_WIDTH / 2, HEIGHT / 7, 0, 0, TITLE_WIDTH, TITLE_HEIGHT ), GRAPH_TITLE );
+	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - TITLE_WIDTH / 2, HEIGHT / 2 - TITLE_HEIGHT, 0, 0, TITLE_WIDTH, TITLE_HEIGHT ), GRAPH_TITLE );
 	drawer->setSprite( sprite );
 	
 }
