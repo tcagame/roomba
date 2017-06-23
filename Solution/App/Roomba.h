@@ -11,6 +11,7 @@ PTR( Ball );
 PTR( Crystal );
 PTR( Laser );
 PTR( Shadow );
+PTR( Timer );
 
 class Roomba {
 public:
@@ -25,13 +26,14 @@ public:
 		MOVE_STATE_LIFT_DOWN,
 		MOVE_STATE_WAIT,
 		MOVE_STATE_STARTING,
+		MOVE_STATE_GAMEOVER,
 		MAX_STATE,
 	};
 public:
 	Roomba( );
 	virtual ~Roomba( );
 public:
-	void update( StagePtr stage, CameraPtr camera, ShadowPtr shadow );
+	void update( StagePtr stage, CameraPtr camera, ShadowPtr shadow, TimerConstPtr timer );
 	void updateLaser( CameraConstPtr camera );
 	void draw( ) const;
 	void reset( );
@@ -59,7 +61,7 @@ private:
 private:
 	void updateState( );
 	void updateBalls( StagePtr stage );
-	void changeState( StagePtr stage, CameraPtr camera );
+	void changeState( StagePtr stage, CameraPtr camera, TimerConstPtr timer );
 	void updateDeliverys( );
 	void moveTranslation( );
 	void moveRotation( );
@@ -70,6 +72,7 @@ private:
 	void moveBound( );
 	void moveStarting( );
 	void moveWait( );
+	void moveGameOver( );
 	void acceleration( );
 	void accelTranslation( );
 	void accelRotation( DIR dir );
@@ -77,16 +80,14 @@ private:
 	void brakeRotation( );
 	void holdCrystal( StagePtr stage );
 	void checkLeftRight( CameraPtr camera );
-	void setVecTrans( Vector& vec );
-	void setVecRot( Vector& vec_left, Vector& vec_right );
-	void setVecScale( Vector& vec_left, Vector& vec_right );
-	void setVecReflection( Vector& vec_left, Vector& vec_right );
 	void shiftPos( CameraPtr camera );
 	void announceChangeState( MOVE_STATE state );
 	void setShadow( ShadowPtr shadow );
 	void drawCommandPrompt( ) const;
 	void drawPromptIn( ) const;
 	void drawPromptOut( ) const;
+	void initVec( );
+	void replacementVec( );
 private:
 	int _start_count;
 	int _wait_count;
@@ -96,11 +97,8 @@ private:
 	Vector _trans_speed;
 	Vector _move_dir;
 	std::array< std::array< bool, 3 >, 2 > _boot;
-	std::array< Vector, 2 > _vec_trans;
-	std::array< Vector, 2 > _vec_start;
-	std::array< Vector, 2 > _vec_rot;
-	std::array< Vector, 2 > _vec_scale;
-	std::array< Vector, 2 > _vec_reflection;
+	std::array< Vector, 2 > _vec_main;
+	std::array< Vector, 2 > _vec_sub;
 	std::array< double, 2 > _vec_z;
 	std::array< Vector, 2 > _vec_delivery;
 	MOVE_STATE _state;

@@ -38,8 +38,8 @@ void Viewer::drawModelMDLMulti( ModelPtr mdl, GRAPH graph, int idx ) const {
 		}
 	}
 	Vector pos = mdl->getPos( );
-	int mdl_x = (int)( pos.x / WORLD_SCALE ) / STAGE_WIDTH_NUM;
-	int mdl_y = (int)( pos.y / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
+	int mdl_x = (int)( ( pos.x + 0.001 ) / WORLD_SCALE ) / STAGE_WIDTH_NUM;
+	int mdl_y = (int)( ( pos.y + 0.001 ) / WORLD_SCALE ) / STAGE_HEIGHT_NUM;
 
 	int diff_x = x - mdl_x;
 	int diff_y = y - mdl_y;

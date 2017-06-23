@@ -97,16 +97,16 @@ Scene::NEXT SceneStage::update( ) {
 		_viewer->update( _roomba->getCentralPos( ) );
 	}
 
-	if ( _timer->isTimeOver( ) ) {
-		return NEXT_GAMEOVER;
-	}
 	if ( _roomba->isFinished( ) ) {
 		_timer->finalize( );
 		_roomba->finalize( );
+		if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_GAMEOVER ) {
+			return NEXT_GAMEOVER;
+		}
 		return NEXT_RESULT;
 	}
 
-	_roomba->update( _stage, _camera, _shadow );
+	_roomba->update( _stage, _camera, _shadow, _timer );
 	_stage->update( _camera );
 	_roomba->updateLaser( _camera );
 
