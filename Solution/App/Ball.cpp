@@ -19,11 +19,17 @@ void Ball::update( const Vector& vec, StagePtr stage, bool rot ) {
 	_vec = vec;
 
 	AppStagePtr stage_ptr = std::dynamic_pointer_cast< AppStage >( stage );
-	Vector adjust_vec = stage_ptr->adjustCollisionToWall( _pos, _vec, BALL_RADIUS );
-	adjust_vec += stage_ptr->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS );
+	Vector adjust_vec_to_wall = _vec;
+	Vector adjust_vec_to_crystal = Vector( );
+	if ( _pos.z < WALL_SIZE.z * 2 ) {
+		adjust_vec_to_wall = stage_ptr->adjustCollisionToWall( _pos, _vec, BALL_RADIUS );
+		adjust_vec_to_crystal = stage_ptr->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS );
+	}
+	Vector adjust_vec = adjust_vec_to_wall + adjust_vec_to_crystal;
+
 	if ( ( _vec - adjust_vec ).getLength( ) > 0.001 ) {
 		_reflection = true;
-		if ( stage_ptr->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS ) != Vector( ) ) {
+		if ( adjust_vec_to_crystal != Vector( ) ) {
 			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_CRYSTAL, _pos, EFFECT_COLLISION_CRYSTAL_SIZE, EFFECT_ROTATE ) );
 		} else {
 			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_WALL, _pos, EFFECT_COLLISION_WALL_SIZE, EFFECT_ROTATE ) );
