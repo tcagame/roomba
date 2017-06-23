@@ -35,14 +35,14 @@ const double OTHER_ROT_RATIO = 2;
 const double MAX_SCALE_SIZE = 6 + 0.01;
 const double MIN_SCALE_SIZE = 5 - 0.01;
 //ルンバ回収系
-const double LIFT_Z = 10;
+const double LIFT_Z = 8;
 const double DELIVERY_FOOT = 1;
 //エフェクト
 const double EFFECT_REBOOT_SIZE = 0.7;
 const double EFFECT_CHANGE_STATE_SIZE = 0.7;
 //待機時間
 const int WAIT_TIME = 180;
-const int START_TIME = 162; // 随時要更新　ルンバがSTART_POSに配置されるまでのフレーム
+const int START_TIME = 250; // 随時要更新　ルンバがSTART_POSに配置されるまでのフレーム
 
 const Vector START_POS[ 2 ] {//スケールが MIN < size < MAXになるようにする
 	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, BALL_RADIUS ) ),
@@ -50,8 +50,8 @@ const Vector START_POS[ 2 ] {//スケールが MIN < size < MAXになるようにする
 };
 
 const Vector POP_POS[ 2 ] {
-	Vector( -15, -5, 8 ),
-	Vector( -18, -5, 8 )
+	Vector( -15, -5, 7 ),
+	Vector( -18, -5, 7 )
 };
 
 Roomba::Roomba( ) :
@@ -117,14 +117,28 @@ void Roomba::draw( ) const {
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 0, 0, 0, 0, 512, 512, WIDTH, HEIGHT ), GRAPH_COMMAND_PROMPT_BACK ) );
 	}
 	drawCommandPrompt( );
+
+	
+	// チュートリアルコントローラー
 	if ( _start_count > START_TIME &&
-		 _start_count < START_TIME * 2 ) {
-		Drawer::Transform trans( ( WIDTH / 2 ) - 128, HEIGHT - 256, 0, 0, 512, 512, ( WIDTH / 2 ) + 128, HEIGHT );
-		if ( _start_count < (double)START_TIME * 1.5 ) {
-			drawer->setSprite( Drawer::Sprite( trans, GRAPH_CONTROLLER_TRANSLATION ) );
-		} else {
-			drawer->setSprite( Drawer::Sprite( trans, GRAPH_CONTROLLER_ROTATION ) );
+		 _start_count < (double)START_TIME * 3 ) {
+		GRAPH graph = GRAPH_CONTROLLER_NEUTRAL;
+		if ( _start_count > (double)START_TIME * 1.2 && 
+			 _start_count < (double)START_TIME * 2 ) {
+			graph = GRAPH_CONTROLLER_TRANSLATION;
 		}
+		if ( _start_count > (double)START_TIME * 2.2 ) {
+			graph = GRAPH_CONTROLLER_ROTATION;
+		}
+		double ratio = 1.0;
+		if ( _start_count < (double)START_TIME * 1.2 ) {
+			ratio = (double)( _start_count - START_TIME ) / 10;
+		}
+		if ( _start_count > (double)START_TIME * 2.8 ) {
+			ratio = 1.0 - ( (double)( _start_count - ( (double)START_TIME * 2.8 ) ) / 10 );
+		}
+		Drawer::Transform trans( ( WIDTH / 2 ) - 128, HEIGHT - 256, 0, 0, 512, 512, ( WIDTH / 2 ) + 128, HEIGHT );
+		drawer->setSprite( Drawer::Sprite( trans, graph, Drawer::BLEND_ALPHA, ratio ) );
 	}
 }
 
@@ -213,7 +227,7 @@ void Roomba::drawPromptOut( ) const {
 	
 	int draw_y = TH / 2;
 	if ( draw_x == 10 ) {
-		draw_y -= ( DRAW_COUNT - ( TW / RATIO ) ) * RATIO;
+		draw_y -= ( DRAW_COUNT - ( ( TW / 2 ) / RATIO ) ) * RATIO;
 		if ( draw_y < 10 ) {
 			draw_y = 10;
 		}
@@ -276,10 +290,12 @@ void Roomba::updateDeliverys( ) {
 	for ( int i = 0; i < 2; i++ ) {
 		_delivery[ i ]->update( );
 		if ( _state == MOVE_STATE_STARTING ) {
-			Vector ball = _balls[ i ]->getPos( );
-			_delivery[ i ]->setPos( ball + Vector( 0, 0, DELIVERY_FOOT ) );
-		} else {
-			_delivery[ i ]->setPos( _delivery[ i ]->getPos( ) + Vector( 1, 1 ) * _vec_start[ i ].getLength( ) );
+			if ( _boot[ i ][ 0 ] ) {
+				Vector ball_pos = _balls[ i ]->getPos( );
+				_delivery[ i ]->setPos( Vector( ball_pos.x, ball_pos.y, LIFT_Z ) );
+			} else {
+				_delivery[ i ]->setPos( _delivery[ i ]->getPos( ) + _vec_delivery[ i ] );
+			}
 		}
 	}
 }
@@ -401,7 +417,7 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera ) {
 			//sound->playSE( "se_maoudamashii_effect14.wav" );
 		}
 	}
-	if ( _boot[ 0 ][ 0 ] || _boot[ 1 ][ 0 ] ) {
+	if ( _start_count < START_TIME ) {
 		state = MOVE_STATE_STARTING;
 	}
 
@@ -719,8 +735,8 @@ void Roomba::moveStarting( ) {
 		const Vector TARGET[ 4 ] = {
 			START_POS[ i ] + Vector(  0,  0 ) * WORLD_SCALE,
 			START_POS[ i ] + Vector(  1,  0 ) * WORLD_SCALE,
-			START_POS[ i ] + Vector( -4, 1 ) * WORLD_SCALE,
-			START_POS[ i ] + Vector(  4,  0 ) * WORLD_SCALE
+			START_POS[ i ] + Vector( -2,  -1 ) * WORLD_SCALE,
+			START_POS[ i ] + Vector(  2,  1 ) * WORLD_SCALE
 		};
 		for ( int j = 0; j < 4; j++ ) {
 			if ( _boot[ i ][ j ] ) {
@@ -733,19 +749,19 @@ void Roomba::moveStarting( ) {
 		_balls[ 0 ]->getPos( ),
 		_balls[ 1 ]->getPos( )
 	};
-	Vector vec2 = Vector( sin( _start_count * PI / 150 ), sin( _start_count * PI / 100 ) ) * 0.01;
 	for ( int i = 0; i < 2; i++ ) {
 		if ( !_boot[ i ][ 0 ] ) {
+			_vec_delivery[ i ] += Vector( 1, 1 ).normalize( ) * DELIVERY_ACCEL_SPEED;
+			if ( _vec_delivery[ i ].getLength( ) > MAX_DELIVERY_SPEED ) {
+				_vec_delivery[ i ].normalize( ) * MAX_DELIVERY_SPEED;
+			}
 			continue;
 		}
 		Vector diff;
 		diff = target[ i ] - pos[ i ];
 		diff.z = 0;
 		double accel = DELIVERY_ACCEL_SPEED;
-		if ( _vec_start[ i ].angle( diff ) > PI / 4 ) {
-			accel *= 1.2;
-		}
-		_vec_start[ i ] += diff.normalize( ) * accel + vec2;
+		_vec_start[ i ] += diff.normalize( ) * accel;
 		if ( _vec_start[ i ].getLength( ) > MAX_DELIVERY_SPEED ) {
 			_vec_start[ i ] = _vec_start[ i ].normalize( ) * MAX_DELIVERY_SPEED;
 		}
@@ -770,10 +786,9 @@ void Roomba::moveStarting( ) {
 				_delivery[ i ]->changeAnim( Animation::ANIM::ANIM_DELIVERY_DISENGAGE );
 			}
 		}
+		_vec_delivery[ i ] = _vec_start[ i ];
 	}
-
 	setVecRot( _vec_start[ 0 ], _vec_start[ 1 ] );
-	
 }
 
 void Roomba::moveWait( ) {

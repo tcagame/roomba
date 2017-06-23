@@ -59,7 +59,7 @@ SceneStage::SceneStage( int stage_num ) {
 	drawer->loadGraph( GRAPH_FLOOR, "Model/Stage/floor.jpg" );
 	drawer->loadGraph( GRAPH_WALL, "Model/Stage/wall.jpg" );
 	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
-	drawer->loadGraph( GRAPH_CONTROLLER_TRANSLATION, "controller/neutral.png" );
+	drawer->loadGraph( GRAPH_CONTROLLER_TRANSLATION, "controller/translation.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
 	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 
