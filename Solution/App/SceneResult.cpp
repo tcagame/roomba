@@ -85,6 +85,7 @@ Scene::NEXT SceneResult::update( ) {
 void SceneResult::draw( ) const {
 	//drawThisTime( );
 	//drawBestTime( );
+	drawBg( );
 	drawFadeBg( );
 	drawController( );
 	drawResult( );
@@ -98,6 +99,16 @@ void SceneResult::draw( ) const {
 		drawFadeOut( );
 	}
 	
+}
+
+void SceneResult::drawBg( ) const {
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+
+	DrawerPtr drawer = Drawer::getTask( );
+	Drawer::Sprite sprite( Drawer::Transform( 0, 0, 0, 0, 1920, 1080, WIDTH, HEIGHT ), GRAPH_BG );
+	drawer->setSprite( sprite );
 }
 
 void SceneResult::drawResult( ) const {
@@ -261,8 +272,8 @@ void SceneResult::drawController( ) const {
 	const int CONTROLLER_SIZE = 512;
 
 	DrawerPtr drawer = Drawer::getTask( );
-	//Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT * 3 / 5, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT * 3 / 5 + CONTROLLER_SIZE / 2 );
-	Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT / 2 + CONTROLLER_SIZE / 6, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT / 2 + CONTROLLER_SIZE / 2 + CONTROLLER_SIZE / 6);
+	Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT * 4 / 6, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT * 4 / 6 + CONTROLLER_SIZE / 2 );
+	//Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT / 2 + CONTROLLER_SIZE / 6, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT / 2 + CONTROLLER_SIZE / 2 + CONTROLLER_SIZE / 6);
 	if ( _count % DRAW_TIME < DRAW_TIME * 2 / 3 ) {
 		Drawer::Sprite sprite( trans, GRAPH_CONTROLLER_ROTATION );
 		drawer->setSprite( sprite );
@@ -275,8 +286,8 @@ void SceneResult::drawController( ) const {
 	int tw = 167;
 	int th = 74;
 	Drawer::Transform trans2( WIDTH / 2 - tw / 2, HEIGHT * 5 / 6, tx, ty,  tw,  th, WIDTH / 2 + tw / 2,  HEIGHT * 5 / 6 + th );
-	Drawer::Sprite sprite( trans2, GRAPH_OK );
-	drawer->setSprite( sprite );
+	//Drawer::Sprite sprite( trans2, GRAPH_OK );
+	//drawer->setSprite( sprite );
 	
 }
 
@@ -294,7 +305,7 @@ void SceneResult::drawCircle( ) const {
 	int ty = idx / 5;
 
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT * 5 / 6 - 74 + CIRCLE_SIZE * 3 / 5, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
+	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT / 2 - 74 + CIRCLE_SIZE * 3 / 5, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
 }
 

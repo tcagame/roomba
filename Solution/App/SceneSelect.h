@@ -18,6 +18,7 @@ private:
 	void drawTriangle( );
 	void drawCircle( ) const;
 	void drawController( );
+	void drawBg( );
 private:
 	std::array< Vector, 3 > _pos;
 	int _move_count;
