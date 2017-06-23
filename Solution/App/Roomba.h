@@ -91,9 +91,11 @@ private:
 private:
 	int _start_count;
 	int _wait_count;
+	int _crystal_catch_count;
 	double _rot_speed;
 	bool _link_break;
 	bool _finished;
+	bool _first_crystal_catch;
 	Vector _trans_speed;
 	Vector _move_dir;
 	std::array< std::array< bool, 3 >, 2 > _boot;

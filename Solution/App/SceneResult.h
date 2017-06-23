@@ -18,6 +18,7 @@ private:
 	void drawResult( ) const;
 	void drawGameClear( ) const;
 	void drawController( ) const;
+	void drawBg( ) const;
 private:
 	int _count;
 	int _choice_count;

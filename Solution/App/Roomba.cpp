@@ -62,6 +62,7 @@ _trans_speed( Vector( ) ),
 _rot_speed( 0 ),
 _link_break( false ),
 _finished( false ),
+_first_crystal_catch( false ),
 _wait_count( 0 ),
 _start_count( 0 ) {
 	for ( int i = 0; i < 2; i++ ) {
@@ -120,21 +121,34 @@ void Roomba::draw( ) const {
 	
 	// チュートリアルコントローラー
 	if ( _start_count > START_TIME &&
-		 _start_count < (double)START_TIME * 3 ) {
+		 _start_count < START_TIME + 120 ) {
 		GRAPH graph = GRAPH_CONTROLLER_NEUTRAL;
-		if ( _start_count > (double)START_TIME * 1.2 && 
-			 _start_count < (double)START_TIME * 2 ) {
+		if ( _start_count > START_TIME + 15 ) {
 			graph = GRAPH_CONTROLLER_TRANSLATION;
 		}
-		if ( _start_count > (double)START_TIME * 2.2 ) {
+		double ratio = 1.0;
+		if ( _start_count < START_TIME + 15 ) {
+			ratio = (double)( _start_count - START_TIME ) / 15;
+		}
+		if ( _start_count > START_TIME + 105 ) {
+			ratio = 1.0 - ( ( (double)_start_count - ( START_TIME + 105 ) ) / 15 );
+		}
+		Drawer::Transform trans( ( WIDTH / 2 ) - 128, HEIGHT - 256, 0, 0, 512, 512, ( WIDTH / 2 ) + 128, HEIGHT );
+		drawer->setSprite( Drawer::Sprite( trans, graph, Drawer::BLEND_ALPHA, ratio ) );
+	}
+
+	if ( _first_crystal_catch &&
+		 _crystal_catch_count < 120 ) {
+		GRAPH graph = GRAPH_CONTROLLER_NEUTRAL;
+		if ( _crystal_catch_count > 15 ) {
 			graph = GRAPH_CONTROLLER_ROTATION;
 		}
 		double ratio = 1.0;
-		if ( _start_count < (double)START_TIME * 1.2 ) {
-			ratio = (double)( _start_count - START_TIME ) / 10;
+		if ( _crystal_catch_count < 15 ) {
+			ratio = (double)_crystal_catch_count / 15;
 		}
-		if ( _start_count > (double)START_TIME * 2.8 ) {
-			ratio = 1.0 - ( (double)( _start_count - ( (double)START_TIME * 2.8 ) ) / 10 );
+		if ( _crystal_catch_count > 105 ) {
+			ratio = 1.0 - ( (double)( _crystal_catch_count - 105 ) / 15 );
 		}
 		Drawer::Transform trans( ( WIDTH / 2 ) - 128, HEIGHT - 256, 0, 0, 512, 512, ( WIDTH / 2 ) + 128, HEIGHT );
 		drawer->setSprite( Drawer::Sprite( trans, graph, Drawer::BLEND_ALPHA, ratio ) );
@@ -557,7 +571,11 @@ void Roomba::holdCrystal( StagePtr stage ) {
 		_crystal = std::dynamic_pointer_cast< AppStage >( stage )->getHittingCrystal( _balls[ 0 ]->getPos( ), _balls[ 1 ]->getPos( ), _balls[ 0 ]->getVec( ), _balls[ 1 ]->getVec( ) );
 		if ( _crystal ) {
 			_crystal->setDropDown( false );
+			_first_crystal_catch = true;
 		}
+	}
+	if ( _first_crystal_catch ) {
+		_crystal_catch_count++;
 	}
 	if ( _crystal ) {
 		if ( _crystal->isDropDown( ) ||
