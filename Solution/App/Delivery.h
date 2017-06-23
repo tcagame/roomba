@@ -32,6 +32,7 @@ private:
 	void updateCatch( );
 	void updateLift( CameraPtr camera );
 	void updateCarry( );
+	void move( );
 private:
 	int _effect_count;
 	STATE _state;
