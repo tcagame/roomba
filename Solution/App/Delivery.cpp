@@ -11,7 +11,7 @@ static const double MIN_POS_Z = 2;
 static const double FOOT = 0.3;
 static const double EFFECT_POINT_SIZE = 0.5;
 static const double EFFECT_CATCH_SIZE = 0.5;
-static const int MAX_EFFECT_COUNT = 30;
+static const int MAX_EFFECT_COUNT = 50;
 
 Delivery::Delivery( Vector target ) :
 _target( target ),
@@ -33,7 +33,7 @@ Delivery::~Delivery( ) {
 void Delivery::draw( ViewerPtr viewer ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	Vector pos = _animation->getPos( );
-	const double SHADOW_SCALE = ( DELIVERY_SIZE.x * SUN_POS ) / ( SUN_POS - DELIVERY_SIZE.z );
+	const double SHADOW_SCALE = ( DELIVERY_SIZE.x * SUN_POS ) / ( SUN_POS - pos.z );
 	if ( _have_crystal ) {
 		_animation->draw( );
 		drawer->setModelMDL( _crystal );
