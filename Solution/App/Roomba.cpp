@@ -92,8 +92,9 @@ void Roomba::update( StagePtr stage, CameraPtr camera, ShadowPtr shadow ) {
 }
 
 void Roomba::setShadow( ShadowPtr shadow ) {
+	const double SCALE = ( BALL_SIZE.x * SUN_POS ) / ( SUN_POS - BALL_SIZE.z );
 	for ( int i = 0; i < 2; i++ ) {
-		shadow->set( _balls[ i ]->getPos( ) );
+		shadow->set( _balls[ i ]->getPos( ), SCALE );
 	}
 }
 
@@ -745,7 +746,7 @@ void Roomba::moveStarting( ) {
 		if ( _boot[ 1 ] ) {
 			_delivery[ i ]->setPos( ball + Vector( 0, 0, DELIVERY_FOOT ) );
 		} else {
-			_delivery[ i ]->setPos( _delivery[ i ]->getPos( ) + _vec_start[ i ] );
+			_delivery[ i ]->setPos( _delivery[ i ]->getPos( ) + Vector( 1, 1 ) * _vec_start[ i ].getLength( ) );
 		}
 	}
 }

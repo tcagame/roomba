@@ -61,27 +61,32 @@ void Delivery::update( CameraPtr camera, ShadowPtr shadow ) {
 		updateCarry( );
 		break;
 	}
+	
+	move( );
 	_animation->update( );
-	shadow->set( _animation->getPos( ) );
+	const double SCALE = ( DELIVERY_SIZE.x * SUN_POS ) / ( SUN_POS - DELIVERY_SIZE.z );
+	shadow->set( _animation->getPos( ), SCALE );
 }
 
+void Delivery::move( ) {
+	if ( _vec.getLength( ) > MOVE_SPEED ) {
+		_vec = _vec.normalize( ) * MOVE_SPEED;
+	}
+	Vector pos = _animation->getPos( );
+	pos += _vec;
+	if ( pos.z < MIN_POS_Z ) {
+		pos.z = MIN_POS_Z;
+	}
+
+	_animation->setPos( pos );
+}
 
 void Delivery::updateWait( ) {
 	_effect_count++;
 	_effect_count %= MAX_EFFECT_COUNT;
 	Vector pos = _animation->getPos( );
-	Vector vec = _target - pos;
-	if ( vec.getLength( ) > MOVE_SPEED ) {
-		_vec = ( _target - pos ).normalize( ) * MOVE_SPEED;
-	} else {
-		_vec = vec;
-	}
-	pos += _vec;
+	_vec = _target - pos;
 	
-	if ( pos.z < MIN_POS_Z ) {
-		pos.z = MIN_POS_Z;
-	}
-	_animation->setPos( pos );
 	if ( _have_crystal ) {
 		_state = STATE_CATCH;
 	}
@@ -90,10 +95,6 @@ void Delivery::updateWait( ) {
 void Delivery::updateCatch( ) {
 	Vector pos = _animation->getPos( );
 	_vec = _crystal.pos - pos + Vector( 0, 0, FOOT );
-	if ( _vec.getLength( ) > MOVE_SPEED ) {
-		_vec = _vec.normalize( ) * MOVE_SPEED;
-	}
-	pos += _vec;
 	if ( _vec.getLength( ) < 0.01 ) {
 		if ( _animation->getAnim( ) == Animation::ANIM::ANIM_DELIVERY_STAND ) {
 			_animation->changeAnim( Animation::ANIM::ANIM_DELIVERY_CATCH );
@@ -104,7 +105,6 @@ void Delivery::updateCatch( ) {
 			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CATCH_CRYSTAL, pos, EFFECT_CATCH_SIZE, EFFECT_ROTATE ) );
 		}
 	}
-	_animation->setPos( pos );
 }
 
 void Delivery::updateLift( CameraPtr camera ) {
@@ -120,7 +120,6 @@ void Delivery::updateLift( CameraPtr camera ) {
 		dir.z = 0;
 		_target = pos + dir.normalize( ) * 100 * WORLD_SCALE;
 	}
-	pos += _vec;
 
 	//クリスタル
 	Vector crystal_vec = pos - _crystal.pos - Vector( 0, 0, FOOT );
@@ -128,7 +127,6 @@ void Delivery::updateLift( CameraPtr camera ) {
 		crystal_vec = crystal_vec.normalize( ) * MOVE_SPEED * 1.5;
 	}
 	_crystal.pos += crystal_vec;
-	_animation->setPos( pos );
 }
 
 void Delivery::updateCarry( ) {
@@ -141,7 +139,6 @@ void Delivery::updateCarry( ) {
 	if ( _vec.getLength( ) < 0.01 ) {
 		_finished = true;
 	}
-	pos += _vec;
 
 	//クリスタル
 	Vector crystal_vec = pos - _crystal.pos - Vector( 0, 0, FOOT );
@@ -149,7 +146,6 @@ void Delivery::updateCarry( ) {
 		crystal_vec = crystal_vec.normalize( ) * MOVE_SPEED * 1.5;
 	}
 	_crystal.pos += crystal_vec;
-	_animation->setPos( pos );
 }
 
 bool Delivery::isFinished( ) const {
@@ -180,6 +176,7 @@ void Delivery::setCrystal( Vector crystal_pos ) {
 	while ( pos.y - crystal_pos.y < -STAGE_HEIGHT_NUM * WORLD_SCALE / 2 ) {
 		pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
+	_animation->setPos( pos );
 	_crystal.type = MDL_CRYSTAL;
 }
 
