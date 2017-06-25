@@ -38,7 +38,6 @@ _count( 0 ) {
 	loadBestTime( );
 	SoundPtr sound = Sound::getTask( );
 	sound->playBGM( "resultBGM.wav" );
-	sound->playSE( "alertSE.wav", true );
 }
 
 
@@ -83,7 +82,7 @@ Scene::NEXT SceneResult::update( ) {
 void SceneResult::draw( ) const {
 	//drawThisTime( );
 	//drawBestTime( );
-	drawBg( );
+	//drawBg( );
 	drawFadeBg( );
 	drawController( );
 	drawResult( );
