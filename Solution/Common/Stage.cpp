@@ -21,21 +21,8 @@ void Stage::drawModel( ) const {
 }
 
 void Stage::load( int stage_num ) {
-	std::string filename = "../Resource/Map/";
-	switch ( stage_num ) {
-	case 0:
-		filename += "00.stage";
-		break;
-	case 1:
-		filename += "01.stage";
-		break;
-	case 2:
-		filename += "02.stage";
-		break;
-	case 3:
-		filename += "test.stage";
-		break;
-	}
+	_stage_num = stage_num;
+	std::string filename = "../Resource/Map/" + std::to_string( _stage_num ) + ".stage";
 	loadData( filename );
 	_max_delivery = 0;
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
@@ -123,4 +110,8 @@ void Stage::debug( ) {
 
 int Stage::getMaxDeliveryNum( ) const {
 	return _max_delivery;
+}
+
+int Stage::getStageNum( ) const {
+	return _stage_num;
 }
