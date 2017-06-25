@@ -16,10 +16,10 @@
 const int UI_PHASE_FOOT_X = 100;
 const int UI_PHASE_Y = 40;
 const int UI_NUM_SIZE = 64;
-const int UI_MAP_SIZE = 6;
+const int UI_MAP_SIZE = 9;
 const int UI_MAP_X = 30;
 const int UI_MAP_FOOT_Y = 30;
-const int UI_MAP_RANGE = 20;
+const int UI_MAP_RANGE = 15;
 const int UI_NUM_SCROLL_TIME = 20;
 const int UI_NUM_SCROLL_SPEED = 2;
 const int FPS = 60;
@@ -99,6 +99,7 @@ SceneStage::~SceneStage( ) {
 }
 
 Scene::NEXT SceneStage::update( ) {
+	SoundPtr sound = Sound::getTask( );
 	// ƒJƒƒ‰&viwerí‚ÉXV‚·‚é
 	if ( _roomba->getMoveState( ) != Roomba::MOVE_STATE_GAMEOVER ) {
 		_camera->update( );
@@ -112,6 +113,7 @@ Scene::NEXT SceneStage::update( ) {
 	if ( _roomba->isFinished( ) && _roomba->getMoveState( ) != Roomba::MOVE_STATE_GAMEOVER ) {
 		_timer->finalize( );
 		_roomba->finalize( );
+		sound->stopSE( "alertSE.wav" );
 		return NEXT_RESULT;
 	}
 
@@ -129,8 +131,7 @@ Scene::NEXT SceneStage::update( ) {
 	}
 	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_WAIT ) {
 		if ( _timer->getTime( ) < 5 * FPS ) {
-			SoundPtr sound = Sound::getTask( );
-			sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
+			sound->stopSE( "alertSE.wav" );
 		}
 		_timer->reset( );
 	}
@@ -400,7 +401,7 @@ Scene::NEXT SceneStage::NextRetry( ) {
 		_choice_count++;
 		if ( _choice_count == 1 ) {
 			SoundPtr sound = Sound::getTask( );
-			sound->playSE( "se_maoudamashii_effect01.wav" );
+			sound->playSE( "circleSE.wav" );
 		}
 	} else {
 		_choice_count = 0;
@@ -412,6 +413,7 @@ Scene::NEXT SceneStage::NextRetry( ) {
 			_choice_count = 0;
 			_draw_count = 0;
 		} else {
+			Sound::getTask( )->stopSE( "alertSE.wav" );
 			return NEXT_GAMEOVER;
 		}
 	}

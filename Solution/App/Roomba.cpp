@@ -28,7 +28,7 @@ const double MAX_DELIVERY_SPEED = 0.3;
 const double DECELETION_ROT_SPEED = 0.002;
 const double DECELETION_TRANS_SPEED = 0.001;
 const double DECELERATION_EMERGENCY_SPEED = 1;
-const double DECELERATION_WAIT_SPEED = 0.2;
+const double DECELERATION_WAIT_SPEED = 0.02;
 const double DECELETION_GAMEOVER_SPEED = 0.01;
 //減速倍率
 const double OTHER_TRANS_RATIO = 6;
@@ -70,12 +70,14 @@ _start_count( 0 ) {
 		_vec_main[ i ] = Vector( );
 		_vec_sub[ i ] = Vector( );
 		_delivery[ i ] = AnimationPtr( new Animation( Animation::ANIM::ANIM_DELIVERY_CARRY ) );
+		_delivery[ i ]->setPos( _balls[ i ]->getPos( ) + Vector( 0, 0, DELIVERY_FOOT ) );
 	}
 	for ( int i = 0; i < 3; i++ ) {	
 		_boot[ 0 ][ i ] = true;
 		_boot[ 1 ][ i ] = true;
 	}
 	_laser = LaserPtr( new Laser );
+
 }
 
 
@@ -302,15 +304,8 @@ void Roomba::updateState( ) {
 
 void Roomba::updateDeliverys( ) {
 	for ( int i = 0; i < 2; i++ ) {
+		_delivery[ i ]->setPos( _delivery[ i ]->getPos( ) + _vec_delivery[ i ] );
 		_delivery[ i ]->update( );
-		if ( _state == MOVE_STATE_STARTING ) {
-			if ( _boot[ i ][ 0 ] ) {
-				Vector ball_pos = _balls[ i ]->getPos( );
-				_delivery[ i ]->setPos( Vector( ball_pos.x, ball_pos.y, LIFT_Z ) );
-			} else {
-				_delivery[ i ]->setPos( _delivery[ i ]->getPos( ) + _vec_delivery[ i ] );
-			}
-		}
 	}
 }
 
@@ -407,6 +402,14 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera, TimerConstPtr timer 
 	if ( _wait_count > 0 ) {
 		state = MOVE_STATE_WAIT;
 	}
+
+	if ( _state == MOVE_STATE_WAIT && state != MOVE_STATE_WAIT ) {
+		double scale = ( _balls[ BALL_LEFT ]->getPos( ) - _balls[ BALL_RIGHT ]->getPos( ) ).getLength( );	
+		if ( scale < MIN_SCALE_SIZE || scale > MAX_SCALE_SIZE ) {
+			state = MOVE_STATE_REFLECTION_RESTORE;
+		}
+	}
+
 	if ( timer->isTimeOver( ) ) {
 		state = MOVE_STATE_GAMEOVER;
 	}
@@ -427,16 +430,19 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera, TimerConstPtr timer 
 		}
 		if ( _state == MOVE_STATE_LIFT_DOWN ) {
 			state = MOVE_STATE_LIFT_DOWN;
-			SoundPtr sound = Sound::getTask( );
-			//sound->playSE( "se_maoudamashii_effect14.wav" );
 		}
 	}
 	if ( _start_count < START_TIME ) {
 		state = MOVE_STATE_STARTING;
 	}
 
+
 	if ( state != _state ) {
 		//ステート変更がある場合の処理
+		if ( state == MOVE_STATE_STARTING ) {
+			_delivery[ 0 ]->setPos( _balls[ 0 ]->getPos( ) + Vector( 0, 0, DELIVERY_FOOT ) );
+			_delivery[ 1 ]->setPos( _balls[ 1 ]->getPos( ) + Vector( 0, 0, DELIVERY_FOOT ) );
+		}
 		if ( state == MOVE_STATE_TRANSLATION ) {
 			if ( _state == MOVE_STATE_ROTATION_LEFT ||
 				 _state == MOVE_STATE_ROTATION_RIGHT ) {
@@ -454,13 +460,14 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera, TimerConstPtr timer 
 			}
 		}
 		if ( state == MOVE_STATE_REFLECTION ) {
-			SoundPtr sound = Sound::getTask( );
-			sound->playSE( "knocking_a_wall.mp3" );
 			_trans_speed = Vector( );
 			_rot_speed = 0;
 		}
 		if ( state == MOVE_STATE_LIFT_UP ) {
-			_delivery[ 0 ]->setPos( Vector( -1, -1 ) );
+			for ( int i = 0; i < 2; i++ ) {
+				_delivery[ i ]->setPos( _balls[ i ]->getPos( ) + Vector( -6, -6 ) ); 
+				_vec_delivery[ i ] = Vector( );
+			}
 			initVec( );
 			_crystal = CrystalPtr( );
 		}
@@ -567,11 +574,14 @@ void Roomba::brakeRotation( ) {
 }
 
 void Roomba::holdCrystal( StagePtr stage ) {
+
 	if ( !_crystal ) {
 		_crystal = std::dynamic_pointer_cast< AppStage >( stage )->getHittingCrystal( _balls[ 0 ]->getPos( ), _balls[ 1 ]->getPos( ), _balls[ 0 ]->getVec( ), _balls[ 1 ]->getVec( ) );
 		if ( _crystal ) {
 			_crystal->setDropDown( false );
 			_first_crystal_catch = true;
+			SoundPtr sound = Sound::getTask( );
+			sound->playSE( "holdCrystal.wav" );
 		}
 	}
 	if ( _first_crystal_catch ) {
@@ -699,33 +709,39 @@ void Roomba::moveLiftUp( ) {
 	if ( _state != MOVE_STATE_LIFT_UP ) {
 		return;
 	}
-	Stage::MV1_INFO delivery[ 2 ] = {
-		_delivery[ 0 ]->getModel( ),
-		_delivery[ 1 ]->getModel( ),
-	};
 	if ( _trans_speed.getLength( ) > 0 ||
 		 _rot_speed > 0 ) {
-		_vec_z[ 0 ] = 0;
-		_vec_z[ 1 ] = 0;
 		return;
-	} else {
-		if ( delivery[ 0 ].pos.x < 0 ) {
-			delivery[ 0 ].pos = _balls[ 0 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
-			delivery[ 1 ].pos = _balls[ 1 ]->getPos( ) + Vector( 0, 0, LIFT_Z );
-		}
 	}
 
 	for ( int i = 0; i < 2; i++ ) {
-		Vector ball = _balls[ i ]->getPos( ) + Vector( 0, 0, DELIVERY_FOOT );
-		Vector distance = delivery[ i ].pos - ball;
-		if ( distance.z > -0.0001 ) {
-			delivery[ i ].pos -= distance.normalize( ) * 0.1;
-			_vec_z[ i ] = 0;
+		Vector ball = _balls[ i ]->getPos( );
+		Vector delivery_pos = _delivery[ i ]->getPos( );
+		Vector distance = delivery_pos - ball;
+		double distance_z = distance.z;
+		distance.z = 0;
+		double distance_length = distance.getLength( );
+		if ( distance_length > 2 ) {
+			_vec_delivery[ i ] += distance.normalize( ) * DELIVERY_ACCEL_SPEED;
 		} else {
-			delivery[ i ].pos.z = ball.z;
-			_vec_z[ i ] = 0.2;
+			if ( distance_length > 0.1 ) {
+				double vec_delivery_length = _vec_delivery[ i ].getLength( );
+				double time = distance_length / vec_delivery_length;
+				_vec_delivery[ i ] -= _vec_delivery[ i ].normalize( ) * ( time / vec_delivery_length );
+			} else {
+				if ( distance_z > DELIVERY_FOOT ) {
+					_vec_z[ i ] = 0;
+					if ( distance_z - DELIVERY_FOOT > 0.2 ) {
+						_vec_delivery[ i ] = Vector( distance.x, distance.y, -0.2 );
+					} else {
+						_vec_delivery[ i ] = Vector( distance.x, distance.y, DELIVERY_FOOT - distance_z - 0.01 );
+					}
+				} else {
+					_vec_z[ i ] = 0.2;
+					_vec_delivery[ i ] = Vector( distance.x, distance.y, _vec_z[ i ] );
+				}
+			}
 		}
-		_delivery[ i ]->setPos( delivery[ i ].pos );
 	}
 }
 
@@ -744,6 +760,8 @@ void Roomba::moveLiftDown( ) {
 
 void Roomba::moveBound( ) {
 	if ( _state == MOVE_STATE_LIFT_UP ) {
+		_vec_z[ 0 ] = 0;
+		_vec_z[ 1 ] = 0;
 		return;
 	}
 	for ( int i = 0; i < 2; i++ ) {
@@ -793,7 +811,7 @@ void Roomba::moveStarting( ) {
 		if ( !_boot[ i ][ 0 ] ) {
 			_vec_delivery[ i ] += Vector( 1, 1 ).normalize( ) * DELIVERY_ACCEL_SPEED;
 			if ( _vec_delivery[ i ].getLength( ) > MAX_DELIVERY_SPEED ) {
-				_vec_delivery[ i ].normalize( ) * MAX_DELIVERY_SPEED;
+				_vec_delivery[ i ] = _vec_delivery[ i ].normalize( ) * MAX_DELIVERY_SPEED;
 			}
 			continue;
 		}
@@ -829,6 +847,7 @@ void Roomba::moveStarting( ) {
 				_delivery[ i ]->changeAnim( Animation::ANIM::ANIM_DELIVERY_DISENGAGE );
 			}
 		}
+		_vec_delivery[ i ] = _vec_main[ i ];
 	}
 }
 

@@ -19,7 +19,6 @@ private:
 	};
 private:
 	void saveFile( ) const;
-	void loadFile( );
 	void saveWall( ) const;
 	void saveFloor( ) const;
 	void edit( );
@@ -36,6 +35,7 @@ private:
 private:
 	Vector _cursor_pos;
 	int _count;
+	bool _save;
 	Vector _before_mouse_pos;
 	EDIT_MODE _mode;
 	std::vector< Drawer::ModelMDL > _walls;

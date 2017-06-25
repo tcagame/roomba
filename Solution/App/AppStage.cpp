@@ -18,7 +18,7 @@ _viewer( viewer ),
 _finished( false ),
 _timer( timer ),
 _roomba( roomba ) {
-	load( 0 );//0~2:í èÌ 3:test_stage
+	load( stage_num );//0~2:í èÌ 3:test_stage
 	loadMapData( );
 	int width = ( STAGE_WIDTH_NUM / FLOOR_CHIP_SIZE );
 	int height = ( STAGE_HEIGHT_NUM / FLOOR_CHIP_SIZE );
@@ -331,6 +331,7 @@ void AppStage::loadMapData( ) {
 }
 
 void AppStage::loadWall( ) {
+	int stage_num = getStageNum( );
 	for ( int i = 0; i < WALL_DIV_SIZE; i++ ) {
 		for ( int j = 0; j < 4; j++ ) {
 			int idx = WALL_DIV_SIZE * i + j;
@@ -339,7 +340,7 @@ void AppStage::loadWall( ) {
 				_walls[ idx ] = ModelPtr( );
 			}
 			_walls[ idx ] = ModelPtr( new Model );
-			_walls[ idx ]->load( "../Resource/Model/Stage/_wall_" + std::to_string( i ) + ".mdl" );
+			_walls[ idx ]->load( "../Resource/Model/Stage/_wall_" + std::to_string( stage_num ) + "_" + std::to_string( i ) + ".mdl" );
 			_walls[ idx ]->multiply( Matrix::makeTransformScaling( WALL_SIZE ) );
 		}
 	}

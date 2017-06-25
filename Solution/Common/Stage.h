@@ -44,6 +44,7 @@ protected:
 	virtual void loadCrystal( );
 	virtual void loadDelivery( );
 	virtual void loadWall( );
+	int getStageNum( ) const;
 private:
 	virtual void drawFloor( ) const = 0;
 	virtual void drawWall( ) const = 0;
@@ -51,5 +52,6 @@ private:
 	std::array< DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _data;
 	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _floor;
 	int _max_delivery;
+	int _stage_num;
 };
 

@@ -1,5 +1,6 @@
 #include "Ball.h"
 #include "AppStage.h"
+#include "Sound.h"
 
 static const double EFFECT_COLLISION_CRYSTAL_SIZE = 0.5;
 static const double EFFECT_COLLISION_WALL_SIZE = 0.5;
@@ -18,6 +19,7 @@ Ball::~Ball( ) {
 void Ball::update( const Vector& vec, StagePtr stage, bool rot ) {
 	_vec = vec;
 
+	SoundPtr sound = Sound::getTask( );
 	AppStagePtr stage_ptr = std::dynamic_pointer_cast< AppStage >( stage );
 	Vector adjust_vec_to_wall = _vec;
 	Vector adjust_vec_to_crystal = Vector( );
@@ -33,8 +35,10 @@ void Ball::update( const Vector& vec, StagePtr stage, bool rot ) {
 		_reflection = true;
 		if ( adjust_vec_to_crystal != Vector( ) ) {
 			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_CRYSTAL, _pos, EFFECT_COLLISION_CRYSTAL_SIZE, EFFECT_ROTATE ) );
+			sound->playSE( "collision.wav" );
 		} else {
 			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_WALL, _pos, EFFECT_COLLISION_WALL_SIZE, EFFECT_ROTATE ) );
+			sound->playSE( "collision.wav" );
 			_collision_count++;
 		}
 	}
