@@ -404,6 +404,8 @@ Scene::NEXT SceneStage::NextRetry( ) {
 			sound->playSE( "circleSE.wav" );
 		}
 	} else {
+		SoundPtr sound = Sound::getTask( );
+		sound->stopSE( "circleSE.wav" );
 		_choice_count = 0;
 	}
 
