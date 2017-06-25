@@ -29,7 +29,7 @@ const double DECELETION_ROT_SPEED = 0.002;
 const double DECELETION_TRANS_SPEED = 0.001;
 const double DECELERATION_EMERGENCY_SPEED = 1;
 const double DECELERATION_WAIT_SPEED = 0.02;
-const double DECELETION_GAMEOVER_SPEED = 0.01;
+const double DECELETION_GAMEOVER_SPEED = 0.005;
 //Œ¸‘¬”{—¦
 const double OTHER_TRANS_RATIO = 6;
 const double OTHER_ROT_RATIO = 2;
