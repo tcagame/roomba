@@ -97,6 +97,8 @@ void Delivery::updateCatch( ) {
 		if ( _animation->getAnim( ) == Animation::ANIM::ANIM_DELIVERY_CARRY ) {
 			_target = pos + Vector( 0, 0, LIFT_UP_Z );
 			_state = STATE_LIFT;
+			SoundPtr sound = Sound::getTask( );
+			sound->playSE( "magic04.wav" );
 			Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CATCH_CRYSTAL, pos, EFFECT_CATCH_SIZE, EFFECT_ROTATE ) );
 		}
 	}

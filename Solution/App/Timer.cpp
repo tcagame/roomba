@@ -13,7 +13,7 @@ Timer::Timer( ) :
 _timer( START_TIME ),
 _add_time( 0 ) {
 	SoundPtr sound = Sound::getTask( );
-	sound->playBGM( "bgm_maoudamashii_cyber06.wav");
+	sound->playBGM( "stageBGM.wav" );
 }
 
 
@@ -24,7 +24,7 @@ void Timer::update( ) {
 	_timer--;
 	if ( _timer == 5 * FPS ) {
 		SoundPtr sound = Sound::getTask( );
-	    sound->playBGM( "meka_ge_keihou.wav" );
+	    sound->playSE( "alertSE.wav", true );
 	}
 }
 

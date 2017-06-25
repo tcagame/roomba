@@ -22,7 +22,7 @@ static const int DRAW_TIME = 100;
 
 
 SceneSelect::SceneSelect( ) :
-_select( 1 ),
+_select( 0 ),
 _count( 0 ),
 _choice_count( 0 ),
 _move_count( 0 ),
@@ -73,28 +73,28 @@ Scene::NEXT SceneSelect::update( ) {
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		_choice_count++;
 		if ( _choice_count == 1 ) {
-			sound->playSE( "se_maoudamashii_effect01.wav" );
+			sound->playSE( "circleSE.wav" );
 		}
 	} else {
 		_choice_count = 0;
-		sound->stopSE( "se_maoudamashii_effect01.wav" );
+		sound->stopSE( "circleSE.wav" );
 	}
 
 	//　ステージ番号選択
-	if ( _move_count == 0 ) {
+	if ( _move_count == 0 && _choice_count == 0 ) {
 		freazeSelect( );
 		if ( left_stick.x > 0 && !_ispush ) {
-			sound->playSE( "se_maoudamashii_system43.wav" );
+			sound->playSE( "selectSE.wav" );
 			_move_count++;
 			_select++;
 			_rot_right = true;
 			_ispush = true;
 		}
 		if ( left_stick.x < 0 && !_ispush ) {
-			sound->playSE( "se_maoudamashii_system43.wav" );
+			sound->playSE( "selectSE.wav" );
 			_rot_right = false;
 			_move_count++;
-			_select++;
+			_select--;
 			_ispush = true;
 		}
 	}
@@ -108,8 +108,12 @@ Scene::NEXT SceneSelect::update( ) {
 		_move_count %= MAX_MOVE_COUNT;
 	}
 
-
-	_select = abs( _select ) % 3;
+	if ( _select < 0 ) { 
+		_select = _select % 3 + 3;
+	}
+	if ( _select >= 3 ) {
+		_select = _select % 3;
+	}
 	return NEXT_CONTINUE;
 }
 
@@ -160,7 +164,7 @@ void SceneSelect::drawSelect( ) {
 	}
 
 
-	GRAPH graph = (GRAPH)( GRAPH_NUM_1 + ( select - 1 ) );
+	GRAPH graph = (GRAPH)( GRAPH_NUM_1 + select );
 	
 	//真ん中
 	if ( graph == (GRAPH)( GRAPH_NUM_3 + 1 ) ) {

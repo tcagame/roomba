@@ -40,7 +40,8 @@ _count( 0 ) {
 	_col_num = col_num;
 	loadBestTime( );
 	SoundPtr sound = Sound::getTask( );
-	sound->playBGM( "bgm_maoudamashii_cyber13.wav" );
+	sound->playBGM( "resultBGM.wav" );
+	sound->playSE( "alertSE.wav", true );
 }
 
 
@@ -73,11 +74,11 @@ Scene::NEXT SceneResult::update( ) {
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		_choice_count++;
 		if ( _choice_count == 1 ) {
-			sound->playSE( "se_maoudamashii_effect01.wav" );
+			sound->playSE( "circleSE.wav" );
 		}
 	} else {
 		_choice_count = 0;
-		sound->stopSE( "se_maoudamashii_effect01.wav" );
+		sound->stopSE( "circleSE.wav" );
 	}
 	return NEXT_CONTINUE;
 }

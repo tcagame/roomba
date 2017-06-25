@@ -23,9 +23,15 @@ const int UI_MAP_RANGE = 15;
 const int UI_NUM_SCROLL_TIME = 20;
 const int UI_NUM_SCROLL_SPEED = 2;
 const int FPS = 60;
+const int CIRCLE_ANIME_FLAME = 3;
+const int MAX_CHOICE_COUNT = 24 * CIRCLE_ANIME_FLAME;
 const double GUIDELINE_VIEW_RANGE = 5 * WORLD_SCALE;
+const double FADE_IN_RETRY_TIME = 30;
 
-SceneStage::SceneStage( int stage_num ) {
+SceneStage::SceneStage( int stage_num ) :
+_draw_count( 0 ),
+_choice_count( 0 ),
+_retry( true ) {
 	_shadow = ShadowPtr( new Shadow );
 	_guideline = ModelPtr( new Model );
 	_viewer = ViewerPtr( new Viewer( _shadow ) );
@@ -54,7 +60,11 @@ SceneStage::SceneStage( int stage_num ) {
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
 	drawer->loadGraph( GRAPH_PHASE, "UI/phase.png" );
-	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );	
+	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
+	drawer->loadGraph( GRAPH_RETRY, "UI/retry.png" );
+	drawer->loadGraph( GRAPH_RETRY_YES_NO, "UI/retry_select_yes_no.png" );
+	drawer->loadGraph( GRAPH_FRAME, "UI/select_frame.png" );
+	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
 	drawer->loadGraph( GRAPH_GUIDELINE, "Model/Guideline/guideline.jpg" );
 	drawer->loadGraph( GRAPH_FLOOR, "Model/Stage/floor.jpg" );
 	drawer->loadGraph( GRAPH_WALL, "Model/Stage/wall.jpg" );
@@ -89,20 +99,21 @@ SceneStage::~SceneStage( ) {
 }
 
 Scene::NEXT SceneStage::update( ) {
+	SoundPtr sound = Sound::getTask( );
 	// ƒJƒƒ‰&viwerí‚ÉXV‚·‚é
-	_camera->update( );
+	if ( _roomba->getMoveState( ) != Roomba::MOVE_STATE_GAMEOVER ) {
+		_camera->update( );
+	}
 	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_STARTING ) {
 		_viewer->update( _roomba->getStartPos( ) );
 	} else {
 		_viewer->update( _roomba->getCentralPos( ) );
 	}
 
-	if ( _roomba->isFinished( ) ) {
+	if ( _roomba->isFinished( ) && _roomba->getMoveState( ) != Roomba::MOVE_STATE_GAMEOVER ) {
 		_timer->finalize( );
 		_roomba->finalize( );
-		if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_GAMEOVER ) {
-			return NEXT_GAMEOVER;
-		}
+		sound->stopSE( "alertSE.wav" );
 		return NEXT_RESULT;
 	}
 
@@ -120,8 +131,7 @@ Scene::NEXT SceneStage::update( ) {
 	}
 	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_WAIT ) {
 		if ( _timer->getTime( ) < 5 * FPS ) {
-			SoundPtr sound = Sound::getTask( );
-			sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
+			sound->stopSE( "alertSE.wav" );
 		}
 		_timer->reset( );
 	}
@@ -130,6 +140,12 @@ Scene::NEXT SceneStage::update( ) {
 	_shadow->update( );
 	_shadow->draw( );
 	drawUI( );
+
+	if ( _roomba->isFinished( ) && _roomba->getMoveState( ) == Roomba::MOVE_STATE_GAMEOVER ) {
+		drawRetry( );
+		drawCircle( );
+		return NextRetry( );
+	}
 
 	return Scene::NEXT_CONTINUE;
 }
@@ -311,6 +327,99 @@ void SceneStage::drawUIMap( ) const {
 		self.z_buffer = true;
 		drawer->setModelSelf( self );
 	}
+}
+
+void SceneStage::drawRetry( ) const {
+	DrawerPtr drawer = Drawer::getTask( );
+	ApplicationPtr app = Application::getInstance( );
+	int WIDTH = app->getWindowWidth( );
+	int HEIGHT = app->getWindowHeight( );
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( 0, 0, 0, 0, 512, 512, WIDTH, HEIGHT ), GRAPH_COMMAND_PROMPT_BACK ) );
+
+	const int TEXTURE_SIZE = 512;
+	double RATIO = (double)( _draw_count ) / FADE_IN_RETRY_TIME;
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( WIDTH / 2 - TEXTURE_SIZE / 2, HEIGHT / 2 - TEXTURE_SIZE / 2 ), GRAPH_RETRY, Drawer::BLEND_ALPHA, RATIO ) );
+
+	const int SELECT_X = 256;
+	const int SELECT_Y = 128;
+	int sx = ( WIDTH / 2 ) - ( SELECT_X / 2 );
+	int sy = HEIGHT / 2 - 64;
+	if ( !_retry ) {
+		sy += SELECT_Y;
+	}
+	int flow = _draw_count % 20;
+	if ( flow > 11 ) {
+		flow = 20 - flow;
+	}
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx - flow, sy - flow, 0, 0, SELECT_X, SELECT_Y, sx + SELECT_X + flow, sy + SELECT_Y + flow ), GRAPH_FRAME, Drawer::BLEND_ALPHA, RATIO ) ); // frame
+}
+
+void SceneStage::drawCircle( ) const {
+	if ( _draw_count < FADE_IN_RETRY_TIME ) {
+		return;
+	}
+
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+	
+	const int CIRCLE_SIZE = 100;
+	int idx = _choice_count / CIRCLE_ANIME_FLAME;
+	if ( idx > 24 || getFadeOutCount( ) != MAX_FADE_COUNT  ) {
+		idx = 24;
+	}
+	int tx = idx % 5;
+	int ty = idx / 5;
+	int sy = HEIGHT / 2 - CIRCLE_SIZE / 2;
+	if ( !_retry ) {
+		sy += 128; // yes no ‚Ì˜g‚Ì‘å‚«‚³•ª‰º‚É‚¸‚ç‚·
+	}
+	DrawerPtr drawer = Drawer::getTask( );
+	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, sy, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
+	drawer->setSprite( sprite );
+}	
+
+void SceneStage::retry( ) {
+	_roomba->retry( );
+	_timer->reset( );
+}
+
+Scene::NEXT SceneStage::NextRetry( ) {
+	_draw_count++;
+	DevicePtr device = Device::getTask( );
+	if ( device->getDirY( ) < 0 &&
+		 device->getRightDirY( ) < 0 ) {
+		_retry = true;
+	}
+	if ( device->getDirY( ) > 0 &&
+		 device->getRightDirY( ) > 0 ) {
+		_retry = false;
+	}
+
+	if ( device->getDirY( ) < 0 &&
+		 device->getRightDirY( ) > 0 ) {
+		_choice_count++;
+		if ( _choice_count == 1 ) {
+			SoundPtr sound = Sound::getTask( );
+			sound->playSE( "circleSE.wav" );
+		}
+	} else {
+		SoundPtr sound = Sound::getTask( );
+		sound->stopSE( "circleSE.wav" );
+		_choice_count = 0;
+	}
+
+	if ( _choice_count > MAX_CHOICE_COUNT ) {
+		if ( _retry ) {
+			retry( );
+			_choice_count = 0;
+			_draw_count = 0;
+		} else {
+			Sound::getTask( )->stopSE( "alertSE.wav" );
+			return NEXT_GAMEOVER;
+		}
+	}
+	return NEXT_CONTINUE;
 }
 
 Vector SceneStage::getAdjustPos( Vector pos, Vector base_pos ) const {
