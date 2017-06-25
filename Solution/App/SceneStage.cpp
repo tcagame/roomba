@@ -89,6 +89,7 @@ SceneStage::~SceneStage( ) {
 }
 
 Scene::NEXT SceneStage::update( ) {
+	SoundPtr sound = Sound::getTask( );
 	// ƒJƒƒ‰&viwerí‚ÉXV‚·‚é
 	_camera->update( );
 	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_STARTING ) {
@@ -101,8 +102,10 @@ Scene::NEXT SceneStage::update( ) {
 		_timer->finalize( );
 		_roomba->finalize( );
 		if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_GAMEOVER ) {
+			sound->stopSE( "alertSE.wav" );
 			return NEXT_GAMEOVER;
 		}
+		sound->stopSE( "alertSE.wav" );
 		return NEXT_RESULT;
 	}
 
@@ -120,8 +123,7 @@ Scene::NEXT SceneStage::update( ) {
 	}
 	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_WAIT ) {
 		if ( _timer->getTime( ) < 5 * FPS ) {
-			SoundPtr sound = Sound::getTask( );
-			sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
+			sound->stopSE( "alertSE.wav" );
 		}
 		_timer->reset( );
 	}
