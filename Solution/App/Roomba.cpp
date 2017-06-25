@@ -77,6 +77,7 @@ _start_count( 0 ) {
 		_boot[ 1 ][ i ] = true;
 	}
 	_laser = LaserPtr( new Laser );
+
 }
 
 
@@ -94,8 +95,8 @@ void Roomba::update( StagePtr stage, CameraPtr camera, ShadowPtr shadow, TimerCo
 }
 
 void Roomba::setShadow( ShadowPtr shadow ) {
-	const double SCALE = ( BALL_SIZE.x * SUN_POS ) / ( SUN_POS - BALL_SIZE.z );
 	for ( int i = 0; i < 2; i++ ) {
+		const double SCALE = ( BALL_SIZE.x * SUN_POS ) / ( SUN_POS - _balls[ i ]->getPos( ).z );
 		shadow->set( _balls[ i ]->getPos( ), SCALE );
 	}
 }
@@ -429,8 +430,6 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera, TimerConstPtr timer 
 		}
 		if ( _state == MOVE_STATE_LIFT_DOWN ) {
 			state = MOVE_STATE_LIFT_DOWN;
-			SoundPtr sound = Sound::getTask( );
-			//sound->playSE( "se_maoudamashii_effect14.wav" );
 		}
 	}
 	if ( _start_count < START_TIME ) {
@@ -461,8 +460,6 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera, TimerConstPtr timer 
 			}
 		}
 		if ( state == MOVE_STATE_REFLECTION ) {
-			SoundPtr sound = Sound::getTask( );
-			sound->playSE( "knocking_a_wall.mp3" );
 			_trans_speed = Vector( );
 			_rot_speed = 0;
 		}
@@ -584,7 +581,7 @@ void Roomba::holdCrystal( StagePtr stage ) {
 			_crystal->setDropDown( false );
 			_first_crystal_catch = true;
 			SoundPtr sound = Sound::getTask( );
-			sound->playSE( "radio-wave01 .wav" );
+			sound->playSE( "holdCrystal.wav" );
 		}
 	}
 	if ( _first_crystal_catch ) {
@@ -1042,4 +1039,11 @@ void Roomba::replacementVec( ) {
 		_vec_main[ i ] = _vec_sub[ i ];
 		_vec_sub[ i ] = tmp_vec;
 	}
+}
+
+void Roomba::retry( ) {
+	initVec( );
+	_state = MOVE_STATE_NEUTRAL;
+	_wait_count = 0;
+	_finished = false;
 }

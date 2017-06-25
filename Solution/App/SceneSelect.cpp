@@ -73,25 +73,25 @@ Scene::NEXT SceneSelect::update( ) {
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		_choice_count++;
 		if ( _choice_count == 1 ) {
-			sound->playSE( "se_maoudamashii_effect01.wav" );
+			sound->playSE( "circleSE.wav" );
 		}
 	} else {
 		_choice_count = 0;
-		sound->stopSE( "se_maoudamashii_effect01.wav" );
+		sound->stopSE( "circleSE.wav" );
 	}
 
 	//　ステージ番号選択
 	if ( _move_count == 0 && _choice_count == 0 ) {
 		freazeSelect( );
 		if ( left_stick.x > 0 && !_ispush ) {
-			sound->playSE( "se_maoudamashii_system43.wav" );
+			sound->playSE( "selectSE.wav" );
 			_move_count++;
 			_select++;
 			_rot_right = true;
 			_ispush = true;
 		}
 		if ( left_stick.x < 0 && !_ispush ) {
-			sound->playSE( "se_maoudamashii_system43.wav" );
+			sound->playSE( "selectSE.wav" );
 			_rot_right = false;
 			_move_count++;
 			_select--;

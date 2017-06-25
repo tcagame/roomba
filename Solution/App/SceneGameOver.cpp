@@ -30,7 +30,7 @@ _count( 0 ) {
 	drawer->loadGraph( GRAPH_GAME_OVER, "UI/game_over.png" );
 	drawer->loadGraph( GRAPH_FRAME, "UI/Frame.png" );
 	SoundPtr sound = Sound::getTask( );
-	sound->playBGM( "bgm_maoudamashii_cyber29.wav" );
+	sound->playBGM( "GameOverBGM.wav" );
 }
 
 
@@ -63,11 +63,11 @@ Scene::NEXT SceneGameOver::update( ) {
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		_choice_count++;
 		if ( _choice_count == 1 ) {
-			sound->playSE( "se_maoudamashii_effect01.wav" );
+			sound->playSE( "circleSE.wav" );
 		}
 	} else {
 		_choice_count = 0;
-		sound->stopSE( "se_maoudamashii_effect01.wav" );
+		sound->stopSE( "circleSE.wav" );
 	}
 	return NEXT_CONTINUE;
 }

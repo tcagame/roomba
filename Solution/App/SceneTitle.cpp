@@ -25,7 +25,7 @@ _choice_count( 0 ) {
 	drawer->loadGraph( GRAPH_PLEASE_PUSH_BUTTON, "title/pleasepushbutton.png" );
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle_blue1.png" );
 	SoundPtr sound = Sound::getTask( );
-	sound->playBGM( "bgm_maoudamashii_cyber31.wav" );
+	sound->playBGM( "titleBGM.wav" );
 	resetCount( );
 }
 
@@ -58,11 +58,11 @@ Scene::NEXT SceneTitle::update( ) {
 	if ( right_stick.y > 0 && left_stick.y < 0 ) {
 		_choice_count++;
 		if ( _choice_count == 1 ) {
-			sound->playSE( "se_maoudamashii_effect01.wav" );
+			sound->playSE( "circleSE.wav" );
 		}
 	} else {
 		_choice_count = 0;
-		sound->stopSE( "se_maoudamashii_effect01.wav" );
+		sound->stopSE( "circleSE.wav" );
 	}
 	return NEXT_CONTINUE;
 }
