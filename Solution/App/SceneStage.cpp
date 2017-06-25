@@ -113,7 +113,6 @@ Scene::NEXT SceneStage::update( ) {
 	if ( _roomba->isFinished( ) && _roomba->getMoveState( ) != Roomba::MOVE_STATE_GAMEOVER ) {
 		_timer->finalize( );
 		_roomba->finalize( );
-		sound->stopSE( "alertSE.wav" );
 		return NEXT_RESULT;
 	}
 
@@ -340,13 +339,14 @@ void SceneStage::drawRetry( ) const {
 	double RATIO = (double)( _draw_count ) / FADE_IN_RETRY_TIME;
 	drawer->setSprite( Drawer::Sprite( Drawer::Transform( WIDTH / 2 - TEXTURE_SIZE / 2, HEIGHT / 2 - TEXTURE_SIZE / 2 ), GRAPH_RETRY, Drawer::BLEND_ALPHA, RATIO ) );
 
-	const int SELECT_X = 256;
-	const int SELECT_Y = 128;
-	int sx = ( WIDTH / 2 ) - ( SELECT_X / 2 );
-	int sy = HEIGHT / 2 - 64;
+	const int SELECT_X = 192;
+	const int SELECT_Y = 96;
+	int sy = HEIGHT / 2 + SELECT_Y / 6;
+	int sx = WIDTH / 2 - SELECT_X - 30;
 	if ( !_retry ) {
-		sy += SELECT_Y;
+		sx += SELECT_X + 60;
 	}
+
 	int flow = _draw_count % 20;
 	if ( flow > 11 ) {
 		flow = 20 - flow;
@@ -386,13 +386,12 @@ void SceneStage::retry( ) {
 
 Scene::NEXT SceneStage::NextRetry( ) {
 	_draw_count++;
+	Sound::getTask( )->stopSE( "alertSE.wav" );
 	DevicePtr device = Device::getTask( );
-	if ( device->getDirY( ) < 0 &&
-		 device->getRightDirY( ) < 0 ) {
+	if ( device->getDirX( ) < 0 ) {
 		_retry = true;
 	}
-	if ( device->getDirY( ) > 0 &&
-		 device->getRightDirY( ) > 0 ) {
+	if ( device->getDirX( ) > 0 ) {
 		_retry = false;
 	}
 
@@ -416,7 +415,6 @@ Scene::NEXT SceneStage::NextRetry( ) {
 			_choice_count = 0;
 			_draw_count = 0;
 		} else {
-			Sound::getTask( )->stopSE( "alertSE.wav" );
 			return NEXT_GAMEOVER;
 		}
 	}

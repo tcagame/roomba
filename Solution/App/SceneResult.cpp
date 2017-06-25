@@ -28,8 +28,6 @@ _count( 0 ) {
 	drawer->loadGraph( GRAPH_OK, "UI/ok.png" );
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
 	drawer->loadGraph( GRAPH_STAGE_SELECT, "select/Stage Select.png" );
-	drawer->loadGraph( GRAPH_RESULT, "Result/result.png" );
-	drawer->loadGraph( GRAPH_RANK, "Result/rank.png" );
 	drawer->loadGraph( GRAPH_GAME_OVER, "UI/game_over.png" );
 	drawer->loadGraph( GRAPH_GAME_CLEAR, "UI/StageClear.png" );
 	drawer->loadGraph( GRAPH_RESULT_FRAME, "UI/game_over_frame.png" );
@@ -37,11 +35,9 @@ _count( 0 ) {
 
 	_this_time = time;
 	_best_time = 0;
-	_col_num = col_num;
 	loadBestTime( );
 	SoundPtr sound = Sound::getTask( );
 	sound->playBGM( "resultBGM.wav" );
-	sound->playSE( "alertSE.wav", true );
 }
 
 
@@ -86,12 +82,11 @@ Scene::NEXT SceneResult::update( ) {
 void SceneResult::draw( ) const {
 	//drawThisTime( );
 	//drawBestTime( );
-	drawBg( );
+	//drawBg( );
 	drawFadeBg( );
 	drawController( );
 	drawResult( );
 	drawGameClear( );
-	//drawOperationRank( );
 	drawFrame( );
 	drawCircle( );
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
@@ -187,7 +182,7 @@ void SceneResult::drawThisTime( ) const {
 	y -= 60;
 	Drawer::Transform trans =  Drawer::Transform( x, y, 512, 0, 512, 256 );
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->setSprite( Drawer::Sprite( trans, GRAPH_RESULT ) );
+	//drawer->setSprite( Drawer::Sprite( trans, GRAPH_RESULT ) );
 }
 
 void SceneResult::drawBestTime( ) const {
@@ -201,7 +196,7 @@ void SceneResult::drawBestTime( ) const {
 	y -= 60;
 	Drawer::Transform trans =  Drawer::Transform( x, y, 512, 256, 512, 256 );
 	DrawerPtr drawer = Drawer::getTask( );
-	drawer->setSprite( Drawer::Sprite( trans, GRAPH_RESULT ) );
+	//drawer->setSprite( Drawer::Sprite( trans, GRAPH_RESULT ) );
 }
 
 void SceneResult::loadBestTime( ) {
@@ -308,57 +303,4 @@ void SceneResult::drawCircle( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT / 2 - 74 + CIRCLE_SIZE * 3 / 5, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
-}
-
-void SceneResult::drawOperationRank( ) const {
-	DrawerPtr drawer = Drawer::getTask( );
-	const int SIZE = 128;
-	int tx = 0;
-	int ty = 0;
-	switch ( _col_num ) {
-	case 0: // S
-		tx = SIZE * 3;
-		ty = 0;
-		break;
-	case 1: // A
-	case 2:
-		tx = SIZE * 0;
-		ty = SIZE;
-		break;
-	case 3: // B
-	case 4:
-		tx = SIZE * 1;
-		ty = SIZE;
-		break;
-	case 5: // C
-	case 6:
-		tx = SIZE * 2;
-		ty = SIZE;
-		break;
-	default: // D
-		tx = SIZE * 3;
-		ty = SIZE;
-		break;
-	}
-
-	ApplicationPtr app = Application::getInstance( );
-	const int WIDTH = app->getWindowWidth( );
-	const int HEIGHT = app->getWindowHeight( );
-	int sx = WIDTH / 2 - SIZE * 3;
-	int sy = HEIGHT * 3 / 4 - SIZE * 2;
-	int sx2 = WIDTH / 2 + SIZE;
-	int sy2 = HEIGHT * 3 / 4 - SIZE;
-	{ // RANK
-		Drawer::Transform trans( sx, sy + ( SIZE - 50 ), 0, 0, SIZE * 3, SIZE, sx2, sy2 +  ( SIZE - 50 ) );
-		Drawer::Sprite sprite( trans, GRAPH_RANK );
-		drawer->setSprite( sprite );
-	}
-	{ // S A B C D
-		static int count = 0;
-		count++;
-		double ratio = (double)count / 50;
-		Drawer::Transform trans( sx2 - SIZE, sy - 20, tx, ty, SIZE, SIZE, sx2 + SIZE * 2, sy2  + SIZE );
-		Drawer::Sprite sprite( trans, GRAPH_RANK, Drawer::BLEND_ALPHA, ratio );
-		drawer->setSprite( sprite );
-	}
 }
