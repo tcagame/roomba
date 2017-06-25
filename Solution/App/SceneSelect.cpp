@@ -204,7 +204,7 @@ void SceneSelect::moveSelect( ) {
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
-	const Vector target1( WIDTH / 2 - NUM_CENTER,  HEIGHT / 2 );
+	const Vector target1( WIDTH / 2 - NUM_CENTER,  HEIGHT * 3 / 7 );
 	const Vector target2( target1.x - ( WIDTH / 2 - NUM_SIZE * 5 ), target1.y - SELECT_CENTER_Y / 4 - HEIGHT / 10 );
 	const Vector target3( target1.x + ( WIDTH / 2 - NUM_SIZE * 5 ), target1.y - SELECT_CENTER_Y / 4 - HEIGHT / 10 );
 	Vector vec1;
@@ -229,7 +229,7 @@ void SceneSelect::freazeSelect( ) {
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
-	_pos[ 0 ] = Vector( WIDTH / 2 - NUM_CENTER, HEIGHT / 2 );
+	_pos[ 0 ] = Vector( WIDTH / 2 - NUM_CENTER, HEIGHT * 3 / 7 );
 	_pos[ 1 ] = Vector( _pos[ 0 ].x - ( WIDTH / 2 - NUM_SIZE * 5 ), _pos[ 0 ].y - SELECT_CENTER_Y / 4 - HEIGHT / 10 );
 	_pos[ 2 ] = Vector( _pos[ 0 ].x + ( WIDTH / 2 - NUM_SIZE * 5 ), _pos[ 0 ].y - SELECT_CENTER_Y / 4 - HEIGHT / 10 );
 }
@@ -276,7 +276,7 @@ void SceneSelect::drawTriangle( ) {
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - TRIANGLE_CENTER_X, HEIGHT / 2, 100, 225, 305, 70 ), GRAPH_STAGE_SELECT );
+	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - TRIANGLE_CENTER_X, HEIGHT  * 3 / 7, 100, 225, 305, 70 ), GRAPH_STAGE_SELECT );
 	drawer->setSprite( sprite );
 }
 
@@ -293,7 +293,8 @@ void SceneSelect::drawCircle( ) const {
 	int tx = idx % 5;
 	int ty = idx / 5;
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT / 2 - 74 + CIRCLE_SIZE * 3 / 5, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
+	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT * 6 / 8 - 16, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
+	//Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT / 2 - 74 + CIRCLE_SIZE * 3 / 5, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
 }
 
@@ -305,7 +306,8 @@ void SceneSelect::drawController( ) {
 	const int CONTROLLER_SIZE = 512;
 
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT * 4 / 6, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT * 4 / 6 + CONTROLLER_SIZE / 2 );
+	//Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT * 4 / 6, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT * 4 / 6 + CONTROLLER_SIZE / 2 );
+	Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT * 3 / 6, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT * 3 / 6 + CONTROLLER_SIZE / 2 );
 	//Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT / 2 + CONTROLLER_SIZE / 6, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT / 2 + CONTROLLER_SIZE / 2 + CONTROLLER_SIZE / 6);
 	if ( _count % DRAW_TIME < DRAW_TIME * 2 / 3 ) {
 		Drawer::Sprite sprite( trans, GRAPH_CONTROLLER_ROTATION );
@@ -318,8 +320,9 @@ void SceneSelect::drawController( ) {
 	int ty = 366;
 	int tw = 167;
 	int th = 74;
-	Drawer::Transform trans2( WIDTH / 2 - tw / 2, HEIGHT * 5 / 6, tx, ty,  tw,  th, WIDTH / 2 + tw / 2,  HEIGHT * 5 / 6 + th );
-	//Drawer::Sprite sprite( trans2, GRAPH_OK );
-	//drawer->setSprite( sprite );
+	//Drawer::Transform trans2( WIDTH / 2 - tw / 2, HEIGHT * 5 / 6, tx, ty,  tw,  th, WIDTH / 2 + tw / 2,  HEIGHT * 5 / 6 + th );
+	Drawer::Transform trans2( WIDTH / 2 - tw / 2, HEIGHT * 6 / 8, tx, ty,  tw,  th, WIDTH / 2 + tw / 2,  HEIGHT * 6 / 8 + th );
+	Drawer::Sprite sprite( trans2, GRAPH_OK );
+	drawer->setSprite( sprite );
 	
 }
