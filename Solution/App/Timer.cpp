@@ -55,10 +55,7 @@ void Timer::reset( ) {
 }
 
 bool Timer::isTimeOver( ) const {
-	if ( _timer < 0 ) {
-		return true;
-	}
-	return false;
+	return ( _timer < 0 );
 }
 
 void Timer::finalize( ) {

@@ -412,6 +412,7 @@ Scene::NEXT SceneStage::NextRetry( ) {
 	if ( _choice_count > MAX_CHOICE_COUNT ) {
 		if ( _retry ) {
 			retry( );
+			_timer->reset( );
 			_choice_count = 0;
 			_draw_count = 0;
 		} else {

@@ -76,17 +76,20 @@ void Crystal::update( AppStagePtr stage ) {
 		_vec = Vector( );
 	}
 
+	if ( _vec.getLength( ) > MAX_SPEED ) {
+		_vec = _vec.normalize( ) * MAX_SPEED;
+	}
 	Vector adjust = stage->adjustCollisionToWall( _pos, _vec, CRYSTAL_RADIUS );
 	if ( ( adjust - _vec ).getLength( ) > 0.1 ) {
 		_vec = adjust;
+		if ( _vec.getLength( ) > MAX_SPEED ) {
+			_vec = _vec.normalize( ) * MAX_SPEED;
+		}
 		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_COLLISION_TO_WALL, _pos, EFFECT_COLLISION_WALL_SIZE, EFFECT_ROTATE ) );
 		toBound( );
 	}
 
 
-	if ( _vec.getLength( ) > MAX_SPEED ) {
-		_vec = _vec.normalize( ) * MAX_SPEED;
-	}
 	_pos += _vec;
 	if ( _pos.z < _start_pos.z ) {
 		_pos.z = _start_pos.z;
