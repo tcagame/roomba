@@ -5,7 +5,7 @@
 #include "Sound.h"
 
 const int FPS = 60;
-const int START_TIME = 2 * FPS;
+const int START_TIME = 30 * FPS;
 const int ADD_TIME = 5 * FPS;
 const int RECOVERY_SPEED = 15;
 
