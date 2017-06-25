@@ -45,7 +45,8 @@ std::string FILENAME[ 32 ] = {
 
 EditorStage::EditorStage( CameraPtr camera ) :
 _count( 0 ),
-_camera( camera ) {
+_camera( camera ),
+_save( false ) {
 	reset( );
 	MousePtr mouse = Mouse::getTask( );
 	_before_mouse_pos = mouse->getPos( );
@@ -57,6 +58,7 @@ _camera( camera ) {
 		Vector pos = Vector( i % STAGE_WIDTH_NUM * WORLD_SCALE, i / STAGE_WIDTH_NUM * WORLD_SCALE );
 		_floor[ i ] = Drawer::ModelMDL( pos, MDL_FLOOR );
 	}
+	load( 0 );
 }
 
 
@@ -71,19 +73,12 @@ void EditorStage::update( CameraPtr camera ) {
 }
 
 void EditorStage::saveFile( ) const {
-	ApplicationPtr app = Application::getInstance( );
-	std::string filename = "../Resource/Map/" + app->inputString( 0, 40 );
+	int stage_num = getStageNum( );
+	std::string filename = "../Resource/Map/" + std::to_string( stage_num ) + ".stage";
 	saveData( filename );
 	saveWall( );
 	saveFloor( );
 }
-
-void EditorStage::loadFile( ) {
-	ApplicationPtr app = Application::getInstance( );
-	std::string filename = "../Resource/Map/" + app->inputString( 0, 40 );
-	loadData( filename );
-}
-
 
 void EditorStage::saveWall( ) const {
 	ModelPtr base_model[ 32 ];
@@ -114,7 +109,8 @@ void EditorStage::saveWall( ) const {
 			count++;
 			ite++;
 		}
-		wall_div_model->save( "../Resource/Model/Stage/_wall_" + std::to_string( i ) + ".mdl" );
+		int stage_num = getStageNum( );
+		wall_div_model->save( "../Resource/Model/Stage/_wall_" + std::to_string( stage_num ) + "_" + std::to_string( i ) + ".mdl" );
 		wall_div_model.reset( );
 	}
 }
@@ -178,6 +174,22 @@ void EditorStage::updateCursor( ) {
 	if ( _cursor_pos.y > STAGE_HEIGHT_NUM  ) {
 		_cursor_pos.y = STAGE_HEIGHT_NUM - 0.1;
 	}
+	//z
+	int x = (int)_cursor_pos.x;
+	int y = (int)_cursor_pos.y;
+	int idx = x + y * STAGE_WIDTH_NUM;
+	Stage::DATA data = getData( idx );
+	_cursor_pos.z = 0;
+	if ( data.delivery == 1 ) {
+		_cursor_pos.z = DELIVERY_POS_Z + DELIVERY_SIZE.z;
+	}
+	if ( data.crystal == 1 ) {
+		_cursor_pos.z = CRYSTAL_SIZE.z;
+	}
+	if ( data.wall == 1 ) {
+		_cursor_pos.z = WALL_SIZE.z * 2;
+	}
+	_cursor_pos.z += 1;
 }
 
 
@@ -186,9 +198,9 @@ void EditorStage::draw( ) const {
 	drawFloor( );
 	drawWall( );
 	DrawerPtr drawer = Drawer::getTask( );
-	Vector cursor_pos( (int)_cursor_pos.x * WORLD_SCALE + WORLD_SCALE / 2, (int)_cursor_pos.y * WORLD_SCALE  + WORLD_SCALE / 4 );
+	Vector cursor_pos( (int)_cursor_pos.x * WORLD_SCALE + WORLD_SCALE / 2, (int)_cursor_pos.y * WORLD_SCALE  + WORLD_SCALE / 4, _cursor_pos.z );
 	drawer->setModelMDL( Drawer::ModelMDL( cursor_pos, MDL_CURSOR ) );
-	drawer->drawString( 0, 0, "壁編集:Z　クリスタル編集:X　デリバー編集:C　ロード:F1　セーブ:F2　カメラ移動:テンキー" );
+	drawer->drawString( 0, 0, "壁編集:Z　クリスタル編集:X　デリバー編集:C　セーブ:F2　カメラ移動:テンキー" );
 
 
 	for ( int i = 0; i <= STAGE_WIDTH_NUM; i++ ) {
@@ -222,14 +234,13 @@ void EditorStage::drawCrystal( ) const {
 void EditorStage::edit( ) {
 	KeyboardPtr keyboard = Keyboard::getTask( );
 	DrawerPtr drawer = Drawer::getTask( );
-	if ( keyboard->isPushKey( "F1" ) ) {
-		drawer->drawString( 0, 20, "ロード" );
-		loadFile( );
-		reset( );
+	if ( _save ) {
+		saveFile( );
+		_save = false;
 	}
 	if ( keyboard->isPushKey( "F2" ) ) {
-		drawer->drawString( 0, 20, "セーブ" );
-		saveFile( );
+		_save = true;
+		drawer->drawString( 0, 20, "セーブ中..." );
 	}
 
 	switch ( _mode ) {
@@ -463,13 +474,11 @@ void EditorStage::loadWall( ) {
 		if ( wall_type == MDL_WALL_0_0 ) {
 			continue;
 		}
-		Vector adjust_pos;
 		if ( ( wall_type > MDL_WALL_0_0 && wall_type <= MDL_WALL_0_15 ) ||
 			wall_type == MDL_WALL_1_0 ) {
-			adjust_pos.z = ( WALL_SIZE.z - 1 ) * 2.12;
 		}
 		Drawer::ModelMDL mdl;
-		mdl.pos = pos + adjust_pos;
+		mdl.pos = pos;
 		mdl.type = wall_type;
 		_walls.push_back( mdl );
 	}
