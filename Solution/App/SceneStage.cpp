@@ -370,12 +370,12 @@ void SceneStage::drawCircle( ) const {
 	}
 	int tx = idx % 5;
 	int ty = idx / 5;
-	int sy = HEIGHT / 2 - CIRCLE_SIZE / 2;
+	int sx = WIDTH / 2 - 180;
 	if ( !_retry ) {
-		sy += 128; // yes no ‚Ì˜g‚Ì‘å‚«‚³•ª‰º‚É‚¸‚ç‚·
+		sx += 260; // yes no ‚Ì˜g•ª‰E‚É‚¸‚ç‚·
 	}
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, sy, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
+	Drawer::Sprite sprite( Drawer::Transform( sx, HEIGHT / 2 + 10, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
 }	
 

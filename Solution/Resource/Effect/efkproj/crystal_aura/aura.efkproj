@@ -57,6 +57,7 @@
             <Wave>Salamander12.efkproj</Wave>
           </Sound>
         </SoundValues>
+        <IsRendered>False</IsRendered>
         <Name>Node</Name>
         <Children />
       </Node>
@@ -272,6 +273,7 @@
             <Wave>Salamander12.efkproj</Wave>
           </Sound>
         </SoundValues>
+        <IsRendered>False</IsRendered>
         <Name>Node</Name>
         <Children />
       </Node>
@@ -388,6 +390,7 @@
             <Wave>Salamander12.efkproj</Wave>
           </Sound>
         </SoundValues>
+        <IsRendered>False</IsRendered>
         <Name>Node</Name>
         <Children />
       </Node>
