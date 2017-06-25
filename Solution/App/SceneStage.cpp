@@ -16,10 +16,10 @@
 const int UI_PHASE_FOOT_X = 100;
 const int UI_PHASE_Y = 40;
 const int UI_NUM_SIZE = 64;
-const int UI_MAP_SIZE = 6;
+const int UI_MAP_SIZE = 9;
 const int UI_MAP_X = 30;
 const int UI_MAP_FOOT_Y = 30;
-const int UI_MAP_RANGE = 20;
+const int UI_MAP_RANGE = 15;
 const int UI_NUM_SCROLL_TIME = 20;
 const int UI_NUM_SCROLL_SPEED = 2;
 const int FPS = 60;
