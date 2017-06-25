@@ -67,6 +67,7 @@ _wait_count( 0 ),
 _start_count( 0 ) {
 	for ( int i = 0; i < 2; i++ ) {
 		_balls[ i ] = BallPtr( new Ball( START_POS[ i ] + POP_POS[ i ] ) );
+		_pause_pos[ i ] = START_POS[ i ] + Vector( 0, 0, 10 );
 		_vec_main[ i ] = Vector( );
 		_vec_sub[ i ] = Vector( );
 		_delivery[ i ] = AnimationPtr( new Animation( Animation::ANIM::ANIM_DELIVERY_CARRY ) );
@@ -287,7 +288,6 @@ void Roomba::drawPromptOut( ) const {
 }
 
 void Roomba::updateState( ) {
-	_wait_count--;
 	_start_count++;
 	acceleration( );
 	moveTranslation( );
@@ -855,7 +855,7 @@ void Roomba::moveGameOver( ) {
 	if ( _state != MOVE_STATE_GAMEOVER ) {
 		return;
 	}
-	_wait_count--;
+
 	for ( int i = 0; i < 2; i++ ) {
 		Vector vec = _balls[ i ]->getVec( );
 		if ( vec.getLength( ) > DECELETION_GAMEOVER_SPEED ) {
@@ -892,6 +892,11 @@ void Roomba::moveWait( ) {
 			vec = Vector( );
 		}
 		_vec_main[ i ] = vec;
+	}
+
+	// è¨ãxé~íÜÇÃposÇãLò^
+	for ( int i = 0; i < 2; i++ ) {
+		_pause_pos[ i ] = _balls[ i ]->getPos( );
 	}
 }
 
@@ -1043,7 +1048,11 @@ void Roomba::replacementVec( ) {
 
 void Roomba::retry( ) {
 	initVec( );
-	_state = MOVE_STATE_NEUTRAL;
+	_state = MOVE_STATE_LIFT_DOWN;
 	_wait_count = 0;
 	_finished = false;
+	_link_break = true;
+	for ( int i = 0; i < 2; i++ ) {
+		_balls[ i ]->setPos( _pause_pos[ i ] );
+	}
 }
