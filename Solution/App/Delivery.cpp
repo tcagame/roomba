@@ -33,14 +33,16 @@ Delivery::~Delivery( ) {
 void Delivery::draw( ViewerPtr viewer ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	Vector pos = _animation->getPos( );
-	const double SHADOW_SCALE = ( DELIVERY_SIZE.x * SUN_POS ) / ( SUN_POS - pos.z );
+	const double SHADOW_DELIVERY_SCALE = ( DELIVERY_SIZE.x * SUN_POS ) / ( SUN_POS - pos.z );
 	if ( _have_crystal ) {
+		const double SHADOW_CRYSTAL_SCALE = ( CRYSTAL_SIZE.x * SUN_POS ) / ( SUN_POS - _crystal.pos.z );
 		_animation->draw( );
 		drawer->setModelMDL( _crystal );
-		viewer->setShadow( pos, SHADOW_SCALE, false );
+		viewer->setShadow( pos, SHADOW_DELIVERY_SCALE, false );
+		viewer->setShadow( _crystal.pos, SHADOW_CRYSTAL_SCALE, false );
 	} else {
 		_animation->draw( viewer );
-		viewer->setShadow( pos, SHADOW_SCALE );
+		viewer->setShadow( pos, SHADOW_DELIVERY_SCALE );
 	}
 	
 	if ( _state == STATE_WAIT && !_effect_count ) {
