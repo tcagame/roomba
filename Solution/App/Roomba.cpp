@@ -567,11 +567,14 @@ void Roomba::brakeRotation( ) {
 }
 
 void Roomba::holdCrystal( StagePtr stage ) {
+
 	if ( !_crystal ) {
 		_crystal = std::dynamic_pointer_cast< AppStage >( stage )->getHittingCrystal( _balls[ 0 ]->getPos( ), _balls[ 1 ]->getPos( ), _balls[ 0 ]->getVec( ), _balls[ 1 ]->getVec( ) );
 		if ( _crystal ) {
 			_crystal->setDropDown( false );
 			_first_crystal_catch = true;
+			SoundPtr sound = Sound::getTask( );
+			sound->playSE( "radio-wave01 .wav" );
 		}
 	}
 	if ( _first_crystal_catch ) {

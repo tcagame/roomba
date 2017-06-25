@@ -5,6 +5,7 @@
 #include "Roomba.h"
 #include "Viewer.h"
 #include "Shadow.h"
+#include "Sound.h"
 
 static const int MAX_EFFECT_COUNT = 30;
 static const double CRYSTAL_RADIUS = CRYSTAL_SIZE.x / 3;
@@ -213,6 +214,8 @@ void Crystal::shiftPos( Vector& base_pos ) {
 
 void Crystal::toBound( ) {
 	if ( !( _pos.z > _start_pos.z ) ) {
+		SoundPtr sound = Sound::getTask( );
+		sound->playSE( "collision.wav" );
 		_vec.z = BOUND_POW;
 		_drop_down = true;
 	}

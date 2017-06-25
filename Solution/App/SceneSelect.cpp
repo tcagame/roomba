@@ -33,7 +33,7 @@ _ispush( false ) {
 	drawer->loadGraph( GRAPH_OK, "UI/select_ok.png" );
 	drawer->loadGraph( GRAPH_BG, "title/title_bg.png" );
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle_blue1.png" );
-	drawer->loadGraph( GRAPH_STAGE_SELECT, "select/Stage Select.png" );
+	drawer->loadGraph( GRAPH_STAGE_SELECT, "select/Stage Select_1.png" );
 	drawer->loadGraph( GRAPH_NUM_1, "select/1_1.png" );
 	drawer->loadGraph( GRAPH_NUM_2, "select/2_1.png" );
 	drawer->loadGraph( GRAPH_NUM_3, "select/3_1.png" );
