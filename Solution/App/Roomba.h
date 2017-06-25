@@ -104,6 +104,7 @@ private:
 	std::array< Vector, 2 > _vec_sub;
 	std::array< double, 2 > _vec_z;
 	std::array< Vector, 2 > _vec_delivery;
+	std::array< Vector, 2 > _pause_pos;
 	MOVE_STATE _state;
 	std::array< BallPtr, 2 > _balls;
 	LaserPtr _laser;
