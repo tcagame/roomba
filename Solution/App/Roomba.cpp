@@ -90,7 +90,7 @@ void Roomba::update( StagePtr stage, CameraPtr camera, ShadowPtr shadow, TimerCo
 	updateState( );
 	holdCrystal( stage );
 	updateBalls( stage );
-	shiftPos( camera );
+	shiftPos( stage, camera );
 	setShadow( shadow );
 	updateDeliverys( );
 }
@@ -310,12 +310,12 @@ void Roomba::updateDeliverys( ) {
 }
 
 void Roomba::updateLaser( CameraConstPtr camera ) {
-	bool show = !(
-		_state == MOVE_STATE_LIFT_DOWN ||
-		_state == MOVE_STATE_LIFT_UP ||
-		_state == MOVE_STATE_REFLECTION ||
-		_state == MOVE_STATE_REFLECTION_RESTORE ||
-		_state == MOVE_STATE_STARTING );
+	bool show = (
+		_state == MOVE_STATE_NEUTRAL ||
+		_state == MOVE_STATE_ROTATION_LEFT ||
+		_state == MOVE_STATE_ROTATION_RIGHT ||
+		_state == MOVE_STATE_TRANSLATION
+		);
 	_laser->show( show );
 	_laser->update( getCentralPos( ), camera, _balls[ BALL_LEFT ]->getPos( ), _balls[ BALL_RIGHT ]->getPos( ), _crystal );
 }
@@ -595,7 +595,8 @@ void Roomba::holdCrystal( StagePtr stage ) {
 			 _crystal->isFinished( ) ||
 			_state == MOVE_STATE_REFLECTION ||
 			_state == MOVE_STATE_REFLECTION_RESTORE ||
-			_state == MOVE_STATE_STARTING ) {
+			_state == MOVE_STATE_STARTING ||
+			_state == MOVE_STATE_GAMEOVER ) {
 			_crystal->setDropDown( true );
 			_crystal = CrystalPtr( );
 			return;
@@ -993,7 +994,7 @@ bool Roomba::isHoldCrystal( ) const {
 	return ( _crystal != CrystalPtr( ) );
 }
 
-void Roomba::shiftPos( CameraPtr camera ) {
+void Roomba::shiftPos( StagePtr stage, CameraPtr camera ) {
 	Vector pos[ 2 ];
 	pos[ 0 ] = _balls[ 0 ]->getPos( );
 	pos[ 1 ] = _balls[ 1 ]->getPos( );
@@ -1021,6 +1022,7 @@ void Roomba::shiftPos( CameraPtr camera ) {
 			_crystal->shiftPos( central_pos );
 		}
 		app_camera->shiftPos( central_pos );
+		std::dynamic_pointer_cast< AppStage >( stage )->shiftPos( );
 	}
 }
 
@@ -1081,6 +1083,9 @@ void Roomba::replacementVec( ) {
 
 void Roomba::retry( ) {
 	initVec( );
+	_trans_speed = Vector( );
+	_rot_speed = 0;
+	_crystal = CrystalPtr( );
 	_state = MOVE_STATE_LIFT_DOWN;
 	_wait_count = 0;
 	_finished = false;

@@ -183,3 +183,11 @@ void Delivery::setCrystal( Vector crystal_pos ) {
 bool Delivery::isHaveCrystal( ) {
 	return _have_crystal;
 }
+
+void Delivery::shiftPos( ) {
+	Vector pos = _animation->getPos( );
+	pos.x += STAGE_WIDTH_NUM * WORLD_SCALE;
+	pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
+	_animation->setPos( pos );
+	_crystal.pos = pos - Vector( 0, 0, FOOT );
+}

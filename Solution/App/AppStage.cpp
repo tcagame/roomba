@@ -456,3 +456,17 @@ void AppStage::adjustPos( Vector& pos, Vector& base_pos ) const {
 		pos.y += STAGE_HEIGHT_NUM * WORLD_SCALE;
 	}
 }
+
+void AppStage::shiftPos( ) {
+	std::list< DeliveryPtr >::iterator delivery_ite = _deliverys.begin( );
+	const std::list< DeliveryPtr >::iterator DELIVERY_ITE_END = _deliverys.end( );
+	while ( delivery_ite != DELIVERY_ITE_END ) {
+		DeliveryPtr delivery = (*delivery_ite);
+		if ( delivery ) {
+			if ( delivery->isHaveCrystal( ) ) {
+				delivery->shiftPos( );
+			}
+		}
+		delivery_ite++;
+	}
+}
