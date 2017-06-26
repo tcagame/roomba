@@ -81,7 +81,7 @@ private:
 	void brakeRotation( );
 	void holdCrystal( StagePtr stage );
 	void checkLeftRight( CameraPtr camera );
-	void shiftPos( CameraPtr camera );
+	void shiftPos( StagePtr stage, CameraPtr camera );
 	void announceChangeState( MOVE_STATE state );
 	void setShadow( ShadowPtr shadow );
 	void drawCommandPrompt( ) const;

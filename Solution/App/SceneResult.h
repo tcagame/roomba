@@ -10,7 +10,6 @@ private:
 	int drawTime( int x, int y, int time ) const;
 	void drawThisTime( ) const;
 	void drawBestTime( ) const;
-	void drawOperationRank( ) const;
 	void loadBestTime( );
 	void saveBestTime( );
 	void drawFrame( ) const;
@@ -25,6 +24,5 @@ private:
 	int _select;
 	int _this_time;
 	int _best_time;
-	int _col_num;
 };
 

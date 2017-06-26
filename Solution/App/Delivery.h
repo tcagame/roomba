@@ -20,6 +20,7 @@ public:
 	bool isFinished( ) const;
 	bool isHaveCrystal( );
 	const Vector& getPos( ) const;
+	void shiftPos( );
 private:
 	enum STATE {
 		STATE_WAIT,

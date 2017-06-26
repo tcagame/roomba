@@ -24,6 +24,7 @@ public:
 	bool isOnDelivery( Vector& pos );
 	int getDeliveryCount( ) const;
 	void reset( );
+	void shiftPos( );
 	std::list< CrystalPtr > getCrystalList( ) const;
 private:
 	void updateCrystal( TimerPtr timer );
