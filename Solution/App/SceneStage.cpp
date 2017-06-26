@@ -134,10 +134,10 @@ Scene::NEXT SceneStage::update( ) {
 		}
 		_timer->reset( );
 	}
-	_roomba->draw( );
 	_stage->draw( );
 	_shadow->update( );
 	_shadow->draw( );
+	_roomba->draw( );
 	drawUI( );
 
 	if ( _roomba->isFinished( ) && _roomba->getMoveState( ) == Roomba::MOVE_STATE_GAMEOVER ) {
