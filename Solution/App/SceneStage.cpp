@@ -26,12 +26,11 @@ const int FPS = 60;
 const int CIRCLE_ANIME_FLAME = 1;
 const int MAX_CHOICE_COUNT = 24 * CIRCLE_ANIME_FLAME;
 const double GUIDELINE_VIEW_RANGE = 5 * WORLD_SCALE;
-const double FADE_IN_RETRY_TIME = 30;
 
 SceneStage::SceneStage( int stage_num ) :
-_draw_count( 0 ),
 _choice_count( 0 ),
-_retry( true ) {
+_tutorial_count( 0 ),
+_crystal_catch_count( 0 ) {
 	_shadow = ShadowPtr( new Shadow );
 	_guideline = ModelPtr( new Model );
 	_viewer = ViewerPtr( new Viewer( _shadow ) );
@@ -40,14 +39,23 @@ _retry( true ) {
 	_stage = StagePtr( new AppStage( stage_num, _viewer, _timer, _roomba ) );//0-2:通常 3:test_stage
 	_camera = CameraPtr( new AppCamera( _roomba ) );
 	
+	_tutorial = false;
+	if ( stage_num == 0 ) {
+		_tutorial = true;
+		DrawerPtr drawer = Drawer::getTask( );
+		drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
+		drawer->loadGraph( GRAPH_CONTROLLER_TRANSLATION, "controller/translation.png" );
+		drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
+		drawer->loadGraph( GRAPH_TUTORIAL_CRYSTAL, "UI/manual_1.png" );
+		drawer->loadGraph( GRAPH_TUTORIAL_DELIVERY, "UI/manual_2.png" );
+	}
 
 	_delivery_number[ 0 ].state = NUMBER_STATE_IN;
 	_delivery_number[ 1 ].state = NUMBER_STATE_NONE;
 	_delivery_number[ 0 ].num = _stage->getMaxDeliveryNum( ) - std::dynamic_pointer_cast<AppStage>( _stage )->getDeliveryCount( ) + 1;
 	_delivery_number[ 0 ].y = -UI_NUM_SCROLL_TIME * UI_NUM_SCROLL_SPEED;
 	_phase_number[ 0 ].state = NUMBER_STATE_IN;
-	_phase_number[ 1 ].state = NUMBER_STATE_NONE;
-	
+	_phase_number[ 1 ].state = NUMBER_STATE_NONE;	
 
 	_guideline->load( "../Resource/Model/Guideline/guideline.mdl" );
 	_guideline->multiply( Matrix::makeTransformScaling( Vector( 0.3, 0.3, 0.3 ) ) );
@@ -61,16 +69,10 @@ _retry( true ) {
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
 	drawer->loadGraph( GRAPH_PHASE, "UI/phase.png" );
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
-	drawer->loadGraph( GRAPH_RETRY, "UI/retry.png" );
-	drawer->loadGraph( GRAPH_RETRY_YES_NO, "UI/retry_select_yes_no.png" );
-	drawer->loadGraph( GRAPH_FRAME, "UI/select_frame.png" );
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
 	drawer->loadGraph( GRAPH_GUIDELINE, "Model/Guideline/guideline.jpg" );
 	drawer->loadGraph( GRAPH_FLOOR, "Model/Stage/floor.jpg" );
 	drawer->loadGraph( GRAPH_WALL, "Model/Stage/wall.jpg" );
-	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
-	drawer->loadGraph( GRAPH_CONTROLLER_TRANSLATION, "controller/translation.png" );
-	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
 	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 
 	Matrix crystal_scale = Matrix::makeTransformScaling( CRYSTAL_SIZE );
@@ -108,11 +110,13 @@ Scene::NEXT SceneStage::update( ) {
 		_viewer->update( _roomba->getStartPos( ) );
 	} else {
 		_viewer->update( _roomba->getCentralPos( ) );
+		_tutorial_count++;
 	}
 
-	if ( _roomba->isFinished( ) && _roomba->getMoveState( ) != Roomba::MOVE_STATE_GAMEOVER ) {
+	if ( _roomba->isFinished( ) ) {
 		_timer->finalize( );
 		_roomba->finalize( );
+		Game::getTask( )->setResult( _roomba->getMoveState( ) != Roomba::MOVE_STATE_GAMEOVER );
 		return NEXT_RESULT;
 	}
 
@@ -140,12 +144,6 @@ Scene::NEXT SceneStage::update( ) {
 	_roomba->draw( );
 	drawUI( );
 
-	if ( _roomba->isFinished( ) && _roomba->getMoveState( ) == Roomba::MOVE_STATE_GAMEOVER ) {
-		drawRetry( );
-		drawCircle( );
-		return NextRetry( );
-	}
-
 	return Scene::NEXT_CONTINUE;
 }
 
@@ -153,6 +151,12 @@ void SceneStage::drawUI( ) {
 	drawUIDelivery( );
 	drawUILinKGauge( );
 	drawUIMap( );
+	if ( _tutorial ) {
+		if ( _roomba->isFirstCrystalCatch( ) ) {
+			_crystal_catch_count++;
+		}
+		drawTutorial( );
+	}
 }
 
 void SceneStage::drawUILinKGauge( ) {
@@ -314,99 +318,58 @@ void SceneStage::drawUIMap( ) const {
 	drawGuideLine( guideline_distance );
 }
 
-void SceneStage::drawRetry( ) const {
-	DrawerPtr drawer = Drawer::getTask( );
-	ApplicationPtr app = Application::getInstance( );
-	int WIDTH = app->getWindowWidth( );
-	int HEIGHT = app->getWindowHeight( );
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( 0, 0, 0, 0, 512, 512, WIDTH, HEIGHT ), GRAPH_COMMAND_PROMPT_BACK ) );
-
-	const int TEXTURE_SIZE = 512;
-	double RATIO = (double)( _draw_count ) / FADE_IN_RETRY_TIME;
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( WIDTH / 2 - TEXTURE_SIZE / 2, HEIGHT / 2 - TEXTURE_SIZE / 2 ), GRAPH_RETRY, Drawer::BLEND_ALPHA, RATIO ) );
-
-	const int SELECT_X = 192;
-	const int SELECT_Y = 96;
-	int sy = HEIGHT / 2 + SELECT_Y / 6;
-	int sx = WIDTH / 2 - SELECT_X - 30;
-	if ( !_retry ) {
-		sx += SELECT_X + 60;
-	}
-
-	int flow = _draw_count % 20;
-	if ( flow > 11 ) {
-		flow = 20 - flow;
-	}
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx - flow, sy - flow, 0, 0, SELECT_X, SELECT_Y, sx + SELECT_X + flow, sy + SELECT_Y + flow ), GRAPH_FRAME, Drawer::BLEND_ALPHA, RATIO ) ); // frame
-}
-
-void SceneStage::drawCircle( ) const {
-	if ( _draw_count < FADE_IN_RETRY_TIME ) {
-		return;
-	}
-
+void SceneStage::drawTutorial( ) const {
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
-	
-	const int CIRCLE_SIZE = 100;
-	int idx = _choice_count / CIRCLE_ANIME_FLAME;
-	if ( idx > 24 || getFadeOutCount( ) != MAX_FADE_COUNT  ) {
-		idx = 24;
-	}
-	int tx = idx % 5;
-	int ty = idx / 5;
-	int sx = WIDTH / 2 - 180;
-	if ( !_retry ) {
-		sx += 260; // yes no の枠分右にずらす
-	}
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( sx, HEIGHT / 2 + 10, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
-	drawer->setSprite( sprite );
-}	
-
-void SceneStage::retry( ) {
-	_roomba->retry( );
-	_timer->reset( );
-}
-
-Scene::NEXT SceneStage::NextRetry( ) {
-	_draw_count++;
-	Sound::getTask( )->stopSE( "alertSE.wav" );
-	DevicePtr device = Device::getTask( );
-	if ( device->getDirX( ) < 0 && 
-		 _choice_count == 0 ) {
-		_retry = true;
-	}
-	if ( device->getDirX( ) > 0 && 
-		 _choice_count == 0 ) {
-		_retry = false;
-	}
-
-	if ( ( device->getDirY( ) < 0 && device->getRightDirY( ) > 0 ) ||
-		 ( device->getDirY( ) > 0 && device->getRightDirY( ) < 0 ) ) {
-		_choice_count++;
-		if ( _choice_count == 1 ) {
-			SoundPtr sound = Sound::getTask( );
-			sound->playSE( "circleSE.wav" );
+	// コントローラー
+	// トランスレーション
+	if ( _roomba->getMoveState( ) != Roomba::MOVE_STATE_STARTING &&
+		 _tutorial_count < 120 ) {
+		GRAPH graph = GRAPH_CONTROLLER_NEUTRAL;
+		if ( _tutorial_count > 15 ) {
+			graph = GRAPH_CONTROLLER_TRANSLATION;
 		}
-	} else {
-		SoundPtr sound = Sound::getTask( );
-		sound->stopSE( "circleSE.wav" );
-		_choice_count = 0;
-	}
+		double ratio = 1.0;
+		if ( _tutorial_count < 15 ) {
+			ratio = (double)_tutorial_count / 15;
+		}
+		if ( _tutorial_count > 105 ) {
+			ratio = 1.0 - ( ( (double)_tutorial_count - 105 ) / 15 );
+		}
+		Drawer::Transform trans( ( WIDTH / 2 ) - 128, HEIGHT - 384, 0, 0, 512, 512, ( WIDTH / 2 ) + 128, HEIGHT - 128 );
+		drawer->setSprite( Drawer::Sprite( trans, graph, Drawer::BLEND_ALPHA, ratio ) );
 
-	if ( _choice_count > MAX_CHOICE_COUNT ) {
-		if ( _retry ) {
-			retry( );
-			_timer->reset( );
-			_choice_count = 0;
-			_draw_count = 0;
-		} else {
-			return NEXT_GAMEOVER;
+		// ゲーム目的メッセージ クリスタルを取る
+		if ( !_roomba->isFirstCrystalCatch( ) ) {
+			Drawer::Transform trans( ( WIDTH / 2 ) - 512, HEIGHT - 128, 0, 0, 1024, 128 );
+			drawer->setSprite( Drawer::Sprite( trans, GRAPH_TUTORIAL_CRYSTAL, Drawer::BLEND_ALPHA, ratio ) );
 		}
 	}
-	return NEXT_CONTINUE;
+	// ローテーション
+	if ( _roomba->isFirstCrystalCatch( ) &&
+		 _crystal_catch_count < 120 ) {
+		GRAPH graph = GRAPH_CONTROLLER_NEUTRAL;
+		if ( _crystal_catch_count > 15 ) {
+			graph = GRAPH_CONTROLLER_ROTATION;
+		}
+		double ratio = 1.0;
+		if ( _crystal_catch_count < 15 ) {
+			ratio = (double)_crystal_catch_count / 15;
+		}
+		if ( _crystal_catch_count > 105 ) {
+			ratio = 1.0 - ( (double)( _crystal_catch_count - 105 ) / 15 );
+		}
+		Drawer::Transform trans( ( WIDTH / 2 ) - 128, HEIGHT - 384, 0, 0, 512, 512, ( WIDTH / 2 ) + 128, HEIGHT - 128 );
+		drawer->setSprite( Drawer::Sprite( trans, graph, Drawer::BLEND_ALPHA, ratio ) );
+
+		// ゲーム目的メッセージ デリバリーへ
+		{
+			Drawer::Transform trans( ( WIDTH / 2 ) - 512, HEIGHT - 128, 0, 0, 1024, 128 );
+			drawer->setSprite( Drawer::Sprite( trans, GRAPH_TUTORIAL_DELIVERY, Drawer::BLEND_ALPHA, ratio ) );
+		}
+	}	
 }
 
 Vector SceneStage::getAdjustPos( Vector pos, Vector base_pos ) const {

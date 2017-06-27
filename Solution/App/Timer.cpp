@@ -60,6 +60,7 @@ void Timer::reset( ) {
 
 bool Timer::isTimeOver( ) const {
 	return ( _timer < 0 );
+	Sound::getTask( )->stopSE( "alertSE.wav" );
 }
 
 void Timer::finalize( ) {
