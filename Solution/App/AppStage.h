@@ -22,10 +22,11 @@ public:
 	Vector adjustCollisionToCrystal( Vector pos, Vector& vec, const double radius );
 	CrystalPtr getHittingCrystal( Vector& pos0, Vector& pos1, Vector& vec0, Vector& vec1) const;
 	bool isOnDelivery( Vector& pos );
-	int getDeliveryCount( ) const;
+	int getCarryCount( ) const;
 	void reset( );
 	void shiftPos( );
-	std::list< CrystalPtr > getCrystalList( ) const;
+	std::list< CrystalPtr > getCrystals( ) const;
+	std::list< DeliveryPtr > getDeliverys( ) const;
 	bool isFirstCrystalCarry( ) const;
 private:
 	void updateCrystal( TimerPtr timer );
@@ -48,7 +49,7 @@ private:
 	std::list< CrystalPtr > _crystals;
 	std::list< DeliveryPtr > _deliverys;
 	std::array< char, STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 > _map_data;
-	int _delivery_count;
+	int _carry_count;
 	bool _finished;
 	bool _first_crystal_carry;
 	ViewerPtr _viewer;
