@@ -23,8 +23,6 @@ private:
 	void drawUIMap( ) const;
 	void drawTutorial( ) const;
 	void drawGuideLine( Vector distance ) const;
-	void retry( );
-	Scene::NEXT NextRetry( );
 	Vector getAdjustPos( Vector pos, Vector base_pos ) const;
 private:
 	enum NUMBER_STATE {

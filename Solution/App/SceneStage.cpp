@@ -117,6 +117,9 @@ Scene::NEXT SceneStage::update( ) {
 		_timer->finalize( );
 		_roomba->finalize( );
 		Game::getTask( )->setResult( _roomba->getMoveState( ) != Roomba::MOVE_STATE_GAMEOVER );
+		if ( _roomba->getMoveState( ) != Roomba::MOVE_STATE_GAMEOVER ) {
+			Game::getTask( )->setOpenStage( );
+		}
 		return NEXT_RESULT;
 	}
 
@@ -343,7 +346,7 @@ void SceneStage::drawTutorial( ) const {
 
 		// ゲーム目的メッセージ クリスタルを取る
 		if ( !_roomba->isFirstCrystalCatch( ) ) {
-			Drawer::Transform trans( ( WIDTH / 2 ) - 512, HEIGHT - 128, 0, 0, 1024, 128 );
+			Drawer::Transform trans( ( WIDTH / 2 ) - 512, HEIGHT - 158 );
 			drawer->setSprite( Drawer::Sprite( trans, GRAPH_TUTORIAL_CRYSTAL, Drawer::BLEND_ALPHA, ratio ) );
 		}
 	}
@@ -366,7 +369,7 @@ void SceneStage::drawTutorial( ) const {
 
 		// ゲーム目的メッセージ デリバリーへ
 		{
-			Drawer::Transform trans( ( WIDTH / 2 ) - 512, HEIGHT - 128, 0, 0, 1024, 128 );
+			Drawer::Transform trans( ( WIDTH / 2 ) - 512, HEIGHT - 158 );
 			drawer->setSprite( Drawer::Sprite( trans, GRAPH_TUTORIAL_DELIVERY, Drawer::BLEND_ALPHA, ratio ) );
 		}
 	}	
