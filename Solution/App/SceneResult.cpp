@@ -85,7 +85,6 @@ void SceneResult::draw( ) const {
 	//drawBestTime( );
 	//drawBg( );
 	drawFadeBg( );
-	drawController( );
 	drawResult( );
 	drawGameClear( );
 	drawFrame( );
@@ -259,33 +258,6 @@ void SceneResult::drawFrame( ) const {
 		Drawer::Sprite sprite( trans, GRAPH_STAGE_SELECT );
 		drawer->setSprite( sprite );
 	}
-}
-
-void SceneResult::drawController( ) const {
-	ApplicationPtr app = Application::getInstance( );
-	const int WIDTH = app->getWindowWidth( );
-	const int HEIGHT = app->getWindowHeight( );
-
-	const int CONTROLLER_SIZE = 512;
-
-	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT * 4 / 6, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT * 4 / 6 + CONTROLLER_SIZE / 2 );
-	//Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT / 2 + CONTROLLER_SIZE / 6, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT / 2 + CONTROLLER_SIZE / 2 + CONTROLLER_SIZE / 6);
-	if ( _count % DRAW_TIME < DRAW_TIME * 2 / 3 ) {
-		Drawer::Sprite sprite( trans, GRAPH_CONTROLLER_ROTATION );
-		drawer->setSprite( sprite );
-	} else {
-		Drawer::Sprite sprite( trans, GRAPH_CONTROLLER_NEUTRAL );
-		drawer->setSprite( sprite );
-	}
-	int tx = 168;
-	int ty = 366;
-	int tw = 167;
-	int th = 74;
-	Drawer::Transform trans2( WIDTH / 2 - tw / 2, HEIGHT * 5 / 6, tx, ty,  tw,  th, WIDTH / 2 + tw / 2,  HEIGHT * 5 / 6 + th );
-	//Drawer::Sprite sprite( trans2, GRAPH_OK );
-	//drawer->setSprite( sprite );
-	
 }
 
 void SceneResult::drawCircle( ) const {
