@@ -9,7 +9,7 @@ static const int TITLE_WIDTH  = 1024;
 static const int TITLE_HEIGHT = 256;
 static const int DRAW_TIME = 100;
 static const int BRANK = 250;
-static const int CIRCLE_ANIME_FLAME = 3;
+static const int CIRCLE_ANIME_FLAME = 1;
 static const int MAX_TITLE_COUNT = 34 * 3;
 static const int MAX_CHOICE_COUNT = 24 * CIRCLE_ANIME_FLAME;
 
@@ -55,7 +55,8 @@ Scene::NEXT SceneTitle::update( ) {
 	}
 
 	// サークルカウント
-	if ( right_stick.y > 0 && left_stick.y < 0 ) {
+	if ( ( right_stick.y > 0 && left_stick.y < 0 ) ||
+		 ( right_stick.y < 0 && left_stick.y > 0 ) ) {
 		_choice_count++;
 		if ( _choice_count == 1 ) {
 			sound->playSE( "circleSE.wav" );

@@ -9,7 +9,7 @@
 static const int GRAPH_GAMEOVER_WIDTH  = 1024;
 static const int GRAPH_GAMEOVER_HEIGHT = 256;
 static const int BRANK = 300;
-static const int CIRCLE_ANIME_FLAME = 3;
+static const int CIRCLE_ANIME_FLAME = 1;
 static const int MAX_CHOICE_COUNT = 25 * CIRCLE_ANIME_FLAME;
 static const int THICK_FRAME_SIZE = 57;
 static const int TRIANGLE_CENTER_X = 312 / 2;
@@ -60,7 +60,8 @@ Scene::NEXT SceneGameOver::update( ) {
 	}
 
 	// サークルカウント
-	if ( right_stick.y > 0 && left_stick.y < 0 ) {
+	if ( ( right_stick.y > 0 && left_stick.y < 0 ) ||
+		 ( right_stick.y < 0 && left_stick.y > 0 ) ) {
 		_choice_count++;
 		if ( _choice_count == 1 ) {
 			sound->playSE( "circleSE.wav" );

@@ -14,7 +14,7 @@ static const int NUM_CENTER = 64 / 2;
 static const int PITCH = 150; 
 static const int MOVE_SPEED = 1;
 static const int MAX_MOVE_COUNT = 10;
-static const int CIRCLE_ANIME_FLAME = 3;
+static const int CIRCLE_ANIME_FLAME = 1;
 static const int MAX_CHOICE_COUNT = 25 * CIRCLE_ANIME_FLAME;
 static const int THICK_FRAME_SIZE = 57;
 static const int TRIANGLE_CENTER_X = 312 / 2;
@@ -70,7 +70,8 @@ Scene::NEXT SceneSelect::update( ) {
 	}
 
 	// サークルカウント
-	if ( right_stick.y > 0 && left_stick.y < 0 ) {
+	if ( ( right_stick.y > 0 && left_stick.y < 0 ) ||
+		 ( right_stick.y < 0 && left_stick.y > 0 ) ) {
 		_choice_count++;
 		if ( _choice_count == 1 ) {
 			sound->playSE( "circleSE.wav" );
@@ -81,7 +82,7 @@ Scene::NEXT SceneSelect::update( ) {
 	}
 
 	//　ステージ番号選択
-	if ( _move_count == 0 && _choice_count == 0 ) {
+	if ( _move_count == 0 && _choice_count == 0 && getFadeOutCount( ) == MAX_FADE_COUNT ) {
 		freazeSelect( );
 		if ( left_stick.x > 0 && !_ispush ) {
 			sound->playSE( "selectSE.wav" );
