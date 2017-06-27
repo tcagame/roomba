@@ -986,6 +986,10 @@ bool Roomba::isFinished( ) const {
 	return _finished;
 }
 
+bool Roomba::isFirstCrystalCatch( ) const {
+	return _first_crystal_catch;
+}
+
 Vector Roomba::getStartPos( ) const {
 	return ( START_POS[ 0 ] + START_POS[ 1 ] ) * 0.5;
 }
