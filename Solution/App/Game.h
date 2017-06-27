@@ -20,6 +20,7 @@ public:
 	void setResultTime( int time );
 	void setCollisionNum( int col_num );
 	void setResult( bool clear );
+	void setOpenStage( );
 private:
 	void changeScene( );
 private:
@@ -27,6 +28,7 @@ private:
 	int _stage_num;
 	int _result_time;
 	bool _stage_clear;
+	bool _open_stage;
 	Scene::NEXT _next;
 	ScenePtr _scene;
 };

@@ -20,13 +20,13 @@ static const int THICK_FRAME_SIZE = 57;
 static const int TRIANGLE_CENTER_X = 312 / 2;
 static const int DRAW_TIME = 100;
 
-
-SceneSelect::SceneSelect( ) :
+SceneSelect::SceneSelect( bool open_stage ) :
 _select( 0 ),
 _count( 0 ),
 _choice_count( 0 ),
 _move_count( 0 ),
-_ispush( false ) {
+_ispush( false ),
+_open_stage( open_stage ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
@@ -82,20 +82,26 @@ Scene::NEXT SceneSelect::update( ) {
 	}
 
 	//　ステージ番号選択
+	if ( _move_count == MAX_MOVE_COUNT - 3 ) {
+		if ( _rot_right ) {
+			_select++;
+		} else {
+			_select--;
+		}
+	}
+
 	if ( _move_count == 0 && _choice_count == 0 && getFadeOutCount( ) == MAX_FADE_COUNT ) {
 		freazeSelect( );
 		if ( left_stick.x > 0 && !_ispush ) {
 			sound->playSE( "selectSE.wav" );
 			_move_count++;
-			_select++;
 			_rot_right = true;
 			_ispush = true;
 		}
 		if ( left_stick.x < 0 && !_ispush ) {
 			sound->playSE( "selectSE.wav" );
-			_rot_right = false;
 			_move_count++;
-			_select--;
+			_rot_right = false;
 			_ispush = true;
 		}
 	}
@@ -107,6 +113,10 @@ Scene::NEXT SceneSelect::update( ) {
 		moveSelect( );
 		_move_count++;
 		_move_count %= MAX_MOVE_COUNT;
+	} else if ( !_open_stage && _select != 0 ) { // ステージ選択できないようにする
+		_move_count++;
+		_ispush = true;
+		sound->playSE( "selectSE.wav" );
 	}
 
 	if ( _select < 0 ) { 
@@ -123,8 +133,8 @@ void SceneSelect::draw( ) {
 	drawBg( );
 	drawRogo( );
 	drawOk( );
-	drawTriangle( );
 	drawSelect( );
+	drawTriangle( );
 	drawFrame( );
 	
 	drawCircle( );
@@ -212,13 +222,13 @@ void SceneSelect::moveSelect( ) {
 	Vector vec2;
 	Vector vec3;
 	if ( _rot_right ) {
-		vec1 = ( target3 - target1 ) * 0.1;
-		vec2 = ( target1 - target2 ) * 0.1;
-		vec3= ( target2 - target3 ) * 0.1;
+		vec1 = ( target3 - target1 ) * ( 1.0 / MAX_MOVE_COUNT );
+		vec2 = ( target1 - target2 ) * ( 1.0 / MAX_MOVE_COUNT );
+		vec3= ( target2 - target3 ) * ( 1.0 / MAX_MOVE_COUNT );
 	} else {
-		vec1 = ( target2 - target1 ) * 0.1;
-		vec2 = ( target3 - target2 ) * 0.1;
-		vec3 = ( target1 - target3 ) * 0.1;
+		vec1 = ( target2 - target1 ) * ( 1.0 / MAX_MOVE_COUNT );
+		vec2 = ( target3 - target2 ) * ( 1.0 / MAX_MOVE_COUNT );
+		vec3 = ( target1 - target3 ) * ( 1.0 / MAX_MOVE_COUNT );
 	}
 
 	_pos[ 0 ] += vec1;
