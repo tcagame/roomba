@@ -439,7 +439,6 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera, TimerPtr timer ) {
 			_crystal = CrystalPtr( );
 		}
 		if ( state == MOVE_STATE_WAIT ) {
-			timer->addTime( );
 			initVec( );
 			_trans_speed = Vector( );
 			_rot_speed = 0;

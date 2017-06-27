@@ -10,7 +10,6 @@ public:
 	void update( );
 	void draw( ) const;
 	void addTime( );
-	void reset( );
 	void finalize( );
 	bool isTimeOver( ) const;
 	int getTime( ) const;
