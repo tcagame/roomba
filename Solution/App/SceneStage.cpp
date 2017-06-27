@@ -139,7 +139,6 @@ Scene::NEXT SceneStage::update( ) {
 		if ( _timer->getTime( ) < 5 * FPS ) {
 			sound->stopSE( "alertSE.wav" );
 		}
-		_timer->reset( );
 	}
 	_stage->draw( );
 	_shadow->update( );

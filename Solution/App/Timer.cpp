@@ -26,6 +26,8 @@ void Timer::update( ) {
 		SoundPtr sound = Sound::getTask( );
 	    sound->playSE( "alertSE.wav", true );
 	}
+	_timer += _add_time;
+	_add_time = 0;
 }
 
 
@@ -46,12 +48,7 @@ void Timer::draw( ) const {
 }
 
 void Timer::addTime( ) {
-	//if ( _timer < 3 * FPS ) {
-	//	SoundPtr sound = Sound::getTask( );
-	//	sound->playBGM( "bgm_maoudamashii_cyber06.wav" );
-	//}
-	//_add_time += ADD_TIME;
-	//
+	_add_time += ADD_TIME;
 }
 
 void Timer::reset( ) {

@@ -33,7 +33,7 @@ public:
 	Roomba( );
 	virtual ~Roomba( );
 public:
-	void update( StagePtr stage, CameraPtr camera, ShadowPtr shadow, TimerConstPtr timer );
+	void update( StagePtr stage, CameraPtr camera, ShadowPtr shadow, TimerPtr timer );
 	void updateLaser( CameraConstPtr camera );
 	void draw( ) const;
 	void reset( );
@@ -62,7 +62,7 @@ private:
 private:
 	void updateState( );
 	void updateBalls( StagePtr stage );
-	void changeState( StagePtr stage, CameraPtr camera, TimerConstPtr timer );
+	void changeState( StagePtr stage, CameraPtr camera, TimerPtr timer );
 	void updateDeliverys( );
 	void moveTranslation( );
 	void moveRotation( );

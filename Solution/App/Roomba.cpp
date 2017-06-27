@@ -85,7 +85,7 @@ _start_count( 0 ) {
 Roomba::~Roomba( ) {
 }
 
-void Roomba::update( StagePtr stage, CameraPtr camera, ShadowPtr shadow, TimerConstPtr timer ) {
+void Roomba::update( StagePtr stage, CameraPtr camera, ShadowPtr shadow, TimerPtr timer ) {
 	changeState( stage, camera, timer );
 	updateState( );
 	holdCrystal( stage );
@@ -308,7 +308,7 @@ void Roomba::updateBalls( StagePtr stage ) {
 	}
 }
 
-void Roomba::changeState( StagePtr stage, CameraPtr camera, TimerConstPtr timer ) {
+void Roomba::changeState( StagePtr stage, CameraPtr camera, TimerPtr timer ) {
 	DevicePtr device = Device::getTask( );
 	Vector right_stick = Vector( device->getRightDirX( ), device->getRightDirY( ) ) * 0.002;
 	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) ) * 0.002;
@@ -438,6 +438,7 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera, TimerConstPtr timer 
 			_crystal = CrystalPtr( );
 		}
 		if ( state == MOVE_STATE_WAIT ) {
+			timer->addTime( );
 			initVec( );
 			_trans_speed = Vector( );
 			_rot_speed = 0;
