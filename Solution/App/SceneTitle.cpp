@@ -9,7 +9,7 @@ static const int TITLE_WIDTH  = 1024;
 static const int TITLE_HEIGHT = 256;
 static const int DRAW_TIME = 100;
 static const int BRANK = 250;
-static const int CIRCLE_ANIME_FLAME = 3;
+static const int CIRCLE_ANIME_FLAME = 1;
 static const int MAX_TITLE_COUNT = 34 * 3;
 static const int MAX_CHOICE_COUNT = 24 * CIRCLE_ANIME_FLAME;
 
@@ -17,6 +17,7 @@ SceneTitle::SceneTitle( ) :
 _count( 0 ),
 _choice_count( 0 ) {
 	DrawerPtr drawer = Drawer::getTask( );
+	drawer->loadGraph( GRAPH_MANUAL, "title/ok_manual.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
 	drawer->loadGraph( GRAPH_BG, "title/title_bg.png" );
@@ -55,7 +56,8 @@ Scene::NEXT SceneTitle::update( ) {
 	}
 
 	// サークルカウント
-	if ( right_stick.y > 0 && left_stick.y < 0 ) {
+	if ( ( right_stick.y > 0 && left_stick.y < 0 ) ||
+		 ( right_stick.y < 0 && left_stick.y > 0 ) ) {
 		_choice_count++;
 		if ( _choice_count == 1 ) {
 			sound->playSE( "circleSE.wav" );
@@ -70,6 +72,7 @@ Scene::NEXT SceneTitle::update( ) {
 void SceneTitle::draw( ) {
 	drawFadeBg( );
 	drawBg( );
+	drawManual( );
 	drawTitle( );
 	//drawPlease( );
 	drawController( );
@@ -168,4 +171,18 @@ void SceneTitle::drawCircle( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT * 6 / 8 - 16, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
-}	
+}
+
+void SceneTitle::drawManual( ) {
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+
+	const int tw = 1024;
+	const int th = 128;
+
+	DrawerPtr drawer = Drawer::getTask( );
+	Drawer::Transform trans( WIDTH / 2 - tw / 2, HEIGHT * 5 / 6, 0, 0, tw, th  );
+	Drawer::Sprite sprite( trans, GRAPH_MANUAL );
+	drawer->setSprite( sprite );
+}

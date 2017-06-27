@@ -23,7 +23,7 @@ const int UI_MAP_RANGE = 15;
 const int UI_NUM_SCROLL_TIME = 20;
 const int UI_NUM_SCROLL_SPEED = 2;
 const int FPS = 60;
-const int CIRCLE_ANIME_FLAME = 3;
+const int CIRCLE_ANIME_FLAME = 1;
 const int MAX_CHOICE_COUNT = 24 * CIRCLE_ANIME_FLAME;
 const double GUIDELINE_VIEW_RANGE = 5 * WORLD_SCALE;
 const double FADE_IN_RETRY_TIME = 30;
@@ -388,15 +388,17 @@ Scene::NEXT SceneStage::NextRetry( ) {
 	_draw_count++;
 	Sound::getTask( )->stopSE( "alertSE.wav" );
 	DevicePtr device = Device::getTask( );
-	if ( device->getDirX( ) < 0 ) {
+	if ( device->getDirX( ) < 0 && 
+		 _choice_count == 0 ) {
 		_retry = true;
 	}
-	if ( device->getDirX( ) > 0 ) {
+	if ( device->getDirX( ) > 0 && 
+		 _choice_count == 0 ) {
 		_retry = false;
 	}
 
-	if ( device->getDirY( ) < 0 &&
-		 device->getRightDirY( ) > 0 ) {
+	if ( ( device->getDirY( ) < 0 && device->getRightDirY( ) > 0 ) ||
+		 ( device->getDirY( ) > 0 && device->getRightDirY( ) < 0 ) ) {
 		_choice_count++;
 		if ( _choice_count == 1 ) {
 			SoundPtr sound = Sound::getTask( );

@@ -12,7 +12,6 @@ private:
 	void drawResult( );
 	void drawCircle( ) const;
 	void drawGameOver( );
-	void drawController( ) const;
 
 private:
 	int _count;

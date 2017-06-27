@@ -9,7 +9,7 @@
 static const int GRAPH_GAMEOVER_WIDTH  = 1024;
 static const int GRAPH_GAMEOVER_HEIGHT = 256;
 static const int BRANK = 300;
-static const int CIRCLE_ANIME_FLAME = 3;
+static const int CIRCLE_ANIME_FLAME = 1;
 static const int MAX_CHOICE_COUNT = 25 * CIRCLE_ANIME_FLAME;
 static const int THICK_FRAME_SIZE = 57;
 static const int TRIANGLE_CENTER_X = 312 / 2;
@@ -60,7 +60,8 @@ Scene::NEXT SceneGameOver::update( ) {
 	}
 
 	// サークルカウント
-	if ( right_stick.y > 0 && left_stick.y < 0 ) {
+	if ( ( right_stick.y > 0 && left_stick.y < 0 ) ||
+		 ( right_stick.y < 0 && left_stick.y > 0 ) ) {
 		_choice_count++;
 		if ( _choice_count == 1 ) {
 			sound->playSE( "circleSE.wav" );
@@ -74,7 +75,6 @@ Scene::NEXT SceneGameOver::update( ) {
 
 void SceneGameOver::draw( ) {
 	drawFadeBg( );
-	drawController( );
 	drawResult( );
 	drawGameOver( );
 	drawFrame( );
@@ -151,32 +151,6 @@ void SceneGameOver::drawFrame( ) {
 	}
 }
 
-void SceneGameOver::drawController( ) const {
-	ApplicationPtr app = Application::getInstance( );
-	const int WIDTH = app->getWindowWidth( );
-	const int HEIGHT = app->getWindowHeight( );
-
-	const int CONTROLLER_SIZE = 512;
-
-	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT * 4 / 6, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT * 4 / 6 + CONTROLLER_SIZE / 2 );
-	//Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT / 2 + CONTROLLER_SIZE / 6, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT / 2 + CONTROLLER_SIZE / 2 + CONTROLLER_SIZE / 6);
-	if ( _count % DRAW_TIME < DRAW_TIME * 2 / 3 ) {
-		Drawer::Sprite sprite( trans, GRAPH_CONTROLLER_ROTATION );
-		drawer->setSprite( sprite );
-	} else {
-		Drawer::Sprite sprite( trans, GRAPH_CONTROLLER_NEUTRAL );
-		drawer->setSprite( sprite );
-	}
-	int tx = 168;
-	int ty = 366;
-	int tw = 167;
-	int th = 74;
-	Drawer::Transform trans2( WIDTH / 2 - tw / 2, HEIGHT * 5 / 6, tx, ty,  tw,  th, WIDTH / 2 + tw / 2,  HEIGHT * 5 / 6 + th );
-	//Drawer::Sprite sprite( trans2, GRAPH_OK );
-	//drawer->setSprite( sprite );
-	
-}
 
 void SceneGameOver::drawCircle( ) const {
 	ApplicationPtr app = Application::getInstance( );
