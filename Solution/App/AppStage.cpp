@@ -13,7 +13,7 @@ const double DELIVERY_POS_Z = FLOOR_POS_Z + WORLD_SCALE;
 const double CRYSTAL_POS_Z = 0;
 
 AppStage::AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer, RoombaPtr roomba ) :
-_delivery_count( 0 ),
+_carry_count( 0 ),
 _viewer( viewer ),
 _finished( false ),
 _first_crystal_carry( true ),
@@ -141,13 +141,10 @@ void AppStage::loadCrystal( ) {
 
 
 void AppStage::loadDelivery( ) {
-	_delivery_count++;
-	if ( _delivery_count > getMaxDeliveryNum( ) ) {
-		_finished = true;
-	}
+	
 	std::list< DeliveryPtr >::const_iterator ite = _deliverys.begin( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if (  getData( i ).delivery == _delivery_count ) {
+		if (  getData( i ).delivery != 0 ) {
 			Vector pos = Vector( ( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, ( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2, DELIVERY_POS_Z );
 			pos += Vector( STAGE_WIDTH_NUM * WORLD_SCALE, STAGE_HEIGHT_NUM * WORLD_SCALE );
 			_deliverys.push_back( DeliveryPtr( new Delivery( pos ) ) );
@@ -381,16 +378,23 @@ bool AppStage::isOnDelivery( Vector& pos ) {
 			continue;
 		}
 		delivery->setCrystal( pos );
-		loadDelivery( );
 		_first_crystal_carry = false;
 		result = true;
+		_carry_count++;
+		if ( _carry_count > getMaxDeliveryNum( ) ) {
+			_finished = true;
+		}
 		break;
 	}
 	return result;
 }
 
-std::list< CrystalPtr > AppStage::getCrystalList( ) const {
+std::list< CrystalPtr > AppStage::getCrystals( ) const {
 	return _crystals;
+}
+
+std::list< DeliveryPtr > AppStage::getDeliverys( ) const {
+	return _deliverys;
 }
 
 void AppStage::drawFloor( ) const {
@@ -401,8 +405,8 @@ void AppStage::drawWall( ) const {
 	_viewer->drawWall( _walls );
 }
 
-int AppStage::getDeliveryCount( ) const {
-	return _delivery_count;
+int AppStage::getCarryCount( ) const {
+	return _carry_count;
 }
 
 bool AppStage::isCollisionToSquare( Vector& square_pos, Vector pos, double radius ) const {

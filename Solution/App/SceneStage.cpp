@@ -12,6 +12,7 @@
 #include "Sound.h"
 #include "Model.h"
 #include "Shadow.h"
+#include "Delivery.h"
 
 const int UI_PHASE_FOOT_X = 100;
 const int UI_PHASE_Y = 40;
@@ -52,7 +53,7 @@ _crystal_catch_count( 0 ) {
 
 	_delivery_number[ 0 ].state = NUMBER_STATE_IN;
 	_delivery_number[ 1 ].state = NUMBER_STATE_NONE;
-	_delivery_number[ 0 ].num = _stage->getMaxDeliveryNum( ) - std::dynamic_pointer_cast<AppStage>( _stage )->getDeliveryCount( ) + 1;
+	_delivery_number[ 0 ].num = _stage->getMaxDeliveryNum( ) - std::dynamic_pointer_cast<AppStage>( _stage )->getCarryCount( ) + 1;
 	_delivery_number[ 0 ].y = -UI_NUM_SCROLL_TIME * UI_NUM_SCROLL_SPEED;
 	_phase_number[ 0 ].state = NUMBER_STATE_IN;
 	_phase_number[ 1 ].state = NUMBER_STATE_NONE;	
@@ -172,7 +173,7 @@ void SceneStage::drawUIDelivery( ) {
 	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
 	int scr_width = app->getWindowWidth( );
 
-	int delivery_num = _stage->getMaxDeliveryNum( ) - app_stage->getDeliveryCount( ) + 1;
+	int delivery_num = _stage->getMaxDeliveryNum( ) - app_stage->getCarryCount( ) + 1;
 	
 	int x = scr_width - UI_PHASE_FOOT_X;
 	int y = UI_PHASE_Y;
@@ -254,31 +255,6 @@ void SceneStage::drawUIMap( ) const {
 		const int TEX_SIZE = 128;
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, tx * TEX_SIZE, ty * TEX_SIZE, TEX_SIZE, TEX_SIZE, sx2, sy2 ), GRAPH_RADAR ) );
 	}
-	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		//デリバー表示
-		if ( _stage->getData( i ).delivery == app_stage->getDeliveryCount( ) ) {
-			int x = i % STAGE_WIDTH_NUM;
-			int y = i / STAGE_WIDTH_NUM;
-			Vector station_pos( i % STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2, i / STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2 ); 
-			Vector distance = ( getAdjustPos( station_pos, base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
-			double length = distance.getLength( );
-			if ( _roomba->isHoldCrystal( ) &&
-				 std::dynamic_pointer_cast< AppStage >( _stage )->isFirstCrystalCarry( ) ) {
-				if ( length < guideline_distance.getLength( ) ) {
-					guideline_distance = distance;
-				}
-			}
-			if ( distance.getLength( ) > RANGE ) {
-				distance = distance.normalize( ) * RANGE;
-
-			}
-			distance = mat.multiply( distance );
-			int sx = (int)( map_central_sx + distance.x - WORLD_SCALE / 4 );
-			int sy = (int)( map_central_sy + distance.y - WORLD_SCALE / 4 );
-			drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 32, 32, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
-			break;
-		}
-	}
 	//ルンバ表示
 	for ( int i = 0; i < 2; i++ ) {
 		Vector distance = ( getAdjustPos( _roomba->getBallPos( i ), base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
@@ -290,8 +266,39 @@ void SceneStage::drawUIMap( ) const {
 		int sy = (int)( map_central_sy + distance.y );
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 48, 16, 16, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
 	}
+	//デリバー表示
+	std::list< DeliveryPtr > deliverys = app_stage->getDeliverys( );
+	std::list< DeliveryPtr >::const_iterator delivery_ite = deliverys.begin( );
+	while ( delivery_ite != deliverys.end( ) ) {
+		DeliveryPtr delivery = *delivery_ite;
+		if ( !delivery ) {
+			delivery_ite++;
+			continue;
+		}
+		if ( delivery->isHaveCrystal( ) ) {
+			delivery_ite++;
+			continue;
+		}
+		Vector pos = delivery->getPos( );
+		pos.z = 0;
+		Vector distance = ( getAdjustPos( pos, base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
+		if ( !_roomba->isHoldCrystal( ) &&
+			 ! _roomba->isFirstCrystalCatch( ) ) {
+			if ( distance.getLength( ) < guideline_distance.getLength( ) ) {
+				guideline_distance = distance;
+			}
+		}
+		if ( distance.getLength( ) > RANGE ) {
+			distance = distance.normalize( ) * RANGE;
+		}
+		distance = mat.multiply( distance );
+		int sx = (int)( map_central_sx + distance.x );
+		int sy = (int)( map_central_sy + distance.y );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 0, 32, 32, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
+		delivery_ite++;
+	}
 	//クリスタル表示
-	std::list< CrystalPtr > crystals = app_stage->getCrystalList( );
+	std::list< CrystalPtr > crystals = app_stage->getCrystals( );
 	std::list< CrystalPtr >::const_iterator crystal_ite = crystals.begin( );
 	while ( crystal_ite != crystals.end( ) ) {
 		CrystalPtr crystal = *crystal_ite;
