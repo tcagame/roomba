@@ -372,7 +372,6 @@ void SceneStage::retry( ) {
 
 Scene::NEXT SceneStage::NextRetry( ) {
 	_draw_count++;
-	Sound::getTask( )->stopSE( "alertSE.wav" );
 	DevicePtr device = Device::getTask( );
 	if ( device->getDirX( ) < 0 && 
 		 _choice_count == 0 ) {

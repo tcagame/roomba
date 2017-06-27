@@ -410,6 +410,7 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera, TimerConstPtr timer 
 
 	if ( timer->isTimeOver( ) ) {
 		state = MOVE_STATE_GAMEOVER;
+		Sound::getTask( )->stopSE( "alertSE.wav" );
 	}
 
 	if ( std::dynamic_pointer_cast< AppStage >( stage )->isFinished( ) ) {
