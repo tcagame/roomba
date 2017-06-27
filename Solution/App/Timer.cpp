@@ -7,7 +7,7 @@
 const int FPS = 60;
 const int START_TIME = 20 * FPS;
 const int ADD_TIME = 5 * FPS;
-const int RECOVERY_SPEED = 15;
+const int RECOVERY_SPEED = 8;
 
 Timer::Timer( ) :
 _timer( START_TIME ),
@@ -26,8 +26,13 @@ void Timer::update( ) {
 		SoundPtr sound = Sound::getTask( );
 	    sound->playSE( "alertSE.wav", true );
 	}
-	_timer += _add_time;
-	_add_time = 0;
+	if ( _add_time > RECOVERY_SPEED ) {
+		_add_time -= RECOVERY_SPEED;
+		_timer += RECOVERY_SPEED;
+	} else {
+		_timer += _add_time;
+		_add_time = 0;
+	}
 }
 
 
@@ -51,9 +56,6 @@ void Timer::addTime( ) {
 	_add_time += ADD_TIME;
 }
 
-void Timer::reset( ) {
-	_timer = START_TIME;
-}
 
 bool Timer::isTimeOver( ) const {
 	return ( _timer < 0 );
