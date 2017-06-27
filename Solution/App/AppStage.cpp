@@ -16,6 +16,7 @@ AppStage::AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer, RoombaPtr r
 _delivery_count( 0 ),
 _viewer( viewer ),
 _finished( false ),
+_first_crystal_carry( true ),
 _timer( timer ),
 _roomba( roomba ) {
 	load( stage_num );//0~2:í èÌ 3:test_stage
@@ -35,6 +36,10 @@ void AppStage::reset( ) {
 
 bool AppStage::isFinished( ) const {
 	return _finished;
+}
+
+bool AppStage::isFirstCrystalCarry( ) const {
+	return _first_crystal_carry;
 }
 
 void AppStage::update( CameraPtr camera ) {
@@ -332,15 +337,15 @@ void AppStage::loadMapData( ) {
 
 void AppStage::loadWall( ) {
 	int stage_num = getStageNum( );
-	for ( int i = 0; i < WALL_DIV_SIZE; i++ ) {
-		for ( int j = 0; j < 4; j++ ) {
-			int idx = WALL_DIV_SIZE * i + j;
+	for ( int i = 0; i < 4; i++ ) {
+		for ( int j = 0; j < WALL_DIV_SIZE; j++ ) {
+			int idx = i * 4 + j;
 			if ( _walls[ idx ] ) {
 				_walls[ idx ].reset( );
 				_walls[ idx ] = ModelPtr( );
 			}
 			_walls[ idx ] = ModelPtr( new Model );
-			_walls[ idx ]->load( "../Resource/Model/Stage/_wall_" + std::to_string( stage_num ) + "_" + std::to_string( i ) + ".mdl" );
+			_walls[ idx ]->load( "../Resource/Model/Stage/_wall_" + std::to_string( stage_num ) + "_" + std::to_string( j ) + ".mdl" );
 			_walls[ idx ]->multiply( Matrix::makeTransformScaling( WALL_SIZE ) );
 		}
 	}
@@ -377,6 +382,7 @@ bool AppStage::isOnDelivery( Vector& pos ) {
 		}
 		delivery->setCrystal( pos );
 		loadDelivery( );
+		_first_crystal_carry = false;
 		result = true;
 		break;
 	}
@@ -388,18 +394,11 @@ std::list< CrystalPtr > AppStage::getCrystalList( ) const {
 }
 
 void AppStage::drawFloor( ) const {
-	for ( int i = 0; i < 4; i++ ) {
-		_viewer->drawModelMDLMulti( _floor[ i ], GRAPH_FLOOR, i );
-	}
+	_viewer->drawFloor( _floor );
 }
 
 void AppStage::drawWall( ) const {
-	for ( int i = 0; i < WALL_DIV_SIZE; i++ ) {
-		for ( int j = 0; j < 4; j++ ) {
-			int idx = WALL_DIV_SIZE * i + j;
-			_viewer->drawModelMDLMulti( _walls[ idx ], GRAPH_WALL, j );
-		}
-	}
+	_viewer->drawWall( _walls );
 }
 
 int AppStage::getDeliveryCount( ) const {

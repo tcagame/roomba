@@ -21,6 +21,7 @@ private:
 	void drawUIDelivery( );
 	void drawUILinKGauge( );
 	void drawUIMap( ) const;
+	void drawGuideLine( Vector distance ) const;
 	void retry( );
 	Scene::NEXT NextRetry( );
 	Vector getAdjustPos( Vector pos, Vector base_pos ) const;
