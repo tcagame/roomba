@@ -44,7 +44,7 @@ const double EFFECT_REBOOT_SIZE = 0.7;
 const double EFFECT_CHANGE_STATE_SIZE = 0.7;
 //待機時間
 const int WAIT_TIME = 180;
-const int START_TIME = 230; // 随時要更新　ルンバがSTART_POSに配置されるまでのフレーム
+const int START_TIME = 180; // 随時要更新　ルンバがSTART_POSに配置されるまでのフレーム
 
 const Vector START_POS[ 2 ] {//スケールが MIN < size < MAXになるようにする
 	( Vector( STAGE_WIDTH_NUM + 19, STAGE_HEIGHT_NUM + 3 ) * WORLD_SCALE + Vector( 0, 0, BALL_RADIUS ) ),
@@ -120,42 +120,6 @@ void Roomba::draw( ) const {
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( 0, 0, 0, 0, 512, 512, WIDTH, HEIGHT ), GRAPH_COMMAND_PROMPT_BACK ) );
 	}
 	drawCommandPrompt( );
-
-	
-	// チュートリアルコントローラー
-	if ( _start_count > START_TIME &&
-		 _start_count < START_TIME + 120 ) {
-		GRAPH graph = GRAPH_CONTROLLER_NEUTRAL;
-		if ( _start_count > START_TIME + 15 ) {
-			graph = GRAPH_CONTROLLER_TRANSLATION;
-		}
-		double ratio = 1.0;
-		if ( _start_count < START_TIME + 15 ) {
-			ratio = (double)( _start_count - START_TIME ) / 15;
-		}
-		if ( _start_count > START_TIME + 105 ) {
-			ratio = 1.0 - ( ( (double)_start_count - ( START_TIME + 105 ) ) / 15 );
-		}
-		Drawer::Transform trans( ( WIDTH / 2 ) - 128, HEIGHT - 256, 0, 0, 512, 512, ( WIDTH / 2 ) + 128, HEIGHT );
-		drawer->setSprite( Drawer::Sprite( trans, graph, Drawer::BLEND_ALPHA, ratio ) );
-	}
-
-	if ( _first_crystal_catch &&
-		 _crystal_catch_count < 120 ) {
-		GRAPH graph = GRAPH_CONTROLLER_NEUTRAL;
-		if ( _crystal_catch_count > 15 ) {
-			graph = GRAPH_CONTROLLER_ROTATION;
-		}
-		double ratio = 1.0;
-		if ( _crystal_catch_count < 15 ) {
-			ratio = (double)_crystal_catch_count / 15;
-		}
-		if ( _crystal_catch_count > 105 ) {
-			ratio = 1.0 - ( (double)( _crystal_catch_count - 105 ) / 15 );
-		}
-		Drawer::Transform trans( ( WIDTH / 2 ) - 128, HEIGHT - 256, 0, 0, 512, 512, ( WIDTH / 2 ) + 128, HEIGHT );
-		drawer->setSprite( Drawer::Sprite( trans, graph, Drawer::BLEND_ALPHA, ratio ) );
-	}
 }
 
 void Roomba::drawCommandPrompt( ) const {
@@ -1083,24 +1047,5 @@ void Roomba::replacementVec( ) {
 		Vector tmp_vec = _vec_main[ i ];
 		_vec_main[ i ] = _vec_sub[ i ];
 		_vec_sub[ i ] = tmp_vec;
-	}
-}
-
-void Roomba::retry( ) {
-	initVec( );
-	_trans_speed = Vector( );
-	_rot_speed = 0;
-	_crystal = CrystalPtr( );
-	_state = MOVE_STATE_LIFT_DOWN;
-	_wait_count = 0;
-	_finished = false;
-	_link_break = true;
-	
-	for ( int i = 0; i < 2; i++ ) {
-		Vector ball_pos = _pause_pos[ i ];
-		ball_pos = Vector( ball_pos.x, ball_pos.y, LIFT_Z );
-		_balls[ i ]->setPos( ball_pos );
-		_delivery[ i ]->setPos( ball_pos + Vector( 0, 0, DELIVERY_FOOT ) );
-		_delivery[ i ]->changeAnim( Animation::ANIM::ANIM_DELIVERY_CARRY );
 	}
 }
