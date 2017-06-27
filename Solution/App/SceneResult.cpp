@@ -19,13 +19,15 @@ const int MAX_CHOICE_COUNT = 25 * CIRCLE_ANIME_FLAME;
 const int DRAW_TIME = 100;
 const double FADE_IN_RETRY_TIME = 30;
 
-SceneResult::SceneResult( int time, int col_num, bool clear ) :
+SceneResult::SceneResult( int time, int col_num, bool clear, int crystal_carry_num ) :
 _select( 1 ),
 _choice_count( 0 ),
 _count( 0 ),
+_crystal_carry_num( 0 ),
 _retry( true ),
 _stage_clear( clear ) {
 	DrawerPtr drawer = Drawer::getTask( );
+	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
 	drawer->loadGraph( GRAPH_OK, "UI/ok.png" );
@@ -34,6 +36,7 @@ _stage_clear( clear ) {
 	drawer->loadGraph( GRAPH_GAME_OVER, "UI/game_over.png" );
 	drawer->loadGraph( GRAPH_GAME_CLEAR, "UI/StageClear.png" );
 	drawer->loadGraph( GRAPH_RESULT_FRAME, "UI/game_over_frame.png" );
+	drawer->loadGraph( GRAPH_RESULT, "UI/result.png" );
 	
 	drawer->loadGraph( GRAPH_RETRY, "UI/retry.png" );
 	drawer->loadGraph( GRAPH_FRAME, "UI/select_frame.png" );
@@ -85,6 +88,7 @@ void SceneResult::draw( ) const {
 	drawFadeBg( );
 	drawFrame( );
 	drawResult( );
+	drawCrystalNum( );
 	if ( _stage_clear ) {
 		drawGameClear( );
 	}
@@ -326,5 +330,34 @@ void SceneResult::selectRetry( ) {
 		SoundPtr sound = Sound::getTask( );
 		sound->stopSE( "circleSE.wav" );
 		_choice_count = 0;
+	}
+}
+
+void SceneResult::drawCrystalNum( ) const {
+	ApplicationPtr app = Application::getInstance();
+	const int WIDTH = app->getWindowWidth();
+	const int HEIGHT = app->getWindowHeight();
+	int tw = 640;
+	int th = 128;
+
+	int tx = 0;
+	int ty = 0;
+	const int NUM_SIZE = 64;
+
+
+	DrawerPtr drawer = Drawer::getTask( );
+	{
+		Drawer::Transform trans( WIDTH / 2 - tw / 2, HEIGHT / 2 - th / 2 );
+		drawer->setSprite( Drawer::Sprite( trans, GRAPH_RESULT ) );
+	}
+	{//”Žš
+		int sx = WIDTH / 2 + tw / 2;
+		int sy = HEIGHT / 2 - NUM_SIZE * 1 / 4;
+		int tx = _crystal_carry_num * NUM_SIZE;
+		int sx2 = sx + NUM_SIZE * 2;
+		int sy2 = sy + NUM_SIZE * 2;
+
+		Drawer::Transform trans( sx, sy, tx, 0, NUM_SIZE, NUM_SIZE, sx2, sy2 );
+		drawer->setSprite( Drawer::Sprite( trans, GRAPH_NUMBER ) );
 	}
 }

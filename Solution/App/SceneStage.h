@@ -15,7 +15,9 @@ class SceneStage : public Scene {//ステージ
 public:
 	SceneStage( int stage_num );
 	virtual ~SceneStage( );
+public:
 	Scene::NEXT update( );
+	int getCrystalCarryNum( ) const;
 private:
 	void drawUI( );
 	void drawUIDelivery( );

@@ -421,3 +421,7 @@ void SceneStage::drawGuideLine( Vector distance ) const {
 		drawer->setModelSelf( self );
 	}
 }
+
+int SceneStage::getCrystalCarryNum( ) const {
+	return std::dynamic_pointer_cast< AppStage >( _stage )->getCarryCount( );
+}

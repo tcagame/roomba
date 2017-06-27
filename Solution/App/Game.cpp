@@ -13,13 +13,15 @@
 #include "Timer.h"
 #include "define.h"
 
+PTR( SceneStage );
+
 GamePtr Game::getTask( ) {
 	ApplicationPtr app = Application::getInstance( );
 	return std::dynamic_pointer_cast< Game >( app->getTask( getTag( ) ) );
 }
 
 Game::Game( ) :
-_next( Scene::NEXT_STAGE_SELECT ),
+_next( Scene::NEXT_RESULT ),
 _stage_num( 0 ),
 _result_time( 0 ),
 _stage_clear( false ),
@@ -45,6 +47,8 @@ void Game::changeScene( ) {
 	}
 	_scene.~shared_ptr( );
 	_scene.reset( );
+	int crystal_carry_num = 0;
+	SceneStagePtr stage = std::dynamic_pointer_cast< SceneStage >( _scene );
 
 	switch ( _next ) {
 	case Scene::NEXT_TITLE:
@@ -57,7 +61,10 @@ void Game::changeScene( ) {
 		_scene = ScenePtr( new SceneStage( _stage_num ) );
 		break;
 	case Scene::NEXT_RESULT:
-		_scene = ScenePtr( new SceneResult( _result_time, _col_num, _stage_clear ) );
+		if ( stage ) {
+			crystal_carry_num = stage->getCrystalCarryNum( );
+		}
+		_scene = ScenePtr( new SceneResult( _result_time, _col_num, _stage_clear, crystal_carry_num ) );
 		break;
 	case Scene::NEXT_GAMEOVER:
 		_scene = ScenePtr( new SceneGameOver( _stage_num ) );
