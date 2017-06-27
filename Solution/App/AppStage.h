@@ -26,6 +26,7 @@ public:
 	void reset( );
 	void shiftPos( );
 	std::list< CrystalPtr > getCrystalList( ) const;
+	bool isFirstCrystalCarry( ) const;
 private:
 	void updateCrystal( TimerPtr timer );
 	void updateDelivery( CameraPtr camera );
@@ -49,6 +50,7 @@ private:
 	std::array< char, STAGE_WIDTH_NUM * 2 * STAGE_HEIGHT_NUM * 2 > _map_data;
 	int _delivery_count;
 	bool _finished;
+	bool _first_crystal_carry;
 	ViewerPtr _viewer;
 	TimerPtr _timer;
 	RoombaPtr _roomba;

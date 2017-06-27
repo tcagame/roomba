@@ -16,6 +16,7 @@ AppStage::AppStage( int stage_num, ViewerPtr viewer, TimerPtr timer, RoombaPtr r
 _delivery_count( 0 ),
 _viewer( viewer ),
 _finished( false ),
+_first_crystal_carry( true ),
 _timer( timer ),
 _roomba( roomba ) {
 	load( stage_num );//0~2:’Êí 3:test_stage
@@ -35,6 +36,10 @@ void AppStage::reset( ) {
 
 bool AppStage::isFinished( ) const {
 	return _finished;
+}
+
+bool AppStage::isFirstCrystalCarry( ) const {
+	return _first_crystal_carry;
 }
 
 void AppStage::update( CameraPtr camera ) {
@@ -377,6 +382,7 @@ bool AppStage::isOnDelivery( Vector& pos ) {
 		}
 		delivery->setCrystal( pos );
 		loadDelivery( );
+		_first_crystal_carry = false;
 		result = true;
 		break;
 	}

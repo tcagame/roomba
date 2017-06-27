@@ -255,7 +255,8 @@ void SceneStage::drawUIMap( ) const {
 			Vector station_pos( i % STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2, i / STAGE_WIDTH_NUM * WORLD_SCALE + WORLD_SCALE / 2 ); 
 			Vector distance = ( getAdjustPos( station_pos, base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
 			double length = distance.getLength( );
-			if ( _roomba->isHoldCrystal( ) ) {
+			if ( _roomba->isHoldCrystal( ) &&
+				 std::dynamic_pointer_cast< AppStage >( _stage )->isFirstCrystalCarry( ) ) {
 				if ( length < guideline_distance.getLength( ) ) {
 					guideline_distance = distance;
 				}
@@ -294,38 +295,23 @@ void SceneStage::drawUIMap( ) const {
 		Vector pos = crystal->getPos( );
 		pos.z = 0;
 		Vector distance = ( getAdjustPos( pos, base_pos ) - base_pos ) * ( UI_MAP_SIZE / WORLD_SCALE );
-		if ( !_roomba->isHoldCrystal( ) ) {
+		if ( !_roomba->isHoldCrystal( ) &&
+			 ! _roomba->isFirstCrystalCatch( ) ) {
 			if ( distance.getLength( ) < guideline_distance.getLength( ) ) {
 				guideline_distance = distance;
 			}
 		}
-		distance = mat.multiply( distance );
 		if ( distance.getLength( ) > RANGE ) {
 			distance = distance.normalize( ) * RANGE;
 		}
+		distance = mat.multiply( distance );
 		int sx = (int)( map_central_sx + distance.x );
 		int sy = (int)( map_central_sy + distance.y );
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, 0, 32, 16, 16, sx + UI_MAP_SIZE, sy + UI_MAP_SIZE ), GRAPH_MAP, Drawer::BLEND_ALPHA, 0.8 ) );
 		crystal_ite++;
 	}
 	// ƒKƒCƒhƒ‰ƒCƒ“
-	if ( _roomba->getMoveState( ) != Roomba::MOVE_STATE_LIFT_UP &&
-		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_LIFT_DOWN &&
-		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_WAIT &&
-		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_STARTING &&
-		 guideline_distance.getLength( ) > GUIDELINE_VIEW_RANGE ) {
-		ModelPtr guideline = ModelPtr( new Model );
-		guideline->mergeModel( _guideline );
-		Matrix rot = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( guideline_distance ) * -1, Vector( 0, -1 ).angle( guideline_distance ) );
-		guideline->multiply( rot );
-		guideline->setPos( base_pos + guideline_distance.normalize( ) + Vector( 0, 0, 1 ) );
-		Drawer::ModelSelf self;
-		self.model = guideline;
-		self.graph = GRAPH_GUIDELINE;
-		self.add = false;
-		self.z_buffer = true;
-		drawer->setModelSelf( self );
-	}
+	drawGuideLine( guideline_distance );
 }
 
 void SceneStage::drawRetry( ) const {
@@ -439,3 +425,27 @@ Vector SceneStage::getAdjustPos( Vector pos, Vector base_pos ) const {
 	return pos;
 }
 
+void SceneStage::drawGuideLine( Vector distance ) const {
+	Roomba::MOVE_STATE state = _roomba->getMoveState( );
+	if ( state == Roomba::MOVE_STATE_LIFT_UP ||
+		 state == Roomba::MOVE_STATE_LIFT_DOWN ||
+		 state == Roomba::MOVE_STATE_WAIT ||
+		 state == Roomba::MOVE_STATE_STARTING ||
+		 distance == Vector( 100, 100 ) ) {
+		return;
+	}
+	if ( distance.getLength( ) > GUIDELINE_VIEW_RANGE ) {
+		ModelPtr guideline = ModelPtr( new Model );
+		guideline->mergeModel( _guideline );
+		Matrix rot = Matrix::makeTransformRotation( Vector( 0, -1 ).cross( distance ) * -1, Vector( 0, -1 ).angle( distance ) );
+		guideline->multiply( rot );
+		guideline->setPos( _roomba->getCentralPos( ) + distance.normalize( ) + Vector( 0, 0, 1 ) );
+		Drawer::ModelSelf self;
+		self.model = guideline;
+		self.graph = GRAPH_GUIDELINE;
+		self.add = false;
+		self.z_buffer = true;
+		DrawerPtr drawer = Drawer::getTask( );
+		drawer->setModelSelf( self );
+	}
+}
