@@ -21,8 +21,6 @@ private:
 	void drawUIDelivery( );
 	void drawUILinKGauge( );
 	void drawUIMap( ) const;
-	void drawRetry( ) const;
-	void drawCircle( ) const;
 	void retry( );
 	Scene::NEXT NextRetry( );
 	Vector getAdjustPos( Vector pos, Vector base_pos ) const;
@@ -40,9 +38,7 @@ private:
 		NUMBER_STATE state;
 	};
 private:
-	int _draw_count;
 	int _choice_count;
-	bool _retry;
 	ModelPtr _guideline;
 	NUMBER _phase_number[ 2 ];
 	NUMBER _delivery_number[ 2 ];

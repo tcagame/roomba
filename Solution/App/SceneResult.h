@@ -2,7 +2,7 @@
 #include "Scene.h"
 class SceneResult : public Scene {//ƒŠƒUƒ‹ƒg
 public:
-	SceneResult( int time, int col_num );
+	SceneResult( int time, int col_num, bool clear );
 	virtual ~SceneResult( );
 private:
 	NEXT update( );
@@ -12,17 +12,19 @@ private:
 	void drawBestTime( ) const;
 	void loadBestTime( );
 	void saveBestTime( );
+	void selectRetry( );
 	void drawFrame( ) const;
 	void drawCircle( ) const;
 	void drawResult( ) const;
+	void drawRetry( ) const;
 	void drawGameClear( ) const;
-	void drawController( ) const;
-	void drawBg( ) const;
 private:
 	int _count;
 	int _choice_count;
 	int _select;
 	int _this_time;
 	int _best_time;
+	bool _retry;
+	bool _stage_clear;
 };
 

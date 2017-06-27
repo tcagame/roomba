@@ -12,16 +12,19 @@ const int RESULT_HEIGHT = 256;
 const std::string DIRECTORY = "../Resource/Savedata/";
 const std::string FILENAME = DIRECTORY + "best_time.dat";
 const int BRANK = 500;
-static const int THICK_FRAME_SIZE = 57;
-static const int SELECT_SIZE  = 512;
-static const int CIRCLE_ANIME_FLAME = 1;
-static const int MAX_CHOICE_COUNT = 25 * CIRCLE_ANIME_FLAME;
-static const int DRAW_TIME = 100;
+const int THICK_FRAME_SIZE = 57;
+const int SELECT_SIZE  = 512;
+const int CIRCLE_ANIME_FLAME = 1;
+const int MAX_CHOICE_COUNT = 25 * CIRCLE_ANIME_FLAME;
+const int DRAW_TIME = 100;
+const double FADE_IN_RETRY_TIME = 30;
 
-SceneResult::SceneResult( int time, int col_num ) :
+SceneResult::SceneResult( int time, int col_num, bool clear ) :
 _select( 1 ),
 _choice_count( 0 ),
-_count( 0 ) {
+_count( 0 ),
+_retry( true ),
+_stage_clear( clear ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
@@ -31,7 +34,9 @@ _count( 0 ) {
 	drawer->loadGraph( GRAPH_GAME_OVER, "UI/game_over.png" );
 	drawer->loadGraph( GRAPH_GAME_CLEAR, "UI/StageClear.png" );
 	drawer->loadGraph( GRAPH_RESULT_FRAME, "UI/game_over_frame.png" );
-
+	
+	drawer->loadGraph( GRAPH_RETRY, "UI/retry.png" );
+	drawer->loadGraph( GRAPH_FRAME, "UI/select_frame.png" );
 
 	_this_time = time;
 	_best_time = 0;
@@ -40,7 +45,6 @@ _count( 0 ) {
 	sound->playBGM( "resultBGM.wav" );
 }
 
-
 SceneResult::~SceneResult( ) {
 }
 
@@ -48,64 +52,49 @@ Scene::NEXT SceneResult::update( ) {
 	_count++;
 	SoundPtr sound = Sound::getTask( );
 	DevicePtr device = Device::getTask( );
-
 	Vector right_stick = Vector( device->getRightDirX( ), device->getRightDirY( ) );
 	Vector left_stick = Vector( device->getDirX( ), device->getDirY( ) );
 
 	draw( );
+
 	// フェードイン
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
 		addFadeInCount( );
 		return NEXT_CONTINUE;
 	}
+
 	// フェードアウト
 	if ( _choice_count > MAX_CHOICE_COUNT ||
 		getFadeOutCount( ) < MAX_FADE_COUNT ) {
 		subFadeOutCount( );
 		if ( getFadeOutCount( ) < 0 ) {
-			return NEXT_TITLE;
+			if ( _retry ) {
+				return NEXT_STAGE;
+			} else {
+				return NEXT_TITLE;
+			}
 		}
 	}
-	// サークルカウント
-	if ( ( right_stick.y > 0 && left_stick.y < 0 ) ||
-		 ( right_stick.y < 0 && left_stick.y > 0 ) ) {
-		_choice_count++;
-		if ( _choice_count == 1 ) {
-			sound->playSE( "circleSE.wav" );
-		}
-	} else {
-		_choice_count = 0;
-		sound->stopSE( "circleSE.wav" );
-	}
+	
+	selectRetry( );
+
 	return NEXT_CONTINUE;
 }
 
 void SceneResult::draw( ) const {
-	//drawThisTime( );
-	//drawBestTime( );
-	//drawBg( );
 	drawFadeBg( );
-	drawController( );
-	drawResult( );
-	drawGameClear( );
 	drawFrame( );
+	drawResult( );
+	if ( _stage_clear ) {
+		drawGameClear( );
+	}
+	drawRetry( );
 	drawCircle( );
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
 		drawFadeIn( );
 	} else {
 		drawFadeOut( );
-	}
-	
-}
-
-void SceneResult::drawBg( ) const {
-	ApplicationPtr app = Application::getInstance( );
-	const int WIDTH = app->getWindowWidth( );
-	const int HEIGHT = app->getWindowHeight( );
-
-	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( 0, 0, 0, 0, 1920, 1080, WIDTH, HEIGHT ), GRAPH_BG );
-	drawer->setSprite( sprite );
+	}	
 }
 
 void SceneResult::drawResult( ) const {
@@ -122,6 +111,35 @@ void SceneResult::drawResult( ) const {
 	drawer->setSprite( sprite );
 }
 
+void SceneResult::drawRetry( ) const {
+	DrawerPtr drawer = Drawer::getTask( );
+	ApplicationPtr app = Application::getInstance( );
+	int WIDTH = app->getWindowWidth( );
+	int HEIGHT = app->getWindowHeight( );
+
+	const int TEXTURE_X = 512;
+	const int TEXTURE_Y = 256;
+	int select_sx = WIDTH / 2 - TEXTURE_X * 2 / 6;
+	int select_sy = HEIGHT / 2 + TEXTURE_Y / 2;
+	double RATIO = (double)( _count ) / FADE_IN_RETRY_TIME;
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( select_sx, select_sy, 0, 0, TEXTURE_X, TEXTURE_Y, select_sx + TEXTURE_X * 2 / 3, select_sy + TEXTURE_Y * 2 / 3 ), GRAPH_RETRY, Drawer::BLEND_ALPHA, RATIO ) );
+
+	const int SELECT_X = 192;
+	const int SELECT_Y = 96;
+	int frame_sy = HEIGHT / 2 + TEXTURE_Y - SELECT_Y / 2 + 10;
+	int frame_sx = WIDTH / 2 - TEXTURE_X / 4 - 15;
+	if ( !_retry ) {
+		frame_sx += SELECT_X;
+	}
+
+	int flow = _count % 20;
+	if ( flow > 11 ) {
+		flow = 20 - flow;
+	}
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( frame_sx - flow, frame_sy - flow, 0, 0, SELECT_X, SELECT_Y, frame_sx + ( SELECT_X * 2 / 3 ) + flow, frame_sy + ( SELECT_Y * 2 / 3 ) + flow ), GRAPH_FRAME, Drawer::BLEND_ALPHA, RATIO ) ); // frame
+}
+
+
 void SceneResult::drawGameClear( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	ApplicationPtr app = Application::getInstance( );
@@ -136,7 +154,6 @@ void SceneResult::drawGameClear( ) const {
 	Drawer::Sprite sprite( trans, GRAPH_GAME_CLEAR );
 	drawer->setSprite( sprite );
 }
-
 
 int SceneResult::drawTime( int x, int y, int time ) const {
 	DrawerPtr drawer = Drawer::getTask( );
@@ -261,47 +278,53 @@ void SceneResult::drawFrame( ) const {
 	}
 }
 
-void SceneResult::drawController( ) const {
-	ApplicationPtr app = Application::getInstance( );
-	const int WIDTH = app->getWindowWidth( );
-	const int HEIGHT = app->getWindowHeight( );
-
-	const int CONTROLLER_SIZE = 512;
-
-	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT * 4 / 6, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT * 4 / 6 + CONTROLLER_SIZE / 2 );
-	//Drawer::Transform trans( WIDTH / 2 - CONTROLLER_SIZE / 4, HEIGHT / 2 + CONTROLLER_SIZE / 6, 0, 0, CONTROLLER_SIZE, CONTROLLER_SIZE, WIDTH / 2 - CONTROLLER_SIZE / 4 + CONTROLLER_SIZE / 2, HEIGHT / 2 + CONTROLLER_SIZE / 2 + CONTROLLER_SIZE / 6);
-	if ( _count % DRAW_TIME < DRAW_TIME * 2 / 3 ) {
-		Drawer::Sprite sprite( trans, GRAPH_CONTROLLER_ROTATION );
-		drawer->setSprite( sprite );
-	} else {
-		Drawer::Sprite sprite( trans, GRAPH_CONTROLLER_NEUTRAL );
-		drawer->setSprite( sprite );
-	}
-	int tx = 168;
-	int ty = 366;
-	int tw = 167;
-	int th = 74;
-	Drawer::Transform trans2( WIDTH / 2 - tw / 2, HEIGHT * 5 / 6, tx, ty,  tw,  th, WIDTH / 2 + tw / 2,  HEIGHT * 5 / 6 + th );
-	//Drawer::Sprite sprite( trans2, GRAPH_OK );
-	//drawer->setSprite( sprite );
-	
-}
-
 void SceneResult::drawCircle( ) const {
+	if ( _count < FADE_IN_RETRY_TIME ) {
+		return;
+	}
+
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
 	
 	const int CIRCLE_SIZE = 100;
 	int idx = _choice_count / CIRCLE_ANIME_FLAME;
-	if ( idx > 25 || getFadeOutCount( ) != MAX_FADE_COUNT  ) {
-		idx = 25;
+	if ( idx > 24 || getFadeOutCount( ) != MAX_FADE_COUNT  ) {
+		idx = 24;
 	}
 	int tx = idx % 5;
 	int ty = idx / 5;
-
+	int sx = WIDTH / 2 - 180;
+	if ( !_retry ) {
+		sx += 260; // yes no の枠分右にずらす
+	}
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT / 2 - 74 + CIRCLE_SIZE * 3 / 5, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
+	Drawer::Sprite sprite( Drawer::Transform( sx, HEIGHT / 2 + 10, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
+}
+
+void SceneResult::selectRetry( ) {
+	Sound::getTask( )->stopSE( "alertSE.wav" );
+	DevicePtr device = Device::getTask( );
+	if ( device->getDirX( ) < 0 && 
+		 _choice_count == 0 ) {
+		_retry = true;
+	}
+	if ( device->getDirX( ) > 0 && 
+		 _choice_count == 0 ) {
+		_retry = false;
+	}
+
+	if ( ( device->getDirY( ) < 0 && device->getRightDirY( ) > 0 ) ||
+		 ( device->getDirY( ) > 0 && device->getRightDirY( ) < 0 ) ) {
+		_choice_count++;
+		if ( _choice_count == 1 ) {
+			SoundPtr sound = Sound::getTask( );
+			sound->playSE( "circleSE.wav" );
+		}
+	} else {
+		SoundPtr sound = Sound::getTask( );
+		sound->stopSE( "circleSE.wav" );
+		_choice_count = 0;
+	}
 }
