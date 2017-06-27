@@ -304,7 +304,8 @@ void Roomba::updateBalls( StagePtr stage ) {
 			  _state != MOVE_STATE_LIFT_UP &&
 			  _state != MOVE_STATE_LIFT_DOWN &&
 			  _state != MOVE_STATE_STARTING ) );
-		_balls[ i ]->update( vec[ i ], stage, rot );
+		bool check_collision = !( _state == MOVE_STATE_STARTING );
+		_balls[ i ]->update( vec[ i ], stage, rot, check_collision );
 	}
 }
 
