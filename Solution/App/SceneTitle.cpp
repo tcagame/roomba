@@ -17,6 +17,7 @@ SceneTitle::SceneTitle( ) :
 _count( 0 ),
 _choice_count( 0 ) {
 	DrawerPtr drawer = Drawer::getTask( );
+	drawer->loadGraph( GRAPH_MANUAL, "title/ok_manual.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
 	drawer->loadGraph( GRAPH_BG, "title/title_bg.png" );
@@ -71,6 +72,7 @@ Scene::NEXT SceneTitle::update( ) {
 void SceneTitle::draw( ) {
 	drawFadeBg( );
 	drawBg( );
+	drawManual( );
 	drawTitle( );
 	//drawPlease( );
 	drawController( );
@@ -169,4 +171,18 @@ void SceneTitle::drawCircle( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
 	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT * 6 / 8 - 16, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
-}	
+}
+
+void SceneTitle::drawManual( ) {
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+
+	const int tw = 1024;
+	const int th = 128;
+
+	DrawerPtr drawer = Drawer::getTask( );
+	Drawer::Transform trans( WIDTH / 2 - tw / 2, HEIGHT * 5 / 6, 0, 0, tw, th  );
+	Drawer::Sprite sprite( trans, GRAPH_MANUAL );
+	drawer->setSprite( sprite );
+}
