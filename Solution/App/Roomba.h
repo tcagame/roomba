@@ -39,7 +39,6 @@ public:
 	void reset( );
 	void setWaitCount( );
 	void finalize( );
-	void retry( );
 	double getRotSpeed( ) const;
 	const double getMaxSpeed( ) const;
 	Vector getDir( ) const;

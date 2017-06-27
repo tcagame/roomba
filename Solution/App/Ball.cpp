@@ -16,17 +16,15 @@ _reflection( false ) {
 Ball::~Ball( ) {
 }
 
-void Ball::update( const Vector& vec, StagePtr stage, bool rot ) {
+void Ball::update( const Vector& vec, StagePtr stage, bool rot, bool check_collision ) {
 	_vec = vec;
 
 	SoundPtr sound = Sound::getTask( );
 	AppStagePtr stage_ptr = std::dynamic_pointer_cast< AppStage >( stage );
 	Vector adjust_vec_to_wall = _vec;
 	Vector adjust_vec_to_crystal = Vector( );
-	if ( _pos.z < WALL_SIZE.z * 2.3 ) {
+	if ( check_collision ) {
 		adjust_vec_to_wall = stage_ptr->adjustCollisionToWall( _pos, _vec, BALL_RADIUS );
-	}
-	if ( _pos.z < CRYSTAL_SIZE.z ) {
 		adjust_vec_to_crystal = stage_ptr->adjustCollisionToCrystal( _pos, _vec, BALL_RADIUS );
 	}
 	Vector adjust_vec = adjust_vec_to_wall + adjust_vec_to_crystal;

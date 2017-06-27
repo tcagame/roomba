@@ -5,7 +5,7 @@
 
 class SceneSelect : public Scene {//ステージ選択
 public:
-	SceneSelect( );
+	SceneSelect( bool open_stage );
 	virtual ~SceneSelect( );
 private:
 	NEXT update( );
@@ -27,5 +27,6 @@ private:
 	int _select;
 	bool _ispush;
 	bool _rot_right;
+	bool _open_stage;
 };
 

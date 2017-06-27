@@ -19,9 +19,11 @@ GamePtr Game::getTask( ) {
 }
 
 Game::Game( ) :
-_next( Scene::NEXT_TITLE ),
+_next( Scene::NEXT_STAGE_SELECT ),
 _stage_num( 0 ),
-_result_time( 0 ) {
+_result_time( 0 ),
+_stage_clear( false ),
+_open_stage( false ) {
 }
 
 Game::~Game( ) {
@@ -49,13 +51,13 @@ void Game::changeScene( ) {
 		_scene = ScenePtr( new SceneTitle );
 		break;
 	case Scene::NEXT_STAGE_SELECT:
-		_scene = ScenePtr( new SceneSelect );
+		_scene = ScenePtr( new SceneSelect( _open_stage ) );
 		break;
 	case Scene::NEXT_STAGE:
 		_scene = ScenePtr( new SceneStage( _stage_num ) );
 		break;
 	case Scene::NEXT_RESULT:
-		_scene = ScenePtr( new SceneResult( _result_time, _col_num ) );
+		_scene = ScenePtr( new SceneResult( _result_time, _col_num, _stage_clear ) );
 		break;
 	case Scene::NEXT_GAMEOVER:
 		_scene = ScenePtr( new SceneGameOver( _stage_num ) );
@@ -76,4 +78,12 @@ void Game::setResultTime( int time ) {
 
 void Game::setCollisionNum( int col_num ) {
 	_col_num = col_num;
+}
+
+void Game::setResult( bool clear ) {
+	_stage_clear = clear;
+}
+
+void Game::setOpenStage( ) {
+	_open_stage = true;
 }

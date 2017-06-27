@@ -21,11 +21,8 @@ private:
 	void drawUIDelivery( );
 	void drawUILinKGauge( );
 	void drawUIMap( ) const;
-	void drawRetry( ) const;
-	void drawCircle( ) const;
+	void drawTutorial( ) const;
 	void drawGuideLine( Vector distance ) const;
-	void retry( );
-	Scene::NEXT NextRetry( );
 	Vector getAdjustPos( Vector pos, Vector base_pos ) const;
 private:
 	enum NUMBER_STATE {
@@ -41,9 +38,10 @@ private:
 		NUMBER_STATE state;
 	};
 private:
-	int _draw_count;
 	int _choice_count;
-	bool _retry;
+	int _tutorial_count;
+	int _crystal_catch_count;
+	bool _tutorial;
 	ModelPtr _guideline;
 	NUMBER _phase_number[ 2 ];
 	NUMBER _delivery_number[ 2 ];
