@@ -18,12 +18,16 @@ const int CIRCLE_ANIME_FLAME = 1;
 const int MAX_CHOICE_COUNT = 25 * CIRCLE_ANIME_FLAME;
 const int DRAW_TIME = 100;
 const double FADE_IN_RETRY_TIME = 30;
+const int SELECT_TEXTURE_X = 512;
+const int SELECT_TEXTURE_Y = 128;
+const double SELECT_SMALL_SIZE = 0.5;
 
 SceneResult::SceneResult( int time, int col_num, bool clear, int crystal_carry_num ) :
 _select( 1 ),
 _choice_count( 0 ),
 _count( 0 ),
 _crystal_carry_num( 0 ),
+_move_count( 0 ),
 _retry( true ),
 _stage_clear( clear ) {
 	DrawerPtr drawer = Drawer::getTask( );
@@ -39,11 +43,18 @@ _stage_clear( clear ) {
 	drawer->loadGraph( GRAPH_RESULT, "UI/result.png" );
 	
 	drawer->loadGraph( GRAPH_RETRY, "UI/retry.png" );
+	drawer->loadGraph( GRAPH_YES_NO, "UI/yes_no.png" );
 	drawer->loadGraph( GRAPH_FRAME, "UI/select_frame.png" );
 
 	_this_time = time;
 	_best_time = 0;
 	loadBestTime( );
+	
+	const int WIDTH = Application::getInstance( )->getWindowWidth( );
+	const int HEIGHT = Application::getInstance( )->getWindowHeight( );
+	_select_pos[ 0 ] = Vector( WIDTH / 2 - SELECT_TEXTURE_X / 4, HEIGHT / 2 + SELECT_TEXTURE_Y + SELECT_TEXTURE_Y / 2, 1 );
+	_select_pos[ 1 ] = Vector( WIDTH / 2 - SELECT_TEXTURE_X / 4 + SELECT_TEXTURE_X * 2 / 3, HEIGHT / 2 + SELECT_TEXTURE_Y + SELECT_TEXTURE_Y / 2, SELECT_SMALL_SIZE );
+
 	SoundPtr sound = Sound::getTask( );
 	sound->playBGM( "resultBGM.wav" );
 }
@@ -121,28 +132,23 @@ void SceneResult::drawRetry( ) const {
 	int WIDTH = app->getWindowWidth( );
 	int HEIGHT = app->getWindowHeight( );
 
-	const int TEXTURE_X = 512;
-	const int TEXTURE_Y = 256;
-	int select_sx = WIDTH / 2 - TEXTURE_X * 2 / 6;
-	int select_sy = HEIGHT / 2 + TEXTURE_Y / 2;
+	const int TEXTURE_X = SELECT_TEXTURE_X;
+	const int TEXTURE_Y = SELECT_TEXTURE_Y;
+	int retry_sx = WIDTH / 2 - TEXTURE_X * 2 / 6;
+	int retry_sy = HEIGHT / 2 + TEXTURE_Y;
 	double RATIO = (double)( _count ) / FADE_IN_RETRY_TIME;
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( select_sx, select_sy, 0, 0, TEXTURE_X, TEXTURE_Y, select_sx + TEXTURE_X * 2 / 3, select_sy + TEXTURE_Y * 2 / 3 ), GRAPH_RETRY, Drawer::BLEND_ALPHA, RATIO ) );
-
-	const int SELECT_X = 192;
-	const int SELECT_Y = 96;
-	int frame_sy = HEIGHT / 2 + TEXTURE_Y - SELECT_Y / 2 + 10;
-	int frame_sx = WIDTH / 2 - TEXTURE_X / 4 - 15;
-	if ( !_retry ) {
-		frame_sx += SELECT_X;
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( retry_sx, retry_sy, 0, 0, TEXTURE_X, TEXTURE_Y, retry_sx + TEXTURE_X * 2 / 3, retry_sy + TEXTURE_Y * 2 / 3 ), GRAPH_RETRY, Drawer::BLEND_ALPHA, RATIO ) );
+	{ // yes
+		int select_sx2 = (int)( _select_pos[ 0 ].x + 256 * _select_pos[ 0 ].z );
+		int select_sy2 = (int)( _select_pos[ 0 ].y + 128 * _select_pos[ 0 ].z );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( (int)_select_pos[ 0 ].x, (int)_select_pos[ 0 ].y, 0, 0, TEXTURE_X / 2, TEXTURE_Y, select_sx2, select_sy2 ), GRAPH_YES_NO ) );
 	}
-
-	int flow = _count % 20;
-	if ( flow > 11 ) {
-		flow = 20 - flow;
+	{ // no
+		int select_sx2 = (int)( _select_pos[ 1 ].x + 256 * _select_pos[ 1 ].z );
+		int select_sy2 = (int)( _select_pos[ 1 ].y + 128 * _select_pos[ 1 ].z );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( (int)_select_pos[ 1 ].x, (int)_select_pos[ 1 ].y, TEXTURE_X / 2, 0, TEXTURE_X / 2, TEXTURE_Y, select_sx2, select_sy2 ), GRAPH_YES_NO ) );
 	}
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( frame_sx - flow, frame_sy - flow, 0, 0, SELECT_X, SELECT_Y, frame_sx + ( SELECT_X * 2 / 3 ) + flow, frame_sy + ( SELECT_Y * 2 / 3 ) + flow ), GRAPH_FRAME, Drawer::BLEND_ALPHA, RATIO ) ); // frame
 }
-
 
 void SceneResult::drawGameClear( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
@@ -310,13 +316,25 @@ void SceneResult::drawCircle( ) const {
 void SceneResult::selectRetry( ) {
 	Sound::getTask( )->stopSE( "alertSE.wav" );
 	DevicePtr device = Device::getTask( );
-	if ( device->getDirX( ) < 0 && 
-		 _choice_count == 0 ) {
-		_retry = true;
+	bool retry = _retry;
+	if ( device->getDirX( ) < 0 &&
+		 _choice_count == 0 &&
+		 _move_count == 0 ) {
+		retry = true;
 	}
-	if ( device->getDirX( ) > 0 && 
-		 _choice_count == 0 ) {
-		_retry = false;
+	if ( device->getDirX( ) > 0 &&
+		 _choice_count == 0 &&
+		 _move_count == 0 ) {
+		retry = false;
+	}
+
+	if ( retry != _retry ) {
+		_retry = retry;
+		_move_count++;
+	}
+
+	if ( _move_count != 0 ) {
+		moveChoice( );
 	}
 
 	if ( ( device->getDirY( ) < 0 && device->getRightDirY( ) > 0 ) ||
@@ -330,6 +348,47 @@ void SceneResult::selectRetry( ) {
 		SoundPtr sound = Sound::getTask( );
 		sound->stopSE( "circleSE.wav" );
 		_choice_count = 0;
+	}
+}
+
+void SceneResult::moveChoice( ) {
+	ApplicationPtr app = Application::getInstance( );
+	int WIDTH = app->getWindowWidth( );
+	int HEIGHT = app->getWindowHeight( );
+	const int TEXTURE_X = SELECT_TEXTURE_X;
+	const int TEXTURE_Y = SELECT_TEXTURE_Y;
+	const Vector YES_LEFT  = Vector( WIDTH / 2 - TEXTURE_X / 4 - TEXTURE_X / 2, HEIGHT / 2 + TEXTURE_Y + TEXTURE_Y / 2 );
+	const Vector YES_RIGHT = Vector( WIDTH / 2 - TEXTURE_X / 4, HEIGHT / 2 + TEXTURE_Y + TEXTURE_Y / 2 );
+	const Vector NO_LEFT   = Vector( WIDTH / 2 - TEXTURE_X / 4, HEIGHT / 2 + TEXTURE_Y + TEXTURE_Y / 2 );
+	const Vector NO_RIGHT  = Vector( WIDTH / 2 - TEXTURE_X / 4 + TEXTURE_X * 2 / 3, HEIGHT / 2 + TEXTURE_Y + TEXTURE_Y / 2 );
+
+	Vector vec[ 2 ];
+	if ( _retry ) {
+		vec[ 0 ] = YES_RIGHT - YES_LEFT; 
+		vec[ 1 ] = NO_RIGHT - NO_LEFT;
+		vec[ 0 ] *= ( 1.0 / 10.0 );
+		vec[ 1 ] *= ( 1.0 / 10.0 );
+	} else {
+		vec[ 0 ] = YES_LEFT - YES_RIGHT;
+		vec[ 1 ] = NO_LEFT - NO_RIGHT;
+		vec[ 0 ] *= ( 1.0 / 10.0 );
+		vec[ 1 ] *= ( 1.0 / 10.0 );
+	}
+
+	for ( int i = 0; i < 2; i++ ) {
+		_select_pos[ i ] += vec[ i ];
+		_select_pos[ i ].z = 0;
+	}
+
+	double yes_ratio = ( YES_LEFT - _select_pos[ 0 ] ).getLength( ) / ( YES_LEFT - YES_RIGHT ).getLength( );
+	_select_pos[ 0 ].z = SELECT_SMALL_SIZE + ( 1.0 - SELECT_SMALL_SIZE ) * yes_ratio;
+	double no_ratio = ( NO_RIGHT - _select_pos[ 1 ] ).getLength( ) / ( NO_RIGHT - NO_LEFT ).getLength( );
+	_select_pos[ 1 ].z = SELECT_SMALL_SIZE + ( 1.0 - SELECT_SMALL_SIZE ) * no_ratio;
+
+	if ( _move_count == 10 ) {
+		_move_count = 0;
+	} else {
+		_move_count++;
 	}
 }
 

@@ -224,7 +224,7 @@ void SceneSelect::moveSelect( ) {
 	if ( _rot_right ) {
 		vec1 = ( target3 - target1 ) * ( 1.0 / MAX_MOVE_COUNT );
 		vec2 = ( target1 - target2 ) * ( 1.0 / MAX_MOVE_COUNT );
-		vec3= ( target2 - target3 ) * ( 1.0 / MAX_MOVE_COUNT );
+		vec3 = ( target2 - target3 ) * ( 1.0 / MAX_MOVE_COUNT );
 	} else {
 		vec1 = ( target2 - target1 ) * ( 1.0 / MAX_MOVE_COUNT );
 		vec2 = ( target3 - target2 ) * ( 1.0 / MAX_MOVE_COUNT );
