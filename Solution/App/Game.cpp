@@ -36,8 +36,8 @@ void Game::initialize( ) {
 }
 
 void Game::update( ) {
-	_next = _scene->update( );
 	changeScene( );
+	_next = _scene->update( );
 }
 
 void Game::changeScene( ) {
