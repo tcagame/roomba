@@ -78,7 +78,6 @@ _start_count( 0 ) {
 	}
 	_laser = LaserPtr( new Laser );
 
-	_move_effect = Drawer::Effect( EFFECT_ROOMBA, getStartPos( ), EFFECT_ROOMBA_SIZE, EFFECT_ROTATE );
 }
 
 
@@ -123,6 +122,10 @@ void Roomba::draw( ) const {
 }
 
 void Roomba::drawCommandPrompt( ) const {
+	//if ( !_boot[ 0 ][ 0 ] && !_boot[ 1 ][ 0 ] ) {
+	//	return;
+	//}
+
 	if ( _state == MOVE_STATE_STARTING ) {
 		if ( _start_count < START_TIME / 2 ) {
 			drawPromptIn( GRAPH_COMMAND_BOOT, _start_count );
@@ -396,12 +399,7 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera, TimerPtr timer ) {
 			state = MOVE_STATE_LIFT_UP;
 		}
 		if ( _state == MOVE_STATE_LIFT_UP ) {
-			if ( _balls[ 0 ]->getPos( ).z < LIFT_Z ||
-				 _balls[ 1 ]->getPos( ).z < LIFT_Z ) {
-				state = MOVE_STATE_LIFT_UP;
-			} else {
-				state = MOVE_STATE_LIFT_DOWN;
-			}
+			state = MOVE_STATE_LIFT_UP;
 		}
 		if ( _state == MOVE_STATE_LIFT_DOWN ) {
 			state = MOVE_STATE_LIFT_DOWN;
@@ -694,6 +692,7 @@ void Roomba::moveLiftUp( ) {
 	}
 
 	for ( int i = 0; i < 2; i++ ) {
+		_vec_z[ i ] = 0;
 		Vector ball_pos = _balls[ i ]->getPos( );
 		Vector delivery_pos = _delivery[ i ]->getPos( );
 		Vector distance = ball_pos - delivery_pos;
@@ -721,6 +720,10 @@ void Roomba::moveLiftUp( ) {
 				if ( _delivery[ i ]->getAnim( ) == Animation::ANIM::ANIM_DELIVERY_CARRY ) {
 					_vec_z[ i ] = 0.2;
 					_vec_delivery[ i ] = Vector( distance.x, distance.y, _vec_z[ i ] );
+					if ( ball_pos.z > 17 ) {
+						_vec_z[ i ] = 0;
+						_vec_delivery[ i ] = Vector( );
+					}
 				}
 			}
 		}
