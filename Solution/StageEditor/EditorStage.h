@@ -43,6 +43,8 @@ private:
 	EDIT_MODE _mode;
 	std::vector< Drawer::ModelMDL > _walls;
 	std::array< Drawer::ModelMDL, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _floor;
+	std::array< ModelPtr, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > _deliverys;
+	ModelPtr _delivery;
 	CameraPtr _camera;
 };
 

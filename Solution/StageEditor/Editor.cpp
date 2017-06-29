@@ -25,8 +25,7 @@ Editor::~Editor( ) {
 void Editor::initialize( ) {
 	//drawer‰Šú‰»Œã
 	DrawerPtr drawer = Drawer::getTask( );
-
-	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
+	drawer->loadGraph( GRAPH_MDL_DELIVERY, "Model/Delivery/color_map.jpg" );
 
 	Matrix crystal_scale = Matrix::makeTransformScaling( CRYSTAL_SIZE );
 	drawer->loadMDLModel( MDL_CRYSTAL, "Model/Crystal/crystal.mdl", "Model/Crystal/crystal.jpg", crystal_scale );
