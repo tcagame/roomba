@@ -44,11 +44,9 @@ _crystal_catch_count( 0 ) {
 	if ( stage_num == 0 ) {
 		_tutorial = true;
 		DrawerPtr drawer = Drawer::getTask( );
-		drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
-		drawer->loadGraph( GRAPH_CONTROLLER_TRANSLATION, "controller/translation.png" );
-		drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
-		drawer->loadGraph( GRAPH_TUTORIAL_CRYSTAL, "UI/manual_1.png" );
-		drawer->loadGraph( GRAPH_TUTORIAL_DELIVERY, "UI/manual_2.png" );
+		drawer->loadGraph( GRAPH_TUTORIAL_NEUTRAL, "tutorial/tutorial_neutral.png" );
+		drawer->loadGraph( GRAPH_TUTORIAL_TRANSLATION, "tutorial/tutorial_translation.png" );
+		drawer->loadGraph( GRAPH_TUTORIAL_ROTATION, "tutorial/tutorial_rotation.png" );
 	}
 
 	_delivery_number[ 0 ].state = NUMBER_STATE_IN;
@@ -338,48 +336,35 @@ void SceneStage::drawTutorial( ) const {
 	if ( _roomba->getMoveState( ) != Roomba::MOVE_STATE_STARTING &&
 		 !_roomba->isFirstCrystalCatch( ) &&
 		 _tutorial_count < 120 ) {
-		GRAPH graph = GRAPH_CONTROLLER_NEUTRAL;
-		if ( _tutorial_count > 15 ) {
-			graph = GRAPH_CONTROLLER_TRANSLATION;
+		GRAPH graph = GRAPH_TUTORIAL_NEUTRAL;
+		if ( _tutorial_count > 30 ) {
+			graph = GRAPH_TUTORIAL_TRANSLATION;
 		}
 		double ratio = 1.0;
 		if ( _tutorial_count < 15 ) {
 			ratio = (double)_tutorial_count / 15;
 		}
-		if ( _tutorial_count > 105 ) {
+		if ( _tutorial_count > 150 ) {
 			ratio = 1.0 - ( ( (double)_tutorial_count - 105 ) / 15 );
 		}
-		Drawer::Transform trans( ( WIDTH / 2 ) - 128, HEIGHT - 384, 0, 0, 512, 512, ( WIDTH / 2 ) + 128, HEIGHT - 128 );
+		Drawer::Transform trans( ( WIDTH / 2 ) - 512, ( HEIGHT / 2 ) + 128, 0, 0, 1024, 256 );
 		drawer->setSprite( Drawer::Sprite( trans, graph, Drawer::BLEND_ALPHA, ratio ) );
 
-		// ゲーム目的メッセージ クリスタルを取る
-		{
-			Drawer::Transform trans( ( WIDTH / 2 ) - 512, HEIGHT - 158 );
-			drawer->setSprite( Drawer::Sprite( trans, GRAPH_TUTORIAL_CRYSTAL, Drawer::BLEND_ALPHA, ratio ) );
-		}
 	}
 	// ローテーション
 	if ( _roomba->isFirstCrystalCatch( ) &&
 		 _crystal_catch_count < 120 ) {
-		GRAPH graph = GRAPH_CONTROLLER_NEUTRAL;
-		if ( _crystal_catch_count > 15 ) {
-			graph = GRAPH_CONTROLLER_ROTATION;
-		}
+		GRAPH graph = GRAPH_TUTORIAL_ROTATION;
 		double ratio = 1.0;
 		if ( _crystal_catch_count < 15 ) {
 			ratio = (double)_crystal_catch_count / 15;
 		}
-		if ( _crystal_catch_count > 105 ) {
+		if ( _crystal_catch_count > 120 ) {
 			ratio = 1.0 - ( (double)( _crystal_catch_count - 105 ) / 15 );
 		}
-		Drawer::Transform trans( ( WIDTH / 2 ) - 128, HEIGHT - 384, 0, 0, 512, 512, ( WIDTH / 2 ) + 128, HEIGHT - 128 );
+		Drawer::Transform trans( ( WIDTH / 2 ) - 512, ( HEIGHT / 2 ) + 128, 0, 0, 1024, 256 );
 		drawer->setSprite( Drawer::Sprite( trans, graph, Drawer::BLEND_ALPHA, ratio ) );
 
-		// ゲーム目的メッセージ デリバリーへ
-		{
-			Drawer::Transform trans( ( WIDTH / 2 ) - 512, HEIGHT - 158 );
-			drawer->setSprite( Drawer::Sprite( trans, GRAPH_TUTORIAL_DELIVERY, Drawer::BLEND_ALPHA, ratio ) );
-		}
 	}	
 }
 
