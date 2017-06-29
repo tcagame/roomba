@@ -24,7 +24,7 @@ SceneResult::SceneResult( int time, int col_num, bool clear, int crystal_carry_n
 _select( 1 ),
 _choice_count( 0 ),
 _count( 0 ),
-_crystal_carry_num( 99 ),
+_crystal_carry_num( crystal_carry_num ),
 _move_count( 0 ),
 _retry( true ),
 _stage_clear( clear ) {

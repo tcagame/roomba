@@ -5,8 +5,9 @@
 #include "Sound.h"
 
 const int FPS = 60;
-const int START_TIME = 30 * FPS;
-const int ADD_TIME = 5 * FPS;
+const int MAX_TIME = 30 * FPS;
+const int START_TIME = MAX_TIME / 2;
+const int ADD_TIME = 10 * FPS;
 const int RECOVERY_SPEED = 8;
 
 Timer::Timer( ) :
@@ -33,6 +34,9 @@ void Timer::update( ) {
 		_timer += _add_time;
 		_add_time = 0;
 	}
+	if ( _timer > MAX_TIME ) {
+		_timer = MAX_TIME;
+	}
 }
 
 
@@ -45,11 +49,11 @@ void Timer::draw( ) const {
 	const int TH = 64;
 	const int BLANK = 24;
 	int th = 0;
-	if ( _timer < START_TIME / 4 && _timer % 6 < 3 ) {
+	if ( _timer < MAX_TIME / 4 && _timer % 6 < 3 ) {
 		th = TH * 2;
 	}
 	drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, -10, 0, TH, TW, TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, -10, 0, th, ( _timer + BLANK ) * ( TW - BLANK ) / ( START_TIME + BLANK ), TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( 10, -10, 0, th, ( _timer + BLANK ) * ( TW - BLANK ) / ( MAX_TIME + BLANK ), TH ), GRAPH_LINK_GAUGE, Drawer::BLEND_ALPHA, 0.9 ) );
 }
 
 void Timer::addTime( ) {
