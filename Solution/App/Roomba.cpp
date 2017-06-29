@@ -1016,7 +1016,8 @@ void Roomba::announceChangeState( MOVE_STATE state ) {
 		 state == MOVE_STATE_REFLECTION_RESTORE ||
 		 state == MOVE_STATE_NEUTRAL ||
 		 state == MOVE_STATE_LIFT_UP ||
-		 state == MOVE_STATE_LIFT_DOWN ) {
+		 state == MOVE_STATE_LIFT_DOWN ||
+		 state == MOVE_STATE_GAMEOVER ) {
 		return;
 	}
 	if ( ( _state == MOVE_STATE_ROTATION_RIGHT || _state == MOVE_STATE_ROTATION_LEFT ) &&
