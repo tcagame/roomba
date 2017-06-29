@@ -26,7 +26,7 @@ _count( 0 ),
 _choice_count( 0 ),
 _move_count( 0 ),
 _ispush( false ),
-_open_stage( open_stage ) {
+_open_stage( true ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
@@ -35,8 +35,13 @@ _open_stage( open_stage ) {
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle_blue1.png" );
 	drawer->loadGraph( GRAPH_STAGE_SELECT, "select/Stage Select.png" );
 	drawer->loadGraph( GRAPH_NUM_1, "select/1.png" );
-	drawer->loadGraph( GRAPH_NUM_2, "select/2.png" );
-	drawer->loadGraph( GRAPH_NUM_3, "select/3.png" );
+	if ( _open_stage ) {
+		drawer->loadGraph( GRAPH_NUM_2, "select/2.png" );
+		drawer->loadGraph( GRAPH_NUM_3, "select/3.png" );
+	} else {
+		drawer->loadGraph( GRAPH_NUM_2, "select/close.png" );
+		drawer->loadGraph( GRAPH_NUM_3, "select/close.png" );
+	}
 	freazeSelect( );
 	resetCount( );
 }
