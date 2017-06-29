@@ -39,8 +39,8 @@ const double MIN_SCALE_SIZE = 5 - 0.01;
 const double LIFT_Z = 8;
 const double DELIVERY_FOOT = 1;
 //エフェクト
-const double EFFECT_REBOOT_SIZE = 0.7;
-const double EFFECT_CHANGE_STATE_SIZE = 0.7;
+const int MAX_EFFECT_COUNT = 20;
+const double EFFECT_ROOMBA_SIZE = 0.7;
 //待機時間
 const int WAIT_TIME = 180;
 const int START_TIME = 180; // 随時要更新　ルンバがSTART_POSに配置されるまでのフレーム
@@ -78,6 +78,7 @@ _start_count( 0 ) {
 	}
 	_laser = LaserPtr( new Laser );
 
+	_move_effect = Drawer::Effect( EFFECT_ROOMBA, getStartPos( ), EFFECT_ROOMBA_SIZE, EFFECT_ROTATE );
 }
 
 
@@ -122,10 +123,6 @@ void Roomba::draw( ) const {
 }
 
 void Roomba::drawCommandPrompt( ) const {
-	//if ( !_boot[ 0 ][ 0 ] && !_boot[ 1 ][ 0 ] ) {
-	//	return;
-	//}
-
 	if ( _state == MOVE_STATE_STARTING ) {
 		if ( _start_count < START_TIME / 2 ) {
 			drawPromptIn( GRAPH_COMMAND_BOOT, _start_count );
@@ -275,6 +272,7 @@ void Roomba::updateState( ) {
 	moveBound( );
 	moveStarting( );
 	moveGameOver( );
+	updateEffect( );
 }
 
 void Roomba::updateDeliverys( ) {
@@ -911,6 +909,12 @@ void Roomba::moveWait( ) {
 	}
 }
 
+void Roomba::updateEffect( ) {
+	_effect_count++;
+	_move_effect.pos = getCentralPos( );
+	Drawer::getTask( )->setEffectPos( _move_effect );
+}
+
 Vector Roomba::getCentralPos( ) const {
 	Vector pos[ 2 ];
 	for ( int i = 0; i < 2; i++ ) {
@@ -1008,11 +1012,6 @@ void Roomba::shiftPos( StagePtr stage, CameraPtr camera ) {
 }
 
 void Roomba::announceChangeState( MOVE_STATE state ) {
-	if ( _state == MOVE_STATE_REFLECTION_RESTORE &&
-		 state != MOVE_STATE_REFLECTION_RESTORE ) {
-		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_REBOOT, getCentralPos( ), EFFECT_REBOOT_SIZE, EFFECT_ROTATE ) );
-		return;
-	}
 	if ( state == MOVE_STATE_REFLECTION ||
 		 state == MOVE_STATE_REFLECTION_RESTORE ||
 		 state == MOVE_STATE_NEUTRAL ||
@@ -1024,8 +1023,12 @@ void Roomba::announceChangeState( MOVE_STATE state ) {
 		 ( state == MOVE_STATE_ROTATION_RIGHT || state == MOVE_STATE_ROTATION_LEFT ) ) {
 		return;
 	}
+	if ( _effect_count < MAX_EFFECT_COUNT ) {
+		return;
+	}
 
-	Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CHANGE_ROOMBA_STATE, getCentralPos( ), EFFECT_CHANGE_STATE_SIZE, EFFECT_ROTATE ) );
+	Drawer::getTask( )->setEffect( _move_effect );
+	_effect_count = 0;
 }
 
 Vector Roomba::getDir( ) const {
