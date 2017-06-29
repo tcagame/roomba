@@ -96,10 +96,8 @@ _result_count( 0 ) {
 	drawer->loadEffect( EFFECT_COLLISION_TO_WALL, "Effect/collision_wall.efk" );
 	drawer->loadEffect( EFFECT_COLLISION_TO_CRYSTAL, "Effect/collision_crystal.efk" );
 	drawer->loadEffect( EFFECT_CRYSTAL_AURA, "Effect/crystal_aura.efk" );
-	drawer->loadEffect( EFFECT_CHANGE_ROOMBA_STATE, "Effect/move_roomba.efk" );
 	drawer->loadEffect( EFFECT_DELIVERY_POINT, "Effect/point.efk" );
-	drawer->loadEffect( EFFECT_REBOOT, "Effect/reboot.efk" );
-
+	drawer->loadEffect( EFFECT_ROOMBA, "Effect/move_roomba.efk" );
 }
 
 

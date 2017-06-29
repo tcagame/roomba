@@ -35,7 +35,7 @@ Crystal::~Crystal( ) {
 void Crystal::draw( ViewerPtr viewer ) const {
 	viewer->drawModelMDL( Drawer::ModelMDL( _pos, _type ) );
 	if ( !_effect_count  ) {
-		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CRYSTAL_AURA, _pos + Vector( 0, 0, 1 ), EFFECT_AURA_SIZE, EFFECT_ROTATE ) );
+		Drawer::getTask( )->setEffect( Drawer::Effect( EFFECT_CRYSTAL_AURA, _pos + Vector( 0, 0, CRYSTAL_SIZE.z / 2 ), EFFECT_AURA_SIZE, EFFECT_ROTATE ) );
 	}
 	const double SHADOW_SCALE = ( CRYSTAL_SIZE.x * SUN_POS ) / ( SUN_POS - CRYSTAL_SIZE.z );
 	viewer->setShadow( _pos, SHADOW_SCALE );
