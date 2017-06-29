@@ -5,7 +5,6 @@
 #include "SceneSelect.h"
 #include "SceneStage.h"
 #include "SceneResult.h"
-#include "SceneGameOver.h"
 #include "Drawer.h"
 #include "AppCamera.h"
 #include "Roomba.h"
@@ -66,8 +65,6 @@ void Game::changeScene( ) {
 		}
 		_scene = ScenePtr( new SceneResult( _result_time, _col_num, _stage_clear, crystal_carry_num ) );
 		break;
-	case Scene::NEXT_GAMEOVER:
-		_scene = ScenePtr( new SceneGameOver( _stage_num ) );
 	}
 }
 

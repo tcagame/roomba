@@ -20,7 +20,6 @@ private:
 	void drawCircle( ) const;
 	void drawResult( ) const;
 	void drawRetry( ) const;
-	void drawGameClear( ) const;
 	void drawCrystalNum( ) const;
 	void moveChoice( );
 private:
@@ -33,7 +32,6 @@ private:
 	int _crystal_carry_num;
 	bool _retry;
 	bool _moveing;
-	bool _stage_clear;
 	std::array < Vector, 2 > _select_pos; // 0:yes 1:no
 };
 

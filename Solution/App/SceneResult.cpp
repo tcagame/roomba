@@ -26,8 +26,7 @@ _choice_count( 0 ),
 _count( 0 ),
 _crystal_carry_num( crystal_carry_num ),
 _move_count( 0 ),
-_retry( true ),
-_stage_clear( clear ) {
+_retry( true ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
@@ -98,9 +97,6 @@ void SceneResult::draw( ) const {
 	drawFrame( );
 	drawResult( );
 	drawCrystalNum( );
-	if ( _stage_clear ) {
-		drawGameClear( );
-	}
 	drawRetry( );
 	drawCircle( );
 	if ( getFadeInCount( ) < MAX_FADE_COUNT ) {
@@ -160,21 +156,6 @@ void SceneResult::drawRetry( ) const {
 		int select_sy2 = (int)( _select_pos[ 1 ].y + 128 * _select_pos[ 1 ].z );
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( (int)_select_pos[ 1 ].x - flow, (int)_select_pos[ 1 ].y - flow, TEXTURE_X / 2, 0, TEXTURE_X / 2, TEXTURE_Y, select_sx2 + flow, select_sy2 + flow ), GRAPH_YES_NO ) );
 	}
-}
-
-void SceneResult::drawGameClear( ) const {
-	DrawerPtr drawer = Drawer::getTask( );
-	ApplicationPtr app = Application::getInstance( );
-	const int WIDTH = app->getWindowWidth( );
-	const int HEIGHT = app->getWindowHeight( );
-
-	const int GAMECLEAR_WIDTH = 655;
-	const int GAMECLEAR_HEIGHT = 80;
-
-	Drawer::Transform trans( WIDTH / 2 - GAMECLEAR_WIDTH  / 2, HEIGHT / 2 - GAMECLEAR_HEIGHT / 2, 192, 114, GAMECLEAR_WIDTH, GAMECLEAR_HEIGHT );
-
-	Drawer::Sprite sprite( trans, GRAPH_GAME_CLEAR );
-	drawer->setSprite( sprite );
 }
 
 int SceneResult::drawTime( int x, int y, int time ) const {

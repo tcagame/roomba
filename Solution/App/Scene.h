@@ -8,7 +8,6 @@ public:
 		NEXT_TITLE,
 		NEXT_STAGE,
 		NEXT_RESULT,
-		NEXT_GAMEOVER,
 		NEXT_DEBUG_RESULT,
 	};
 public:
