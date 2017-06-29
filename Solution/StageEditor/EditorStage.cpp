@@ -7,7 +7,7 @@
 #include "Model.h"
 
 static const double CURSOR_MOVE_SPEED = 0.5;
-static const double DELIVERY_POS_Z = FLOOR_POS_Z + WORLD_SCALE;
+static const double DELIVERY_POS_Z = FLOOR_POS_Z;
 std::string FILENAME[ 32 ] = {
 	"" ,
 	"0_1.mdl" ,
@@ -59,6 +59,10 @@ _save( false ) {
 		_floor[ i ] = Drawer::ModelMDL( pos, MDL_FLOOR );
 	}
 	load( 0 );
+	_delivery = ModelPtr( new Model );
+	_delivery->load( "../Resource/Model/Delivery/delivery.mdl" );
+	_delivery->multiply( Matrix::makeTransformScaling( DELIVERY_SIZE ) );
+	_deliverys = { };
 	checkPlacedNum( );
 }
 
@@ -269,7 +273,6 @@ void EditorStage::editWall( ) {
 		}
 		DATA data = getData( idx );
 		if ( data.wall == 0 ) {
-			DATA data = DATA( );
 			data.wall = 1;
 			setData( data, idx );
 			loadWall( );
@@ -324,7 +327,6 @@ void EditorStage::editCrystal( ) {
 void EditorStage::editDelivery( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->drawString( 0, 80, "MODE:デリバー配置" );
-	std::array< Stage::DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > data = getData( );
 	MousePtr mouse = Mouse::getTask( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
 	if ( ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) ) && _placed_delivery_num < MAX_LINK ) {
@@ -337,6 +339,19 @@ void EditorStage::editDelivery( ) {
 			data.delivery = 1;
 			_placed_delivery_num++;
 			setData( data, idx );
+
+
+			//モデル
+			if ( _deliverys[ idx ] ) {
+				_deliverys[ idx ]->reset( );
+			} else {
+				_deliverys[ idx ] = ModelPtr( new Model );
+			}
+			double x = double( idx % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
+			double y = double( idx / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
+			_deliverys[ idx ] = ModelPtr( new Model );
+			_deliverys[ idx ]->mergeModel( _delivery );
+			_deliverys[ idx ]->setPos( Vector( x, y, DELIVERY_POS_Z ) );
 		}
 	}
 
@@ -350,6 +365,12 @@ void EditorStage::editDelivery( ) {
 			data.delivery = 0;
 			_placed_delivery_num--;
 			setData( data, idx );
+
+			//モデル
+			if ( _deliverys[ idx ] ) {
+				_deliverys[ idx ].reset( );
+				_deliverys[ idx ] = ModelPtr( );
+			}
 		}
 	}
 }
@@ -386,14 +407,17 @@ void EditorStage::drawWall( ) const {
 
 void EditorStage::drawDelivery( ) const {
 	DrawerPtr drawer = Drawer::getTask( );
-	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( getData( i ).delivery != 0 ) {
-			double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
-			double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
-			Matrix trans = Matrix::makeTransformTranslation( Vector( x, y, 0 ) );
+	std::array< Stage::DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > data = getData( );
 			Matrix rot = Matrix::makeTransformRotation( Vector( 1, 0, 0 ), PI / 2 );
 			Matrix scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
-			drawer->setModelMV1( Drawer::ModelMV1( scale.multiply( rot ).multiply( trans ), MV1_DELIVERY_STAND, 0, 0 ) );
+			Matrix scale_rot = scale.multiply( rot );
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		if ( data[ i ].delivery != 0 ) {
+			Drawer::ModelSelf self;
+			self.graph = GRAPH_MDL_DELIVERY;
+			self.add = false;
+			self.model = _deliverys[ i ];
+			drawer->setModelSelf( self );
 		}
 	}
 }
@@ -472,11 +496,18 @@ void EditorStage::checkPlacedNum( ) {
 	_placed_delivery_num = 0;
 	std::array< Stage::DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > data = getData( );
 	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( data[ i ].crystal ) {
+		if ( data[ i ].crystal != 0 ) {
 			_placed_crystal_num++;
 		}
-		if ( data[ i ].delivery ) {
+		if ( data[ i ].delivery != 0 ) {
 			_placed_delivery_num++;
+			if ( !_deliverys[ i ] ) {
+				double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
+				double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
+				_deliverys[ i ] = ModelPtr( new Model );
+				_deliverys[ i ]->mergeModel( _delivery );
+				_deliverys[ i ]->setPos( Vector( x, y, DELIVERY_POS_Z ) );
+			}
 		}
 	}
 }
