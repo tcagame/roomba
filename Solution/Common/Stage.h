@@ -30,7 +30,7 @@ public:
 	const std::array< DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM >& getData( ) const;
 protected:
 	static const int MAX_STAGE = 4;
-	static const int MAX_LINK = 10;
+	static const int MAX_LINK = 20;
 protected:
 	void debug( );
 	void setData( DATA& data, int idx );
