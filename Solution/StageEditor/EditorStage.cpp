@@ -59,6 +59,7 @@ _save( false ) {
 		_floor[ i ] = Drawer::ModelMDL( pos, MDL_FLOOR );
 	}
 	load( 0 );
+	checkPlacedNum( );
 }
 
 
@@ -250,7 +251,7 @@ void EditorStage::edit( ) {
 	case EDIT_MODE_CRYSTAL:
 		editCrystal( );
 		break;
-	case EDIT_MODE_STATION:
+	case EDIT_MODE_DELIVERY:
 		editDelivery( );
 		break;
 	}
@@ -291,17 +292,10 @@ void EditorStage::editWall( ) {
 void EditorStage::editCrystal( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->drawString( 0, 80, "MODE:クリスタル配置" );
-	
-	int count = 0;
-	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		if ( getData( i ).crystal > 0 ) {
-			count++;
-		}
-	}
-
 	MousePtr mouse = Mouse::getTask( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	if ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) && count < MAX_LINK ) {
+
+	if ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) && _placed_crystal_num < MAX_LINK ) {
 		int idx = (int)_cursor_pos.y * STAGE_WIDTH_NUM + (int)_cursor_pos.x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
@@ -309,6 +303,7 @@ void EditorStage::editCrystal( ) {
 		DATA data = getData( idx );
 		if ( data.crystal == 0 ) {
 			data.crystal = 1;
+			_placed_crystal_num++;
 			setData( data, idx );
 		}
 	}
@@ -319,6 +314,7 @@ void EditorStage::editCrystal( ) {
 		}
 		DATA data = getData( idx );
 		if ( data.crystal != 0 ) {
+			_placed_crystal_num--;
 			data.crystal = 0;
 			setData( data, idx );
 		}
@@ -328,32 +324,18 @@ void EditorStage::editCrystal( ) {
 void EditorStage::editDelivery( ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->drawString( 0, 80, "MODE:デリバー配置" );
-	bool placed[ MAX_LINK ] = { };
-
-	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
-		DATA data = getData( i );
-		if ( data.delivery ) {
-			placed[ data.delivery - 1 ] = true;
-		}
-	}
-	int number = 0;
-	for ( int i = 0; i < MAX_LINK; i++ ) {
-		if ( !placed[ i ] ) {
-			number = i + 1;
-			break;
-		}
-	}
-
+	std::array< Stage::DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > data = getData( );
 	MousePtr mouse = Mouse::getTask( );
 	KeyboardPtr keyboard = Keyboard::getTask( );
-	if ( ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) ) && number != 0 ) {
+	if ( ( mouse->isHoldLeftButton( ) || keyboard->isHoldKey( "SPACE" ) ) && _placed_delivery_num < MAX_LINK ) {
 		int idx = (int)_cursor_pos.y * STAGE_WIDTH_NUM + (int)_cursor_pos.x;
 		if ( idx < 0 || idx > STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM ) {
 			return;
 		}
 		DATA data = getData( idx );
 		if ( data.delivery == 0 ) {
-			data.delivery = number;
+			data.delivery = 1;
+			_placed_delivery_num++;
 			setData( data, idx );
 		}
 	}
@@ -366,6 +348,7 @@ void EditorStage::editDelivery( ) {
 		DATA data = getData( idx );
 		if ( data.delivery != 0 ) {
 			data.delivery = 0;
+			_placed_delivery_num--;
 			setData( data, idx );
 		}
 	}
@@ -380,7 +363,7 @@ void EditorStage::updateMode( ) {
 		_mode = EDIT_MODE_CRYSTAL;
 	}
 	if ( keyboard->isPushKey( "C" ) ) {
-		_mode = EDIT_MODE_STATION;
+		_mode = EDIT_MODE_DELIVERY;
 	}
 }
 
@@ -481,5 +464,19 @@ void EditorStage::loadWall( ) {
 		mdl.pos = pos;
 		mdl.type = wall_type;
 		_walls.push_back( mdl );
+	}
+}
+
+void EditorStage::checkPlacedNum( ) {
+	_placed_crystal_num = 0;
+	_placed_delivery_num = 0;
+	std::array< Stage::DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > data = getData( );
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		if ( data[ i ].crystal ) {
+			_placed_crystal_num++;
+		}
+		if ( data[ i ].delivery ) {
+			_placed_delivery_num++;
+		}
 	}
 }
