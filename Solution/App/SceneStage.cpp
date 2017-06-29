@@ -27,7 +27,7 @@ const int FPS = 60;
 const int CIRCLE_ANIME_FLAME = 1;
 const int MAX_CHOICE_COUNT = 24 * CIRCLE_ANIME_FLAME;
 const double GUIDELINE_VIEW_RANGE = 5 * WORLD_SCALE;
-const int RESULT_TIME = 200;
+const int RESULT_TIME = 150;
 
 SceneStage::SceneStage( int stage_num ) :
 _choice_count( 0 ),
@@ -56,7 +56,8 @@ _result_count( 0 ) {
 	_delivery_number[ 0 ].num = _stage->getMaxDeliveryNum( ) - std::dynamic_pointer_cast<AppStage>( _stage )->getCarryCount( ) + 1;
 	_delivery_number[ 0 ].y = -UI_NUM_SCROLL_TIME * UI_NUM_SCROLL_SPEED;
 	_phase_number[ 0 ].state = NUMBER_STATE_IN;
-	_phase_number[ 1 ].state = NUMBER_STATE_NONE;	
+	_phase_number[ 1 ].state = NUMBER_STATE_NONE;
+
 
 	_guideline->load( "../Resource/Model/Guideline/guideline.mdl" );
 	_guideline->multiply( Matrix::makeTransformScaling( Vector( 0.3, 0.3, 0.3 ) ) );
