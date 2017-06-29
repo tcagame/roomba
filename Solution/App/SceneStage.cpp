@@ -27,7 +27,7 @@ const int FPS = 60;
 const int CIRCLE_ANIME_FLAME = 1;
 const int MAX_CHOICE_COUNT = 24 * CIRCLE_ANIME_FLAME;
 const double GUIDELINE_VIEW_RANGE = 5 * WORLD_SCALE;
-const int RESULT_TIME = 200;
+const int RESULT_TIME = 150;
 
 SceneStage::SceneStage( int stage_num ) :
 _choice_count( 0 ),
