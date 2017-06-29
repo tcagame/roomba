@@ -75,6 +75,7 @@ private:
 	void moveStarting( );
 	void moveWait( );
 	void moveGameOver( );
+	void updateEffect( );
 	void acceleration( );
 	void accelTranslation( );
 	void accelRotation( DIR dir );
@@ -94,6 +95,7 @@ private:
 	int _start_count;
 	int _wait_count;
 	int _crystal_catch_count;
+	int _effect_count;
 	double _rot_speed;
 	bool _link_break;
 	bool _finished;
@@ -112,5 +114,6 @@ private:
 	CrystalPtr _crystal;
 	Matrix _stick_rot;
 	std::array< AnimationPtr, 2 > _delivery;
+	Drawer::Effect _move_effect;
 };
 

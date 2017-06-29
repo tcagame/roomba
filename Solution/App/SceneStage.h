@@ -23,6 +23,7 @@ private:
 	void drawUIDelivery( );
 	void drawUILinKGauge( );
 	void drawUIMap( ) const;
+	void drawUIResult( );
 	void drawTutorial( ) const;
 	void drawGuideLine( Vector distance ) const;
 	Vector getAdjustPos( Vector pos, Vector base_pos ) const;
@@ -44,6 +45,7 @@ private:
 	int _tutorial_count;
 	int _crystal_catch_count;
 	bool _tutorial;
+	int _result_count;
 	ModelPtr _guideline;
 	NUMBER _phase_number[ 2 ];
 	NUMBER _delivery_number[ 2 ];
