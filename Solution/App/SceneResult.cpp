@@ -24,7 +24,7 @@ SceneResult::SceneResult( int time, int col_num, bool clear, int crystal_carry_n
 _select( 1 ),
 _choice_count( 0 ),
 _count( 0 ),
-_crystal_carry_num( 0 ),
+_crystal_carry_num( 99 ),
 _move_count( 0 ),
 _retry( true ),
 _stage_clear( clear ) {
@@ -50,8 +50,8 @@ _stage_clear( clear ) {
 	
 	const int WIDTH = Application::getInstance( )->getWindowWidth( );
 	const int HEIGHT = Application::getInstance( )->getWindowHeight( );
-	_select_pos[ 0 ] = Vector( WIDTH / 2 - SELECT_TEXTURE_X / 4, HEIGHT / 2 + SELECT_TEXTURE_Y + SELECT_TEXTURE_Y / 2, 1 );
-	_select_pos[ 1 ] = Vector( WIDTH / 2 - SELECT_TEXTURE_X / 4 + SELECT_TEXTURE_X * 2 / 3, HEIGHT / 2 + SELECT_TEXTURE_Y + SELECT_TEXTURE_Y / 2, SELECT_SMALL_SIZE );
+	_select_pos[ 0 ] = Vector( WIDTH / 2 - SELECT_TEXTURE_X / 4, HEIGHT * 6 / 8, 1 );
+	_select_pos[ 1 ] = Vector( WIDTH / 2 - SELECT_TEXTURE_X / 4 + SELECT_TEXTURE_X * 2 / 3, HEIGHT * 6 / 8, SELECT_SMALL_SIZE );
 
 	SoundPtr sound = Sound::getTask( );
 	sound->playBGM( "resultBGM.wav" );
@@ -313,7 +313,7 @@ void SceneResult::drawCircle( ) const {
 	int tx = idx % 5;
 	int ty = idx / 5;
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT * 6 / 8, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
+	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - CIRCLE_SIZE / 2, HEIGHT * 6 / 8 + 10, tx * CIRCLE_SIZE, ty * CIRCLE_SIZE, CIRCLE_SIZE, CIRCLE_SIZE ), GRAPH_CIRCLE );
 	drawer->setSprite( sprite );
 }
 
@@ -361,10 +361,10 @@ void SceneResult::moveChoice( ) {
 	int HEIGHT = app->getWindowHeight( );
 	const int TEXTURE_X = SELECT_TEXTURE_X;
 	const int TEXTURE_Y = SELECT_TEXTURE_Y;
-	const Vector YES_LEFT  = Vector( WIDTH / 2 - TEXTURE_X / 4 - TEXTURE_X / 2, HEIGHT / 2 + TEXTURE_Y + TEXTURE_Y / 2 );
-	const Vector YES_RIGHT = Vector( WIDTH / 2 - TEXTURE_X / 4, HEIGHT / 2 + TEXTURE_Y + TEXTURE_Y / 2 );
-	const Vector NO_LEFT   = Vector( WIDTH / 2 - TEXTURE_X / 4, HEIGHT / 2 + TEXTURE_Y + TEXTURE_Y / 2 );
-	const Vector NO_RIGHT  = Vector( WIDTH / 2 - TEXTURE_X / 4 + TEXTURE_X * 2 / 3, HEIGHT / 2 + TEXTURE_Y + TEXTURE_Y / 2 );
+	const Vector YES_LEFT  = Vector( WIDTH / 2 - TEXTURE_X / 4 - TEXTURE_X / 2, HEIGHT * 6 / 8 );
+	const Vector YES_RIGHT = Vector( WIDTH / 2 - TEXTURE_X / 4, HEIGHT * 6 / 8 );
+	const Vector NO_LEFT   = Vector( WIDTH / 2 - TEXTURE_X / 4, HEIGHT * 6 / 8 );
+	const Vector NO_RIGHT  = Vector( WIDTH / 2 - TEXTURE_X / 4 + TEXTURE_X * 2 / 3, HEIGHT * 6 / 8 );
 
 	Vector vec[ 2 ];
 	if ( _retry ) {
@@ -397,30 +397,43 @@ void SceneResult::moveChoice( ) {
 }
 
 void SceneResult::drawCrystalNum( ) const {
-	ApplicationPtr app = Application::getInstance();
-	const int WIDTH = app->getWindowWidth();
-	const int HEIGHT = app->getWindowHeight();
-	int tw = 640;
+	ApplicationPtr app = Application::getInstance( );
+	const int WIDTH = app->getWindowWidth( );
+	const int HEIGHT = app->getWindowHeight( );
+	int tw = 256;
 	int th = 128;
-
-	int tx = 0;
-	int ty = 0;
-	const int NUM_SIZE = 64;
-
 
 	DrawerPtr drawer = Drawer::getTask( );
 	{
-		Drawer::Transform trans( WIDTH / 2 - tw / 2, HEIGHT / 2 - th / 2 );
+		Drawer::Transform trans( WIDTH / 2 - tw * 3 / 4, HEIGHT / 2 - th );
 		drawer->setSprite( Drawer::Sprite( trans, GRAPH_RESULT ) );
 	}
-	{//”Žš
-		int sx = WIDTH / 2 + tw / 2;
-		int sy = HEIGHT / 2 - NUM_SIZE * 1 / 4;
-		int tx = _crystal_carry_num * NUM_SIZE;
-		int sx2 = sx + NUM_SIZE * 2;
-		int sy2 = sy + NUM_SIZE * 2;
+	{ // ”Žš
+		int max_num = 0;
+		if ( _crystal_carry_num / 10 ) {
+			max_num = 2;
+		} else {
+			max_num = 1;
+		}
 
-		Drawer::Transform trans( sx, sy, tx, 0, NUM_SIZE, NUM_SIZE, sx2, sy2 );
-		drawer->setSprite( Drawer::Sprite( trans, GRAPH_NUMBER ) );
+		const int NUM_SIZE = 64;
+		for ( int i = 0; i < max_num; i++ ) {
+			int sx = ( WIDTH / 2 ) + ( tw / 4 ) + ( i * ( NUM_SIZE * 2 ) );
+			int sy = HEIGHT / 2 - NUM_SIZE;
+			int sx2 = sx + NUM_SIZE * 2;
+			int sy2 = sy + NUM_SIZE * 2;
+
+			int tx = 0;
+			int digit = (int)pow( 10, max_num - 1 - i );
+			if ( digit > 9 ) {
+				tx = ( _crystal_carry_num / digit ) * NUM_SIZE;
+			}
+			if ( digit < 10 ) {
+				tx = ( _crystal_carry_num % 10 ) * NUM_SIZE;
+			}
+
+			Drawer::Transform trans( sx, sy, tx, 0, NUM_SIZE, NUM_SIZE, sx2, sy2 );
+			drawer->setSprite( Drawer::Sprite( trans, GRAPH_NUMBER ) );
+		}
 	}
 }
