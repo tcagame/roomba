@@ -14,7 +14,7 @@ private:
 	enum EDIT_MODE {
 		EDIT_MODE_WALL,
 		EDIT_MODE_CRYSTAL,
-		EDIT_MODE_STATION,
+		EDIT_MODE_DELIVERY,
 		EDIT_MODE_MAX
 	};
 private:
@@ -32,10 +32,13 @@ private:
 	void drawWall( ) const;
 	void drawDelivery( ) const;
 	void loadWall( );
+	void checkPlacedNum( );
 private:
 	Vector _cursor_pos;
 	int _count;
 	bool _save;
+	int _placed_delivery_num;
+	int _placed_crystal_num;
 	Vector _before_mouse_pos;
 	EDIT_MODE _mode;
 	std::vector< Drawer::ModelMDL > _walls;

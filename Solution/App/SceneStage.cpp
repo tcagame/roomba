@@ -27,11 +27,13 @@ const int FPS = 60;
 const int CIRCLE_ANIME_FLAME = 1;
 const int MAX_CHOICE_COUNT = 24 * CIRCLE_ANIME_FLAME;
 const double GUIDELINE_VIEW_RANGE = 5 * WORLD_SCALE;
+const int RESULT_TIME = 200;
 
 SceneStage::SceneStage( int stage_num ) :
 _choice_count( 0 ),
 _tutorial_count( 0 ),
-_crystal_catch_count( 0 ) {
+_crystal_catch_count( 0 ),
+_result_count( 0 ) {
 	_shadow = ShadowPtr( new Shadow );
 	_guideline = ModelPtr( new Model );
 	_viewer = ViewerPtr( new Viewer( _shadow ) );
@@ -70,6 +72,8 @@ _crystal_catch_count( 0 ) {
 	drawer->loadGraph( GRAPH_PHASE, "UI/phase.png" );
 	drawer->loadGraph( GRAPH_MAP, "UI/map.png" );
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
+	drawer->loadGraph( GRAPH_GAME_OVER, "UI/game_over.png" );
+	//model
 	drawer->loadGraph( GRAPH_GUIDELINE, "Model/Guideline/guideline.jpg" );
 	drawer->loadGraph( GRAPH_FLOOR, "Model/Stage/floor.jpg" );
 	drawer->loadGraph( GRAPH_WALL, "Model/Stage/wall.jpg" );
@@ -90,10 +94,8 @@ _crystal_catch_count( 0 ) {
 	drawer->loadEffect( EFFECT_COLLISION_TO_WALL, "Effect/collision_wall.efk" );
 	drawer->loadEffect( EFFECT_COLLISION_TO_CRYSTAL, "Effect/collision_crystal.efk" );
 	drawer->loadEffect( EFFECT_CRYSTAL_AURA, "Effect/crystal_aura.efk" );
-	drawer->loadEffect( EFFECT_CHANGE_ROOMBA_STATE, "Effect/move_roomba.efk" );
 	drawer->loadEffect( EFFECT_DELIVERY_POINT, "Effect/point.efk" );
-	drawer->loadEffect( EFFECT_REBOOT, "Effect/reboot.efk" );
-
+	drawer->loadEffect( EFFECT_ROOMBA, "Effect/move_roomba.efk" );
 }
 
 
@@ -103,21 +105,22 @@ SceneStage::~SceneStage( ) {
 Scene::NEXT SceneStage::update( ) {
 	SoundPtr sound = Sound::getTask( );
 	// ƒJƒƒ‰&viwerí‚ÉXV‚·‚é
-	if ( _roomba->getMoveState( ) != Roomba::MOVE_STATE_GAMEOVER ) {
+	Roomba::MOVE_STATE roomba_move_state = _roomba->getMoveState( );
+	if ( roomba_move_state != Roomba::MOVE_STATE_GAMEOVER ) {
 		_camera->update( );
 	}
-	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_STARTING ) {
+	if ( roomba_move_state == Roomba::MOVE_STATE_STARTING ) {
 		_viewer->update( _roomba->getStartPos( ) );
 	} else {
 		_viewer->update( _roomba->getCentralPos( ) );
 		_tutorial_count++;
 	}
 
-	if ( _roomba->isFinished( ) ) {
+	if ( _result_count > RESULT_TIME ) {
 		_timer->finalize( );
 		_roomba->finalize( );
-		Game::getTask( )->setResult( _roomba->getMoveState( ) != Roomba::MOVE_STATE_GAMEOVER );
-		if ( _roomba->getMoveState( ) != Roomba::MOVE_STATE_GAMEOVER ) {
+		Game::getTask( )->setResult( roomba_move_state != Roomba::MOVE_STATE_GAMEOVER );
+		if ( roomba_move_state != Roomba::MOVE_STATE_GAMEOVER ) {
 			Game::getTask( )->setOpenStage( );
 		}
 		return NEXT_RESULT;
@@ -128,14 +131,14 @@ Scene::NEXT SceneStage::update( ) {
 	_roomba->updateLaser( _camera );
 
 	AppStagePtr app_stage = std::dynamic_pointer_cast< AppStage >( _stage );
-	if ( _roomba->getMoveState( ) != Roomba::MOVE_STATE_LIFT_UP &&
-		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_LIFT_DOWN &&
-		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_WAIT &&
-		 _roomba->getMoveState( ) != Roomba::MOVE_STATE_STARTING &&
+	if ( roomba_move_state != Roomba::MOVE_STATE_LIFT_UP &&
+		 roomba_move_state != Roomba::MOVE_STATE_LIFT_DOWN &&
+		 roomba_move_state != Roomba::MOVE_STATE_WAIT &&
+		 roomba_move_state != Roomba::MOVE_STATE_STARTING &&
 		 !app_stage->isFinished( ) ) {
 		_timer->update( );
 	}
-	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE_WAIT ) {
+	if ( roomba_move_state == Roomba::MOVE_STATE_WAIT ) {
 		if ( _timer->getTime( ) < 5 * FPS ) {
 			sound->stopSE( "alertSE.wav" );
 		}
@@ -153,6 +156,7 @@ void SceneStage::drawUI( ) {
 	drawUIDelivery( );
 	drawUILinKGauge( );
 	drawUIMap( );
+	drawUIResult( );
 	if ( _tutorial ) {
 		if ( _roomba->isFirstCrystalCatch( ) ) {
 			_crystal_catch_count++;
@@ -163,6 +167,39 @@ void SceneStage::drawUI( ) {
 
 void SceneStage::drawUILinKGauge( ) {
 	_timer->draw( );
+}
+
+void SceneStage::drawUIResult( ) {
+	Roomba::MOVE_STATE roomba_move_state = _roomba->getMoveState( );
+	if ( !_timer->isTimeOver( ) &&
+		 !std::dynamic_pointer_cast< AppStage >( _stage )->isFinished( ) ) {
+		return;
+	}
+	DrawerPtr drawer = Drawer::getTask( );
+	ApplicationPtr app = Application::getInstance( );
+	const int WINDOW_WIDTH = app->getWindowWidth( );
+	const int WINDOW_HEIGHT = app->getWindowHeight( );
+	const int GRAPH_WIDTH = 1024;
+	const int GRAPH_HEIGHT = 256;
+	double alpha =  _result_count * 0.01;
+	if ( alpha > 1 ) {
+		alpha = 1;
+	}
+	{//background
+		Drawer::Transform trans( 0, 0, 0, 0, 512, 512, WINDOW_WIDTH, WINDOW_HEIGHT );
+		Drawer::Sprite sprite( trans, GRAPH_COMMAND_PROMPT_BACK, Drawer::BLEND_ALPHA, alpha );
+		drawer->setSprite( sprite );
+	}
+	int sx = ( WINDOW_WIDTH - GRAPH_WIDTH ) / 2;
+	int sy = ( WINDOW_HEIGHT - GRAPH_HEIGHT ) / 2;
+	if ( _timer->isTimeOver( ) ) {//GAMEOVER
+		Drawer::Transform trans( sx, sy );
+		Drawer::Sprite sprite( trans, GRAPH_GAME_OVER, Drawer::BLEND_ALPHA, alpha );
+		drawer->setSprite( sprite );
+	}
+	if ( std::dynamic_pointer_cast< AppStage >( _stage )->isFinished( ) ) {//GAMECLEAR
+	}
+	_result_count++;
 }
 
 void SceneStage::drawUIDelivery( ) {
