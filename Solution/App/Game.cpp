@@ -21,7 +21,7 @@ GamePtr Game::getTask( ) {
 }
 
 Game::Game( ) :
-_next( Scene::NEXT_RESULT ),
+_next( Scene::NEXT_STAGE ),
 _stage_num( 0 ),
 _result_time( 0 ),
 _stage_clear( false ),

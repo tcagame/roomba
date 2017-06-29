@@ -1,5 +1,6 @@
 #pragma once
 #include "Drawer.h"
+#include "define.h"
 #include "Stage.h"
 #include "Animation.h"
 #include <array>
@@ -85,8 +86,8 @@ private:
 	void announceChangeState( MOVE_STATE state );
 	void setShadow( ShadowPtr shadow );
 	void drawCommandPrompt( ) const;
-	void drawPromptIn( ) const;
-	void drawPromptOut( ) const;
+	void drawPromptIn( GRAPH str_graph, int count ) const;
+	void drawPromptOut( GRAPH str_graph, int count ) const;
 	void initVec( );
 	void replacementVec( );
 private:

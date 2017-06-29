@@ -1,5 +1,4 @@
 #include "Roomba.h"
-#include "define.h"
 #include "Ball.h"
 #include "AppCamera.h"
 #include "AppStage.h"
@@ -123,25 +122,36 @@ void Roomba::draw( ) const {
 }
 
 void Roomba::drawCommandPrompt( ) const {
-	if ( !_boot[ 0 ][ 0 ] && !_boot[ 1 ][ 0 ] ) {
-		return;
+	//if ( !_boot[ 0 ][ 0 ] && !_boot[ 1 ][ 0 ] ) {
+	//	return;
+	//}
+
+	if ( _state == MOVE_STATE_STARTING ) {
+		if ( _start_count < START_TIME / 2 ) {
+			drawPromptIn( GRAPH_COMMAND_BOOT, _start_count );
+		} else if ( _start_count < START_TIME ) {
+			drawPromptOut( GRAPH_COMMAND_BOOT, _start_count );
+		}
 	}
 
-	if ( _start_count < START_TIME / 2 ) {
-		drawPromptIn( );
-	} else {
-		drawPromptOut( );
+	if ( _state == MOVE_STATE_WAIT ) {
+		int count = WAIT_TIME - _wait_count;
+		if ( _wait_count > WAIT_TIME / 2 ) {
+			drawPromptIn( GRAPH_COMMAND_REBOOT, count );
+		} else if ( _wait_count > 0 ) {
+			drawPromptOut( GRAPH_COMMAND_REBOOT, count );
+		}
 	}
 }
 
-void Roomba::drawPromptIn( ) const {
+void Roomba::drawPromptIn( GRAPH str_graph, int count ) const {
 	const int TW = 650;
 	const int TH = 256;
 	const int WAIT_TIME = 10;
 	const int RATIO = 15;
 	int draw_x = 10;
-	if ( _start_count > WAIT_TIME ) {
-		draw_x += ( _start_count - WAIT_TIME ) * RATIO;
+	if ( count > WAIT_TIME ) {
+		draw_x += ( count - WAIT_TIME ) * RATIO;
 		if ( draw_x > TW / 2 ) {
 			draw_x = TW / 2;
 		}
@@ -151,7 +161,7 @@ void Roomba::drawPromptIn( ) const {
 	int draw_y = 10;
 	if ( draw_x == TW / 2 ) {
 		draw_str = true;
-		draw_y += ( _start_count - WAIT_TIME ) * RATIO - ( draw_x - 10 );
+		draw_y += ( count - WAIT_TIME ) * RATIO - ( draw_x - 10 );
 		if ( draw_y > TH / 2 ) {
 			draw_y = TH / 2;
 		}
@@ -185,21 +195,21 @@ void Roomba::drawPromptIn( ) const {
 			tx_left = 0;
 		}
 		int tw_left = ( TW / 2 ) - tx_left;
-		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx - tw_left, sy, tx_left, 0, tw_left, TH, sx, sy2 ), GRAPH_COMMAND_PROMPT_STRING ) );
+		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx - tw_left, sy, tx_left, 0, tw_left, TH, sx, sy2 ), str_graph ) );
 
 		int tw_right = draw_x;
 		if ( tw_right > TW / 2 ) {
 			tw_right = TW / 2;
 		}
-		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, TW / 2, 0, tw_right, TH, sx2_right, sy2 ), GRAPH_COMMAND_PROMPT_STRING ) );
+		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, TW / 2, 0, tw_right, TH, sx2_right, sy2 ), str_graph ) );
 	}
 }
 
-void Roomba::drawPromptOut( ) const {
+void Roomba::drawPromptOut( GRAPH str_graph, int count ) const {
 	const int TW = 650;
 	const int TH = 256;
 	const int RATIO = 15;
-	const int DRAW_COUNT = _start_count - ( START_TIME / 2 );
+	const int DRAW_COUNT = count - ( START_TIME / 2 );
 	int draw_x = ( TW  / 2 ) - ( DRAW_COUNT * RATIO );
 	if ( draw_x < 10 ) {
 		draw_x = 10;
@@ -208,8 +218,9 @@ void Roomba::drawPromptOut( ) const {
 	int draw_y = TH / 2;
 	if ( draw_x == 10 ) {
 		draw_y -= ( DRAW_COUNT - ( ( TW / 2 ) / RATIO ) ) * RATIO;
-		if ( draw_y < 10 ) {
-			draw_y = 10;
+		if ( draw_y < 0 ) {
+			draw_x = 0;
+			draw_y = 0;
 		}
 	}
 	ApplicationPtr app = Application::getInstance( );
@@ -241,13 +252,13 @@ void Roomba::drawPromptOut( ) const {
 			tx_left = 0;
 		}
 		int tw_left = ( TW / 2 ) - tx_left;
-		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx - tw_left, sy, tx_left, 0, tw_left, TH, sx, sy2 ), GRAPH_COMMAND_PROMPT_STRING ) );
+		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx - tw_left, sy, tx_left, 0, tw_left, TH, sx, sy2 ), str_graph ) );
 
 		int tw_right = draw_x;
 		if ( tw_right > TW / 2 ) {
 			tw_right = TW / 2;
 		}
-		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, TW / 2, 0, tw_right, TH, sx2_right, sy2 ), GRAPH_COMMAND_PROMPT_STRING ) );
+		Drawer::getTask( )->setSprite( Drawer::Sprite( Drawer::Transform( sx, sy, TW / 2, 0, tw_right, TH, sx2_right, sy2 ), str_graph ) );
 	}
 }
 

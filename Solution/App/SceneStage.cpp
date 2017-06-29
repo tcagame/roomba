@@ -64,7 +64,8 @@ _crystal_catch_count( 0 ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_SHADOW, "texture/shadow.png" );
 	drawer->loadGraph( GRAPH_RADAR, "UI/radar.png" );
-	drawer->loadGraph( GRAPH_COMMAND_PROMPT_STRING, "UI/Boot.png" );
+	drawer->loadGraph( GRAPH_COMMAND_BOOT, "UI/Boot.png" );
+	drawer->loadGraph( GRAPH_COMMAND_REBOOT, "UI/ReBoot.png" );
 	drawer->loadGraph( GRAPH_COMMAND_PROMPT_BACK, "UI/op_background.png" );
 	drawer->loadGraph( GRAPH_LINK_GAUGE, "UI/link_gauge.png" );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
@@ -335,6 +336,7 @@ void SceneStage::drawTutorial( ) const {
 	// コントローラー
 	// トランスレーション
 	if ( _roomba->getMoveState( ) != Roomba::MOVE_STATE_STARTING &&
+		 !_roomba->isFirstCrystalCatch( ) &&
 		 _tutorial_count < 120 ) {
 		GRAPH graph = GRAPH_CONTROLLER_NEUTRAL;
 		if ( _tutorial_count > 15 ) {
@@ -351,7 +353,7 @@ void SceneStage::drawTutorial( ) const {
 		drawer->setSprite( Drawer::Sprite( trans, graph, Drawer::BLEND_ALPHA, ratio ) );
 
 		// ゲーム目的メッセージ クリスタルを取る
-		if ( !_roomba->isFirstCrystalCatch( ) ) {
+		{
 			Drawer::Transform trans( ( WIDTH / 2 ) - 512, HEIGHT - 158 );
 			drawer->setSprite( Drawer::Sprite( trans, GRAPH_TUTORIAL_CRYSTAL, Drawer::BLEND_ALPHA, ratio ) );
 		}
