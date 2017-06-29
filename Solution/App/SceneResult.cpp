@@ -16,11 +16,9 @@ const int THICK_FRAME_SIZE = 57;
 const int SELECT_SIZE  = 512;
 const int CIRCLE_ANIME_FLAME = 1;
 const int MAX_CHOICE_COUNT = 25 * CIRCLE_ANIME_FLAME;
-const int DRAW_TIME = 100;
-const double FADE_IN_RETRY_TIME = 30;
 const int SELECT_TEXTURE_X = 512;
 const int SELECT_TEXTURE_Y = 128;
-const double SELECT_SMALL_SIZE = 0.5;
+const double SELECT_SMALL_SIZE = 0.75;
 
 SceneResult::SceneResult( int time, int col_num, bool clear, int crystal_carry_num ) :
 _select( 1 ),
@@ -132,21 +130,35 @@ void SceneResult::drawRetry( ) const {
 	int WIDTH = app->getWindowWidth( );
 	int HEIGHT = app->getWindowHeight( );
 
+	const int MAX_FLOW = 20;
 	const int TEXTURE_X = SELECT_TEXTURE_X;
 	const int TEXTURE_Y = SELECT_TEXTURE_Y;
 	int retry_sx = WIDTH / 2 - TEXTURE_X * 2 / 6;
 	int retry_sy = HEIGHT / 2 + TEXTURE_Y;
-	double RATIO = (double)( _count ) / FADE_IN_RETRY_TIME;
-	drawer->setSprite( Drawer::Sprite( Drawer::Transform( retry_sx, retry_sy, 0, 0, TEXTURE_X, TEXTURE_Y, retry_sx + TEXTURE_X * 2 / 3, retry_sy + TEXTURE_Y * 2 / 3 ), GRAPH_RETRY, Drawer::BLEND_ALPHA, RATIO ) );
+	drawer->setSprite( Drawer::Sprite( Drawer::Transform( retry_sx, retry_sy, 0, 0, TEXTURE_X, TEXTURE_Y, retry_sx + TEXTURE_X * 2 / 3, retry_sy + TEXTURE_Y * 2 / 3 ), GRAPH_RETRY ) );
 	{ // yes
+		int flow = _count % MAX_FLOW;
+		if ( flow > MAX_FLOW / 2 ) {
+			flow = MAX_FLOW - flow;
+		}
+		if ( !_retry ) {
+			flow = 0;
+		}
 		int select_sx2 = (int)( _select_pos[ 0 ].x + 256 * _select_pos[ 0 ].z );
 		int select_sy2 = (int)( _select_pos[ 0 ].y + 128 * _select_pos[ 0 ].z );
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( (int)_select_pos[ 0 ].x, (int)_select_pos[ 0 ].y, 0, 0, TEXTURE_X / 2, TEXTURE_Y, select_sx2, select_sy2 ), GRAPH_YES_NO ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( (int)_select_pos[ 0 ].x - flow, (int)_select_pos[ 0 ].y - flow, 0, 0, TEXTURE_X / 2, TEXTURE_Y, select_sx2 + flow, select_sy2 + flow ), GRAPH_YES_NO ) );
 	}
 	{ // no
+		int flow = _count % MAX_FLOW;
+		if ( flow > MAX_FLOW / 2 ) {
+			flow = MAX_FLOW - flow;
+		}
+		if ( _retry ) {
+			flow = 0;
+		}
 		int select_sx2 = (int)( _select_pos[ 1 ].x + 256 * _select_pos[ 1 ].z );
 		int select_sy2 = (int)( _select_pos[ 1 ].y + 128 * _select_pos[ 1 ].z );
-		drawer->setSprite( Drawer::Sprite( Drawer::Transform( (int)_select_pos[ 1 ].x, (int)_select_pos[ 1 ].y, TEXTURE_X / 2, 0, TEXTURE_X / 2, TEXTURE_Y, select_sx2, select_sy2 ), GRAPH_YES_NO ) );
+		drawer->setSprite( Drawer::Sprite( Drawer::Transform( (int)_select_pos[ 1 ].x - flow, (int)_select_pos[ 1 ].y - flow, TEXTURE_X / 2, 0, TEXTURE_X / 2, TEXTURE_Y, select_sx2 + flow, select_sy2 + flow ), GRAPH_YES_NO ) );
 	}
 }
 
@@ -289,10 +301,6 @@ void SceneResult::drawFrame( ) const {
 }
 
 void SceneResult::drawCircle( ) const {
-	if ( _count < FADE_IN_RETRY_TIME ) {
-		return;
-	}
-
 	ApplicationPtr app = Application::getInstance( );
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
