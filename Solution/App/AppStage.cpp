@@ -381,7 +381,7 @@ bool AppStage::isOnDelivery( Vector& pos ) {
 		_first_crystal_carry = false;
 		result = true;
 		_carry_count++;
-		if ( _carry_count > getMaxDeliveryNum( ) ) {
+		if ( _carry_count >= getMaxDeliveryNum( ) ) {
 			_finished = true;
 		}
 		break;
