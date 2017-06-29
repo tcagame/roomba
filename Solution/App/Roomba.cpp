@@ -145,10 +145,10 @@ void Roomba::drawCommandPrompt( ) const {
 }
 
 void Roomba::drawPromptIn( GRAPH str_graph, int count ) const {
-	const int TW = 650;
+	const int TW = 1024;
 	const int TH = 256;
 	const int WAIT_TIME = 10;
-	const int RATIO = 15;
+	const int RATIO = 20;
 	int draw_x = 10;
 	if ( count > WAIT_TIME ) {
 		draw_x += ( count - WAIT_TIME ) * RATIO;
@@ -206,9 +206,9 @@ void Roomba::drawPromptIn( GRAPH str_graph, int count ) const {
 }
 
 void Roomba::drawPromptOut( GRAPH str_graph, int count ) const {
-	const int TW = 650;
+	const int TW = 1024;
 	const int TH = 256;
-	const int RATIO = 15;
+	const int RATIO = 20;
 	const int DRAW_COUNT = count - ( START_TIME / 2 );
 	int draw_x = ( TW  / 2 ) - ( DRAW_COUNT * RATIO );
 	if ( draw_x < 10 ) {
