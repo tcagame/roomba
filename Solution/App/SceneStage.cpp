@@ -248,12 +248,35 @@ void SceneStage::drawUIDelivery( ) {
 			}
 		}
 		int number = _delivery_number[ i ].num;
-		int sx = x  + UI_NUM_SIZE / 2 - (int)( UI_NUM_SIZE * _delivery_number[ i ].size ) / 2;
-		int sy = y + UI_NUM_SIZE / 2  - (int)( UI_NUM_SIZE * _delivery_number[ i ].size ) / 2 + _delivery_number[ i ].y;
-		int sx2 = sx + (int)( UI_NUM_SIZE * _delivery_number[ i ].size );
-		int sy2 = sy + (int)( UI_NUM_SIZE * _delivery_number[ i ].size );
-		Drawer::Sprite sprite( Drawer::Transform( sx, sy, number * UI_NUM_SIZE, 0, UI_NUM_SIZE, UI_NUM_SIZE, sx2, sy2 ), GRAPH_NUMBER );
-		drawer->setSprite( sprite );
+		
+		int max_digit = 0;
+		if ( number / 10 ) {
+			max_digit = 2;
+		} else {
+			max_digit = 1;
+		}
+
+		for ( int j = 0; j < max_digit; j++ ) {
+			int sx = x + UI_NUM_SIZE / 2 - (int)( UI_NUM_SIZE * _delivery_number[ i ].size ) / 2 + ( j * ( UI_NUM_SIZE / 2 ) );
+			if ( max_digit == 2 ) {
+				sx -= UI_NUM_SIZE / 4;
+			}
+			int sy = y + UI_NUM_SIZE / 2 - (int)( UI_NUM_SIZE * _delivery_number[ i ].size ) / 2 + _delivery_number[ i ].y;
+			int sx2 = sx + (int)( UI_NUM_SIZE * _delivery_number[ i ].size );
+			int sy2 = sy + (int)( UI_NUM_SIZE * _delivery_number[ i ].size );
+
+			int tx = 0;
+			int digit = (int)pow( 10, max_digit - 1 - j );
+			if ( digit > 9 ) {
+				tx = ( number / digit ) * UI_NUM_SIZE;
+			}
+			if ( digit < 10 ) {
+				tx = ( number % 10 ) * UI_NUM_SIZE;
+			}
+
+			Drawer::Transform trans( sx, sy, tx, 0, UI_NUM_SIZE, UI_NUM_SIZE, sx2, sy2 );
+			drawer->setSprite( Drawer::Sprite( trans, GRAPH_NUMBER ) );
+		}
 	}
 }
 
