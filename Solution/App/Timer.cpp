@@ -7,7 +7,7 @@
 const int FPS = 60;
 const int MAX_TIME = 30 * FPS;
 const int START_TIME = MAX_TIME / 2;
-const int ADD_TIME = 10 * FPS;
+const int ADD_TIME = 7 * FPS;
 const int RECOVERY_SPEED = 8;
 
 Timer::Timer( ) :
