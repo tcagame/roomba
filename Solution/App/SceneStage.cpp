@@ -56,7 +56,8 @@ _result_count( 0 ) {
 	_delivery_number[ 0 ].num = _stage->getMaxDeliveryNum( ) - std::dynamic_pointer_cast<AppStage>( _stage )->getCarryCount( ) + 1;
 	_delivery_number[ 0 ].y = -UI_NUM_SCROLL_TIME * UI_NUM_SCROLL_SPEED;
 	_phase_number[ 0 ].state = NUMBER_STATE_IN;
-	_phase_number[ 1 ].state = NUMBER_STATE_NONE;	
+	_phase_number[ 1 ].state = NUMBER_STATE_NONE;
+
 
 	_guideline->load( "../Resource/Model/Guideline/guideline.mdl" );
 	_guideline->multiply( Matrix::makeTransformScaling( Vector( 0.3, 0.3, 0.3 ) ) );
