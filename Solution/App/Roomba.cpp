@@ -77,7 +77,7 @@ _start_count( 0 ) {
 		_boot[ 1 ][ i ] = true;
 	}
 	_laser = LaserPtr( new Laser );
-
+	_move_effect = Drawer::Effect( EFFECT_ROOMBA, getCentralPos( ), EFFECT_ROOMBA_SIZE, EFFECT_ROTATE );
 }
 
 
@@ -122,10 +122,6 @@ void Roomba::draw( ) const {
 }
 
 void Roomba::drawCommandPrompt( ) const {
-	//if ( !_boot[ 0 ][ 0 ] && !_boot[ 1 ][ 0 ] ) {
-	//	return;
-	//}
-
 	if ( _state == MOVE_STATE_STARTING ) {
 		if ( _start_count < START_TIME / 2 ) {
 			drawPromptIn( GRAPH_COMMAND_BOOT, _start_count );
