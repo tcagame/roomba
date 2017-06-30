@@ -26,7 +26,7 @@ _count( 0 ),
 _choice_count( 0 ),
 _move_count( 0 ),
 _ispush( false ),
-_open_stage( open_stage ) {
+_open_stage( 1 ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );

@@ -43,6 +43,7 @@ std::string FILENAME[ 32 ] = {
 	"1_15.mdl",
 };
 
+
 EditorStage::EditorStage( CameraPtr camera ) :
 _count( 0 ),
 _camera( camera ),
