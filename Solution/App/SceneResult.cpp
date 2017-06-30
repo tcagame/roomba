@@ -9,9 +9,6 @@
 
 const int RESULT_WIDTH  = 512;
 const int RESULT_HEIGHT = 256;
-const std::string DIRECTORY = "../Resource/Savedata/";
-const std::string FILENAME = DIRECTORY + "best_time.dat";
-const int BRANK = 500;
 const int THICK_FRAME_SIZE = 57;
 const int SELECT_SIZE  = 512;
 const int CIRCLE_ANIME_FLAME = 1;
@@ -20,8 +17,7 @@ const int SELECT_TEXTURE_X = 512;
 const int SELECT_TEXTURE_Y = 128;
 const double SELECT_SMALL_SIZE = 0.75;
 
-SceneResult::SceneResult( int time, int col_num, bool clear, int crystal_carry_num ) :
-_select( 1 ),
+SceneResult::SceneResult( int crystal_carry_num ) :
 _choice_count( 0 ),
 _count( 0 ),
 _crystal_carry_num( crystal_carry_num ),
@@ -29,24 +25,15 @@ _move_count( 0 ),
 _retry( true ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_NUMBER, "UI/number.png" );
-	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
-	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
-	drawer->loadGraph( GRAPH_OK, "UI/ok.png" );
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
 	drawer->loadGraph( GRAPH_STAGE_SELECT, "select/Stage Select.png" );
-	drawer->loadGraph( GRAPH_GAME_OVER, "UI/game_over.png" );
-	drawer->loadGraph( GRAPH_GAME_CLEAR, "UI/StageClear.png" );
+	drawer->loadGraph( GRAPH_GAME_OVER, "UI/result_str.png" );
 	drawer->loadGraph( GRAPH_RESULT_FRAME, "UI/game_over_frame.png" );
 	drawer->loadGraph( GRAPH_RESULT, "UI/result.png" );
 	
 	drawer->loadGraph( GRAPH_RETRY, "UI/retry.png" );
 	drawer->loadGraph( GRAPH_YES_NO, "UI/yes_no.png" );
-	drawer->loadGraph( GRAPH_FRAME, "UI/select_frame.png" );
-
-	_this_time = time;
-	_best_time = 0;
-	loadBestTime( );
-	
+		
 	const int WIDTH = Application::getInstance( )->getWindowWidth( );
 	const int HEIGHT = Application::getInstance( )->getWindowHeight( );
 	_select_pos[ 0 ] = Vector( WIDTH / 2 - SELECT_TEXTURE_X / 4, HEIGHT * 6 / 8, 1 );
@@ -112,10 +99,10 @@ void SceneResult::drawResult( ) const {
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
 
-	const int RESULT_WIDTH = 169;
-	const int RESULT_HEIGHT = 37;
+	const int RESULT_WIDTH = 180;
+	const int RESULT_HEIGHT = 50;
 
-	Drawer::Transform trans( WIDTH / 2 - RESULT_WIDTH / 2, HEIGHT / 2 - RESULT_HEIGHT * 8, 427, 50, RESULT_WIDTH, RESULT_HEIGHT );
+	Drawer::Transform trans( WIDTH / 2 - RESULT_WIDTH / 2, RESULT_HEIGHT * 5 );
 	Drawer::Sprite sprite( trans, GRAPH_GAME_OVER );
 	drawer->setSprite( sprite );
 }
@@ -156,92 +143,6 @@ void SceneResult::drawRetry( ) const {
 		int select_sy2 = (int)( _select_pos[ 1 ].y + 128 * _select_pos[ 1 ].z );
 		drawer->setSprite( Drawer::Sprite( Drawer::Transform( (int)_select_pos[ 1 ].x - flow, (int)_select_pos[ 1 ].y - flow, TEXTURE_X / 2, 0, TEXTURE_X / 2, TEXTURE_Y, select_sx2 + flow, select_sy2 + flow ), GRAPH_YES_NO ) );
 	}
-}
-
-int SceneResult::drawTime( int x, int y, int time ) const {
-	DrawerPtr drawer = Drawer::getTask( );
-	const int WIDTH = 64;
-	const int HEIGHT = 64;
-	const int SIZE = 2;
-	int x2 = x + WIDTH * SIZE;
-	int y2 = y + HEIGHT * SIZE;
-	// 小数点以下数字
-	Drawer::Transform trans( x, y, ( time % 10 ) * WIDTH, 0, WIDTH, HEIGHT, x2, y2 );
-	drawer->setSprite( Drawer::Sprite( trans, GRAPH_NUMBER ) );
-	time /= 10;
-	// 小数点
-	x -= WIDTH * SIZE / 2;
-	x2 = x + WIDTH * SIZE / 2;
-	trans =  Drawer::Transform( x, y, 10 * WIDTH, 0, WIDTH / 2, HEIGHT, x2, y2 );
-	drawer->setSprite( Drawer::Sprite( trans, GRAPH_NUMBER ) );
-	
-	// 小数点以上数字
-	x -= WIDTH * SIZE;
-	x2 = x + WIDTH * SIZE;
-	while ( time >= 0 ) {
-		trans =  Drawer::Transform( x, y, ( time % 10 ) * WIDTH, 0, WIDTH, HEIGHT, x2, y2 );
-		drawer->setSprite( Drawer::Sprite( trans, GRAPH_NUMBER ) );
-		x -= WIDTH * SIZE;
-		x2 = x + WIDTH * SIZE;
-		time /= 10;
-		
-		if ( time == 0 ) {
-			break;
-		}
-	}
-	return x;
-}
-
-void SceneResult::drawThisTime( ) const {
-	ApplicationPtr app = Application::getInstance( );
-	const int WIDTH = app->getWindowWidth( );
-	const int HEIGHT = app->getWindowHeight( );
-	int x = WIDTH / 3 * 2;
-	int y = HEIGHT * 2 / 5;
-	x = drawTime( x, y, _this_time );
-	x -= 400;//文字サイズ
-	y -= 60;
-	Drawer::Transform trans =  Drawer::Transform( x, y, 512, 0, 512, 256 );
-	DrawerPtr drawer = Drawer::getTask( );
-	//drawer->setSprite( Drawer::Sprite( trans, GRAPH_RESULT ) );
-}
-
-void SceneResult::drawBestTime( ) const {
-	ApplicationPtr app = Application::getInstance();
-	const int WIDTH = app->getWindowWidth();
-	const int HEIGHT = app->getWindowHeight();
-	int x = WIDTH / 3 * 2;
-	int y = HEIGHT * 3 / 5;
-	x = drawTime( x, y, _best_time );
-	x -= 400;//文字サイズ
-	y -= 60;
-	Drawer::Transform trans =  Drawer::Transform( x, y, 512, 256, 512, 256 );
-	DrawerPtr drawer = Drawer::getTask( );
-	//drawer->setSprite( Drawer::Sprite( trans, GRAPH_RESULT ) );
-}
-
-void SceneResult::loadBestTime( ) {
-	//load
-	ApplicationPtr app = Application::getInstance( );
-	BinaryPtr binary( new Binary );
-	if ( !app->loadBinary( FILENAME, binary ) ) {
-		saveBestTime( );
-		return;
-	}
-	_best_time = *(int*)binary->getPtr( );
-	binary->~Binary( );
-
-	if ( _best_time < _this_time ) {
-		saveBestTime( );
-	}
-}
-
-void SceneResult::saveBestTime( ) {
-	ApplicationPtr app = Application::getInstance( );
-	BinaryPtr binary( new Binary );
-	binary->ensure( sizeof( _this_time ) );
-	binary->write( (void*)&_this_time, sizeof( _this_time ) );
-	app->saveBinary( FILENAME, binary );
 }
 
 void SceneResult::drawFrame( ) const {
