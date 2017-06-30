@@ -77,8 +77,10 @@ _result_count( 0 ) {
 	drawer->loadGraph( GRAPH_GAME_CLEAR, "UI/StageClear.png" );
 	//model
 	drawer->loadGraph( GRAPH_GUIDELINE, "Model/Guideline/guideline.jpg" );
-	drawer->loadGraph( GRAPH_FLOOR, "Model/Stage/floor.jpg" );
-	drawer->loadGraph( GRAPH_WALL, "Model/Stage/wall.jpg" );
+	std::string floor_texture = "Model/Stage/floor_" + std::to_string( stage_num ) + ".jpg";
+	drawer->loadGraph( GRAPH_FLOOR, floor_texture.c_str( ) );
+	std::string wall_texture = "Model/Stage/wall_" + std::to_string( stage_num ) + ".jpg";
+	drawer->loadGraph( GRAPH_WALL, wall_texture.c_str( ) );
 	Matrix delivery_scale = Matrix::makeTransformScaling( DELIVERY_SIZE );
 
 	Matrix crystal_scale = Matrix::makeTransformScaling( CRYSTAL_SIZE );
