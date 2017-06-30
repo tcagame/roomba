@@ -9,7 +9,6 @@ private:
 	NEXT update( );
 	void draw( );
 	void drawTitle( );
-	void drawPlease( );
 	void drawController( );
 	void drawCircle( ) const;
 	void drawBg( );
