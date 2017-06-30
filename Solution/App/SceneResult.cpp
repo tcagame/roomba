@@ -204,11 +204,13 @@ void SceneResult::selectRetry( ) {
 	DevicePtr device = Device::getTask( );
 	bool retry = _retry;
 	if ( device->getDirX( ) < 0 &&
+		 getFadeOutCount( ) == MAX_FADE_COUNT && 
 		 _choice_count == 0 &&
 		 _move_count == 0 ) {
 		retry = true;
 	}
 	if ( device->getDirX( ) > 0 &&
+		 getFadeOutCount( ) == MAX_FADE_COUNT && 
 		 _choice_count == 0 &&
 		 _move_count == 0 ) {
 		retry = false;
