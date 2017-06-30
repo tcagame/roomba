@@ -44,10 +44,16 @@ void Game::changeScene( ) {
 	if ( _next == Scene::NEXT_CONTINUE ) {
 		return;
 	}
+	int crystal_carry_num = 0;//ƒŠƒUƒ‹ƒg—p
+	if ( _next == Scene::NEXT_RESULT ) {
+		SceneStagePtr stage = std::dynamic_pointer_cast< SceneStage >( _scene );
+		if ( stage ) {
+			crystal_carry_num = stage->getCrystalCarryNum( );
+		}
+
+	}
 	_scene.~shared_ptr( );
 	_scene.reset( );
-	int crystal_carry_num = 0;
-	SceneStagePtr stage = std::dynamic_pointer_cast< SceneStage >( _scene );
 
 	switch ( _next ) {
 	case Scene::NEXT_TITLE:
@@ -60,9 +66,6 @@ void Game::changeScene( ) {
 		_scene = ScenePtr( new SceneStage( _stage_num ) );
 		break;
 	case Scene::NEXT_RESULT:
-		if ( stage ) {
-			crystal_carry_num = stage->getCrystalCarryNum( );
-		}
 		_scene = ScenePtr( new SceneResult( _result_time, _col_num, _stage_clear, crystal_carry_num ) );
 		break;
 	}
