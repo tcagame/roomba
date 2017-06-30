@@ -13,7 +13,7 @@ static const int NUM_SIZE = 256;
 static const int NUM_CENTER = NUM_SIZE / 2;
 static const int PITCH = 150; 
 static const int MOVE_SPEED = 1;
-static const int MAX_MOVE_COUNT = 10;
+static const int MAX_MOVE_COUNT = 8;
 static const int CIRCLE_ANIME_FLAME = 1;
 static const int MAX_CHOICE_COUNT = 25 * CIRCLE_ANIME_FLAME;
 static const int THICK_FRAME_SIZE = 57;
@@ -26,7 +26,7 @@ _count( 0 ),
 _choice_count( 0 ),
 _move_count( 0 ),
 _ispush( false ),
-_open_stage( 1 ) {
+_open_stage( open_stage ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
@@ -135,8 +135,8 @@ Scene::NEXT SceneSelect::update( ) {
 }
 
 void SceneSelect::draw( ) {
-	//drawFadeBg( );
 	drawBg( );
+	drawFadeBg( );
 	drawRogo( );
 	drawOk( );
 	drawSelect( );
@@ -167,7 +167,7 @@ void SceneSelect::drawRogo( ) {
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - SELECT_CENTER_X, HEIGHT / 5, 46, 86, 430, 50 ), GRAPH_STAGE_SELECT );
+	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - SELECT_CENTER_X, HEIGHT / 5, 46, 80, 430, 55 ), GRAPH_STAGE_SELECT );
 	drawer->setSprite( sprite );
 	
 }
