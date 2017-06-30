@@ -55,7 +55,7 @@ void Scene::drawFadeBg( ) const {
 	const int WIDTH = app->getWindowWidth( );
 	const int HEIGHT = app->getWindowHeight( );
 	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Sprite sprite( Drawer::Transform( 0, 0, 0, 0, 256, 256, WIDTH, HEIGHT ), GRAPH_FADE_BG, Drawer::BLEND_ALPHA, 0.75 );
+	Drawer::Sprite sprite( Drawer::Transform( 0, HEIGHT / 2 - 130, 0, 0, 256, 256, WIDTH, HEIGHT / 2 + 195 ), GRAPH_FADE_BG );
 	drawer->setSprite( sprite );
 }
 
