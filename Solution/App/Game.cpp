@@ -66,7 +66,7 @@ void Game::changeScene( ) {
 		_scene = ScenePtr( new SceneStage( _stage_num ) );
 		break;
 	case Scene::NEXT_RESULT:
-		_scene = ScenePtr( new SceneResult( _result_time, _col_num, _stage_clear, crystal_carry_num ) );
+		_scene = ScenePtr( new SceneResult( crystal_carry_num ) );
 		break;
 	}
 }
