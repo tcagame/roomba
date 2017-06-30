@@ -988,6 +988,9 @@ bool Roomba::isHoldCrystal( ) const {
 }
 
 void Roomba::shiftPos( StagePtr stage, CameraPtr camera ) {
+	if ( _state == MOVE_STATE_GAMEOVER ) {
+		return;
+	}
 	Vector pos[ 2 ];
 	pos[ 0 ] = _balls[ 0 ]->getPos( );
 	pos[ 1 ] = _balls[ 1 ]->getPos( );
