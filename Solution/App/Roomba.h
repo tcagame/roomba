@@ -49,6 +49,7 @@ public:
 	bool isWait( ) const;
 	bool isFirstCrystalCatch( ) const;
 	bool isFinished( ) const;
+	bool isGameClear( ) const;
 	Vector getStartPos( ) const;
 	bool isHoldCrystal( ) const;
 private:

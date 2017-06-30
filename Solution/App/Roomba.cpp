@@ -438,7 +438,7 @@ void Roomba::changeState( StagePtr stage, CameraPtr camera, TimerPtr timer ) {
 		}
 		if ( state == MOVE_STATE_LIFT_UP ) {
 			for ( int i = 0; i < 2; i++ ) {
-				_delivery[ i ]->setPos( _balls[ i ]->getPos( ) + Vector( -10, -10, LIFT_Z ) ); 
+				_delivery[ i ]->setPos( _balls[ i ]->getPos( ) + Vector( -15, -15, LIFT_Z ) ); 
 				_vec_delivery[ i ] = Vector( );
 				_delivery[ i ]->changeAnim( Animation::ANIM::ANIM_DELIVERY_STAND );
 			}
@@ -969,6 +969,15 @@ bool Roomba::isWait( ) const {
 bool Roomba::isFinished( ) const {
 	return _finished;
 }
+
+bool Roomba::isGameClear( ) const {
+	return (
+		_state					   == MOVE_STATE_LIFT_UP			 &&
+		_delivery[ 0 ]->getAnim( ) == Animation::ANIM_DELIVERY_CARRY &&
+		_delivery[ 1 ]->getAnim( ) == Animation::ANIM_DELIVERY_CARRY
+		);
+}
+
 
 bool Roomba::isFirstCrystalCatch( ) const {
 	return _first_crystal_catch;
