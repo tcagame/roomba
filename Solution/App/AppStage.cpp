@@ -336,7 +336,7 @@ void AppStage::loadWall( ) {
 	int stage_num = getStageNum( );
 	for ( int i = 0; i < 4; i++ ) {
 		for ( int j = 0; j < WALL_DIV_SIZE; j++ ) {
-			int idx = i * 4 + j;
+			int idx = i * WALL_DIV_SIZE + j;
 			if ( _walls[ idx ] ) {
 				_walls[ idx ].reset( );
 				_walls[ idx ] = ModelPtr( );

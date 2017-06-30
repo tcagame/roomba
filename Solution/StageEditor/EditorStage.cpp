@@ -240,7 +240,15 @@ void EditorStage::edit( ) {
 	KeyboardPtr keyboard = Keyboard::getTask( );
 	DrawerPtr drawer = Drawer::getTask( );
 	if ( _save ) {
+		for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+			if ( _deliverys[ i ] ) {
+				_deliverys[ i ].reset( );
+				_deliverys[ i ] = ModelPtr( );
+			}
+		}
+
 		saveFile( );
+		loadDelivery( );
 		_save = false;
 	}
 	if ( keyboard->isPushKey( "F2" ) ) {
