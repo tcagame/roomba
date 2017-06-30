@@ -69,7 +69,7 @@ Scene::NEXT SceneTitle::update( ) {
 }
 
 void SceneTitle::draw( ) {
-	drawFadeBg( );
+	//drawFadeBg( );
 	drawBg( );
 	drawManual( );
 	drawTitle( );
