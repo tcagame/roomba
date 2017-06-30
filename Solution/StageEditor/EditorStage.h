@@ -32,7 +32,9 @@ private:
 	void drawWall( ) const;
 	void drawDelivery( ) const;
 	void loadWall( );
+	void loadDelivery( );
 	void checkPlacedNum( );
+	void reset( );
 private:
 	Vector _cursor_pos;
 	int _count;

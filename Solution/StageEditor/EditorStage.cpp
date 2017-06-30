@@ -58,11 +58,10 @@ _save( false ) {
 		Vector pos = Vector( i % STAGE_WIDTH_NUM * WORLD_SCALE, i / STAGE_WIDTH_NUM * WORLD_SCALE );
 		_floor[ i ] = Drawer::ModelMDL( pos, MDL_FLOOR );
 	}
-	load( 0 );
 	_delivery = ModelPtr( new Model );
 	_delivery->load( "../Resource/Model/Delivery/delivery.mdl" );
 	_delivery->multiply( Matrix::makeTransformScaling( DELIVERY_SIZE ) );
-	_deliverys = { };
+	load( 0 );
 	checkPlacedNum( );
 }
 
@@ -501,6 +500,15 @@ void EditorStage::checkPlacedNum( ) {
 		}
 		if ( data[ i ].delivery != 0 ) {
 			_placed_delivery_num++;
+		}
+	}
+}
+
+void EditorStage::loadDelivery( ) {
+	_deliverys = { };
+	std::array< Stage::DATA, STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM > data = getData( );
+	for ( int i = 0; i < STAGE_WIDTH_NUM * STAGE_HEIGHT_NUM; i++ ) {
+		if ( data[ i ].delivery != 0 ) {
 			if ( !_deliverys[ i ] ) {
 				double x = double( i % STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 3;
 				double y = double( i / STAGE_WIDTH_NUM ) * WORLD_SCALE + WORLD_SCALE / 2;
@@ -510,4 +518,9 @@ void EditorStage::checkPlacedNum( ) {
 			}
 		}
 	}
+}
+
+void EditorStage::reset( ) {
+	Stage::reset( );
+	checkPlacedNum( );
 }
