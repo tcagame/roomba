@@ -20,3 +20,6 @@ Solution/Release/App.iobj
 Solution/Release/App.ipdb
 Solution/Release/Common.lib
 Solution/Release/Framework2017.lib
+*.ipdb
+*.iobj
+Solution/Release/Log.txt

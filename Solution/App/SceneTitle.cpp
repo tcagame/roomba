@@ -22,8 +22,7 @@ _choice_count( 0 ) {
 	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
 	drawer->loadGraph( GRAPH_BG, "title/title_bg.png" );
 	drawer->loadGraph( GRAPH_OK, "UI/ok.png" );
-	drawer->loadGraph( GRAPH_TITLE, "title/roomb_title_2.png" );
-	drawer->loadGraph( GRAPH_PLEASE_PUSH_BUTTON, "title/pleasepushbutton.png" );
+	drawer->loadGraph( GRAPH_TITLE, "title/roomb_title.png" );
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle_blue1.png" );
 	SoundPtr sound = Sound::getTask( );
 	sound->playBGM( "titleBGM.wav" );
@@ -111,22 +110,6 @@ void  SceneTitle::drawTitle( ) {
 	Drawer::Sprite sprite( Drawer::Transform( WIDTH / 2 - TITLE_WIDTH / 2, HEIGHT / 2 - TITLE_HEIGHT, 0, 0, TITLE_WIDTH, TITLE_HEIGHT ), GRAPH_TITLE, Drawer::BLEND_ALPHA, blend );
 	drawer->setSprite( sprite );
 	
-}
-
-void SceneTitle::drawPlease( ) {
-	ApplicationPtr app = Application::getInstance( );
-	const int WIDTH = app->getWindowWidth( );
-	const int HEIGHT = app->getWindowHeight( );
-
-	const int tx = 122;
-	const int ty = 116;
-	const int tx2 = 269;
-	const int ty2 = 52;
-
-	DrawerPtr drawer = Drawer::getTask( );
-	Drawer::Transform trans( WIDTH / 2 - tx2 / 2, HEIGHT / 2, tx, ty, tx2, ty2  );
-	Drawer::Sprite sprite( trans, GRAPH_PLEASE_PUSH_BUTTON );
-	drawer->setSprite( sprite );
 }
 
 void SceneTitle::drawController( ) {
