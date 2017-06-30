@@ -35,12 +35,12 @@ _open_stage( open_stage ) {
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle_blue1.png" );
 	drawer->loadGraph( GRAPH_STAGE_SELECT, "select/Stage Select.png" );
 	drawer->loadGraph( GRAPH_SELECT, "select/Select.png" );
-	drawer->loadGraph( GRAPH_NUM_1, "select/normal_1.png" );
+	drawer->loadGraph( GRAPH_BEGINNER, "select/beginner_1.png" );
 	if ( _open_stage ) {
-		drawer->loadGraph( GRAPH_NUM_2, "select/2.png" );
+		drawer->loadGraph( GRAPH_NORMAL, "select/normal.png" );
 		drawer->loadGraph( GRAPH_NUM_3, "select/3.png" );
 	} else {
-		drawer->loadGraph( GRAPH_NUM_2, "select/close.png" );
+		drawer->loadGraph( GRAPH_NORMAL, "select/close.png" );
 		drawer->loadGraph( GRAPH_NUM_3, "select/close.png" );
 	}
 	freazeSelect( );
@@ -181,13 +181,13 @@ void SceneSelect::drawSelect( ) {
 	}
 
 
-	GRAPH graph = (GRAPH)( GRAPH_NUM_1 + select );
+	GRAPH graph = (GRAPH)( GRAPH_BEGINNER + select );
 	
 	//ê^ÇÒíÜ
 	if ( graph == (GRAPH)( GRAPH_NUM_3 + 1 ) ) {
-		graph = GRAPH_NUM_1;
+		graph = GRAPH_BEGINNER;
 	}
-	if ( graph == (GRAPH)( GRAPH_NUM_1 - 1 ) ) {
+	if ( graph == (GRAPH)( GRAPH_BEGINNER - 1 ) ) {
 		graph = GRAPH_NUM_3;
 	}
 	Drawer::Sprite sprite_1( Drawer::Transform( (int)_pos[ 0 ].x, (int)_pos[ 0 ].y, 0, 0, NUM_SIZE, NUM_SIZE  ), graph );
@@ -196,9 +196,9 @@ void SceneSelect::drawSelect( ) {
 	//ç∂
 	graph = (GRAPH)( graph + 1 );
 	if ( graph == (GRAPH)( GRAPH_NUM_3 + 1 ) ) {
-		graph = GRAPH_NUM_1;
+		graph = GRAPH_BEGINNER;
 	}
-	if ( graph == (GRAPH)( GRAPH_NUM_1 - 1 ) ) {
+	if ( graph == (GRAPH)( GRAPH_BEGINNER - 1 ) ) {
 		graph = GRAPH_NUM_3;
 	}
 	Drawer::Sprite sprite_2( Drawer::Transform( (int)_pos[ 1 ].x, (int)_pos[ 1 ].y, 0, 0, NUM_SIZE, NUM_SIZE, (int)_pos[ 1 ].x + NUM_SIZE * 2 / 5, (int)_pos[ 1 ].y + NUM_SIZE * 2 / 5 ), graph );
@@ -207,9 +207,9 @@ void SceneSelect::drawSelect( ) {
 	//âE
 	graph = (GRAPH)( graph + 1 );
 	if ( graph == (GRAPH)( GRAPH_NUM_3 + 1 ) ) {
-		graph = GRAPH_NUM_1;
+		graph = GRAPH_BEGINNER;
 	}
-	if ( graph == (GRAPH)( GRAPH_NUM_1 - 1 ) ) {
+	if ( graph == (GRAPH)( GRAPH_BEGINNER - 1 ) ) {
 		graph = GRAPH_NUM_3;
 	}
 	Drawer::Sprite sprite_3( Drawer::Transform( (int)_pos[ 2 ].x, (int)_pos[ 2 ].y, 0, 0, NUM_SIZE, NUM_SIZE, (int)_pos[ 2 ].x + NUM_SIZE * 2 / 5, (int)_pos[ 2 ].y + NUM_SIZE * 2 / 5 ), graph );
