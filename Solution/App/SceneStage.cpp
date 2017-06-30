@@ -27,7 +27,7 @@ const int FPS = 60;
 const int CIRCLE_ANIME_FLAME = 1;
 const int MAX_CHOICE_COUNT = 24 * CIRCLE_ANIME_FLAME;
 const double GUIDELINE_VIEW_RANGE = 5 * WORLD_SCALE;
-const int RESULT_TIME = 60;
+const int RESULT_TIME = 120;
 
 SceneStage::SceneStage( int stage_num ) :
 _choice_count( 0 ),
@@ -75,7 +75,6 @@ _result_count( 0 ) {
 	drawer->loadGraph( GRAPH_CIRCLE, "scene/circle.png" );
 	drawer->loadGraph( GRAPH_GAME_OVER, "UI/game_over.png" );
 	drawer->loadGraph( GRAPH_GAME_CLEAR, "UI/StageClear.png" );
-	drawer->loadGraph( GRAPH_WHITE, "UI/white.png" );
 	//model
 	drawer->loadGraph( GRAPH_GUIDELINE, "Model/Guideline/guideline.jpg" );
 	drawer->loadGraph( GRAPH_FLOOR, "Model/Stage/floor.jpg" );
@@ -175,7 +174,7 @@ void SceneStage::drawUILinKGauge( ) {
 void SceneStage::drawUIResult( ) {
 	Roomba::MOVE_STATE roomba_move_state = _roomba->getMoveState( );
 	if ( !_timer->isTimeOver( ) &&
-		 _roomba->getMoveState( ) != Roomba::MOVE_STATE::MOVE_STATE_LIFT_UP ) {
+		 !_roomba->isGameClear( ) ) {
 		return;
 	}
 	DrawerPtr drawer = Drawer::getTask( );
@@ -202,23 +201,24 @@ void SceneStage::drawUIResult( ) {
 			drawer->setSprite( sprite );
 		}
 	}
-	if ( _roomba->getMoveState( ) == Roomba::MOVE_STATE::MOVE_STATE_LIFT_UP ) {//GAMECLEAR
-		int sy = ( WINDOW_HEIGHT - GRAPH_HEIGHT ) / 2;
-		int sx = ( WINDOW_WIDTH - GRAPH_WIDTH ) / 2;
-		{//white
-			Drawer::Transform trans( sx, sy );
-			double ratio = _result_count * 0.03;
-			if ( ratio > 0.7 ) {
-				ratio = 0;
-			}
-			Drawer::Sprite sprite( trans, GRAPH_WHITE, Drawer::BLEND_ADD, ratio );
-			drawer->setSprite( sprite );
+	if ( _roomba->isGameClear( ) ) {//GAMECLEAR
+		double ratio = _result_count;
+		double size_ratio = 1 + _result_count * 0.02;
+		if ( size_ratio > 1.2 && size_ratio < 1.4 ) {
+			size_ratio = 1.2 - ( size_ratio - 1.2 );
 		}
-		{//gameclear
-			Drawer::Transform trans( sx, sy );
-			Drawer::Sprite sprite( trans, GRAPH_GAME_CLEAR );
-			drawer->setSprite( sprite );
+		if ( size_ratio >= 1.4 ) {
+			size_ratio = 1;
 		}
+		int width =  ( int )( GRAPH_WIDTH  * size_ratio );
+		int height = ( int )( GRAPH_HEIGHT * size_ratio );
+		int sx1 = ( WINDOW_WIDTH  - width  ) / 2;
+		int sy1 = ( WINDOW_HEIGHT - height ) / 2;
+		int sx2 = sx1 + width;
+		int sy2 = sy1 + height;
+		Drawer::Transform trans( sx1, sy1, 0, 0, GRAPH_WIDTH, GRAPH_HEIGHT, sx2, sy2 );
+		Drawer::Sprite sprite( trans, GRAPH_GAME_CLEAR );
+		drawer->setSprite( sprite );
 	}
 	_result_count++;
 }
