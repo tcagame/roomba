@@ -26,7 +26,7 @@ _count( 0 ),
 _choice_count( 0 ),
 _move_count( 0 ),
 _ispush( false ),
-_open_stage( open_stage ) {
+_open_stage( 1 ) {
 	DrawerPtr drawer = Drawer::getTask( );
 	drawer->loadGraph( GRAPH_CONTROLLER_NEUTRAL, "controller/neutral.png" );
 	drawer->loadGraph( GRAPH_CONTROLLER_ROTATION, "controller/rotation.png" );
@@ -98,13 +98,13 @@ Scene::NEXT SceneSelect::update( ) {
 
 	if ( _move_count == 0 && _choice_count == 0 && getFadeOutCount( ) == MAX_FADE_COUNT ) {
 		freazeSelect( );
-		if ( left_stick.x > 0 && !_ispush ) {
+		if ( left_stick.x < 0 && !_ispush ) {
 			sound->playSE( "selectSE.wav" );
 			_move_count++;
 			_rot_right = true;
 			_ispush = true;
 		}
-		if ( left_stick.x < 0 && !_ispush ) {
+		if ( left_stick.x > 0 && !_ispush ) {
 			sound->playSE( "selectSE.wav" );
 			_move_count++;
 			_rot_right = false;
